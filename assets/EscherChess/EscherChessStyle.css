@@ -1,0 +1,283 @@
+:root {
+  --cell-size: 40px;
+  --grid-gap: 2px;
+  --primary-color: #333;
+  --light-square: #f0d9b5;
+  --dark-square: #b58863;
+  --valid-move: rgba(255, 255, 0, 0.3);
+  --valid-move-border: #FFD700;
+}
+
+body {
+  margin: 0;
+  background: #e0e0e0;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.turn-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 20px 0;
+  flex: 1 1 45%;
+  min-width: 300px;
+}
+
+.turn-column {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.grid-wrapper {
+  display: grid;
+  grid-template-columns: auto;
+  gap: 10px;
+  width: calc(var(--cell-size) * var(--board-width));
+  height: calc(var(--cell-size) * var(--board-height));
+  margin: 0 auto;
+}
+
+.chess-board {
+  display: flex;
+  padding: 20px;
+  background: #888;
+  border-radius: 8px;
+  margin: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Board container with labels */
+.board-container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 5px;
+  width: calc(var(--cell-size) * var(--board-width) + 25px);
+  height: calc(var(--cell-size) * var(--board-height) + 25px);
+}
+
+/* File labels container */
+.file-labels {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--board-width), var(--cell-size));
+  gap: 0;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+/* Rank labels container */
+.rank-labels {
+  grid-column: 1;
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: repeat(var(--board-height), var(--cell-size));
+  gap: 0;
+  margin-right: 5px;
+}
+
+.rank-label {
+  height: var(--cell-size);
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  font-size: 14px;
+}
+
+/* Chess board inner */
+.chess-board-inner {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--board-width), var(--cell-size));
+  grid-template-rows: repeat(var(--board-height), var(--cell-size));
+  gap: 0;
+  border: 2px solid #666;
+  background: #666;
+  width: fit-content;
+  height: fit-content;
+}
+
+.chess-cell {
+  aspect-ratio: 1;
+  width: var(--cell-size);
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+  font-size: 24px;
+  cursor: pointer;
+  position: relative;
+}
+
+.chess-cell.light {
+  background: var(--light-square);
+}
+
+.chess-cell.dark {
+  background: var(--dark-square);
+}
+
+.chess-cell.selected {
+  box-shadow: inset 0 0 0 4px #ffa500;
+}
+
+.chess-cell.selected .chess-piece {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.chess-cell.valid-move {
+  position: relative;
+}
+
+.chess-cell.valid-move::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: rgba(255, 204, 0, 0.5);
+  z-index: 5;
+}
+
+.chess-cell.valid-move:hover {
+  background-color: rgba(255, 204, 0, 0.3);
+  cursor: pointer;
+}
+
+.chess-piece {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  z-index: 10;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.chess-piece:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Room Controls Styling */
+.room-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.room-display {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 10px;
+  background: #fff;
+  border-radius: 4px;
+  min-width: 200px;
+  text-align: center;
+}
+
+.room-input-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+}
+
+#roomInput {
+  flex: 1;
+  padding: 8px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.game-button {
+  padding: 10px 15px;
+  font-size: 1em;
+  cursor: pointer;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.game-button:hover {
+  background: #0056b3;
+}
+
+.innerdiv {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  flex: 1 1 45%;
+  min-width: 300px;
+}
+
+.two-column-layout {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.text-column {
+  flex: 0 1 60%;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.game-column {
+  flex: 0 1 40%;
+  min-width: 300px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.file-label {
+  height: 20px;
+  width: var(--cell-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  font-size: 14px;
+}

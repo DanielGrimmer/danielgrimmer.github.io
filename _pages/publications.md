@@ -28,3 +28,9 @@ nav_order: 1
 <div class="publications">
 {% bibliography --query @*[status!=submitted] %}
 </div>
+
+## Unpublished preprints
+
+<div class="publications">
+{% bibliography -f preprints %}
+</div>

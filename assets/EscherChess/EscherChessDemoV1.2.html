@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Escher Chess Demo 2</title>
+    <link rel="stylesheet" href="EscherChessStyle.css">
+    <script type="module" src="EscherChessLogic.js"></script>
+  </head>
+  <body>   
+      <img style="width: 35%;min-width: 400px; max-width: 600px; float: right; margin-left: 20px;" src="EscherChessLogo.png" alt="Something went wrong">
+      <div class="innerdiv">
+      <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+      Welcome to the Escher Chess Game! (Play Time: < 30 mins) 
+      <br><br>    
+      There is a mystery at the heart of this game which the two players should try to solve after playing their first game together. In brief, there 
+      are two seemingly contradictory ways of looking at this chess variant which are nonetheless somehow coherent with each other. The rough idea is
+      conveyed by the following Escher-like illusion.
+    </p>
+    </div>
+      <img style="width: 35%;min-width: 400px; max-width: 600px; float: right; margin-left: 20px;" src="EscherChessIllusion.png" alt="Something went wrong">   
+      <div class="innerdiv">
+      <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+	    Before getting to the real game, however, you should start by play around with this demonstration page in order to learn (most of) the game's 
+      rules and to familiarize yourself with the user interface. 
+      <br><br>
+      This game must be played with a friend. While you can be sitting side-by-side for this demo game, it will be important for the next game (i.e., 
+      the real game) that you cannot see each other's screens. You can both open this webpage separately on your own devices and the game state will 
+      automatically be synchronized across the two browser sessions once you are in the same game room.
+    </p>
+    </div>
+    <!-- Room Controls -->
+    <div class="room-controls">
+      <button id="nextRoomButton" class="game-button">Get Next Available Room</button>
+      <div id="currentRoom" class="room-display"></div>
+      <div class="room-input-container">
+          <input type="text" id="roomInput" placeholder="Enter room name">
+          <button id="joinRoomButton" class="game-button">Join Room</button>
+      </div>
+    </div>
+    <div class="innerdiv">
+    <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+    Next you will need to decide together what size of board to play on: either 5x13 or 8x8. Despite its odd size, the 5x13 version of this game is 
+    actually the simpler one and is more like standard chess. I recommend starting with the 5x13 board if this is your first game of Escher Chess. After
+    picking a board size the players should decide who will play as white and who will play as black.
+    </p>
+    </div>  
+    <!-- Buttons -->
+    <div class="button-container">
+      <button id="changeBoardSizeButton" class="game-button">Change Board Size</button>
+      <button id="changePlayerTypeButton" class="game-button">Change Player Type</button>
+      <button id="resetButton" class="game-button">Reset Game</button>
+    </div>
+
+    <!-- New display field for user player type -->
+    <div class="turn-container">
+      <div class="turn-column" id="boardSizeDisplay">Loading board size...</div>
+      <div class="turn-column" id="playerTypeDisplay">Loading player type...</div>
+    </div>
+
+    <div class="two-column-layout">
+        <div class="text-column">
+            <div class="innerdiv" id="rulesText">
+                <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+                    Loading Rules Text...     
+                </p>
+            </div>
+        </div>
+
+        <div class="game-column">
+            <div class="turn-container">
+                <div class="turn-column" id="turnDisplay"> Loading turn indicator...</div>
+                <div class="turn-column" id="gameStatus"> Loading game status...</div>
+            </div>
+
+            <div class="grid-wrapper">
+                <div id="chessBoard" class="chess-board"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="innerdiv">
+      <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+    Please read all of this text before you click the link below to play Escher Chess.
+    <br><br>
+    As I noted above, there is a mystery at the heart of this game which the two players should try to solve after playing their first game together. In 
+    order to preserve the mystery until the end of the first game, however, a rather strict separation between the player's perspectives must be enforced.
+    During the first game, each player should be focused solely upon their own game experience. In this game (as in life) the only access that you will 
+    have to the other player's experience is through their actions (and, later, through their words).
+    <br><br>    
+    Concretely, the two players should now be seated apart from each other, and hence playing in different browser sessions. (Make sure that you are in 
+    the same game room, see above.) Also, the next game should be played without talking to each other (e.g., mute your audio call). Once the first game
+     is over, however, the two players are encouraged to play again while looking at each other's screens and to compare notes regarding their respective
+      experiences with the game. The nature of the game's mystery will naturally become apparent at this point.
+    <br><br>    
+    One Last Note:
+    <br><br>    
+    Despite the fact that you and your opponent will be looking at different game boards, this is nonetheless a "complete information game". As you look 
+    at your own game board, you see the entire game state (there is no hidden information). Moreover, you know exactly what your opponent's objective is 
+    (to capture your king) and exactly how they can achieve this goal (their move-set will be explained on the next page). In these ways, your opponent 
+    is no mystery to you. Nonetheless, however, they will still surprise you after the first game is over.
+    <br><br>    
+    You can now click <a id="gameLink" href="EscherChessGameV1.2.html">this link</a> to play Escher Chess.
+      </p>
+    </div>
+  </body>
+</html>

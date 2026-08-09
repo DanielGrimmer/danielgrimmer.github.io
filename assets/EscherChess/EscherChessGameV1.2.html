@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Escher Chess Game V1.2</title>
+    <link rel="stylesheet" href="EscherChessStyle.css">
+    <script type="module" src="EscherChessLogic.js"></script>
+  </head>
+  <body>   
+      <img style="width: 35%;min-width: 400px; max-width: 600px; float: right; margin-left: 20px;" src="EscherChessLogo.png" alt="Something went wrong">
+      <div class="innerdiv">
+      <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+      Welcome to the Escher Chess Game! (Play Time: < 30 min) 
+      <br><br>    
+      If you haven't already, please read the first part of the instructions on <a href="EscherChessDemoV1.2.html">the demo page</a>. 
+    </p>
+    </div>
+
+        <!-- New display field for user player type -->
+    <div class="turn-container">
+      <div class="turn-column" id="boardSizeDisplay">Loading board size...</div>
+      <div class="turn-column" id="playerTypeDisplay">Loading player type...</div>
+    </div>
+
+    <div class="two-column-layout">
+      <div class="text-column">
+          <div class="innerdiv" id="rulesText2">
+              <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+                  Loading Rules Text 2...     
+              </p>
+          </div>
+      </div>
+
+      <div class="game-column">
+          <div class="button-container">
+            <button id="changePlayerTypeButton" class="game-button">Change Player Type</button>
+            <button id="resetButton" class="game-button">Reset Game</button>
+          </div>
+          <div class="turn-container">
+              <div class="turn-column" id="turnDisplay"> Loading turn indicator...</div>
+              <div class="turn-column" id="gameStatus"> Loading game status...</div>
+          </div>
+
+          <div class="grid-wrapper">
+              <div id="chessBoard" class="chess-board"></div>
+          </div>
+      </div>
+  </div>
+
+    <div class="innerdiv">
+      <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;">
+        Explain the mystery here... 
+      </p>
+    </div>
+  </body>
+</html>

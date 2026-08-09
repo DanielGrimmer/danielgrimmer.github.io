@@ -48,7 +48,7 @@ Magdalen College, Oxford — Trinity Term 2023
 Brasenose College, Oxford — Trinity Term 2023
 
 **Elements of Deductive Logic**  
-St Hugh's College, Oxford — Hilary Term 2022
+St Hugh's College, Oxford — Hilary Term 2023
 
 **Philosophy of Spacetime**  
 Wycliffe Hall, Oxford — Michaelmas Term 2022

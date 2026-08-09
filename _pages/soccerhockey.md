@@ -3,8 +3,7 @@ layout: page
 permalink: /soccer-hockey/
 title: soccer hockey
 description: A two-player game where each player sees a different — but equivalent — version of the same match.
-nav: true
-nav_order: 5
+nav: false # surfaced via the 'games' dropdown in _pages/games.md
 ---
 
 Two players sit at separate screens and play what each believes is an ordinary

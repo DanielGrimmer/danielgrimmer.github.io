@@ -9,18 +9,20 @@ Section B is the CV reconciliation (2026-08) — read that first.
 
 ## A. Still needed
 
-- [ ] **A1. Escher Chess** — not yet ported; it was in the old nav.
+Nothing. Every asset from the old site is in place.
 
 ## B. CV reconciliation — decisions for you
 
 The CV resolved every open fact. It also disagreed with the old site in places.
 Where the CV was simply newer or fuller, it was adopted. These need your call.
 
-- [ ] **B1. Teaching year conflict.** *Elements of Deductive Logic, St Hugh's
-      College* — the old site said **Hilary Term 2023**, the CV says **HT 2022**.
-      The CV was adopted. One of the two is wrong; only you know which.
-- [ ] **B2. Two talk titles changed to match the CV.** Both were substantive, not
-      cosmetic:
+- [x] ~~**B1. Teaching year conflict.**~~ Resolved: the teaching arrangement
+      record reads `Hilary|2022/2023`, and Hilary falls in the spring half of
+      that academic year, so it is **Hilary Term 2023**. The site now says 2023.
+      **Your CV has this as HT 2022 and is a year out — worth fixing there.**
+- [x] ~~**B2. Two talk titles changed to match the CV.**~~ Surrey confirmed: the
+      talk was about laws of nature, so the CV title is right. Bonn adopted from
+      the CV on the same basis.
       - Surrey Summer School, July 2024 — old site *"Deflating Spacetime: A
         Dynamics-First View of Topology"* → CV *"What Are the Laws of Nature? And
         What Do They Do?"*
@@ -36,28 +38,25 @@ Where the CV was simply newer or fuller, it was adopted. These need your call.
       Morals (PHIL 2340)"* vs CV *"AI Epistemology and Ethics: Knowing Machine
       Morals"*; site *"Philosophy of Physics: Space, Time, Quantum (PHIL 3333)"*
       vs CV *"Philosophy of Physics"*. Say which you'd rather show.
-- [ ] **B5. Preprint-only work is still hidden.** You said to leave these in
-      comments — but the CV lists them publicly under **"Unpublished Preprints
-      (5)"**, which is different evidence from "never got published". All five
-      are ready to go in `_bibliography/never_published.bib`, including
-      *Introducing the ISE Methodology* (arXiv:2303.04130), which was on neither
-      the old site nor my earlier list. Want a third section on the publications
-      page for them?
+- [x] ~~**B5. Preprint-only work is hidden.**~~ Done: `/publications/` now has a
+      third section, **Unpublished preprints**, holding all five from the CV —
+      including *Introducing the ISE Methodology* (arXiv:2303.04130), which was
+      on neither the old site nor my earlier list. They live in
+      `_bibliography/preprints.bib`.
 - [ ] **B6. "Das Neue Raumproblem"** is on the CV under *In Preparation*. Not
-      added to the site — in-preparation work is a taste call. It's sitting in
-      `never_published.bib` ready to move.
+      added to the site — in-preparation work is a taste call. It's in
+      `_bibliography/parked.bib` ready to move into `papers.bib`.
 - [ ] **B7. The CV's own header still points at the old Oxford URL.** Worth
       updating to `danielgrimmer.github.io` in the next revision of the PDF.
 - [ ] **B8. `Connecting Grit and Peer Disagreement`** appears nowhere on the
       2026 CV, so it looks abandoned rather than merely unpublished. It is parked
-      in `never_published.bib` with a note. Delete it if that's right.
+      in `_bibliography/parked.bib`, which nothing renders. Delete it if that's
+      right.
 - [ ] **B9. Selected publications on the homepage** are still the old site's
       four. The newly accepted Erkenntnis paper is arguably a better pick than a
       preprint — change with `selected = {true}` in `papers.bib`.
-- [ ] **B10. The CV's References section is deliberately NOT on the site.** It
-      lists five people's personal emails, phone numbers and postal addresses.
-      Publishing third-party contact details is not something to do by default;
-      say if you want it and I'll add it.
+- [x] ~~**B10. References section.**~~ Confirmed: stays off. It lists five
+      people's personal emails, phone numbers and postal addresses.
 
 ## C. Applied from the CV
 
@@ -102,7 +101,7 @@ No action needed — recorded so you can spot anything wrong.
 - **Blog hidden** from the nav; no posts.
 - **Journal badge colours** in `_data/venues.yml` are invented.
 
-## E. Soccer Hockey
+## E. The two games
 
 - [ ] **E1. Check the Firestore Security Rules.** The API key in
       `assets/SoccerHockey/firebaseConfig.js` is *not* a leak — Firebase web keys
@@ -111,12 +110,17 @@ No action needed — recorded so you can spot anything wrong.
       now published from a public repo. Confirm rules still disallow *creating*
       documents, and that the project is still active: "test mode" rules expire
       after 30 days and then deny everything, which would explain a stale back end.
+      **Escher Chess shares the same Firebase project**, so this covers both games.
 - [ ] **E2. Rooms are unauthenticated** — ten fixed names, no login, so anyone
       can join a room and move pieces in someone else's game.
 - [ ] **E3. Optionally restrict the API key** to referrer
       `danielgrimmer.github.io/*` in the Google Cloud console.
-- [ ] **E4. The demo and game keep their own styling** and don't inherit the site
-      theme, as on the old site.
+- [ ] **E4. The demos and games keep their own styling** and don't inherit the
+      site theme, as on the old site.
+- [ ] **E5. Gameplay is untested.** Both bundles load with no JavaScript errors
+      and all their assets resolve, but every dynamic field stays on "Loading…"
+      here because this build environment cannot reach Firebase. Play a real
+      two-browser game once the site is live before trusting either.
 
 ## F. Optional
 
@@ -128,12 +132,15 @@ No action needed — recorded so you can spot anything wrong.
 
 ## G. Verified
 
-- Builds with zero warnings and zero errors; 10 pages
-- Publications: 2 + 18, matching the CV exactly
+- Builds with zero warnings and zero errors; 11 pages
+- Publications: 2 + 18 + 5, matching the CV exactly
 - No broken internal links; no plain-text email anywhere in the output
 - CV page renders all seven sections with real data
 - Light mode, dark mode and mobile all check out
-- Soccer Hockey bundle survives the build with ES module imports intact
+- Both game bundles survive the build with ES module imports intact
+- Publications page renders three sections: 2 under review, 18 peer-reviewed,
+  5 unpublished preprints
+- The two games sit under a `games` dropdown so the navbar stays at seven items
 
 **Not yet live:** this work is on `claude/academic-site-migration-plan-5yq7ob`.
 It publishes when merged to `main`.

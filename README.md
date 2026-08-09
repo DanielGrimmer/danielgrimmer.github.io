@@ -14,7 +14,7 @@ still outstanding is listed in [CHECKLIST.md](CHECKLIST.md).
 | --- | --- |
 | Homepage bio + research interests | `_pages/about.md` |
 | The longer career narrative | `_pages/bio.md` (published at `/about/`) |
-| Publications | `_bibliography/papers.bib` — the page generates itself |
+| Publications | `_bibliography/papers.bib` (under review + peer-reviewed) and `_bibliography/preprints.bib` (unpublished preprints) — the page generates itself |
 | Talks, posters, research visits | `_pages/talks.md` |
 | Teaching | `_pages/teaching.md` |
 | CV | `_data/cv.yml`; the PDF is `assets/pdf/CV_Grimmer.pdf` |
@@ -22,7 +22,7 @@ still outstanding is listed in [CHECKLIST.md](CHECKLIST.md).
 | Email and profile links | `_data/socials.yml` |
 | Journal badge colours | `_data/venues.yml`, keyed by the `abbr` field in the .bib |
 | Profile photos | `assets/img/prof_pic.jpg`, `assets/img/DGrimmer2.jpg` |
-| Soccer Hockey | `assets/SoccerHockey/`, landing page `_pages/soccerhockey.md` |
+| The games | `assets/SoccerHockey/` and `assets/EscherChess/`; landing pages `_pages/soccerhockey.md`, `_pages/escherchess.md`, grouped by `_pages/games.md` |
 | Nav order / hiding a page | `nav` and `nav_order` in that page's front matter |
 
 ### Adding a publication
