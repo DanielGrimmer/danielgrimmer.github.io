@@ -9,14 +9,12 @@
 # restores the envelope icon and undoes that.
 github_username: DanielGrimmer
 youtube_id: oxfordspacetime
+orcid_id: 0000-0002-8449-3775
 scholar_userid: -R31VGwAAAAJ # Google Scholar
 
-# TODO: upload the CV PDF to assets/pdf/ and uncomment to restore the old
-# site's "Long CV" link. Left off for now so it does not 404.
-# cv_pdf: /assets/pdf/CVGrimmer.pdf
+cv_pdf: /assets/pdf/CV_Grimmer.pdf # the old site's "Long CV" link
 
 # Uncomment and fill if you want these too:
-# orcid_id:
 # philpeople_id:
 # bluesky_url:
 # linkedin_username:

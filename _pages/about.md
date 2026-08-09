@@ -2,7 +2,7 @@
 layout: about
 title: home
 permalink: /
-subtitle: Postdoctoral Researcher in Philosophy, Yale University
+subtitle: Postdoctoral Associate in Philosophy, Yale University
 
 profile:
   align: right
@@ -27,7 +27,7 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am a Postdoctoral Researcher in Philosophy at Yale University. My research trajectory spans across disciplines, beginning with Physics (Ph.D., Waterloo) and expanding into the Philosophy of Physics (DPhil, Oxford), Cognitive Science, and Artificial Intelligence.
+I am a Postdoctoral Associate in Philosophy at Yale University. My research trajectory spans across disciplines, beginning with Physics (Ph.D., Waterloo) and expanding into the Philosophy of Physics (DPhil, Oxford), Cognitive Science, and Artificial Intelligence.
 
 Currently, my work focuses on **Evolutionary Epistemology _in silico_** ([recent talk](https://www.youtube.com/playlist?list=PLrJKZOWDalkVMqSXykVyW3GQY5OzeL2iu)). Remarkably, the machine learning technique of Meta-Learning can be used to implement an evolutionarily faithful simulation of Darwinian evolution. We can therefore use artificial neural networks to simulate the evolution of our own cognitive faculties, shedding light on the age-old philosophical debate between Nativism and Empiricism. In aid of this program, I have recently derived a suite of advanced optimization algorithms directly from evolutionary first principles ([recent paper](https://github.com/DanielGrimmer/adam-dls)).
 

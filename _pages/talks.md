@@ -11,12 +11,21 @@ toc:
 
 <!-- Migrated from the old site's talks.html. -->
 
-## Upcoming
-
-**Hausdorff and the Underdetermination of Space by Evidence**  
-Felix Hausdorff Conference (Yale), New Haven, CT, USA — May 8, 2026
+<!--
+  No "Upcoming" section at present: the Hausdorff talk was May 2026 and is now
+  past. Re-add an `## Upcoming` heading above the list when the next one is booked.
+-->
 
 ## Past talks
+
+**How Evolutionary Meta-Learning Repositions Neural Networks in the Nativism–Empiricism Debate**  
+British Society for the Philosophy of Science (BSPS), Leeds, UK — July 2026
+
+**Topological Asymmetry Neutralizes Leibniz's Shift Argument and Collapses Categorical Equivalence**  
+Foundations of Physics, University of California, Irvine, CA, USA — June 2026
+
+**Hausdorff and the Underdetermination of Space by Evidence**  
+Felix Hausdorff Conference, Yale University, New Haven, CT, USA — May 2026
 
 **Evolutionary Epistemology In Silico: Exploring Nature and Nurture with Neural Networks**  
 Laurie Paul's Group Meeting, New Haven, CT, USA — April 2026
@@ -33,10 +42,10 @@ P&P Meeting, Digital Ethics Center (Yale), New Haven, CT, USA — September 2025
 **Undercutting the Spatiotemporal Underpinnings of the Humean Mosaic**  
 Quantum Gravity and the Laws of Nature Workshop, Geneva, Switzerland — December 2024
 
-**Searching for New Spacetimes: Towards a Dynamics-First View of Topology**  
-History and Philosophy of Physics Research Seminar, Bonn, Germany — November 2024
+**Searching for New Spacetimes: The ISE Method of Topological Redescription**  
+History and Philosophy of Physics Research Seminar, University of Bonn, Germany — November 2024
 
-**Deflating Spacetime: A Dynamics-First View of Topology**  
+**What Are the Laws of Nature? And What Do They Do?**  
 Surrey Summer School, Southampton, UK — July 2024
 
 **In Search of New Spacetime: The ISE Method of Topological Redescription**  

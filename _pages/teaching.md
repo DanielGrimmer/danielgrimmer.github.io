@@ -38,6 +38,9 @@ St Hugh's College, Oxford — Michaelmas Term 2022, Hilary Term 2023
 
 ## Oxford tutorial teaching
 
+**Philosophy of Time**  
+Pembroke College, Oxford (OxNet Outreach) — Trinity Term 2023
+
 **Leibniz–Clarke Correspondence**  
 Magdalen College, Oxford — Trinity Term 2023
 
@@ -45,7 +48,7 @@ Magdalen College, Oxford — Trinity Term 2023
 Brasenose College, Oxford — Trinity Term 2023
 
 **Elements of Deductive Logic**  
-St Hugh's College, Oxford — Hilary Term 2023
+St Hugh's College, Oxford — Hilary Term 2022
 
 **Philosophy of Spacetime**  
 Wycliffe Hall, Oxford — Michaelmas Term 2022
@@ -59,6 +62,9 @@ St Hilda's College, Oxford — Hilary Term 2022
 **Introduction to Logic**  
 Oxford Study Abroad Programme — Hilary Term 2022
 
+**Philosophy of Time**  
+Oriel College, Oxford (Academic Taster) — Hilary Term 2022
+
 **Philosophy of Spacetime**  
 Exeter College, Oxford — Hilary Term 2022
 
@@ -71,7 +77,8 @@ Pembroke College, Oxford — Michaelmas Term 2021
 ## Before Oxford
 
 **Teaching Assistant in Physics**  
-University of Waterloo — September 2015 – December 2017
+University of Waterloo — September 2015 – December 2017  
+Physics 1 · Mechanics · Electrical Engineering 1 · Quantum Physics 1 · Quantum Theory 2
 
 **Mathematics Tutor**  
 University of Oklahoma — September 2013 – May 2015

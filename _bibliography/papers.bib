@@ -2,73 +2,75 @@
 ---
 
 %% =====================================================================
-%%  Migrated from the old site's papers.html.
+%%  Reconciled against CV_Grimmer.pdf (2026-08).
 %%
 %%  Entries carrying `status = {submitted}` render in the "Under peer
 %%  review" section of /publications/; everything else renders in the
 %%  main chronological list. `selected = {true}` also promotes an entry
 %%  to the homepage.
+%%
+%%  Papers that exist only as preprints live in never_published.bib in
+%%  this folder and are not rendered. Note you cannot comment an entry
+%%  out with a leading percent sign — BibTeX-Ruby starts an entry at the
+%%  at-sign regardless, and the build dies. Even an at-sign inside a
+%%  comment provokes a lexer warning.
 %% =====================================================================
 
 %% ---------------------------------------------------------------------
-%%  Currently under peer review
+%%  Currently under peer review (2)
 %% ---------------------------------------------------------------------
+
+@article{grimmer2026innateness,
+  title       = {Innateness In Silico at Scale: How Evolutionary Meta-Learning Repositions Neural Networks within the Nativism–Empiricism Debate},
+  author      = {Grimmer, Daniel},
+  year        = {2026},
+  month       = {March},
+  abbr        = {Preprint},
+  status      = {submitted},
+  selected    = {true},
+  bibtex_show = {true},
+  journal     = {Synthese (submitted; revise and resubmit)},
+  html        = {https://philsci-archive.pitt.edu/28373/}
+}
 
 @article{grimmer2026darwin,
   title       = {Direct From Darwin: Deriving Advanced Optimizers From Evolutionary First Principles},
   author      = {Grimmer, Daniel},
   year        = {2026},
+  month       = {May},
   abbr        = {Preprint},
   status      = {submitted},
   selected    = {true},
   bibtex_show = {true},
-  journal     = {Submitted to Evolutionary Computation Journal},
-  month       = {May},
+  journal     = {Submitted to Evolutionary Computation},
+  arxiv       = {2605.05284},
   code        = {https://github.com/DanielGrimmer/adam-dls}
 }
 
-% TODO: the old site had a placeholder "#" for the arXiv link. Add
-% arxiv = {XXXX.XXXXX} once the preprint is posted.
+%% ---------------------------------------------------------------------
+%%  Peer-reviewed publications and graduate theses (18)
+%% ---------------------------------------------------------------------
 
 @article{grimmer2026equivalence,
-  title       = {Equivalence and determinism in light of topologically-induced structure},
+  title       = {Equivalence and Determinism in Light of Topologically-Induced Structure},
   author      = {Grimmer, Daniel and Read, James},
   year        = {2026},
-  abbr        = {Preprint},
-  status      = {submitted},
+  month       = {July},
+  abbr        = {Erkenntnis},
   bibtex_show = {true},
-  journal     = {Submitted to Erkenntnis},
-  month       = {April}
+  journal     = {Erkenntnis (accepted; in production)},
+  html        = {https://philsci-archive.pitt.edu/29119/}
 }
-
-% TODO: the old site had an unfilled placeholder for the arXiv link
-% ("YOUR_UNIT1_ARXIV_LINK"). Add arxiv = {XXXX.XXXXX} when available.
-
-@article{grimmer2026evolutionary,
-  title       = {Evolutionary Meta-Learning in Neural Networks as a Neutral Testing Ground for Nativism and Empiricism},
-  author      = {Grimmer, Daniel},
-  year        = {2026},
-  abbr        = {Preprint},
-  status      = {submitted},
-  selected    = {true},
-  bibtex_show = {true},
-  journal     = {Submitted to Synthese},
-  month       = {March},
-  html        = {https://philsci-archive.pitt.edu/28373/}
-}
-
-%% ---------------------------------------------------------------------
-%%  Peer-reviewed publications and graduate theses
-%% ---------------------------------------------------------------------
 
 @phdthesis{grimmer2024dphil,
   title       = {Searching for New Spacetimes: Towards a Dynamics-First View of Topology},
   author      = {Grimmer, Daniel},
   year        = {2024},
+  month       = {August},
   school      = {DPhil thesis, University of Oxford},
   abbr        = {Thesis},
   bibtex_show = {true},
-  abstract    = {Defended August 2024, passed with no corrections. Text available upon request.}
+  abstract    = {Submitted July 2024, viva August 2024. Passed viva with no corrections.}
 }
 
 @article{grimmer2024dualities,
@@ -76,6 +78,7 @@
   author      = {Grimmer, Daniel and Cinti, Enrico and Jaksland, Rasmus},
   journal     = {The British Journal for the Philosophy of Science},
   year        = {2024},
+  month       = {March},
   abbr        = {BJPS},
   selected    = {true},
   bibtex_show = {true},
@@ -84,10 +87,13 @@
 }
 
 @article{grimmer2023pragmatic,
-  title       = {The Pragmatic QFT Measurement Problem and the need for a Heisenberg-like Cut in QFT},
+  title       = {The Pragmatic QFT Measurement Problem and the Need for a Heisenberg-like Cut in QFT},
   author      = {Grimmer, Daniel},
   journal     = {Synthese},
   year        = {2023},
+  month       = {September},
+  volume      = {202},
+  pages       = {104},
   abbr        = {Synthese},
   selected    = {true},
   bibtex_show = {true},
@@ -97,18 +103,14 @@
   video       = {https://www.youtube.com/watch?v=T2Xv6EYnrGE}
 }
 
-% NOTE: the old site's papers.html pointed this video abstract at
-% youtu.be/BkLmIObkg0c (the Unruh paper's video) while index.html used
-% T2Xv6EYnrGE. Confirmed 2026-08: the index.html link is the correct one.
-
 @article{grimmer2023decoding,
   title       = {Decoding Quantum Field Theory with Machine Learning},
   author      = {Grimmer, Daniel and Melgarejo-Lermas, Irene and Polo-Gómez, José and Martín-Martínez, Eduardo},
   journal     = {Journal of High Energy Physics},
   year        = {2023},
+  month       = {August},
   volume      = {2023},
-  number      = {8},
-  pages       = {31},
+  pages       = {031},
   abbr        = {JHEP},
   bibtex_show = {true},
   doi         = {10.1007/JHEP08(2023)031},
@@ -117,10 +119,11 @@
 }
 
 @article{grimmer2021measurements,
-  title       = {Measurements in QFT: Weakly coupled local particle detectors and entanglement harvesting},
+  title       = {Measurements in QFT: Weakly Coupled Local Particle Detectors and Entanglement Harvesting},
   author      = {Grimmer, Daniel and de S. L. Torres, Bruno and Martín-Martínez, Eduardo},
   journal     = {Physical Review D},
   year        = {2021},
+  month       = {October},
   volume      = {104},
   pages       = {085014},
   abbr        = {PRD},
@@ -135,6 +138,7 @@
   author      = {Vriend, Silas and Grimmer, Daniel and Martín-Martínez, Eduardo},
   journal     = {Symmetry},
   year        = {2021},
+  month       = {October},
   volume      = {13},
   number      = {11},
   pages       = {1977},
@@ -147,10 +151,11 @@
 }
 
 @article{grimmer2021dimensional,
-  title       = {Dimensional reduction of cavities with axial symmetry: Are optical fibers really one-dimensional?},
+  title       = {Dimensional Reduction of Cavities with Axial Symmetry: Are Optical Fibers Really One-Dimensional?},
   author      = {Grimmer, Daniel and Lopp, Richard and Martín-Martínez, Eduardo},
   journal     = {Physical Review A},
   year        = {2021},
+  month       = {July},
   volume      = {104},
   pages       = {013723},
   abbr        = {PRA},
@@ -164,6 +169,7 @@
   title       = {Interpolated Collision Models Formalism},
   author      = {Grimmer, Daniel},
   year        = {2020},
+  month       = {September},
   school      = {Ph.D. thesis in Physics, University of Waterloo},
   abbr        = {Thesis},
   bibtex_show = {true},
@@ -176,6 +182,7 @@
   author      = {Seah, Stella and Nimmrichter, Stefan and Grimmer, Daniel and Santos, Jader P. and Scarani, Valerio and Landi, Gabriel T.},
   journal     = {Physical Review Letters},
   year        = {2019},
+  month       = {October},
   volume      = {123},
   pages       = {180602},
   abbr        = {PRL},
@@ -190,6 +197,7 @@
   author      = {Grimmer, Daniel and Kempf, Achim and Mann, Robert B. and Martín-Martínez, Eduardo},
   journal     = {Physical Review A},
   year        = {2019},
+  month       = {October},
   volume      = {100},
   pages       = {042702},
   abbr        = {PRA},
@@ -204,6 +212,9 @@
   author      = {Onuma-Kalu, Marvellous and Grimmer, Daniel and Mann, Robert B. and Martín-Martínez, Eduardo},
   journal     = {Journal of Physics A},
   year        = {2019},
+  month       = {October},
+  volume      = {52},
+  pages       = {435302},
   abbr        = {J Phys A},
   bibtex_show = {true},
   doi         = {10.1088/1751-8121/ab40e1},
@@ -216,6 +227,9 @@
   author      = {Grimmer, Daniel and Mann, Robert B. and Martín-Martínez, Eduardo},
   journal     = {Journal of Physics A},
   year        = {2019},
+  month       = {September},
+  volume      = {52},
+  pages       = {395305},
   abbr        = {J Phys A},
   bibtex_show = {true},
   doi         = {10.1088/1751-8121/ab3a19},
@@ -228,6 +242,7 @@
   author      = {Grimmer, Daniel and Brown, Eric and Kempf, Achim and Mann, Robert B. and Martín-Martínez, Eduardo},
   journal     = {Physical Review A},
   year        = {2018},
+  month       = {May},
   volume      = {97},
   pages       = {052120},
   abbr        = {PRA},
@@ -242,6 +257,9 @@
   author      = {Grimmer, Daniel and Brown, Eric and Kempf, Achim and Mann, Robert B. and Martín-Martínez, Eduardo},
   journal     = {Journal of Physics A},
   year        = {2018},
+  month       = {May},
+  volume      = {51},
+  pages       = {245301},
   abbr        = {J Phys A},
   bibtex_show = {true},
   doi         = {10.1088/1751-8121/aac114},
@@ -254,6 +272,7 @@
   author      = {Grimmer, Daniel and Mann, Robert B. and Martín-Martínez, Eduardo},
   journal     = {Physical Review A},
   year        = {2017},
+  month       = {April},
   volume      = {95},
   pages       = {042114},
   abbr        = {PRA},
@@ -268,6 +287,7 @@
   author      = {Grimmer, Daniel and Layden, David and Mann, Robert B. and Martín-Martínez, Eduardo},
   journal     = {Physical Review A},
   year        = {2016},
+  month       = {September},
   volume      = {94},
   pages       = {032126},
   abbr        = {PRA},
@@ -279,9 +299,10 @@
 
 @article{grimmer2014quantum,
   title       = {Quantum Phases of Soft-Core Dipolar Bosons in Optical Lattices},
-  author      = {Grimmer, Daniel and Safavi-Naini, Arghavan and Capogrosso-Sansone, Barbara and Soyler, Sebnem Gunes},
+  author      = {Grimmer, Daniel and Safavi-Naini, Arghavan and Capogrosso-Sansone, Barbara and Soyler, Şebnem Güneş},
   journal     = {Physical Review A},
   year        = {2014},
+  month       = {October},
   volume      = {90},
   pages       = {043635},
   abbr        = {PRA},
@@ -290,10 +311,3 @@
   html        = {https://journals.aps.org/pra/abstract/10.1103/PhysRevA.90.043635},
   arxiv       = {1408.3532}
 }
-
-
-%% Papers that were never published live in never_published.bib in this folder.
-%% They are not rendered anywhere; that file is a parking lot, kept valid so the
-%% metadata stays machine-readable. Note you cannot comment an entry out with a
-%% leading percent sign — BibTeX-Ruby starts an entry at the at-sign regardless,
-%% and the build dies. Even an at-sign inside a comment provokes a lexer warning.

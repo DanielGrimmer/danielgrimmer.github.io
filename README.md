@@ -17,11 +17,12 @@ still outstanding is listed in [CHECKLIST.md](CHECKLIST.md).
 | Publications | `_bibliography/papers.bib` — the page generates itself |
 | Talks, posters, research visits | `_pages/talks.md` |
 | Teaching | `_pages/teaching.md` |
-| CV | `_data/cv.yml` (page is `_pages/cv.md`, currently hidden from the nav) |
+| CV | `_data/cv.yml`; the PDF is `assets/pdf/CV_Grimmer.pdf` |
 | Site title, description, favicon | `_config.yml`, top section |
 | Email and profile links | `_data/socials.yml` |
 | Journal badge colours | `_data/venues.yml`, keyed by the `abbr` field in the .bib |
 | Profile photos | `assets/img/prof_pic.jpg`, `assets/img/DGrimmer2.jpg` |
+| Soccer Hockey | `assets/SoccerHockey/`, landing page `_pages/soccerhockey.md` |
 | Nav order / hiding a page | `nav` and `nav_order` in that page's front matter |
 
 ### Adding a publication

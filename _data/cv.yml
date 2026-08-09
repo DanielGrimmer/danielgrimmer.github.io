@@ -1,28 +1,31 @@
 # Drives /cv/ (because _pages/cv.md sets cv_format: rendercv).
 #
-# Assembled from the old site's about.html and teaching.html.
+# Transcribed from CV_Grimmer.pdf (2026-08). Dates are now sourced, not
+# inferred. Publications are deliberately NOT duplicated here — the
+# publications page already generates them from _bibliography/papers.bib.
 #
-# ⚠ DATES ARE INFERRED, NOT SOURCED. The old site gave no start/end dates for
-# any position, so the ranges below were reconstructed from surrounding
-# evidence (DPhil defended Aug 2024; Bonn seminar talk Nov 2024; first Yale
-# teaching Fall 2025). Check every one of them before publishing this page.
-# /cv/ is currently hidden from the nav for exactly this reason — see
-# _pages/cv.md.
+# The CV's References section is deliberately omitted: it lists five people's
+# personal emails, phone numbers and postal addresses. Publishing third-party
+# contact details on a public site is not something to do by default.
 
 cv:
   name: Daniel Grimmer
-  label: Postdoctoral Researcher in Philosophy, Yale University
+  label: Postdoctoral Associate in Philosophy, Yale University
   email: daniel.grimmer (at) yale.edu # unlinked on purpose — see _config.yml
   location: New Haven, CT, USA
   image: ""
   summary: >
-    My research trajectory is highly interdisciplinary, reflecting a continuous
-    drive to use rigorous formal methods to answer fundamental philosophical
-    questions. It currently takes the form of Evolutionary Epistemology in
-    silico, using Evolutionary Meta-Learning to simulate Darwinian evolution
-    and probe classical debates in cognitive science.
+    Philosophy of physics and philosophy of science, currently focused on
+    evolutionary epistemology in silico. Areas of specialization: philosophy of
+    physics, philosophy of science, philosophy of biology, metaphysics of space
+    and time, evolutionary epistemology, epistemology of artificial
+    intelligence, quantum field theory, quantum information, general relativity.
+    Areas of competence: ethics of artificial intelligence, philosophical logic,
+    philosophy of mathematics, early modern philosophy, thermodynamics.
 
   social_networks:
+    - network: ORCID
+      username: 0000-0002-8449-3775
     - network: GitHub
       username: DanielGrimmer
     - network: Google Scholar
@@ -31,24 +34,22 @@ cv:
   sections:
     Experience:
       - company: Yale University
-        position: Postdoctoral Researcher in Philosophy
+        position: Postdoctoral Associate in Philosophy
         location: New Haven, CT, USA
-        start_date: 2025 # TODO verify
-        end_date: present
-        highlights:
-          - Evolutionary Epistemology *in silico*, using Evolutionary Meta-Learning to probe Nativism vs. Empiricism.
+        start_date: 2025-07
+        end_date: 2027-06
 
       - company: University of Bonn
-        position: Hertz Postdoctoral Fellow, History and Philosophy of Physics
+        position: Hertz Postdoctoral Fellowship in History and Philosophy of Physics
         location: Bonn, Germany
-        start_date: 2024 # TODO verify
-        end_date: 2025 # TODO verify
+        start_date: 2024-10
+        end_date: 2025-06
 
-      - company: Barrio RQI (University of Waterloo & Perimeter Institute)
-        position: Postdoctoral Visiting Fellow
+      - company: University of Waterloo
+        position: Visiting Postdoctoral Fellow, Barrio RQI
         location: Waterloo, ON, Canada
-        start_date: # TODO — held concurrently with the DPhil
-        end_date:
+        start_date: 2020-09
+        end_date: 2022-05
 
     Education:
       - institution: University of Oxford
@@ -56,36 +57,60 @@ cv:
         url: https://www.philosophy.ox.ac.uk/
         area: Philosophy
         studyType: DPhil
-        start_date: # TODO verify
-        end_date: 2024
+        start_date: 2021-09
+        end_date: 2024-08
         highlights:
-          - "Thesis: *Searching for New Spacetimes: Towards a Dynamics-First View of Topology*. Defended August 2024, passed with no corrections."
-          - Clarendon Scholar, Reuben College.
+          - "Thesis: *Searching for New Spacetimes: Towards a Dynamics-First View of Topology*."
+          - Passed viva with no corrections.
 
       - institution: University of Oxford
         location: Oxford, United Kingdom
         area: Philosophy of Physics
         studyType: MSt
-        start_date: # TODO verify
-        end_date: # TODO verify
-        highlights:
-          - Pembroke College.
+        start_date: 2020-09
+        end_date: 2021-06
 
       - institution: University of Waterloo
         location: Waterloo, ON, Canada
         url: https://uwaterloo.ca/institute-for-quantum-computing/
         area: Physics (Quantum Information)
         studyType: PhD
-        start_date: # TODO verify
-        end_date: 2020
+        start_date: 2015-09
+        end_date: 2020-09
         highlights:
-          - "Thesis: *Interpolated Collision Models Formalism*, at the Institute for Quantum Computing (IQC)."
-          - Supervised by Eduardo Martín-Martínez and Robert B. Mann.
+          - "Thesis: *Interpolated Collision Model Formalism*."
 
-    Awards:
-      - title: Hertz Postdoctoral Fellowship
-        awarder: University of Bonn
-        date: # TODO
-      - title: Clarendon Scholarship
-        awarder: University of Oxford
-        date: # TODO
+      - institution: University of Oklahoma
+        location: Norman, OK, USA
+        area: Mathematics
+        studyType: BA
+        start_date: 2011-09
+        end_date: 2015-05
+
+      - institution: University of Oklahoma
+        location: Norman, OK, USA
+        area: Engineering-Physics
+        studyType: BS
+        start_date: 2011-09
+        end_date: 2015-05
+
+    Academic Funding Secured:
+      - bullet: "**Clarendon Scholarship & Oxford-Reuben Graduate Scholarship** — University of Oxford — £142,050"
+      - bullet: "**Pembroke College Alumni & Cooper Trust Scholarship** — University of Oxford — £13,200"
+      - bullet: "**Vanier Scholarship** — University of Waterloo — $150,000 CAD"
+      - bullet: "**OU Regents' Scholarship** — University of Oklahoma — $50,600 USD"
+      - bullet: "**Astronaut Scholarship** — University of Oklahoma — $10,000 USD"
+
+    Service and Governance:
+      - bullet: "**Seminar Organizer**, Graduate Student Lecture Series (\"Pop-grunch\"), March 2022 – January 2023."
+      - bullet: "**Graduate Student Representative**, Humanities Division Board, University of Oxford, September 2020 – October 2021. Chair of the Graduate Joint Consultative Committee; also served on the Humanities Divisional Board, Graduate Studies Committee, Education Development Panel, and Committee for Library Provisions."
+      - bullet: "**Director, Board of Directors**, Graduate Student Association, University of Waterloo, May 2019 – August 2020 — a not-for-profit corporation with roughly 20 full-time employees and a $1M CAD annual operating budget. Chief Returning Officer, March – April 2019."
+      - bullet: "**President**, Graduate Student Association, Institute for Quantum Computing, April 2018 – October 2019; Physics Graduate Student Association, November 2018 – November 2019."
+      - bullet: "**Lead Conference Organizer**, Canadian Graduate Quantum Conference, 2019 and 2020."
+
+    Journal Refereeing:
+      - label: Journals
+        details: >-
+          Australasian Journal of Philosophy · British Journal for the Philosophy
+          of Science · Foundations of Physics · Annals of Physics · Physical
+          Review Research · Physical Review A
