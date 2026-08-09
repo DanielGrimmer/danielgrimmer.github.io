@@ -1,0 +1,56 @@
+# Drives /cv/ (because _pages/cv.md sets cv_format: rendercv).
+#
+# PLACEHOLDER — the skeleton below is reconstructed from public sources and is
+# certainly incomplete and possibly wrong on dates. Replace it from the real CV.
+# Any section you delete simply disappears from the page.
+
+cv:
+  name: Daniel Grimmer
+  label: Philosopher of Physics
+  email: your.address@uni-bonn.de # TODO
+  location: Bonn, Germany # TODO
+  image: ""
+  summary: >
+    Philosophy of physics, with a focus on spacetime, topology and the
+    foundations of physical theory. TODO — replace with the real summary.
+
+  social_networks:
+    - network: Google Scholar
+      username: -R31VGwAAAAJ
+
+  sections:
+    Education:
+      - institution: University of Oxford
+        location: Oxford, United Kingdom
+        url: https://www.philosophy.ox.ac.uk/
+        area: Philosophy
+        studyType: DPhil
+        start_date: # TODO
+        end_date: # TODO
+        highlights:
+          - "Thesis: TODO — title of the DPhil thesis."
+
+      - institution: University of Waterloo
+        location: Waterloo, Ontario, Canada
+        url: https://uwaterloo.ca/
+        area: Physics (Quantum Information)
+        studyType: PhD
+        start_date: # TODO
+        end_date: # TODO
+        highlights:
+          - "Thesis: TODO — title of the physics PhD thesis."
+
+    Experience:
+      - company: University of Bonn
+        position: Hertz Postdoctoral Fellow, History and Philosophy of Physics
+        location: Bonn, Germany
+        start_date: # TODO
+        end_date: # TODO ("present" is fine)
+        highlights:
+          - TODO
+
+    Awards:
+      - title: TODO
+        date:
+        awarder:
+        summary:

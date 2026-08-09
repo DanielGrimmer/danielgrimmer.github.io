@@ -1,0 +1,12 @@
+# Colours and links for the `abbr` label on each publication entry.
+# The key must match the abbr={...} field in _bibliography/papers.bib.
+
+"arXiv":
+  url: https://arxiv.org/
+  color: "#b31b1b"
+# "BJPS":
+#   url: https://www.journals.uchicago.edu/journal/bjps
+#   color: "#00369f"
+# "PRD":
+#   url: https://journals.aps.org/prd/
+#   color: "#1b5e9f"

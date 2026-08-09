@@ -1,0 +1,8 @@
+# Turns co-author names in _bibliography/papers.bib into links.
+# Keyed by lowercase surname; `firstname` lists every form that appears in the
+# .bib so the matcher catches "Martín-Martínez, E." and "Martín-Martínez, Eduardo"
+# alike. Empty for now — add entries as the real bibliography lands.
+#
+# "surname":
+#   - firstname: ["Given", "G.", "G. N."]
+#     url: https://example.org/their-page
