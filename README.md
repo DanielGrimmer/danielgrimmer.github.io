@@ -6,7 +6,7 @@ Academic site for Daniel Grimmer, built with [Jekyll](https://jekyllrb.com/) and
 
 Migrated from the old Oxford page (`users.ox.ac.uk/~pemb6003/`). All the prose,
 publications, talks and teaching history from that site are in place; what is
-still outstanding is listed under [Still to do](#still-to-do).
+still outstanding is listed in [CHECKLIST.md](CHECKLIST.md).
 
 ## Where things live
 
@@ -89,44 +89,8 @@ edit the pinned versions in the `:al_folio_plugins` group in `Gemfile`, run
 
 ## Still to do
 
-- [ ] **Set Pages source to "GitHub Actions"** (see above) — nothing publishes until this is done
-- [ ] Replace the two placeholder photos with the real `DGrimmer3.jpg` / `DGrimmer2.jpg`
-- [ ] Copy the four talk slide decks into `assets/pdf/talks/` — these links 404 today:
-      `PragmaticQFTMeasurementProblemPopGrunch.pdf`, `TheUnruhEffectInSlowMotion.pdf`,
-      `DiscreteGeneralCovariancePopGrunch.pdf`, `DiscreteGeneralCovarianceBarrioRQI.pdf`
-- [ ] Upload `CVGrimmer.pdf` to `assets/pdf/`, then uncomment `cv_pdf` in
-      `_data/socials.yml` to restore the old "Long CV" link
-- [ ] Fill in the two missing arXiv links in `papers.bib` (the old site had
-      unfilled placeholders `#` and `YOUR_UNIT1_ARXIV_LINK`)
-- [ ] Verify the inferred dates in `_data/cv.yml`, then set `nav: true` in `_pages/cv.md`
-- [ ] Port the Soccer Hockey Duality and Escher Chess demos
-- [ ] Decide about the dropped papers — see below
-
-### Things worth a decision
-
-**Papers that vanished from the old site.** The old `papers.html` had a large
-commented-out block containing "A Discrete Analog of General Covariance"
-(arXiv [2204.02276](https://arxiv.org/abs/2204.02276) /
-[2205.07701](https://arxiv.org/abs/2205.07701)), "From Humean Laws to a
-Neo-Kantian Spacetime" ([2308.14146](https://arxiv.org/abs/2308.14146)),
-"Spacetime Representation Theory" ([2306.08110](https://arxiv.org/abs/2306.08110)),
-and "Connecting Grit and Peer Disagreement". Two of those are linked from the
-homepage research interests but appear nowhere on the publications page. They
-have not been carried into `papers.bib` — that mirrors the old site's *rendered*
-output, but it may have been an accident when the "under review" section was
-rewritten.
-
-**A video link that disagrees with itself.** For the Pragmatic QFT paper, the old
-`index.html` and `papers.html` pointed the video abstract at two different
-YouTube videos, and the one in `papers.html` is the Unruh paper's video. The
-`index.html` link was kept. Noted in a comment in `papers.bib`.
-
-**Google Fonts.** The theme loads webfonts from `fonts.googleapis.com`, which
-sends every visitor's IP to Google. Worth self-hosting if that matters to you.
-
-**purgecss.** The deploy strips unused CSS to cut page weight. If the live site
-ever renders with missing styles, that step in `deploy.yml` is the first suspect —
-add the missing class to the safelist in `purgecss.config.js`.
+Outstanding items, open questions and decisions-made-on-your-behalf all live in
+**[CHECKLIST.md](CHECKLIST.md)**. Delete that file once it's empty.
 
 ## Licence
 

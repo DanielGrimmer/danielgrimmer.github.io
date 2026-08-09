@@ -31,11 +31,15 @@ back_to_top: true # set to false to disable the back to top button
 # repo color theme
 repo_theme_light: default # https://github.com/stats-organization/github-stats-extended/blob/master/packages/core/src/themes/README.md
 repo_theme_dark: dark # https://github.com/stats-organization/github-stats-extended/blob/master/packages/core/src/themes/README.md
-# Off by default: addresses are then split at build time so the HTML contains no
-# `user@host` and no `mailto:` for harvesters to scrape, and clicking one copies
-# it to the clipboard instead of opening a mail client.
-# See "Protecting email addresses from scrapers" in docs/CUSTOMIZE.md.
-protect_email: false
+# Protects email addresses written in page CONTENT (split at build time, so no
+# `user@host` reaches the HTML).
+# CAVEAT: it does NOT cover the social-icon row or the `more_info` block in
+# _pages/about.md — al_folio_core does not pipe those through the filter — so
+# daniel.grimmer@yale.edu IS published in plain text there. The old Oxford site
+# wrote it as "daniel.grimmer(at)yale.edu" instead. If you want that back, write
+# the address in that obfuscated form in _pages/about.md and _data/cv.yml, and
+# drop the `email:` key from _data/socials.yml (which loses the envelope icon).
+protect_email: true
 
 # Off by default: the free public github-profile-trophy instance is disabled
 # (its Vercel deployment answers HTTP 402 / DEPLOYMENT_DISABLED), so every trophy

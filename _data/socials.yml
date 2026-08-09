@@ -16,4 +16,5 @@ scholar_userid: -R31VGwAAAAJ # Google Scholar
 # bluesky_url:
 # linkedin_username:
 
-rss_icon: false # no blog posts yet; flip to true if you start writing
+# rss_icon: true # jekyll-socials renders any key that is PRESENT, so this must
+#                 be commented out to hide it — `rss_icon: false` still shows it.
