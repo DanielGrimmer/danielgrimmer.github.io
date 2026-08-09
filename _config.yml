@@ -221,6 +221,7 @@ kramdown:
 # Includes & excludes
 include: ["_pages"]
 exclude:
+  - oxford-site/ # mirror handed to Oxford for users.ox.ac.uk/~pemb6003; not part of this site
   - AGENTS.md
   - al-folio-upgrade-report.md
   - bin/

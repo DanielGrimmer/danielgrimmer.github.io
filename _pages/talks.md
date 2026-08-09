@@ -11,10 +11,10 @@ toc:
 
 <!-- Migrated from the old site's talks.html. -->
 
-<!--
-  No "Upcoming" section at present: the Hausdorff talk was May 2026 and is now
-  past. Re-add an `## Upcoming` heading above the list when the next one is booked.
--->
+## Upcoming
+
+**The Circularity Beneath Measurement: Felix Hausdorff and the Underdetermination of Geometry by Evidence**  
+American Philosophical Association, Eastern Division, Boston, MA, USA — January 13–16, 2027
 
 ## Past talks
 

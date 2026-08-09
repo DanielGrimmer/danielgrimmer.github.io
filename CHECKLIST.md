@@ -120,8 +120,14 @@ No action needed — recorded so you can spot anything wrong.
 
 ## F. Optional
 
-- [ ] **F1. Ask Oxford IT to leave a redirect** at `users.ox.ac.uk/~pemb6003/` —
-      the URL people have cited. It is still live and still serving your talk PDFs.
+- [ ] **F1. Hand `oxford-site/` to Oxford.** Five updated HTML files plus a
+      README, mirroring this site's content in the old site's own styling and
+      asset paths. Each carries a `<link rel="canonical">` to the matching page
+      here, so search engines treat danielgrimmer.github.io as primary rather
+      than penalising the two as duplicates. The one file Oxford also needs is a
+      fresh `CVGrimmer.pdf` under that exact name.
+      Regenerate with `python3 oxford-site/regenerate.py` — its content is
+      hard-coded, so it does not follow changes to `_pages/` automatically.
 - [ ] **F2. Enable link previews** — `serve_og_meta`, `serve_schema_org` and
       `og_image` are off.
 - [ ] **F3. Add PhilPeople** to `_data/socials.yml`.
