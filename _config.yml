@@ -6,14 +6,14 @@ title: blank # the website title (if blank, full name will be used instead)
 first_name: Daniel
 middle_name:
 last_name: Grimmer
-contact_note: > # TODO: confirm preferred contact route
+contact_note: >
   Email is the best way to reach me.
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-  Daniel Grimmer — philosophy of physics: spacetime, topology, and the foundations of physical theory.
+  Daniel Grimmer — Postdoctoral Researcher in Philosophy at Yale University, working on evolutionary epistemology, the metaphysics of space and time, and the foundations of quantum field theory.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
-keywords: philosophy of physics, spacetime, topology, foundations of physics, quantum information, Daniel Grimmer
+keywords: Daniel Grimmer, philosophy of physics, evolutionary epistemology, meta-learning, nativism, spacetime topology, quantum field theory, quantum information
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
 icon: ⚛️ # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
 apple_touch_icon: # image name in /assets/img/ (or a rooted path / absolute URL) used for iOS home-screen bookmarks; needs a real 180x180 PNG, since Safari ignores the emoji favicon above. Left empty, iOS falls back to a screenshot of the page.
@@ -403,6 +403,7 @@ filtered_bibtex_keywords:
     preview,
     selected,
     slides,
+    status,
     supp,
     video,
     website,

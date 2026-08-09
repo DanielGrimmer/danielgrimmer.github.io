@@ -1,56 +1,91 @@
 # Drives /cv/ (because _pages/cv.md sets cv_format: rendercv).
 #
-# PLACEHOLDER — the skeleton below is reconstructed from public sources and is
-# certainly incomplete and possibly wrong on dates. Replace it from the real CV.
-# Any section you delete simply disappears from the page.
+# Assembled from the old site's about.html and teaching.html.
+#
+# ⚠ DATES ARE INFERRED, NOT SOURCED. The old site gave no start/end dates for
+# any position, so the ranges below were reconstructed from surrounding
+# evidence (DPhil defended Aug 2024; Bonn seminar talk Nov 2024; first Yale
+# teaching Fall 2025). Check every one of them before publishing this page.
+# /cv/ is currently hidden from the nav for exactly this reason — see
+# _pages/cv.md.
 
 cv:
   name: Daniel Grimmer
-  label: Philosopher of Physics
-  email: your.address@uni-bonn.de # TODO
-  location: Bonn, Germany # TODO
+  label: Postdoctoral Researcher in Philosophy, Yale University
+  email: daniel.grimmer@yale.edu
+  location: New Haven, CT, USA
   image: ""
   summary: >
-    Philosophy of physics, with a focus on spacetime, topology and the
-    foundations of physical theory. TODO — replace with the real summary.
+    My research trajectory is highly interdisciplinary, reflecting a continuous
+    drive to use rigorous formal methods to answer fundamental philosophical
+    questions. It currently takes the form of Evolutionary Epistemology in
+    silico, using Evolutionary Meta-Learning to simulate Darwinian evolution
+    and probe classical debates in cognitive science.
 
   social_networks:
+    - network: GitHub
+      username: DanielGrimmer
     - network: Google Scholar
       username: -R31VGwAAAAJ
 
   sections:
+    Experience:
+      - company: Yale University
+        position: Postdoctoral Researcher in Philosophy
+        location: New Haven, CT, USA
+        start_date: 2025 # TODO verify
+        end_date: present
+        highlights:
+          - Evolutionary Epistemology *in silico*, using Evolutionary Meta-Learning to probe Nativism vs. Empiricism.
+
+      - company: University of Bonn
+        position: Hertz Postdoctoral Fellow, History and Philosophy of Physics
+        location: Bonn, Germany
+        start_date: 2024 # TODO verify
+        end_date: 2025 # TODO verify
+
+      - company: Barrio RQI (University of Waterloo & Perimeter Institute)
+        position: Postdoctoral Visiting Fellow
+        location: Waterloo, ON, Canada
+        start_date: # TODO — held concurrently with the DPhil
+        end_date:
+
     Education:
       - institution: University of Oxford
         location: Oxford, United Kingdom
         url: https://www.philosophy.ox.ac.uk/
         area: Philosophy
         studyType: DPhil
-        start_date: # TODO
-        end_date: # TODO
+        start_date: # TODO verify
+        end_date: 2024
         highlights:
-          - "Thesis: TODO — title of the DPhil thesis."
+          - "Thesis: *Searching for New Spacetimes: Towards a Dynamics-First View of Topology*. Defended August 2024, passed with no corrections."
+          - Clarendon Scholar, Reuben College.
+
+      - institution: University of Oxford
+        location: Oxford, United Kingdom
+        area: Philosophy of Physics
+        studyType: MSt
+        start_date: # TODO verify
+        end_date: # TODO verify
+        highlights:
+          - Pembroke College.
 
       - institution: University of Waterloo
-        location: Waterloo, Ontario, Canada
-        url: https://uwaterloo.ca/
+        location: Waterloo, ON, Canada
+        url: https://uwaterloo.ca/institute-for-quantum-computing/
         area: Physics (Quantum Information)
         studyType: PhD
-        start_date: # TODO
-        end_date: # TODO
+        start_date: # TODO verify
+        end_date: 2020
         highlights:
-          - "Thesis: TODO — title of the physics PhD thesis."
-
-    Experience:
-      - company: University of Bonn
-        position: Hertz Postdoctoral Fellow, History and Philosophy of Physics
-        location: Bonn, Germany
-        start_date: # TODO
-        end_date: # TODO ("present" is fine)
-        highlights:
-          - TODO
+          - "Thesis: *Interpolated Collision Models Formalism*, at the Institute for Quantum Computing (IQC)."
+          - Supervised by Eduardo Martín-Martínez and Robert B. Mann.
 
     Awards:
-      - title: TODO
-        date:
-        awarder:
-        summary:
+      - title: Hertz Postdoctoral Fellowship
+        awarder: University of Bonn
+        date: # TODO
+      - title: Clarendon Scholarship
+        awarder: University of Oxford
+        date: # TODO

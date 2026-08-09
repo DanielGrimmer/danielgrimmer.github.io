@@ -1,60 +1,292 @@
 ---
 ---
 
-@string{aps = {American Physical Society,}}
-
 %% =====================================================================
-%%  STARTER BIBLIOGRAPHY — REPLACE WITH THE REAL LIST
+%%  Migrated from the old site's papers.html.
 %%
-%%  The three entries below were reconstructed from public arXiv listings
-%%  and have NOT been verified against Daniel's own records. Journal names,
-%%  volumes, pages and years in particular need checking, and the list is
-%%  certainly incomplete. Export the authoritative list from the old site
-%%  (or from Google Scholar / INSPIRE / arXiv) and overwrite this file.
-%%
-%%  Field cheat-sheet (al-folio extensions on top of normal BibTeX):
-%%    selected={true}   -> also shown in "selected publications" on the homepage
-%%    abbr={...}        -> small label on the left of the entry
-%%    abstract={...}    -> adds an [Abs] toggle
-%%    arxiv={2303.04130}-> adds an [arXiv] link
-%%    pdf={file.pdf}    -> links assets/pdf/file.pdf (or a full URL)
-%%    html={...}        -> external link, e.g. the published version
-%%    bibtex_show={true}-> adds a [BibTeX] toggle
-%%    preview={img.png} -> thumbnail from assets/img/publication_preview/
-%%    award={...}       -> highlighted note under the entry
+%%  Entries carrying `status = {submitted}` render in the "Under peer
+%%  review" section of /publications/; everything else renders in the
+%%  main chronological list. `selected = {true}` also promotes an entry
+%%  to the homepage.
 %% =====================================================================
 
-@article{grimmer2023introducing,
-  title        = {Introducing the ISE Methodology: A Powerful New Tool for Topological Redescription},
-  author       = {Grimmer, Daniel},
-  year         = {2023},
-  eprint       = {2303.04130},
-  arxiv        = {2303.04130},
-  abbr         = {arXiv},
-  bibtex_show  = {true},
-  selected     = {true},
-  abstract     = {TODO: paste the real abstract here.}
+%% ---------------------------------------------------------------------
+%%  Currently under peer review
+%% ---------------------------------------------------------------------
+
+@article{grimmer2026darwin,
+  title       = {Direct From Darwin: Deriving Advanced Optimizers From Evolutionary First Principles},
+  author      = {Grimmer, Daniel},
+  year        = {2026},
+  abbr        = {Preprint},
+  status      = {submitted},
+  selected    = {true},
+  bibtex_show = {true},
+  journal     = {Submitted to Evolutionary Computation Journal},
+  month       = {May},
+  code        = {https://github.com/DanielGrimmer/adam-dls}
 }
 
-@article{grimmer2023spacetime,
-  title        = {Spacetime Representation Theory: Setting the Scope of the ISE Method of Topological Redescription},
-  author       = {Grimmer, Daniel},
-  year         = {2023},
-  eprint       = {2306.08110},
-  arxiv        = {2306.08110},
-  abbr         = {arXiv},
-  bibtex_show  = {true},
-  selected     = {true},
-  abstract     = {TODO: paste the real abstract here.}
+% TODO: the old site had a placeholder "#" for the arXiv link. Add
+% arxiv = {XXXX.XXXXX} once the preprint is posted.
+
+@article{grimmer2026equivalence,
+  title       = {Equivalence and determinism in light of topologically-induced structure},
+  author      = {Grimmer, Daniel and Read, James},
+  year        = {2026},
+  abbr        = {Preprint},
+  status      = {submitted},
+  bibtex_show = {true},
+  journal     = {Submitted to Erkenntnis},
+  month       = {April}
 }
 
-@article{grimmer2023humean,
-  title        = {From Humean Laws to a Neo-Kantian Spacetime: A Dynamics-First View of Topology},
-  author       = {Grimmer, Daniel},
-  year         = {2023},
-  eprint       = {2308.14146},
-  arxiv        = {2308.14146},
-  abbr         = {arXiv},
-  bibtex_show  = {true},
-  abstract     = {TODO: paste the real abstract here.}
+% TODO: the old site had an unfilled placeholder for the arXiv link
+% ("YOUR_UNIT1_ARXIV_LINK"). Add arxiv = {XXXX.XXXXX} when available.
+
+@article{grimmer2026evolutionary,
+  title       = {Evolutionary Meta-Learning in Neural Networks as a Neutral Testing Ground for Nativism and Empiricism},
+  author      = {Grimmer, Daniel},
+  year        = {2026},
+  abbr        = {Preprint},
+  status      = {submitted},
+  selected    = {true},
+  bibtex_show = {true},
+  journal     = {Submitted to Synthese},
+  month       = {March},
+  html        = {https://philsci-archive.pitt.edu/28373/}
+}
+
+%% ---------------------------------------------------------------------
+%%  Peer-reviewed publications and graduate theses
+%% ---------------------------------------------------------------------
+
+@phdthesis{grimmer2024dphil,
+  title       = {Searching for New Spacetimes: Towards a Dynamics-First View of Topology},
+  author      = {Grimmer, Daniel},
+  year        = {2024},
+  school      = {DPhil thesis, University of Oxford},
+  abbr        = {Thesis},
+  bibtex_show = {true},
+  abstract    = {Defended August 2024, passed with no corrections. Text available upon request.}
+}
+
+@article{grimmer2024dualities,
+  title       = {Dualities, Quantum Mechanics, and the Uncommon Common Core},
+  author      = {Grimmer, Daniel and Cinti, Enrico and Jaksland, Rasmus},
+  journal     = {The British Journal for the Philosophy of Science},
+  year        = {2024},
+  abbr        = {BJPS},
+  selected    = {true},
+  bibtex_show = {true},
+  doi         = {10.1086/730421},
+  html        = {https://www.journals.uchicago.edu/doi/10.1086/730421}
+}
+
+@article{grimmer2023pragmatic,
+  title       = {The Pragmatic QFT Measurement Problem and the need for a Heisenberg-like Cut in QFT},
+  author      = {Grimmer, Daniel},
+  journal     = {Synthese},
+  year        = {2023},
+  abbr        = {Synthese},
+  selected    = {true},
+  bibtex_show = {true},
+  doi         = {10.1007/s11229-023-04301-4},
+  html        = {https://link.springer.com/article/10.1007/s11229-023-04301-4},
+  arxiv       = {2205.09608},
+  video       = {https://www.youtube.com/watch?v=T2Xv6EYnrGE}
+}
+
+% NOTE: the old site's papers.html pointed this video abstract at
+% youtu.be/BkLmIObkg0c, which is the Unruh paper's video. index.html
+% used the link above; kept that one. Worth confirming.
+
+@article{grimmer2023decoding,
+  title       = {Decoding Quantum Field Theory with Machine Learning},
+  author      = {Grimmer, Daniel and Melgarejo-Lermas, Irene and Polo-Gómez, José and Martín-Martínez, Eduardo},
+  journal     = {Journal of High Energy Physics},
+  year        = {2023},
+  volume      = {2023},
+  number      = {8},
+  pages       = {31},
+  abbr        = {JHEP},
+  bibtex_show = {true},
+  doi         = {10.1007/JHEP08(2023)031},
+  html        = {https://link.springer.com/article/10.1007/JHEP08(2023)031},
+  arxiv       = {1910.03637}
+}
+
+@article{grimmer2021measurements,
+  title       = {Measurements in QFT: Weakly coupled local particle detectors and entanglement harvesting},
+  author      = {Grimmer, Daniel and de S. L. Torres, Bruno and Martín-Martínez, Eduardo},
+  journal     = {Physical Review D},
+  year        = {2021},
+  volume      = {104},
+  pages       = {085014},
+  abbr        = {PRD},
+  bibtex_show = {true},
+  doi         = {10.1103/PhysRevD.104.085014},
+  html        = {https://journals.aps.org/prd/abstract/10.1103/PhysRevD.104.085014},
+  arxiv       = {2108.02794}
+}
+
+@article{vriend2021unruh,
+  title       = {The Unruh Effect in Slow Motion},
+  author      = {Vriend, Silas and Grimmer, Daniel and Martín-Martínez, Eduardo},
+  journal     = {Symmetry},
+  year        = {2021},
+  volume      = {13},
+  number      = {11},
+  pages       = {1977},
+  abbr        = {Symmetry},
+  bibtex_show = {true},
+  doi         = {10.3390/sym13111977},
+  html        = {https://www.mdpi.com/2073-8994/13/11/1977},
+  arxiv       = {2011.08223},
+  video       = {https://youtu.be/BkLmIObkg0c}
+}
+
+@article{grimmer2021dimensional,
+  title       = {Dimensional reduction of cavities with axial symmetry: Are optical fibers really one-dimensional?},
+  author      = {Grimmer, Daniel and Lopp, Richard and Martín-Martínez, Eduardo},
+  journal     = {Physical Review A},
+  year        = {2021},
+  volume      = {104},
+  pages       = {013723},
+  abbr        = {PRA},
+  bibtex_show = {true},
+  doi         = {10.1103/PhysRevA.104.013723},
+  html        = {https://journals.aps.org/pra/abstract/10.1103/PhysRevA.104.013723},
+  arxiv       = {2104.00745}
+}
+
+@phdthesis{grimmer2020thesis,
+  title       = {Interpolated Collision Models Formalism},
+  author      = {Grimmer, Daniel},
+  year        = {2020},
+  school      = {Ph.D. thesis in Physics, University of Waterloo},
+  abbr        = {Thesis},
+  bibtex_show = {true},
+  html        = {https://uwspace.uwaterloo.ca/handle/10012/16312},
+  arxiv       = {2009.10472}
+}
+
+@article{seah2019collisional,
+  title       = {Collisional Quantum Thermometry},
+  author      = {Seah, Stella and Nimmrichter, Stefan and Grimmer, Daniel and Santos, Jader P. and Scarani, Valerio and Landi, Gabriel T.},
+  journal     = {Physical Review Letters},
+  year        = {2019},
+  volume      = {123},
+  pages       = {180602},
+  abbr        = {PRL},
+  bibtex_show = {true},
+  doi         = {10.1103/PhysRevLett.123.180602},
+  html        = {https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.180602},
+  arxiv       = {1904.12551}
+}
+
+@article{grimmer2019zeno,
+  title       = {Zeno Friction and Antifriction from Quantum Collision Models},
+  author      = {Grimmer, Daniel and Kempf, Achim and Mann, Robert B. and Martín-Martínez, Eduardo},
+  journal     = {Physical Review A},
+  year        = {2019},
+  volume      = {100},
+  pages       = {042702},
+  abbr        = {PRA},
+  bibtex_show = {true},
+  doi         = {10.1103/PhysRevA.100.042702},
+  html        = {https://journals.aps.org/pra/abstract/10.1103/PhysRevA.100.042702},
+  arxiv       = {1902.07738}
+}
+
+@article{onumakalu2019classification,
+  title       = {A Classification of Markovian Fermionic Gaussian Master Equations},
+  author      = {Onuma-Kalu, Marvellous and Grimmer, Daniel and Mann, Robert B. and Martín-Martínez, Eduardo},
+  journal     = {Journal of Physics A},
+  year        = {2019},
+  abbr        = {J Phys A},
+  bibtex_show = {true},
+  doi         = {10.1088/1751-8121/ab40e1},
+  html        = {https://iopscience.iop.org/article/10.1088/1751-8121/ab40e1},
+  arxiv       = {1902.02239}
+}
+
+@article{grimmer2019thermal,
+  title       = {Thermal Contact: Mischief and Time Scales},
+  author      = {Grimmer, Daniel and Mann, Robert B. and Martín-Martínez, Eduardo},
+  journal     = {Journal of Physics A},
+  year        = {2019},
+  abbr        = {J Phys A},
+  bibtex_show = {true},
+  doi         = {10.1088/1751-8121/ab3a19},
+  html        = {https://iopscience.iop.org/article/10.1088/1751-8121/ab3a19},
+  arxiv       = {1805.11118}
+}
+
+@article{grimmer2018gaussian,
+  title       = {Gaussian Ancillary Bombardment},
+  author      = {Grimmer, Daniel and Brown, Eric and Kempf, Achim and Mann, Robert B. and Martín-Martínez, Eduardo},
+  journal     = {Physical Review A},
+  year        = {2018},
+  volume      = {97},
+  pages       = {052120},
+  abbr        = {PRA},
+  bibtex_show = {true},
+  doi         = {10.1103/PhysRevA.97.052120},
+  html        = {https://journals.aps.org/pra/abstract/10.1103/PhysRevA.97.052120},
+  arxiv       = {1802.08629}
+}
+
+@article{grimmer2018classification,
+  title       = {A Classification of Open Gaussian Dynamics},
+  author      = {Grimmer, Daniel and Brown, Eric and Kempf, Achim and Mann, Robert B. and Martín-Martínez, Eduardo},
+  journal     = {Journal of Physics A},
+  year        = {2018},
+  abbr        = {J Phys A},
+  bibtex_show = {true},
+  doi         = {10.1088/1751-8121/aac114},
+  html        = {https://iopscience.iop.org/article/10.1088/1751-8121/aac114},
+  arxiv       = {1709.07891}
+}
+
+@article{grimmer2017purification,
+  title       = {Purification in Rapid Repeated Interaction Systems},
+  author      = {Grimmer, Daniel and Mann, Robert B. and Martín-Martínez, Eduardo},
+  journal     = {Physical Review A},
+  year        = {2017},
+  volume      = {95},
+  pages       = {042114},
+  abbr        = {PRA},
+  bibtex_show = {true},
+  doi         = {10.1103/PhysRevA.95.042114},
+  html        = {https://journals.aps.org/pra/abstract/10.1103/PhysRevA.95.042114},
+  arxiv       = {1611.07530}
+}
+
+@article{grimmer2016open,
+  title       = {Open Dynamics under Rapid Repeated Interaction},
+  author      = {Grimmer, Daniel and Layden, David and Mann, Robert B. and Martín-Martínez, Eduardo},
+  journal     = {Physical Review A},
+  year        = {2016},
+  volume      = {94},
+  pages       = {032126},
+  abbr        = {PRA},
+  bibtex_show = {true},
+  doi         = {10.1103/PhysRevA.94.032126},
+  html        = {https://journals.aps.org/pra/abstract/10.1103/PhysRevA.94.032126},
+  arxiv       = {1605.04302}
+}
+
+@article{grimmer2014quantum,
+  title       = {Quantum Phases of Soft-Core Dipolar Bosons in Optical Lattices},
+  author      = {Grimmer, Daniel and Safavi-Naini, Arghavan and Capogrosso-Sansone, Barbara and Soyler, Sebnem Gunes},
+  journal     = {Physical Review A},
+  year        = {2014},
+  volume      = {90},
+  pages       = {043635},
+  abbr        = {PRA},
+  bibtex_show = {true},
+  doi         = {10.1103/PhysRevA.90.043635},
+  html        = {https://journals.aps.org/pra/abstract/10.1103/PhysRevA.90.043635},
+  arxiv       = {1408.3532}
 }

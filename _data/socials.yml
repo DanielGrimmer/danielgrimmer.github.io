@@ -1,19 +1,19 @@
-# Social media links and usernames, displayed in the order defined here.
+# Social and academic profile links, shown in the order defined here.
 # Docs: https://github.com/george-gca/jekyll-socials
-#
-# TODO: fill in / delete as appropriate. Anything left commented out is hidden.
-# The email below is a PLACEHOLDER — set it to the address you actually want
-# published before the site goes live.
 
-email: your.address@uni-bonn.de
-scholar_userid: -R31VGwAAAAJ # Google Scholar (verified from public profile)
-# orcid_id: # e.g. 0000-0002-1825-0097
-# arxiv_id: # arXiv author identifier
-# inspirehep_id: # Inspire HEP author ID
-# philpeople_id: # PhilPeople profile
-# github_username:
+email: daniel.grimmer@yale.edu
+github_username: DanielGrimmer
+youtube_id: oxfordspacetime
+scholar_userid: -R31VGwAAAAJ # Google Scholar
+
+# TODO: upload the CV PDF to assets/pdf/ and uncomment to restore the old
+# site's "Long CV" link. Left off for now so it does not 404.
+# cv_pdf: /assets/pdf/CVGrimmer.pdf
+
+# Uncomment and fill if you want these too:
+# orcid_id:
+# philpeople_id:
 # bluesky_url:
-# mastodon_url:
 # linkedin_username:
-# cv_pdf: /assets/pdf/grimmer_cv.pdf # adds a CV icon to the social row
+
 rss_icon: false # no blog posts yet; flip to true if you start writing

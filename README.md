@@ -4,29 +4,44 @@ Academic site for Daniel Grimmer, built with [Jekyll](https://jekyllrb.com/) and
 [al-folio](https://github.com/alshedivat/al-folio) theme. Published at
 <https://danielgrimmer.github.io/>.
 
-> **Status: scaffold.** The structure, build and deploy pipeline are done and
-> verified. The *content* is placeholder — see [What still needs doing](#what-still-needs-doing).
+Migrated from the old Oxford page (`users.ox.ac.uk/~pemb6003/`). All the prose,
+publications, talks and teaching history from that site are in place; what is
+still outstanding is listed under [Still to do](#still-to-do).
 
 ## Where things live
 
 | I want to change… | Edit this |
 | --- | --- |
-| Homepage bio, photo, affiliation, address | `_pages/about.md` |
-| Research overview | `_pages/research.md` |
+| Homepage bio + research interests | `_pages/about.md` |
+| The longer career narrative | `_pages/bio.md` (published at `/about/`) |
 | Publications | `_bibliography/papers.bib` — the page generates itself |
+| Talks, posters, research visits | `_pages/talks.md` |
 | Teaching | `_pages/teaching.md` |
-| CV | `_data/cv.yml` (and drop a PDF in `assets/pdf/`, then point `cv_pdf` at it in `_pages/cv.md`) |
-| News items on the homepage | files in `_news/` |
-| Site title, name, description, favicon | `_config.yml`, top section |
-| Social / academic profile links | `_data/socials.yml` |
-| Profile photo | replace `assets/img/prof_pic.jpg` |
-| Nav order, or hiding a page | `nav` and `nav_order` in that page's front matter |
+| CV | `_data/cv.yml` (page is `_pages/cv.md`, currently hidden from the nav) |
+| Site title, description, favicon | `_config.yml`, top section |
+| Email and profile links | `_data/socials.yml` |
+| Journal badge colours | `_data/venues.yml`, keyed by the `abbr` field in the .bib |
+| Profile photos | `assets/img/prof_pic.jpg`, `assets/img/DGrimmer2.jpg` |
+| Nav order / hiding a page | `nav` and `nav_order` in that page's front matter |
 
-Adding a publication means adding a BibTeX entry to `_bibliography/papers.bib`.
-`selected={true}` also puts it on the homepage; `abstract={...}` adds an **Abs**
-toggle; `arxiv={2303.04130}` adds an **arXiv** link; `pdf={file.pdf}` links
-`assets/pdf/file.pdf`. The full field list is documented in a comment at the top
-of that file.
+### Adding a publication
+
+Add a BibTeX entry to `_bibliography/papers.bib`. Useful fields:
+
+- `status = {submitted}` — files it under "Currently under peer review" instead
+  of the main list.
+- `selected = {true}` — also shows it on the homepage.
+- `abbr = {PRA}` — the coloured badge; give it a colour in `_data/venues.yml`.
+- `arxiv`, `doi`, `html`, `code`, `video`, `abstract` — each adds a button.
+
+Two gotchas, both learned the hard way during the migration:
+
+- **Do not put `%` comments inside an entry.** BibTeX-Ruby only accepts them
+  between entries; inside braces they abort the whole build.
+- **Avoid `additional_info`.** The theme concatenates it straight onto the
+  journal name and markdownifies it, which yields `Journal NameYour note , 2024`.
+  Put publication details in `journal`/`school` and `month`, and anything longer
+  in `abstract`.
 
 ## Running it locally
 
@@ -38,8 +53,8 @@ bundle exec jekyll serve   # http://127.0.0.1:4000
 ```
 
 **If the build dies with `invalid byte sequence in US-ASCII`,** your shell is not
-in a UTF-8 locale and the BibTeX parser is choking on an accented character.
-Fix it with:
+in a UTF-8 locale and the BibTeX parser is choking on an accented name
+(Martín-Martínez, Polo-Gómez). Fix it with:
 
 ```bash
 export LANG=C.UTF-8 LC_ALL=C.UTF-8
@@ -56,6 +71,15 @@ broken build is caught before it reaches the live site.
 **GitHub Actions**. Until that is set, the workflow will run but nothing will
 be published.
 
+## Theme customisation
+
+`assets/css/main.scss` shadows the theme's own stylesheet entry purely to change
+the accent colour from al-folio's magenta/teal to the deep navy the old site used
+(`#002147`, near-identical to Yale blue), with a lighter tint for dark mode.
+**To revert to stock al-folio, delete that file** — nothing else depends on it.
+If you bump the `al_folio_core` gem, re-check that file against the gem's own
+`assets/css/main.scss` in case the import list changed.
+
 ## Upgrading the theme
 
 al-folio v1.x ships its runtime as versioned gems rather than as files copied
@@ -63,24 +87,42 @@ into this repo, so upgrading is a version bump rather than a merge conflict:
 edit the pinned versions in the `:al_folio_plugins` group in `Gemfile`, run
 `bundle update`, check the site still builds, and commit the new `Gemfile.lock`.
 
-## What still needs doing
+## Still to do
 
-- [ ] Replace the placeholder bio in `_pages/about.md`
-- [ ] Set the real affiliation, postal address and **email** (currently a dummy
-      address in both `_pages/about.md` and `_data/socials.yml`)
-- [ ] Replace `assets/img/prof_pic.jpg` with a real photo
-- [ ] Replace `_bibliography/papers.bib` — the three entries there were
-      reconstructed from public arXiv listings and are unverified and incomplete
-- [ ] Fill in `_data/cv.yml` and attach the CV PDF
-- [ ] Write `_pages/research.md` and `_pages/teaching.md`
-- [ ] Delete the placeholder item in `_news/`
-- [ ] Set Pages source to "GitHub Actions" (see above)
+- [ ] **Set Pages source to "GitHub Actions"** (see above) — nothing publishes until this is done
+- [ ] Replace the two placeholder photos with the real `DGrimmer3.jpg` / `DGrimmer2.jpg`
+- [ ] Copy the four talk slide decks into `assets/pdf/talks/` — these links 404 today:
+      `PragmaticQFTMeasurementProblemPopGrunch.pdf`, `TheUnruhEffectInSlowMotion.pdf`,
+      `DiscreteGeneralCovariancePopGrunch.pdf`, `DiscreteGeneralCovarianceBarrioRQI.pdf`
+- [ ] Upload `CVGrimmer.pdf` to `assets/pdf/`, then uncomment `cv_pdf` in
+      `_data/socials.yml` to restore the old "Long CV" link
+- [ ] Fill in the two missing arXiv links in `papers.bib` (the old site had
+      unfilled placeholders `#` and `YOUR_UNIT1_ARXIV_LINK`)
+- [ ] Verify the inferred dates in `_data/cv.yml`, then set `nav: true` in `_pages/cv.md`
+- [ ] Port the Soccer Hockey Duality and Escher Chess demos
+- [ ] Decide about the dropped papers — see below
 
-### Two things worth a decision
+### Things worth a decision
+
+**Papers that vanished from the old site.** The old `papers.html` had a large
+commented-out block containing "A Discrete Analog of General Covariance"
+(arXiv [2204.02276](https://arxiv.org/abs/2204.02276) /
+[2205.07701](https://arxiv.org/abs/2205.07701)), "From Humean Laws to a
+Neo-Kantian Spacetime" ([2308.14146](https://arxiv.org/abs/2308.14146)),
+"Spacetime Representation Theory" ([2306.08110](https://arxiv.org/abs/2306.08110)),
+and "Connecting Grit and Peer Disagreement". Two of those are linked from the
+homepage research interests but appear nowhere on the publications page. They
+have not been carried into `papers.bib` — that mirrors the old site's *rendered*
+output, but it may have been an accident when the "under review" section was
+rewritten.
+
+**A video link that disagrees with itself.** For the Pragmatic QFT paper, the old
+`index.html` and `papers.html` pointed the video abstract at two different
+YouTube videos, and the one in `papers.html` is the Unruh paper's video. The
+`index.html` link was kept. Noted in a comment in `papers.bib`.
 
 **Google Fonts.** The theme loads webfonts from `fonts.googleapis.com`, which
-sends every visitor's IP to Google. German courts have treated that as a GDPR
-problem for sites hosted in Germany, so it may be worth self-hosting the fonts.
+sends every visitor's IP to Google. Worth self-hosting if that matters to you.
 
 **purgecss.** The deploy strips unused CSS to cut page weight. If the live site
 ever renders with missing styles, that step in `deploy.yml` is the first suspect —

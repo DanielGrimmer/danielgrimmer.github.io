@@ -1,12 +1,40 @@
 # Colours and links for the `abbr` label on each publication entry.
 # The key must match the abbr={...} field in _bibliography/papers.bib.
 
-"arXiv":
-  url: https://arxiv.org/
-  color: "#b31b1b"
-# "BJPS":
-#   url: https://www.journals.uchicago.edu/journal/bjps
-#   color: "#00369f"
-# "PRD":
-#   url: https://journals.aps.org/prd/
-#   color: "#1b5e9f"
+"Preprint":
+  color: "#7a7a7a"
+
+"Thesis":
+  color: "#4a4a4a"
+
+"BJPS":
+  url: https://www.journals.uchicago.edu/journal/bjps
+  color: "#00356b"
+
+"Synthese":
+  url: https://link.springer.com/journal/11229
+  color: "#1a5632"
+
+"JHEP":
+  url: https://link.springer.com/journal/13130
+  color: "#8a1538"
+
+"PRL":
+  url: https://journals.aps.org/prl/
+  color: "#00369f"
+
+"PRD":
+  url: https://journals.aps.org/prd/
+  color: "#00369f"
+
+"PRA":
+  url: https://journals.aps.org/pra/
+  color: "#00369f"
+
+"J Phys A":
+  url: https://iopscience.iop.org/journal/1751-8121
+  color: "#5b2d8e"
+
+"Symmetry":
+  url: https://www.mdpi.com/journal/symmetry
+  color: "#0b6e4f"
