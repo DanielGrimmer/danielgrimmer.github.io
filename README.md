@@ -37,7 +37,11 @@ Add a BibTeX entry to `_bibliography/papers.bib`. Useful fields:
 Two gotchas, both learned the hard way during the migration:
 
 - **Do not put `%` comments inside an entry.** BibTeX-Ruby only accepts them
-  between entries; inside braces they abort the whole build.
+  between entries; inside braces they abort the whole build. You also cannot
+  comment an entry out by prefixing its lines with `%` — the parser starts an
+  entry at the at-sign regardless. Park unwanted entries in
+  `_bibliography/never_published.bib`, which nothing renders. Even a stray
+  at-sign inside a comment produces a lexer warning.
 - **Avoid `additional_info`.** The theme concatenates it straight onto the
   journal name and markdownifies it, which yields `Journal NameYour note , 2024`.
   Put publication details in `journal`/`school` and `month`, and anything longer

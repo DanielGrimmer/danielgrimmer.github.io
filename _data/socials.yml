@@ -1,7 +1,12 @@
 # Social and academic profile links, shown in the order defined here.
 # Docs: https://github.com/george-gca/jekyll-socials
 
-email: daniel.grimmer@yale.edu
+# `email:` is deliberately NOT set. jekyll-socials would emit a bare
+# <a href="mailto:daniel.grimmer@yale.edu">, which al-folio's protect_email does
+# not rewrite — so the address would sit in the HTML for harvesters exactly as
+# the old Oxford site was careful to avoid. The address appears instead as
+# "daniel.grimmer (at) yale.edu" on the homepage and CV. Setting this key again
+# restores the envelope icon and undoes that.
 github_username: DanielGrimmer
 youtube_id: oxfordspacetime
 scholar_userid: -R31VGwAAAAJ # Google Scholar

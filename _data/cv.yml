@@ -12,7 +12,7 @@
 cv:
   name: Daniel Grimmer
   label: Postdoctoral Researcher in Philosophy, Yale University
-  email: daniel.grimmer@yale.edu
+  email: daniel.grimmer (at) yale.edu # unlinked on purpose — see _config.yml
   location: New Haven, CT, USA
   image: ""
   summary: >

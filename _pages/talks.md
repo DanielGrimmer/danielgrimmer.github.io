@@ -9,17 +9,7 @@ toc:
   sidebar: left
 ---
 
-<!--
-  Migrated from the old site's talks.html.
-
-  TODO: four slide decks are linked below and still need to be copied across
-  from the old site's TalksAndPosters/ folder into assets/pdf/talks/ ,
-  otherwise those links will 404:
-    PragmaticQFTMeasurementProblemPopGrunch.pdf
-    TheUnruhEffectInSlowMotion.pdf
-    DiscreteGeneralCovariancePopGrunch.pdf
-    DiscreteGeneralCovarianceBarrioRQI.pdf
--->
+<!-- Migrated from the old site's talks.html. -->
 
 ## Upcoming
 
@@ -47,7 +37,7 @@ Quantum Gravity and the Laws of Nature Workshop, Geneva, Switzerland — Decembe
 History and Philosophy of Physics Research Seminar, Bonn, Germany — November 2024
 
 **Deflating Spacetime: A Dynamics-First View of Topology**  
-Surrey Summer School, South Hampton, UK — July 2024
+Surrey Summer School, Southampton, UK — July 2024
 
 **In Search of New Spacetime: The ISE Method of Topological Redescription**  
 Oxford Philosophy of Physics Seminar, Oxford, UK — May 2024
