@@ -3,7 +3,8 @@
 What's outstanding, and what was decided on your behalf, migrating from
 `users.ox.ac.uk/~pemb6003/`. Delete this file once it's empty.
 
-Section B is the CV reconciliation (2026-08) — read that first.
+Section B is the CV reconciliation (2026-08) — read that first. The Oxford
+mirror has been dropped; that site is no longer being kept in step.
 
 ---
 
@@ -16,10 +17,9 @@ Nothing. Every asset from the old site is in place.
 The CV resolved every open fact. It also disagreed with the old site in places.
 Where the CV was simply newer or fuller, it was adopted. These need your call.
 
-- [x] ~~**B1. Teaching year conflict.**~~ Resolved: the teaching arrangement
-      record reads `Hilary|2022/2023`, and Hilary falls in the spring half of
-      that academic year, so it is **Hilary Term 2023**. The site now says 2023.
-      **Your CV has this as HT 2022 and is a year out — worth fixing there.**
+- [x] ~~**B1. Teaching year conflict.**~~ Resolved: Hilary of the 2022/2023
+      academic year falls in spring 2023. Site says HT 2023, and the revised CV
+      now agrees.
 - [x] ~~**B2. Two talk titles changed to match the CV.**~~ Surrey confirmed: the
       talk was about laws of nature, so the CV title is right. Bonn adopted from
       the CV on the same basis.
@@ -28,9 +28,11 @@ Where the CV was simply newer or fuller, it was adopted. These need your call.
         What Do They Do?"*
       - Bonn seminar, Nov 2024 — old site *"…Towards a Dynamics-First View of
         Topology"* → CV *"…The ISE Method of Topological Redescription"*
-- [x] ~~**B3. Braga talk title.**~~ Confirmed: the longer old-site title is
-      correct. **Your CV shortens it to "From Humean Laws to a Kantian
-      Spacetime" — worth correcting there.**
+- [x] ~~**B3. Braga talk title.**~~ Confirmed: the longer title is correct, and
+      the revised CV now carries the full "…: A Dynamics-First View of Topology".
+      One wrinkle left: under *Talks* the CV says "a **Kantian** Spacetime" while
+      its own *Unpublished Preprints* entry, the preprint, and this site all say
+      "**Neo-**Kantian". Cosmetic, but inconsistent within the one document.
 - [x] ~~**B4. Yale course titles.**~~ Confirmed as *"Philosophy of Physics:
       Space, Time, and Quantum"* and *"AI Epistemology and Ethics: Knowing
       Machine Morals"*. Applied, with the course codes kept alongside.
@@ -42,8 +44,9 @@ Where the CV was simply newer or fuller, it was adopted. These need your call.
 - [ ] **B6. "Das Neue Raumproblem"** is on the CV under *In Preparation*. Not
       added to the site — in-preparation work is a taste call. It's in
       `_bibliography/parked.bib` ready to move into `papers.bib`.
-- [ ] **B7. The CV's own header still points at the old Oxford URL.** Worth
-      updating to `danielgrimmer.github.io` in the next revision of the PDF.
+- [ ] **B7. The CV's header still points at `users.ox.ac.uk/~pemb6003`.** That
+      page is no longer being maintained, so the CV is advertising a URL that
+      will drift out of date. Worth switching to `danielgrimmer.github.io`.
 - [ ] **B8. `Connecting Grit and Peer Disagreement`** appears nowhere on the
       2026 CV, so it looks abandoned rather than merely unpublished. It is parked
       in `_bibliography/parked.bib`, which nothing renders. Delete it if that's
@@ -51,8 +54,9 @@ Where the CV was simply newer or fuller, it was adopted. These need your call.
 - [ ] **B9. Selected publications on the homepage** are still the old site's
       four. The newly accepted Erkenntnis paper is arguably a better pick than a
       preprint — change with `selected = {true}` in `papers.bib`.
-- [x] ~~**B10. References section.**~~ Confirmed: stays off. It lists five
-      people's personal emails, phone numbers and postal addresses.
+- [x] ~~**B10. References section.**~~ Resolved at source: the revised CV drops
+      it entirely, so the published PDF carries no third-party contact details.
+      Verified — the only email in it is your own, and there are no phone numbers.
 
 ## C. Applied from the CV
 
@@ -120,14 +124,6 @@ No action needed — recorded so you can spot anything wrong.
 
 ## F. Optional
 
-- [ ] **F1. Hand `oxford-site/` to Oxford.** Five updated HTML files plus a
-      README, mirroring this site's content in the old site's own styling and
-      asset paths. Each carries a `<link rel="canonical">` to the matching page
-      here, so search engines treat danielgrimmer.github.io as primary rather
-      than penalising the two as duplicates. The one file Oxford also needs is a
-      fresh `CVGrimmer.pdf` under that exact name.
-      Regenerate with `python3 oxford-site/regenerate.py` — its content is
-      hard-coded, so it does not follow changes to `_pages/` automatically.
 - [ ] **F2. Enable link previews** — `serve_og_meta`, `serve_schema_org` and
       `og_image` are off.
 - [ ] **F3. Add PhilPeople** to `_data/socials.yml`.

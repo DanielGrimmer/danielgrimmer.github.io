@@ -9,7 +9,7 @@ last_name: Grimmer
 contact_note: >
   Email is the best way to reach me.
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-  Daniel Grimmer — Postdoctoral Researcher in Philosophy at Yale University, working on evolutionary epistemology, the metaphysics of space and time, and the foundations of quantum field theory.
+  Daniel Grimmer — Postdoctoral Associate in Philosophy at Yale University, working on evolutionary epistemology, the metaphysics of space and time, and the foundations of quantum field theory.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
@@ -221,7 +221,6 @@ kramdown:
 # Includes & excludes
 include: ["_pages"]
 exclude:
-  - oxford-site/ # mirror handed to Oxford for users.ox.ac.uk/~pemb6003; not part of this site
   - AGENTS.md
   - al-folio-upgrade-report.md
   - bin/

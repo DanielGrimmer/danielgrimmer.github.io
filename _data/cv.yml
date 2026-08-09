@@ -1,12 +1,11 @@
 # Drives /cv/ (because _pages/cv.md sets cv_format: rendercv).
 #
-# Transcribed from CV_Grimmer.pdf (2026-08). Dates are now sourced, not
-# inferred. Publications are deliberately NOT duplicated here — the
-# publications page already generates them from _bibliography/papers.bib.
+# Transcribed from the CV PDF (revised 2026-08, at assets/pdf/CV_Grimmer.pdf).
+# Dates are sourced, not inferred. Publications are deliberately NOT duplicated
+# here — the publications page generates them from _bibliography/papers.bib.
 #
-# The CV's References section is deliberately omitted: it lists five people's
-# personal emails, phone numbers and postal addresses. Publishing third-party
-# contact details on a public site is not something to do by default.
+# The revised CV no longer carries a References section, so there is no
+# third-party contact detail to keep off the site.
 
 cv:
   name: Daniel Grimmer
