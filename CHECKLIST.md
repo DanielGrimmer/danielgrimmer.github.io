@@ -28,16 +28,12 @@ Where the CV was simply newer or fuller, it was adopted. These need your call.
         What Do They Do?"*
       - Bonn seminar, Nov 2024 — old site *"…Towards a Dynamics-First View of
         Topology"* → CV *"…The ISE Method of Topological Redescription"*
-- [ ] **B3. One talk title left as the old site had it.** Braga, Sept 2023: the
-      CV shortens it to *"From Humean Laws to a Kantian Spacetime"*, the old site
-      had *"From Humean Laws to a Neo-Kantian Spacetime: A Dynamics-First View of
-      Topology"*, which matches the preprint title. Kept the longer one.
-- [ ] **B4. Yale course titles differ between the two sources.** The site keeps
-      the old site's catalogue titles and course codes, which the CV lacks:
-      site *"Ethics and Epistemology of Artificial Intelligence: Knowing Machine
-      Morals (PHIL 2340)"* vs CV *"AI Epistemology and Ethics: Knowing Machine
-      Morals"*; site *"Philosophy of Physics: Space, Time, Quantum (PHIL 3333)"*
-      vs CV *"Philosophy of Physics"*. Say which you'd rather show.
+- [x] ~~**B3. Braga talk title.**~~ Confirmed: the longer old-site title is
+      correct. **Your CV shortens it to "From Humean Laws to a Kantian
+      Spacetime" — worth correcting there.**
+- [x] ~~**B4. Yale course titles.**~~ Confirmed as *"Philosophy of Physics:
+      Space, Time, and Quantum"* and *"AI Epistemology and Ethics: Knowing
+      Machine Morals"*. Applied, with the course codes kept alongside.
 - [x] ~~**B5. Preprint-only work is hidden.**~~ Done: `/publications/` now has a
       third section, **Unpublished preprints**, holding all five from the CV —
       including *Introducing the ISE Methodology* (arXiv:2303.04130), which was
