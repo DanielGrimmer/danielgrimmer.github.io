@@ -6,6 +6,110 @@ source of truth for the Security Rules; the console copy should be kept in step
 with it. Nothing here is served — the directory begins with an underscore, so
 Jekyll skips it.
 
+## What to do, and when
+
+Most of this can wait. In order:
+
+| # | Step | When | How long |
+| --- | --- | --- | --- |
+| 1 | Check the visitor counters have a `count` number | **Now** — the published rules depend on it | 2 min |
+| 2 | Enable Anonymous Authentication | **Now** — harmless, and V4.0 needs it | 2 min |
+| 3 | Seed the room pool | When V4.0 is ready to test | 10 min |
+| 4 | Turn on App Check enforcement | After V4.0 is live and sending tokens | 10 min |
+| 5 | Restrict the API key by referrer | Any time | 5 min |
+
+Doing 3 or 4 early does no good: the pool would sit empty and unused, and App
+Check enforcement would block the *current* game, which does not request a
+token.
+
+### 1. Check the visitor counters — do this now
+
+The published rules say a counter may only be replaced by a number exactly one
+higher than the one already there. That rule can only work if the document
+already holds a `count` number. If one does not, the write is denied and the
+old tutorial page can no longer hand out Player 1 / Player 2 to *new* visitors.
+
+Console → Firestore Database → **Data** tab. Look at:
+
+- every document in `sharedData` named `visitors_<RoomName>`
+- every document in `EscherChessGames` whose name contains `visitors_`
+
+Each needs a field called `count` whose type is **number**. If one is missing
+or is a string, click the document, add or fix the field, and save. Anyone who
+has played before is unaffected either way — their side is already cached in
+their browser.
+
+### 2. Enable Anonymous Authentication — do this now
+
+This does not add a login screen. It lets a browser quietly obtain a stable ID,
+so a seat can belong to *somebody* rather than to whoever writes first.
+
+Console → Build → **Authentication** → *Get started* if you have never opened it
+→ **Sign-in method** tab → **Anonymous** in the provider list → toggle *Enable*
+→ *Save*.
+
+Nothing changes on the site until V4.0 ships, so this is safe to do at any time.
+
+### 3. Seed the room pool — when V4.0 is ready
+
+A "room" is one Firestore document holding one game. Clients are not allowed to
+create documents — that is what stops a stranger filling the project with junk —
+so the rooms have to exist before anyone can play in them. Twenty is plenty:
+they are reused, and a room frees itself five minutes after its players leave.
+
+**With a terminal (recommended).** Admin credentials bypass the rules, so
+nothing has to be loosened:
+
+1. Console → ⚙ Project settings → **Service accounts** → *Generate new private
+   key*. That downloads a JSON file. This one **is** a real secret, unlike the
+   API key in the game pages. Save it outside this repository.
+2. In any scratch folder:
+   ```sh
+   npm init -y && npm install firebase-admin
+   GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json \
+     node /path/to/_firebase/seed-rooms.mjs
+   ```
+   Add `--dry-run` first to see the room names without writing anything.
+3. Delete the key afterwards, or keep it somewhere safe. Never commit it.
+
+The script is safe to re-run: it skips any room that already exists, so a game
+in progress is never touched.
+
+**Without a terminal.** Temporarily allow creation, seed from the browser, then
+put the rule back. Slightly less tidy, and the window should be minutes:
+
+1. In the rules, add `allow create: if true;` to a temporary
+   `match /dualityRooms/{roomId}` block and publish.
+2. Open the site, open the browser console, and run the snippet V4.0 will ship
+   for this purpose.
+3. Remove the rule and publish again. Confirm `create` is denied everywhere.
+
+### 4. App Check — after V4.0 is live
+
+The project ID and API key sit in the page source, as they are meant to. That
+means anyone can send writes to the database from outside your site. On the
+free plan there is no bill, but there *is* a daily cap: about 20,000 writes.
+Somebody scripting writes could burn through that and Firestore would refuse
+everything until the quota resets — your games would simply stop working.
+
+App Check closes that. The page fetches an invisible reCAPTCHA token, Firebase
+verifies it, and requests without one are rejected. No rule can do this, because
+rules judge each write on its own and cannot count them.
+
+Console → **App Check** → register the web app with reCAPTCHA v3 → add the site
+key to the client → then, and only then, switch Firestore to *Enforced*.
+
+Order matters: enforcing before the client sends tokens blocks your own game.
+There is a monitoring mode that reports what *would* be rejected — leave it
+there for a day before enforcing.
+
+### 5. Restrict the API key
+
+Google Cloud console → APIs & Services → Credentials → the browser key → under
+*Application restrictions* choose **HTTP referrers** and add
+`danielgrimmer.github.io/*`. A referrer can be forged, so this deters rather
+than prevents, but it is free.
+
 ## What is actually at risk
 
 The project is on the **Spark (free) plan**. That changes the threat model in

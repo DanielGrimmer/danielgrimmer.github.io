@@ -23,13 +23,16 @@
  *
  * Options
  * -------
- *   --count=50        how many rooms to create (default 50)
+ *   --count=20        how many rooms to create (default 20)
  *   --collection=...  target collection (default dualityRooms)
  *   --dry-run         report what would be written, write nothing
+ *
+ * Twenty is generous: rooms are reused, and one frees itself five minutes
+ * after its players stop reporting in.
  */
 
-import { initializeApp, applicationDefault } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+// firebase-admin is imported lazily inside main(), so --dry-run works with
+// plain node and the helpers below stay importable without installing anything.
 
 const args = Object.fromEntries(
   process.argv.slice(2).map((a) => {
@@ -38,7 +41,7 @@ const args = Object.fromEntries(
   })
 );
 
-const COUNT = Number(args.count ?? 50);
+const COUNT = Number(args.count ?? 20);
 const COLLECTION = String(args.collection ?? 'dualityRooms');
 const DRY_RUN = Boolean(args['dry-run']);
 
@@ -55,11 +58,14 @@ const ADJECTIVES = [
 const NOUNS = ['Puck', 'Goal', 'Field', 'Rink', 'Net', 'Stripes', 'Skates', 'Whistle'];
 
 export function roomNames(count) {
+  // 25 adjectives and 8 nouns are coprime, so stepping both together walks all
+  // 200 pairs before repeating — and consecutive rooms look nothing alike,
+  // which matters when two people are reading names to each other.
   const names = [];
-  for (let i = 0; names.length < count; i++) {
-    const name = `${ADJECTIVES[i % ADJECTIVES.length]}${NOUNS[Math.floor(i / ADJECTIVES.length) % NOUNS.length]}`;
+  const limit = ADJECTIVES.length * NOUNS.length;
+  for (let i = 0; names.length < count && i < limit; i++) {
+    const name = `${ADJECTIVES[i % ADJECTIVES.length]}${NOUNS[i % NOUNS.length]}`;
     if (!names.includes(name)) names.push(name);
-    if (i > ADJECTIVES.length * NOUNS.length) break; // exhausted the vocabulary
   }
   return names;
 }
@@ -90,6 +96,9 @@ async function main() {
     console.log(names.join(', '));
     return;
   }
+
+  const { initializeApp, applicationDefault } = await import('firebase-admin/app');
+  const { getFirestore } = await import('firebase-admin/firestore');
 
   initializeApp({ credential: applicationDefault() });
   const db = getFirestore();

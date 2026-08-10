@@ -22,8 +22,7 @@ still outstanding is listed in [CHECKLIST.md](CHECKLIST.md).
 | Email and profile links | `_data/socials.yml` |
 | Journal badge colours | `_data/venues.yml`, keyed by the `abbr` field in the .bib |
 | Profile photos | `assets/img/prof_pic.jpg`, `assets/img/DGrimmer2.jpg` |
-| The games | `assets/SoccerHockey/` and `assets/EscherChess/`; landing pages `_pages/soccerhockey.md`, `_pages/escherchess.md`, grouped by `_pages/games.md` |
-| Duality games engine | `assets/games/core/` — shared rules, with tests in `_tests/`. See `assets/games/README.md`. The pre-rewrite bundle is kept in `_archive/soccer-hockey-v3.1/` |
+| The games | Their landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md` and `_pages/games.md`. Everything else about them — the engine, the tests, the Firebase setup — is in [`assets/games/README.md`](assets/games/README.md) |
 | Nav order / hiding a page | `nav` and `nav_order` in that page's front matter |
 
 ### Adding a publication
