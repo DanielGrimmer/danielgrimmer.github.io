@@ -14,9 +14,11 @@ rules_version = '2';
 //   * Whose turn it is is derivable from the log — seat 0 moves first, so the
 //     seat on move is `moves.size() % 2`. A rule cannot replay a board, but it
 //     can count, so it can refuse a move from anybody but the player on move.
-//   * Timestamps come from `request.time` rather than from the client, so a tab
-//     cannot backdate a rival's seat to steal it, nor hold its own open while
-//     disconnected.
+//   * Staleness is judged against request.time, not against anything the
+//     client says, so a tab cannot hold its seat open while disconnected. The
+//     seat times themselves are client millis: they sit inside an array, and
+//     Firestore forbids serverTimestamp() there, so the best available is to
+//     bound them against the server clock.
 //
 // On creation: rooms are made lazily by whoever arrives first, but only under
 // one of the twenty names below and only as an empty game. The number of
@@ -46,8 +48,25 @@ service cloud.firestore {
       function before() { return resource.data; }
       function after() { return request.resource.data; }
 
+      /**
+       * Seat times are integer milliseconds from the client, not Firestore
+       * timestamps.
+       *
+       * They live inside `seats`, which is an array, and Firestore forbids
+       * serverTimestamp() sentinels inside arrays — so the server cannot stamp
+       * them. Comparisons therefore go through request.time.toMillis(), and a
+       * beat is only bounded in the future: a value in the past is harmless and
+       * self-correcting, whereas one far ahead would park a seat indefinitely.
+       */
+      function nowMs() { return request.time.toMillis(); }
+
       function seatShapeOk(i) {
         return after().seats[i].keys().hasOnly(['uid', 'claimedAt', 'lastSeen', 'lastActive']);
+      }
+
+      function plausibleBeat(i) {
+        return after().seats[i].lastSeen is int
+          && after().seats[i].lastSeen <= nowMs() + 600000;
       }
 
       // Only seats and moves ever change; everything else is fixed at creation.
@@ -61,25 +80,24 @@ service cloud.firestore {
           && after().moves.size() <= 500;
       }
 
-      // Vacant: nobody holds it, or its holder has been silent for five minutes
-      // of server time.
+      // Vacant: nobody holds it, or its holder has been silent for five minutes.
       function seatVacant(i) {
         return before().seats[i].uid == null
           || before().seats[i].lastSeen == null
-          || request.time > before().seats[i].lastSeen + duration.value(5, 'm');
+          || nowMs() > before().seats[i].lastSeen + 300000;
       }
 
       function seatMine(i) {
         return before().seats[i].uid == request.auth.uid;
       }
 
-      // You may only write your own uid into a seat, only when it is vacant or
-      // already yours, and lastSeen must be now.
+      // You may only write your own uid into a seat, and only when it is vacant
+      // or already yours.
       function seatWriteOk(i) {
         return after().seats[i] == before().seats[i]
           || (
             after().seats[i].uid == request.auth.uid
-            && after().seats[i].lastSeen == request.time
+            && plausibleBeat(i)
             && (seatVacant(i) || seatMine(i))
           )
           || (seatMine(i) && after().seats[i].uid == null); // releasing your own
@@ -109,14 +127,25 @@ service cloud.firestore {
           && seatsOk();
       }
 
-      // A new room may only be born empty.
+      /**
+       * A seat in a brand-new room: either empty, or taken by whoever is
+       * creating it. Arriving first and sitting down is one action, so
+       * demanding that the room be born empty would refuse every real create —
+       * there is no moment between the two for a second write to happen in.
+       */
+      function freshSeat(i) {
+        return after().seats[i].uid == null
+          || (after().seats[i].uid == request.auth.uid && plausibleBeat(i));
+      }
+
       function isFreshRoom() {
         return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'moves'])
           && after().name == roomId
+          && after().version == 1
           && after().moves.size() == 0
           && after().seats.size() == 2
-          && after().seats[0].uid == null
-          && after().seats[1].uid == null;
+          && seatShapeOk(0) && seatShapeOk(1)
+          && freshSeat(0) && freshSeat(1);
       }
 
       allow read: if signedIn() && known();
