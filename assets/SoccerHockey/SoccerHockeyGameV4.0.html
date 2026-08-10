@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.1" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.2" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -51,25 +51,25 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.1.1';
+      const BUILD = '4.1.2';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.1';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.2';
       import {
         initialGame,
         replay,
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.1.1';
+      } from '../games/core/game.js?v=4.1.2';
       import {
         presenceOf,
         seatOf,
         normaliseSeats,
         occupancy,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.1.1';
-      import { createBoardView } from '../games/ui/board.js?v=4.1.1';
-      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.1';
+      } from '../games/core/seats.js?v=4.1.2';
+      import { createBoardView } from '../games/ui/board.js?v=4.1.2';
+      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.2';
       import {
         signIn,
         chooseRoom,
@@ -79,9 +79,10 @@
         appendMove,
         resetRoom,
         watchRoom,
+        explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.1.1';
+      } from '../games/net/room.js?v=4.1.2';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -162,7 +163,7 @@
                 } catch (err) {
                   // Someone moved first, or the rules refused it. The snapshot
                   // that follows is the truth; say so rather than freezing.
-                  el('status').textContent = `That move did not take: ${err.message}`;
+                  el('status').textContent = `That move did not take: ${explain(err)}`;
                 }
               }
             : null,
@@ -235,7 +236,7 @@
             draw();
           },
           (err) => {
-            el('status').textContent = `Lost contact with the room: ${err.message}`;
+            el('status').textContent = `Lost contact with the room. ${explain(err)}`;
           }
         );
       }
@@ -325,10 +326,9 @@
           await enterRoom(name);
           startBeating();
         } catch (err) {
-          el('status').textContent = `Could not connect: ${err.message}`;
-          el('coachBody').textContent =
-            'The game could not reach its back end. If this persists, the ' +
-            'Firestore rules or Anonymous Authentication may not be set up yet.';
+          // Name the switch that needs flipping rather than the call that failed.
+          el('status').textContent = 'The game could not start.';
+          el('coachBody').textContent = explain(err);
           console.error(err);
         }
       })();

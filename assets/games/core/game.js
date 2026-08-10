@@ -12,7 +12,7 @@
  * the same fold run through the other lens.
  */
 
-import { Lens, mod, signedRep, modInverse, dualityBetween } from './duality.js?v=4.1.1';
+import { Lens, mod, signedRep, modInverse, dualityBetween } from './duality.js?v=4.1.2';
 import {
   makeBoard,
   dualMoveSet,
@@ -21,7 +21,7 @@ import {
   goalApproaches,
   scoringSeat,
   squareKey,
-} from './rules.js?v=4.1.1';
+} from './rules.js?v=4.1.2';
 
 export const STATUS = Object.freeze({
   PLAYING: 'playing',

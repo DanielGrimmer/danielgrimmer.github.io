@@ -17,7 +17,7 @@
  */
 
 import { firebaseConfig } from '../../SoccerHockey/firebaseConfig.js';
-import { ROOM_NAMES, ROOMS_COLLECTION, emptyRoomDoc, isRoomName } from './rooms.js?v=4.1.1';
+import { ROOM_NAMES, ROOMS_COLLECTION, emptyRoomDoc, isRoomName } from './rooms.js?v=4.1.2';
 import {
   claimSeat,
   touchSeat,
@@ -26,10 +26,45 @@ import {
   findOpenRoom,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.1.1';
+} from '../core/seats.js?v=4.1.2';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
+
+/**
+ * Turn a Firebase error into something worth reading.
+ *
+ * These all mean "somebody has to change a setting in the console", and the
+ * console is not where the person hitting the error is looking. Naming the
+ * exact switch beats a stack trace.
+ */
+export function explain(err) {
+  const code = err?.code ?? '';
+  switch (code) {
+    case 'auth/admin-restricted-operation':
+    case 'auth/operation-not-allowed':
+      return (
+        'Firebase refused to create an anonymous account. Two switches to check, ' +
+        'both under Authentication in the Firebase console: Sign-in method → ' +
+        'Anonymous must read Enabled, and Settings → User actions must have ' +
+        '“Enable create (sign-up)” ticked. That second one blocks every sign-up, ' +
+        'anonymous included, and is easy to miss.'
+      );
+    case 'auth/network-request-failed':
+      return 'Could not reach Firebase. Check the network, and any extension blocking Google domains.';
+    case 'permission-denied':
+      return (
+        'The Firestore rules refused that. Check the dualityRooms block from ' +
+        '_firebase/firestore-next.rules is published alongside the others.'
+      );
+    case 'unavailable':
+      return 'Firestore is unreachable right now — the network dropped, or the daily quota is spent.';
+    case 'failed-precondition':
+      return 'Firestore rejected the write. If this is persistent, the rules and the client disagree about the room shape.';
+    default:
+      return err?.message ?? String(err);
+  }
+}
 
 const SDK = 'https://www.gstatic.com/firebasejs/11.3.1';
 
