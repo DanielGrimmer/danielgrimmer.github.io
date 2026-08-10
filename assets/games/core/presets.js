@@ -7,7 +7,7 @@
  * which is how it ended up with a stalemate guard the real game lacked.
  */
 
-import { makeConfig } from './game.js?v=4.1.0';
+import { makeConfig } from './game.js?v=4.1.1';
 
 /** Palettes lifted verbatim from v3.1 so the boards keep their look. */
 export const THEMES = Object.freeze({

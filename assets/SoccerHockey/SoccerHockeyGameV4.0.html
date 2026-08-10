@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.1" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -51,25 +51,25 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.1.0';
+      const BUILD = '4.1.1';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.0';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.1';
       import {
         initialGame,
         replay,
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.1.0';
+      } from '../games/core/game.js?v=4.1.1';
       import {
         presenceOf,
         seatOf,
         normaliseSeats,
         occupancy,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.1.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.1.0';
-      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.0';
+      } from '../games/core/seats.js?v=4.1.1';
+      import { createBoardView } from '../games/ui/board.js?v=4.1.1';
+      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.1';
       import {
         signIn,
         chooseRoom,
@@ -81,7 +81,7 @@
         watchRoom,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.1.0';
+      } from '../games/net/room.js?v=4.1.1';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);

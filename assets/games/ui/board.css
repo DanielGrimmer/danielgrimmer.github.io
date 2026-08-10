@@ -45,6 +45,19 @@
   --dg-divider: #3a3a3c;
 }
 
+/*
+ * `hidden` must actually hide.
+ *
+ * The browser implements it as `display: none` in its own stylesheet, which any
+ * author rule setting `display` outranks. `.dg-btn-primary` sets inline-block
+ * and `.dg-room-tools` sets flex, so both stayed on screen while reporting
+ * hidden === true — which is how the Play the Real Game button came to sit
+ * there from step one. Anything hidden in markup is hidden, full stop.
+ */
+[hidden] {
+  display: none !important;
+}
+
 /* ---------------------------------------------------------------- page ---- */
 
 body.dg {

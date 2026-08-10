@@ -17,7 +17,7 @@
  */
 
 import { firebaseConfig } from '../../SoccerHockey/firebaseConfig.js';
-import { ROOM_NAMES, ROOMS_COLLECTION, emptyRoomDoc, isRoomName } from './rooms.js?v=4.1.0';
+import { ROOM_NAMES, ROOMS_COLLECTION, emptyRoomDoc, isRoomName } from './rooms.js?v=4.1.1';
 import {
   claimSeat,
   touchSeat,
@@ -26,7 +26,7 @@ import {
   findOpenRoom,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.1.0';
+} from '../core/seats.js?v=4.1.1';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
