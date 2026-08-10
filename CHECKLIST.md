@@ -138,7 +138,10 @@ No action needed — recorded so you can spot anything wrong.
 - Both game bundles survive the build with ES module imports intact
 - Publications page renders three sections: 2 under review, 18 peer-reviewed,
   5 unpublished preprints
-- The two games sit under a `games` dropdown so the navbar stays at seven items
+- The two games sit under a `duality games` dropdown so the navbar stays at seven
+  items. The dropdown's parent label is not a link (the theme renders it as
+  `href="#"`), so an `overview` child carries the link to the `/games/` landing
+  page, which is also where the homepage points.
 
-**Not yet live:** this work is on `claude/academic-site-migration-plan-5yq7ob`.
-It publishes when merged to `main`.
+**Live:** the migration work has been merged to `main` and is published at
+<https://danielgrimmer.github.io/>.
