@@ -9,7 +9,7 @@
 
 cv:
   name: Daniel Grimmer
-  label: Postdoctoral Associate in Philosophy, Yale University
+  label: Postdoctoral Associate and Lecturer in Philosophy, Yale University
   email: daniel.grimmer (at) yale.edu # unlinked on purpose — see _config.yml
   location: New Haven, CT, USA
   image: ""
@@ -33,7 +33,7 @@ cv:
   sections:
     Experience:
       - company: Yale University
-        position: Postdoctoral Associate in Philosophy
+        position: Postdoctoral Associate and Lecturer in Philosophy
         location: New Haven, CT, USA
         start_date: 2025-07
         end_date: 2027-06

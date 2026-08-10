@@ -48,19 +48,19 @@ History and Philosophy of Physics Research Seminar, University of Bonn, Germany 
 **What Are the Laws of Nature? And What Do They Do?**  
 Surrey Summer School, Southampton, UK — July 2024
 
-**In Search of New Spacetime: The ISE Method of Topological Redescription**  
+**In Search of New Spacetimes: The ISE Method of Topological Redescription**  
 Oxford Philosophy of Physics Seminar, Oxford, UK — May 2024
 
-**In Search of New Spacetime: A Dynamics-First View of Topology**  
+**In Search of New Spacetimes: A Dynamics-First View of Topology**  
 Technion University job talk, Haifa, Israel — February 2024
 
-**In Search of New Spacetime: A Dynamics-First View of Topology**  
+**In Search of New Spacetimes: A Dynamics-First View of Topology**  
 University of Bonn job talk, Bonn, Germany — February 2024
 
-**In Search of New Spacetime: A Dynamics-First View of Topology**  
+**In Search of New Spacetimes: A Dynamics-First View of Topology**  
 Chapman University job talk, Orange, CA, USA — February 2024
 
-**In Search of New Spacetime: A Dynamics-First View of Topology**  
+**In Search of New Spacetimes: A Dynamics-First View of Topology**  
 Oxford Philosophy of Physics Workshop, Oxford, UK — September 2023
 
 **Deflating Spacetime: A Dynamics-First View of Topology**  

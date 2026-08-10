@@ -13,7 +13,7 @@ nav_order: 4
   </div>
 </div>
 
-I am currently a Postdoctoral Associate in Philosophy at Yale University. My research trajectory is highly interdisciplinary, reflecting a continuous drive to use rigorous formal methods to answer fundamental philosophical questions. Today, this takes the form of **Evolutionary Epistemology _in silico_**, where I use the machine learning technique of Evolutionary Meta-Learning to formally simulate Darwinian evolution and probe classical debates in cognitive science, such as Nativism vs. Empiricism.
+I am currently a Postdoctoral Associate and Lecturer in Philosophy at Yale University. My research trajectory is highly interdisciplinary, reflecting a continuous drive to use rigorous formal methods to answer fundamental philosophical questions. Today, this takes the form of **Evolutionary Epistemology _in silico_**, where I use the machine learning technique of Evolutionary Meta-Learning to formally simulate Darwinian evolution and probe classical debates in cognitive science, such as Nativism vs. Empiricism.
 
 Before coming to Yale, I was a Hertz Postdoctoral Fellow in the History and Philosophy of Physics at the University of Bonn. Prior to that, I completed a DPhil (Ph.D.) in Philosophy at the University of Oxford, supported by a [Clarendon scholarship](https://www.ox.ac.uk/clarendon) at Reuben College. My DPhil thesis developed the ISE Method of topological redescription, arguing for a "Dynamics-First" view of spacetime topology.
 

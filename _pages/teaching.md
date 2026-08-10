@@ -14,13 +14,13 @@ toc:
 **Philosophy of Physics: Space, Time, and Quantum (PHIL 3333)**  
 Yale Philosophy Department — Fall 2026
 
-**First Order Logic (PHIL 1115)**  
+**First-Order Logic (PHIL 1115)**  
 Yale Philosophy Department — Fall 2026
 
 **AI Epistemology and Ethics: Knowing Machine Morals (PHIL 2340)**  
 Yale Philosophy Department — Fall 2025
 
-**First Order Logic (PHIL 1115)**  
+**First-Order Logic (PHIL 1115)**  
 Yale Philosophy Department — Fall 2025
 
 ## Special seminar series
