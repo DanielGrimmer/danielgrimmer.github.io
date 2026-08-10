@@ -88,14 +88,14 @@ export const BASKETBALL_STEPS = Object.freeze([
     id: 'welcome',
     title: 'Two goals, one ball',
     body:
-      'The ball is the orange circle in the middle. Player 1 is aiming for the ' +
-      'goal at the top right, Player 2 for the one at the bottom left — the ' +
-      'single gaps in the black walls. Play both sides yourself, or take turns ' +
-      'with whoever is sitting next to you.\n\n' +
-      'The yellow highlighted squares are where the ball can go: short steps to ' +
-      'the squares around it, and longer passes further out. Look at the star ' +
-      'they make around the ball, and remember its shape — you will want to ' +
-      'recognise it later, when it is bent around an edge or half eaten away.',
+      'The ball is the orange circle in the middle. The single gaps in the black ' +
+      "walls are the two goals. Player 1's goal is the one at the top right, " +
+      "Player 2's goal is at the bottom left. Play both sides yourself, or take " +
+      'turns with whoever is sitting next to you.\n\n' +
+      'The yellow highlighted squares show where the ball can go next: short ' +
+      'steps to the squares around it, and longer passes further out. Remember ' +
+      'the star-shape they make around the ball, you will want to recognize it ' +
+      'later.',
     hint: 'Click a yellow highlighted square to move the ball.',
     done: (ctx) => ctx.moveCount >= 1,
   },
@@ -104,9 +104,9 @@ export const BASKETBALL_STEPS = Object.freeze([
     title: 'The ball burns its path',
     body:
       'Every square the ball leaves is marked with a ✕ and can never be used ' +
-      'again. The board only ever closes up, never opens: that is what will ' +
-      'eventually force a goal, or a tie if the ball runs out of anywhere to go.',
-    hint: 'Push it around a little and watch the yellow squares thin out.',
+      'again. Squares only ever close up, they never open: that is what will ' +
+      'eventually force a goal (or a tie if the ball runs out of anywhere to go).',
+    hint: 'Push it around a little and watch the available spaces thin out.',
     done: (ctx) => ctx.moveCount >= 4,
   },
   {

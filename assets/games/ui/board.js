@@ -59,6 +59,10 @@ export function createBoardView(container, { board, theme, interactive = true })
       const { left, top } = isoPosition(row, col, board.height);
       cell.style.left = `${left}px`;
       cell.style.top = `${top}px`;
+      // Painter's order. Depth on an isometric board runs along row + col, not
+      // along the DOM order, so without this a far cube can paint over a near
+      // one and swallow the ball sitting on it.
+      cell.style.zIndex = String(row + col);
       cell.dataset.row = String(row);
       cell.dataset.col = String(col);
 
@@ -66,7 +70,12 @@ export function createBoardView(container, { board, theme, interactive = true })
       top_.className = 'dg-face dg-top';
       const glyph = document.createElement('span');
       glyph.className = 'dg-glyph';
-      top_.append(glyph);
+      // The ball is drawn rather than typed: a glyph sits on its font's
+      // baseline, which left it low in the square and at the mercy of whatever
+      // font happened to load.
+      const ballEl = document.createElement('span');
+      ballEl.className = 'dg-ball';
+      top_.append(glyph, ballEl);
 
       const left_ = document.createElement('div');
       left_.className = 'dg-face dg-left';
@@ -88,14 +97,29 @@ export function createBoardView(container, { board, theme, interactive = true })
     });
   }
 
-  /** Scale the board so it fits the width available, and size the frame to match. */
+  /**
+   * Scale the board to the width available, then reserve the space it actually
+   * paints into.
+   *
+   * The height cannot be computed from the layout box: each cube's side faces
+   * are translated well below its own square, so the board paints lower than it
+   * measures. Reserving only the layout height let the board sit on top of the
+   * buttons underneath it. Measuring the cells settles it.
+   */
   function fit() {
     const available = container.clientWidth || frame.clientWidth || layout.width;
     const rendered = layout.width * SQUASH_X;
     const scale = Math.min(1, available / rendered);
     surface.style.setProperty('--dg-fit', String(scale));
     frame.style.width = `${rendered * scale}px`;
-    frame.style.height = `${layout.height * SQUASH_Y * scale}px`;
+
+    const top = frame.getBoundingClientRect().top;
+    let bottom = top;
+    for (const { cell } of cells.values()) {
+      const rect = cell.getBoundingClientRect();
+      if (rect.bottom > bottom) bottom = rect.bottom;
+    }
+    frame.style.height = `${Math.ceil(bottom - top)}px`;
   }
 
   function render(view, { showApproaches = true, onSquare: handler = null } = {}) {
@@ -117,14 +141,14 @@ export function createBoardView(container, { board, theme, interactive = true })
       cell.classList.toggle('is-visited', key !== ball && visited.has(key));
       cell.classList.toggle('is-playable', !isWall && legal.has(key));
 
-      // The ball is a filled disc coloured per sport; a spent square is a cross,
-      // so the two read as different kinds of thing at a glance rather than as
-      // two colours of the same O.
+      // A spent square is a cross and an approach is a dot, so the three read as
+      // different kinds of thing rather than as three sizes of the same circle.
+      // The ball itself is the drawn element, not a glyph.
       let text = '';
-      if (isWall) text = '';
-      else if (key === ball) text = '●';
-      else if (visited.has(key)) text = '✕';
-      else if (approaches.has(key)) text = '•';
+      if (!isWall && key !== ball) {
+        if (visited.has(key)) text = '✕';
+        else if (approaches.has(key)) text = '•';
+      }
       glyph.textContent = text;
     }
 

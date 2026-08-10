@@ -258,29 +258,55 @@ body.dg {
 }
 
 /*
- * The ball takes the colour of its sport — orange for basketball, white for
- * soccer, near-black for a puck — and sits a little larger than the approach
- * dots so the two are never confused. Spent squares are crosses rather than a
- * second colour of circle.
+ * The ball is drawn, not typed. A glyph rides its font's baseline, which left
+ * it sitting low in the square and depending on whichever font loaded. This is
+ * a box centred on the face by geometry, so it lands in the middle every time.
+ *
+ * It carries the same counter-transform as the glyphs, undoing the board's
+ * 0.8 x 0.4 squash so the ball reads as round rather than as an ellipse.
  */
-.dg-cell.is-ball .dg-glyph {
-  /* Clearly the ball, not a larger version of an approach dot. */
-  font-size: 40px;
-  text-shadow:
-    0 0 3px rgba(0, 0, 0, 0.55),
-    0 2px 1px rgba(0, 0, 0, 0.3);
+.dg-ball {
+  display: none;
 }
 
-.dg-board[data-theme='basketball'] .dg-cell.is-ball .dg-glyph {
-  color: #e8802a;
+.dg-cell.is-ball .dg-ball {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  margin-top: -11px;
+  border-radius: 50%;
+  transform: rotate(-45deg) scaleX(1.25) scaleY(2.5);
+  background: radial-gradient(
+    circle at 34% 30%,
+    var(--dg-ball-hi) 0%,
+    var(--dg-ball-mid) 48%,
+    var(--dg-ball-lo) 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
-.dg-board[data-theme='soccer'] .dg-cell.is-ball .dg-glyph {
-  color: #ffffff;
+.dg-board[data-theme='basketball'] {
+  --dg-ball-hi: #f8a95a;
+  --dg-ball-mid: #e8802a;
+  --dg-ball-lo: #a9530f;
 }
 
-.dg-board[data-theme='hockey'] .dg-cell.is-ball .dg-glyph {
-  color: #16181d;
+.dg-board[data-theme='soccer'] {
+  --dg-ball-hi: #ffffff;
+  --dg-ball-mid: #f2f2f2;
+  --dg-ball-lo: #9aa0a6;
+}
+
+.dg-board[data-theme='hockey'] {
+  --dg-ball-hi: #4a4f57;
+  --dg-ball-mid: #23262b;
+  --dg-ball-lo: #0c0d10;
 }
 
 .dg-cell.is-visited .dg-glyph {
