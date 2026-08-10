@@ -4,6 +4,9 @@ import assert from 'node:assert/strict';
 import {
   SEAT_TTL_MS,
   HEARTBEAT_MS,
+  ACTIVE_MS,
+  PRESENCE,
+  presenceOf,
   SEAT_COUNT,
   OUTCOME,
   emptySeats,
@@ -28,8 +31,8 @@ test('seat records', async (t) => {
     const seats = emptySeats();
     assert.equal(seats.length, SEAT_COUNT);
     assert.deepEqual([...seats], [
-      { uid: null, claimedAt: null, lastSeen: null },
-      { uid: null, claimedAt: null, lastSeen: null },
+      { uid: null, claimedAt: null, lastSeen: null, lastActive: null },
+      { uid: null, claimedAt: null, lastSeen: null, lastActive: null },
     ]);
     assert.throws(() => {
       'use strict';
@@ -211,17 +214,80 @@ test('who may move', async (t) => {
   });
 });
 
+test('telling whether the other chair is occupied', async (t) => {
+  await t.test('an unclaimed seat is empty', () => {
+    assert.equal(presenceOf(emptySeats()[0], T0), PRESENCE.EMPTY);
+    assert.equal(presenceOf(undefined, T0), PRESENCE.EMPTY);
+  });
+
+  await t.test('a seat whose tab has stopped reporting is gone', () => {
+    const seats = claimSeat(emptySeats(), { uid: 'alice', now: T0 }).seats;
+    assert.equal(presenceOf(seats[0], T0 + SEAT_TTL_MS + 1), PRESENCE.GONE);
+  });
+
+  await t.test('reporting in without interacting is idle, not active', () => {
+    let seats = claimSeat(emptySeats(), { uid: 'alice', now: T0 }).seats;
+    seats = touchSeat(seats, { uid: 'alice', now: T0 + 60_000 });
+    // claimSeat does not set lastActive, and a plain beat does not either
+    assert.equal(presenceOf(seats[0], T0 + 60_000), PRESENCE.IDLE);
+  });
+
+  await t.test('a beat that followed real interaction is active', () => {
+    let seats = claimSeat(emptySeats(), { uid: 'alice', now: T0 }).seats;
+    seats = touchSeat(seats, { uid: 'alice', now: T0 + 60_000, active: true });
+    assert.equal(presenceOf(seats[0], T0 + 60_000), PRESENCE.ACTIVE);
+  });
+
+  await t.test('activity decays back to idle while the tab stays open', () => {
+    let seats = claimSeat(emptySeats(), { uid: 'alice', now: T0 }).seats;
+    seats = touchSeat(seats, { uid: 'alice', now: T0, active: true });
+    const later = T0 + ACTIVE_MS + 1;
+    seats = touchSeat(seats, { uid: 'alice', now: later }); // still beating, not touching
+    assert.equal(presenceOf(seats[0], later), PRESENCE.IDLE, 'present but not at the controls');
+    assert.notEqual(presenceOf(seats[0], later), PRESENCE.GONE, 'and certainly not gone');
+  });
+
+  await t.test('interaction is remembered across quiet beats', () => {
+    let seats = claimSeat(emptySeats(), { uid: 'alice', now: T0 }).seats;
+    seats = touchSeat(seats, { uid: 'alice', now: T0, active: true });
+    seats = touchSeat(seats, { uid: 'alice', now: T0 + 1000 });
+    assert.equal(seats[0].lastActive, T0, 'a quiet beat must not erase it');
+  });
+});
+
 test('finding a room in the pool', async (t) => {
   const held = (uid, now) => ({ uid, claimedAt: now, lastSeen: now });
 
-  await t.test('prefers an empty room, then one with a seat spare', () => {
+  await t.test('joins someone already waiting before opening a fresh room', () => {
+    // Otherwise two people arriving independently each get a room of their own
+    // and never meet, which is exactly the wrong default for a two-player game.
     const rooms = [
       { id: 'full', seats: [held('a', T0), held('b', T0)] },
+      { id: 'empty', seats: emptySeats() },
       { id: 'half', seats: [held('c', T0), null] },
+    ];
+    assert.equal(findOpenRoom(rooms, T0).id, 'half');
+  });
+
+  await t.test('opens an empty room only when there is nobody to join', () => {
+    const rooms = [
+      { id: 'full', seats: [held('a', T0), held('b', T0)] },
       { id: 'empty', seats: emptySeats() },
     ];
     assert.equal(findOpenRoom(rooms, T0).id, 'empty');
-    assert.equal(findOpenRoom(rooms.slice(0, 2), T0).id, 'half');
+  });
+
+  await t.test('two arrivals in sequence land in the same room', () => {
+    const pool = [
+      { id: 'one', seats: emptySeats() },
+      { id: 'two', seats: emptySeats() },
+    ];
+    const first = findOpenRoom(pool, T0);
+    first.seats = claimSeat(first.seats, { uid: 'alice', now: T0 }).seats;
+    const second = findOpenRoom(pool, T0 + 5000);
+    assert.equal(second.id, first.id, 'the second player must be sent to the first');
+    const claim = claimSeat(second.seats, { uid: 'bob', now: T0 + 5000 });
+    assert.equal(claim.seat, 1);
   });
 
   await t.test('counts a room whose players have gone as empty again', () => {

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Soccer Hockey Duality Game (V4.0)</title>
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.0" />
+  </head>
+  <body class="dg">
+    <div class="dg-wrap">
+      <header class="dg-masthead">
+        <div>
+          <h1 id="sportTitle">Soccer Hockey</h1>
+          <div class="dg-sub" id="sportSub">Connecting…</div>
+        </div>
+        <a href="/soccer-hockey/">← Soccer Hockey</a>
+      </header>
+
+      <div class="dg-layout">
+        <div class="dg-coach" id="coach" aria-live="polite">
+          <div class="dg-coach-progress" id="coachProgress">Room</div>
+          <h2 class="dg-coach-title" id="roomName">…</h2>
+          <p class="dg-coach-body" id="coachBody">Finding you a room…</p>
+
+          <div class="dg-room-tools" id="roomTools" hidden>
+            <button class="dg-btn dg-btn-primary" id="copyLink" type="button">Copy the invite link</button>
+            <label class="dg-join">
+              Or join a room by name:
+              <span class="dg-join-row">
+                <input id="roomInput" list="roomList" placeholder="GreenField" autocomplete="off" />
+                <button class="dg-btn" id="joinRoom" type="button">Join</button>
+              </span>
+            </label>
+            <datalist id="roomList"></datalist>
+          </div>
+        </div>
+
+        <div class="dg-play">
+          <div class="dg-status" id="status">Connecting…</div>
+          <div class="dg-presence" id="presence"></div>
+          <div id="board"></div>
+          <div class="dg-bar">
+            <button class="dg-btn" id="newGame" type="button" hidden>New game</button>
+            <button class="dg-btn" id="leave" type="button" hidden>Leave this room</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
+    </div>
+
+    <script type="module">
+      const BUILD = '4.1.0';
+
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.0';
+      import {
+        initialGame,
+        replay,
+        viewOf,
+        squareFromView,
+        STATUS,
+      } from '../games/core/game.js?v=4.1.0';
+      import {
+        presenceOf,
+        seatOf,
+        normaliseSeats,
+        occupancy,
+        PRESENCE,
+      } from '../games/core/seats.js?v=4.1.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.1.0';
+      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.0';
+      import {
+        signIn,
+        chooseRoom,
+        joinRoom,
+        heartbeat,
+        leaveRoom,
+        appendMove,
+        resetRoom,
+        watchRoom,
+        HEARTBEAT_MS,
+        ACTIVE_HEARTBEAT_MS,
+      } from '../games/net/room.js?v=4.1.0';
+
+      const config = SOCCER_HOCKEY;
+      const el = (id) => document.getElementById(id);
+
+      let uid = null;
+      let room = null; // the room's name
+      let seat = null; // 0, 1, or null for a spectator
+      let state = { seats: normaliseSeats([]), moves: [] };
+      let game = initialGame(config);
+      let boardView = null;
+      let unwatch = null;
+      let interacted = false; // has anyone touched this tab since the last beat
+
+      const now = () => Date.now();
+
+      /* ---------------------------------------------------------- rendering */
+
+      function sportOf(index) {
+        return config.seats[index]?.sport ?? 'Spectating';
+      }
+
+      function describeOpponent() {
+        if (seat === null) return '';
+        const them = state.seats[seat === 0 ? 1 : 0];
+        switch (presenceOf(them, now())) {
+          case PRESENCE.EMPTY:
+            return 'Nobody else is here yet.';
+          case PRESENCE.ACTIVE:
+            return 'Your opponent is here, and moving about.';
+          case PRESENCE.IDLE:
+            return 'Your opponent is here but has been still for a while.';
+          case PRESENCE.GONE:
+            return 'Your opponent has stopped responding. Their seat frees up after five minutes.';
+          default:
+            return '';
+        }
+      }
+
+      function describeStatus() {
+        if (seat === null) {
+          return 'Both seats in this room are taken — you are watching. Join another room to play.';
+        }
+        const full = occupancy(state.seats, now()).held === 2;
+        if (!full) return 'Waiting for a second player to join this room.';
+        if (game.outcome.status === STATUS.WON) {
+          return game.outcome.winner === seat ? 'You win.' : 'Your opponent wins.';
+        }
+        if (game.outcome.status === STATUS.TIE) return 'Nobody can move. A draw.';
+        return game.turn === seat ? 'Your move.' : "Your opponent's move.";
+      }
+
+      function draw() {
+        game = replay(config, state.moves);
+        const lens = seat ?? 0;
+
+        if (!boardView) {
+          boardView = createBoardView(el('board'), {
+            board: config.board,
+            theme: config.seats[lens].theme,
+          });
+        }
+
+        const full = occupancy(state.seats, now()).held === 2;
+        const mayMoveNow =
+          seat !== null && full && game.outcome.status === STATUS.PLAYING && game.turn === seat;
+
+        boardView.render(viewOf(config, game, lens), {
+          onSquare: mayMoveNow
+            ? async (viewSquare) => {
+                const square = squareFromView(config, lens, viewSquare);
+                try {
+                  await appendMove({
+                    name: room,
+                    uid,
+                    square,
+                    expectedLength: state.moves.length,
+                  });
+                } catch (err) {
+                  // Someone moved first, or the rules refused it. The snapshot
+                  // that follows is the truth; say so rather than freezing.
+                  el('status').textContent = `That move did not take: ${err.message}`;
+                }
+              }
+            : null,
+        });
+
+        el('status').textContent = describeStatus();
+        el('status').dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
+        el('presence').textContent = describeOpponent();
+        el('newGame').hidden = seat === null || game.outcome.status === STATUS.PLAYING;
+        el('leave').hidden = seat === null;
+      }
+
+      function drawRoom() {
+        el('roomName').textContent = room ?? '…';
+        el('roomTools').hidden = false;
+
+        if (seat === null) {
+          el('sportTitle').textContent = 'Soccer Hockey';
+          el('sportSub').textContent = 'Both seats taken — you are watching.';
+          el('coachBody').textContent =
+            'This room is full. Pick another room by name below, or ask your ' +
+            'opponent for their invite link.';
+          return;
+        }
+
+        el('sportTitle').textContent = sportOf(seat);
+        el('sportSub').textContent = `You are Player ${seat + 1}.`;
+
+        const full = occupancy(state.seats, now()).held === 2;
+        el('coachBody').textContent = full
+          ? 'You are both here. Stop talking to each other now — no comparing ' +
+            'screens, no hints — and play the game out. When it is over, call ' +
+            'each other and compare notes.'
+          : 'You are the only one here. Send your opponent the invite link, or ' +
+            'tell them this room name so they can type it in. Once they arrive, ' +
+            'stop talking to each other until the game is over.';
+      }
+
+      /* ------------------------------------------------------------ network */
+
+      async function enterRoom(name) {
+        if (unwatch) {
+          unwatch();
+          unwatch = null;
+        }
+        if (room && seat !== null) await leaveRoom({ name: room, uid });
+
+        room = name;
+        const joined = await joinRoom({ name, uid, now: now() });
+        seat = joined.seat;
+        state = { seats: normaliseSeats(joined.room.seats), moves: joined.room.moves ?? [] };
+
+        // The lens decides the palette, so a change of seat needs a fresh board.
+        if (boardView) {
+          boardView.destroy();
+          boardView = null;
+        }
+
+        history.replaceState(null, '', `?room=${encodeURIComponent(name)}`);
+        drawRoom();
+        draw();
+
+        unwatch = await watchRoom(
+          name,
+          (next) => {
+            state = next;
+            // A seat can be lost while away; keep ours honest.
+            seat = seatOf(next.seats, uid);
+            drawRoom();
+            draw();
+          },
+          (err) => {
+            el('status').textContent = `Lost contact with the room: ${err.message}`;
+          }
+        );
+      }
+
+      function startBeating() {
+        const beat = async () => {
+          if (!room || seat === null) return;
+          try {
+            await heartbeat({ name: room, uid, now: now(), active: interacted });
+            interacted = false;
+          } catch {
+            // A missed beat is survivable; the seat holds for five minutes.
+          }
+        };
+
+        // Faster while it is your move, so the other side can tell you are there.
+        let timer = null;
+        const schedule = () => {
+          clearTimeout(timer);
+          const mine = seat !== null && game.turn === seat && game.outcome.status === STATUS.PLAYING;
+          timer = setTimeout(async () => {
+            await beat();
+            schedule();
+          }, mine ? ACTIVE_HEARTBEAT_MS : HEARTBEAT_MS);
+        };
+        schedule();
+
+        for (const evt of ['pointermove', 'keydown', 'pointerdown']) {
+          window.addEventListener(evt, () => {
+            interacted = true;
+          }, { passive: true });
+        }
+
+        // Best effort: a closed tab frees its seat at once rather than in five
+        // minutes. It does not always fire, which is why the timeout exists.
+        window.addEventListener('pagehide', () => {
+          if (room && seat !== null) leaveRoom({ name: room, uid });
+        });
+      }
+
+      /* -------------------------------------------------------------- setup */
+
+      el('copyLink').addEventListener('click', async () => {
+        const link = shareLink(location.origin, location.pathname, room);
+        try {
+          await navigator.clipboard.writeText(link);
+          el('copyLink').textContent = 'Link copied';
+          setTimeout(() => (el('copyLink').textContent = 'Copy the invite link'), 2000);
+        } catch {
+          window.prompt('Copy this link:', link);
+        }
+      });
+
+      el('joinRoom').addEventListener('click', async () => {
+        const wanted = el('roomInput').value.trim();
+        if (!ROOM_NAMES.includes(wanted)) {
+          el('coachBody').textContent = `There is no room called “${wanted}”. Pick one from the list.`;
+          return;
+        }
+        await enterRoom(wanted);
+      });
+
+      el('newGame').addEventListener('click', async () => {
+        await resetRoom({ name: room });
+      });
+
+      el('leave').addEventListener('click', async () => {
+        await leaveRoom({ name: room, uid });
+        location.href = '/soccer-hockey/';
+      });
+
+      el('roomList').append(
+        ...ROOM_NAMES.map((name) => {
+          const option = document.createElement('option');
+          option.value = name;
+          return option;
+        })
+      );
+
+      el('buildStamp').textContent = BUILD;
+
+      (async () => {
+        try {
+          uid = await signIn();
+          const wanted = roomFromLocation(location.search);
+          const name = await chooseRoom({ preferred: wanted, now: now() });
+          await enterRoom(name);
+          startBeating();
+        } catch (err) {
+          el('status').textContent = `Could not connect: ${err.message}`;
+          el('coachBody').textContent =
+            'The game could not reach its back end. If this persists, the ' +
+            'Firestore rules or Anonymous Authentication may not be set up yet.';
+          console.error(err);
+        }
+      })();
+    </script>
+  </body>
+</html>

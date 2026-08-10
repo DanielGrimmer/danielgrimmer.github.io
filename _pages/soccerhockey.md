@@ -45,7 +45,7 @@ central mystery will become apparent.
 
 <div class="sh-actions">
   <a href="{{ '/assets/SoccerHockey/SoccerHockeyTutorialV4.0.html' | relative_url }}">Start with the tutorial (Basketball)</a>
-  <a href="{{ '/assets/SoccerHockey/SoccerHockeyGameV3.1.html' | relative_url }}">Go straight to the game (Soccer or Hockey)</a>
+  <a href="{{ '/assets/SoccerHockey/SoccerHockeyGameV4.0.html' | relative_url }}">Go straight to the game (Soccer or Hockey)</a>
 </div>
 
 While the tutorial can be played side-by-side on one device, you will ultimately
@@ -53,10 +53,9 @@ need to open this webpage on two separate devices. Once you get into the same
 game room, the game state will be synchronized automatically behind the scenes.
 
 <!--
-  The tutorial is V4.0 and needs nothing but a browser. The game is still V3.1
-  and is next to be rebuilt; until then it depends on the V3.1 demo page having
-  assigned a side, so a player arriving straight from the V4.0 tutorial has no
-  seat. That gap closes when the V4.0 game lands.
+  Both pages are V4.0. The tutorial needs nothing but a browser; the game needs
+  Anonymous Authentication and the dualityRooms rules from _firebase/. The V3.1
+  pages are still on disk but nothing links to them any more.
 
   Firebase web API keys are designed to be public — access is controlled by
   Firestore Security Rules, not by keeping the key secret — so the key in

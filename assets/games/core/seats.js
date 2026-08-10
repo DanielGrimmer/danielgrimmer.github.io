@@ -40,11 +40,24 @@ export const OUTCOME = Object.freeze({
   SPECTATOR: 'spectator',
 });
 
+/** How recently a seat must have interacted to count as "thinking". */
+export const ACTIVE_MS = 45 * 1000;
+
+export const PRESENCE = Object.freeze({
+  EMPTY: 'empty',
+  ACTIVE: 'active',
+  IDLE: 'idle',
+  GONE: 'gone',
+});
+
 function frozenSeat(seat) {
   return Object.freeze({
     uid: seat?.uid ?? null,
     claimedAt: seat?.claimedAt ?? null,
+    /** Last heartbeat: the tab is open and connected. */
     lastSeen: seat?.lastSeen ?? null,
+    /** Last interaction: a mouse move, key or tap. Someone is actually there. */
+    lastActive: seat?.lastActive ?? null,
   });
 }
 
@@ -140,14 +153,39 @@ export function claimAllSeats(seats, { uid, now }) {
   );
 }
 
-/** Report in. A no-op for anyone not holding a seat. */
-export function touchSeat(seats, { uid, now }) {
+/**
+ * Report in. A no-op for anyone not holding a seat.
+ *
+ * `active` marks a beat that followed real interaction — a mouse move, a key,
+ * a tap — as opposed to a tab merely being open. That is the difference between
+ * an opponent who is thinking and one who has wandered off, which matters when
+ * you cannot see them and silence is otherwise indistinguishable from a fault.
+ */
+export function touchSeat(seats, { uid, now, active = false }) {
   assertUid(uid);
   assertNow(now);
   const current = normaliseSeats(seats);
   const mine = seatOf(current, uid);
   if (mine === null) return current;
-  return writeSeat(current, mine, { ...current[mine], lastSeen: now });
+  return writeSeat(current, mine, {
+    ...current[mine],
+    lastSeen: now,
+    lastActive: active ? now : current[mine].lastActive,
+  });
+}
+
+/**
+ * What to say about the other chair.
+ *
+ * `gone` means the tab stopped reporting in; `idle` means it is there but
+ * nobody has touched it lately; `active` means somebody is at the controls.
+ */
+export function presenceOf(seat, now, { ttl = SEAT_TTL_MS, activeWithin = ACTIVE_MS } = {}) {
+  assertNow(now);
+  if (!seat || seat.uid == null) return PRESENCE.EMPTY;
+  if (!isHeld(seat, now, ttl)) return PRESENCE.GONE;
+  if (seat.lastActive != null && now - seat.lastActive <= activeWithin) return PRESENCE.ACTIVE;
+  return PRESENCE.IDLE;
 }
 
 /** Give up a seat deliberately — a "leave" button, or a tab closing. */
@@ -175,15 +213,22 @@ export function occupancy(seats, now, ttl = SEAT_TTL_MS) {
 }
 
 /**
- * Pick a room from the pre-created pool: an empty one if there is one,
- * otherwise one with a seat going spare, otherwise nothing.
+ * Pick a room from the pool: one with somebody already waiting first, an empty
+ * one only if there is nobody to join.
+ *
+ * The order matters more than it looks. Preferring empty rooms means two people
+ * arriving independently are each given a room of their own and never meet —
+ * they would have to notice, and swap links, before the game could start at
+ * all. Preferring a room with a seat going spare pairs them automatically, and
+ * the share link is then for choosing your opponent rather than for finding one.
+ *
  * @param {{id:string, seats:any}[]} rooms
  */
 export function findOpenRoom(rooms, now, ttl = SEAT_TTL_MS) {
   const rated = rooms.map((room) => ({ room, ...occupancy(room.seats, now, ttl) }));
   return (
-    rated.find((r) => r.status === 'empty')?.room ??
     rated.find((r) => r.status === 'joinable')?.room ??
+    rated.find((r) => r.status === 'empty')?.room ??
     null
   );
 }

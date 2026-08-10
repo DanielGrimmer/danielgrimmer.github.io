@@ -1,27 +1,29 @@
 rules_version = '2';
 
-// DRAFT — do not publish yet.
+// Rules for the rewritten games. PUBLISH THESE ALONGSIDE THE EXISTING ONES —
+// paste the `dualityRooms` block into the rules you already have, keeping the
+// `sharedData`, `games` and `EscherChessGames` blocks as they are. This adds a
+// collection rather than changing any existing one, so the V3.1 game keeps
+// working throughout.
 //
-// These are the rules for the rewritten games, covering the `dualityRooms`
-// collection that does not exist until the pool is seeded. Publish them only
-// once the new client is live; until then `firestore.rules` in this directory
-// is the file to use. Both can coexist: this adds a collection rather than
-// changing the existing ones, so the old game keeps running throughout the
-// changeover and the two collections are cut over independently.
+// Requires Anonymous Authentication to be enabled.
 //
-// The difference from the interim rules is that these can tell who is writing.
-// With Anonymous Authentication enabled, every browser carries a stable uid,
-// a seat is owned by a uid, and a move is refused unless it comes from the
-// seat whose turn it is. Anonymous does not mean unidentified.
-//
-// Two things make that enforceable:
+// Two things make real enforcement possible here, where the interim rules could
+// only check shapes:
 //
 //   * Whose turn it is is derivable from the log — seat 0 moves first, so the
-//     seat on move is `moves.size() % 2`. No separate turn field to disagree
-//     with, and nothing to forge.
-//   * Timestamps are pinned to `request.time` rather than taken from the
-//     client, so a tab cannot backdate a rival's seat to steal it, nor hold
-//     its own seat open forever while disconnected.
+//     seat on move is `moves.size() % 2`. A rule cannot replay a board, but it
+//     can count, so it can refuse a move from anybody but the player on move.
+//   * Timestamps come from `request.time` rather than from the client, so a tab
+//     cannot backdate a rival's seat to steal it, nor hold its own open while
+//     disconnected.
+//
+// On creation: rooms are made lazily by whoever arrives first, but only under
+// one of the twenty names below and only as an empty game. The number of
+// documents this project can ever hold is therefore fixed, which is the
+// property that matters — on the free plan an unbounded document count is a
+// quota exhausted and the games offline for the day. Keep this list in step
+// with assets/games/net/rooms.js.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -32,22 +34,35 @@ service cloud.firestore {
         return request.auth != null && request.auth.uid is string;
       }
 
+      function known() {
+        return roomId in [
+          'RedPuck', 'BlueGoal', 'GreenField', 'GoldRink', 'SilverNet',
+          'BronzeStripes', 'PurpleSkates', 'OrangeWhistle', 'WhitePuck', 'BlackGoal',
+          'AmberField', 'CoralRink', 'IvoryNet', 'JadeStripes', 'OnyxSkates',
+          'PearlWhistle', 'RustPuck', 'SableGoal', 'TealField', 'UmberRink'
+        ];
+      }
+
       function before() { return resource.data; }
       function after() { return request.resource.data; }
 
-      // Only these fields exist, and only seats and moves ever change.
+      function seatShapeOk(i) {
+        return after().seats[i].keys().hasOnly(['uid', 'claimedAt', 'lastSeen', 'lastActive']);
+      }
+
+      // Only seats and moves ever change; everything else is fixed at creation.
       function shapeIsIntact() {
-        return after().keys().hasOnly(['version', 'name', 'game', 'params', 'seats', 'moves'])
+        return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'moves'])
           && after().version == before().version
           && after().name == before().name
           && after().game == before().game
-          && after().params == before().params
           && after().seats.size() == 2
+          && seatShapeOk(0) && seatShapeOk(1)
           && after().moves.size() <= 500;
       }
 
-      // A seat is vacant if nobody holds it, or its holder has been silent for
-      // longer than five minutes of server time.
+      // Vacant: nobody holds it, or its holder has been silent for five minutes
+      // of server time.
       function seatVacant(i) {
         return before().seats[i].uid == null
           || before().seats[i].lastSeen == null
@@ -58,8 +73,8 @@ service cloud.firestore {
         return before().seats[i].uid == request.auth.uid;
       }
 
-      // Writing a seat: you may only put your own uid into it, you may only do
-      // so if it is vacant or already yours, and lastSeen must be now.
+      // You may only write your own uid into a seat, only when it is vacant or
+      // already yours, and lastSeen must be now.
       function seatWriteOk(i) {
         return after().seats[i] == before().seats[i]
           || (
@@ -74,27 +89,43 @@ service cloud.firestore {
         return seatWriteOk(0) && seatWriteOk(1);
       }
 
-      // Claiming, beating or releasing a seat. The move log must not move.
+      // Claiming, beating or releasing. The move log must not move.
       function isSeatOperation() {
         return after().moves == before().moves && seatsOk();
       }
 
-      // Exactly one move appended, by the seat whose turn it is. Seat 0 opens,
-      // so the seat on move is the parity of the log length.
+      // Exactly one move appended, by the seat whose turn it is.
       function isMoveAppend() {
         return after().moves.size() == before().moves.size() + 1
           && after().moves[0:before().moves.size()] == before().moves
           && before().seats[before().moves.size() % 2].uid == request.auth.uid
-          && request.time <= before().seats[before().moves.size() % 2].lastSeen
-               + duration.value(5, 'm')
           && seatsOk();
       }
 
-      allow read: if signedIn();
-      allow create, delete: if false; // the pool is seeded once, with admin credentials
+      // Starting again in the same room, keeping both seats.
+      function isReset() {
+        return after().moves.size() == 0
+          && before().moves.size() > 0
+          && seatsOk();
+      }
+
+      // A new room may only be born empty.
+      function isFreshRoom() {
+        return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'moves'])
+          && after().name == roomId
+          && after().moves.size() == 0
+          && after().seats.size() == 2
+          && after().seats[0].uid == null
+          && after().seats[1].uid == null;
+      }
+
+      allow read: if signedIn() && known();
+      allow create: if signedIn() && known() && isFreshRoom();
+      allow delete: if false;
       allow update: if signedIn()
+        && known()
         && shapeIsIntact()
-        && (isSeatOperation() || isMoveAppend());
+        && (isSeatOperation() || isMoveAppend() || isReset());
     }
   }
 }
