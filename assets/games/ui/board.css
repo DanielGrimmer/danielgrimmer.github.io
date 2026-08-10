@@ -1,0 +1,300 @@
+/*
+ * Styling for the duality game pages.
+ *
+ * Two jobs. The page furniture matches the rest of danielgrimmer.github.io —
+ * Roboto, the #002147 navy accent, and a dark mode that follows the reader's
+ * system setting. The board itself is the V3.1 isometric look kept exactly:
+ * the same three CSS-transformed faces per cube, the same palettes, and the
+ * same lift on hover. Those transforms are tuned for a 40px tile, so the board
+ * is never re-measured — it is scaled as a whole to fit its container, which is
+ * also what fixes V3.1's board being a fixed size on phones.
+ *
+ * This file lives outside assets/css/, so purgecss never sees it.
+ */
+
+:root {
+  --dg-bg: #ffffff;
+  --dg-surface: #f7f7f7;
+  --dg-text: #000000;
+  --dg-text-muted: #828282;
+  --dg-accent: #002147;
+  --dg-accent-text: #ffffff;
+  --dg-divider: #e0e0e0;
+  --dg-tile: 40px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dg-theme='light']) {
+    --dg-bg: #1c1c1d;
+    --dg-surface: #2b2b2c;
+    --dg-text: #e8e8e8;
+    --dg-text-muted: #9d9d9d;
+    --dg-accent: #7fb2e5;
+    --dg-accent-text: #1c1c1d;
+    --dg-divider: #3a3a3c;
+  }
+}
+
+:root[data-dg-theme='dark'] {
+  --dg-bg: #1c1c1d;
+  --dg-surface: #2b2b2c;
+  --dg-text: #e8e8e8;
+  --dg-text-muted: #9d9d9d;
+  --dg-accent: #7fb2e5;
+  --dg-accent-text: #1c1c1d;
+  --dg-divider: #3a3a3c;
+}
+
+/* ---------------------------------------------------------------- page ---- */
+
+body.dg {
+  margin: 0;
+  padding: 0 1rem 4rem;
+  background: var(--dg-bg);
+  color: var(--dg-text);
+  font-family: Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.dg-wrap {
+  max-width: 930px; /* $max-content-width from the site's main.scss */
+  margin: 0 auto;
+}
+
+.dg-masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--dg-divider);
+  margin-bottom: 2rem;
+}
+
+.dg-masthead a {
+  color: var(--dg-accent);
+  text-decoration: none;
+}
+
+.dg-masthead a:hover {
+  text-decoration: underline;
+}
+
+.dg-masthead h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.dg-sub {
+  color: var(--dg-text-muted);
+  font-size: 0.9rem;
+}
+
+.dg h2 {
+  font-weight: 500;
+  margin: 2.5rem 0 0.75rem;
+}
+
+.dg p {
+  max-width: 62ch;
+}
+
+/* ------------------------------------------------------------- controls ---- */
+
+.dg-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.dg-btn {
+  font: inherit;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--dg-accent);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--dg-accent);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.dg-btn:hover:not(:disabled) {
+  background: var(--dg-accent);
+  color: var(--dg-accent-text);
+}
+
+.dg-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dg-status {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--dg-divider);
+  border-radius: 6px;
+  background: var(--dg-surface);
+  font-weight: 500;
+  min-height: 1.6em;
+}
+
+.dg-status[data-tone='win'] {
+  border-color: var(--dg-accent);
+}
+
+/* ---------------------------------------------------------------- board ---- */
+
+.dg-board-frame {
+  position: relative;
+  margin: 1.5rem auto;
+  /* Sized in JS: the board is transformed, and transforms do not affect layout. */
+}
+
+.dg-board {
+  position: relative;
+  transform-origin: top left;
+  /* The flattening that makes the grid read as a field seen from a low angle. */
+  transform: scaleX(calc(0.8 * var(--dg-fit, 1))) scaleY(calc(0.4 * var(--dg-fit, 1)));
+}
+
+.dg-cell {
+  position: absolute;
+  width: var(--dg-tile);
+  height: var(--dg-tile);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+.dg-cell.is-playable {
+  cursor: pointer;
+}
+
+/* The lift under the cursor. Worth keeping — it is most of the charm. */
+.dg-cell.is-playable:hover {
+  transform: translateY(-15px);
+}
+
+.dg-face {
+  position: absolute;
+  width: var(--dg-tile);
+  height: var(--dg-tile);
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: #000;
+  /* The board is squashed 0.8 x 0.4; undo it on the glyphs so they stay round. */
+}
+
+.dg-face.dg-top {
+  transform: rotate(45deg);
+}
+
+.dg-face.dg-left {
+  transform: scaleY(1.733) translateY(25.2px) translateX(-14.8px) rotate(60deg) scaleY(0.577) rotate(-45deg);
+}
+
+.dg-face.dg-right {
+  transform: scaleY(1.733) translateY(25.2px) translateX(14.8px) rotate(-60deg) scaleY(0.577) rotate(45deg);
+}
+
+.dg-glyph {
+  /* Counter the board's squash so an O looks like an O, not an ellipse. */
+  display: block;
+  transform: rotate(-45deg) scaleX(1.25) scaleY(2.5);
+  line-height: 1;
+}
+
+/* Palettes, lifted from V3.1 ------------------------------------------------ */
+
+.dg-board[data-theme='basketball'] .dg-top {
+  background: #dfbb85;
+}
+.dg-board[data-theme='basketball'] .dg-left {
+  background: #981717;
+}
+.dg-board[data-theme='basketball'] .dg-right {
+  background: #f9c852;
+}
+
+.dg-board[data-theme='soccer'] .dg-top {
+  background: #98e070;
+}
+.dg-board[data-theme='soccer'] .dg-left {
+  background: #8b4513;
+}
+.dg-board[data-theme='soccer'] .dg-right {
+  background: #a0522d;
+}
+
+.dg-board[data-theme='hockey'] .dg-top {
+  background: #e0f4ff;
+}
+.dg-board[data-theme='hockey'] .dg-left {
+  background: #c0e8ff;
+}
+.dg-board[data-theme='hockey'] .dg-right {
+  background: #a0dcff;
+}
+
+/* Wall beside a goal mouth. */
+.dg-cell.is-wall .dg-face {
+  background: #000 !important;
+  border-color: #000;
+  color: #000;
+}
+
+/* A square you may move to. Only the top face lights, as in V3.1. */
+.dg-cell.is-legal .dg-top {
+  background: #ffffcc !important;
+  border: 2px solid #ffd700;
+}
+
+.dg-cell.is-ball .dg-glyph {
+  color: #c0392b;
+}
+
+.dg-cell.is-visited .dg-glyph {
+  color: #000;
+}
+
+/* ---------------------------------------------------------------- misc ---- */
+
+.dg-legend {
+  color: var(--dg-text-muted);
+  font-size: 0.9rem;
+}
+
+.dg-seats {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+}
+
+.dg-seat {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--dg-divider);
+  border-radius: 4px;
+}
+
+.dg-seat[data-active='true'] {
+  border-color: var(--dg-accent);
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .dg-masthead {
+    padding: 1rem 0;
+  }
+  .dg h2 {
+    margin-top: 2rem;
+  }
+}

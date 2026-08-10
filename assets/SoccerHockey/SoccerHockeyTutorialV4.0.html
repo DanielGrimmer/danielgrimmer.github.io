@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Basketball — Duality Games tutorial (V4.0)</title>
+    <link rel="stylesheet" href="../games/ui/board.css" />
+  </head>
+  <body class="dg">
+    <div class="dg-wrap">
+      <header class="dg-masthead">
+        <div>
+          <h1>Basketball</h1>
+          <div class="dg-sub">A practice board. No duality — you are both looking at the same thing.</div>
+        </div>
+        <a href="/soccer-hockey/">← Soccer Hockey</a>
+      </header>
+
+      <p>
+        This teaches the interface, nothing more. Both of you can play it from
+        this one screen, taking turns — use <strong>Swap sides</strong> if you
+        would rather each drive your own player from the same laptop. The real
+        game needs two devices and is where the interesting part lives.
+      </p>
+
+      <div class="dg-bar">
+        <div class="dg-seats">
+          <span class="dg-seat" id="seat0">Player 1 — up and right</span>
+          <span class="dg-seat" id="seat1">Player 2 — down and left</span>
+        </div>
+      </div>
+
+      <div class="dg-status" id="status">Player 1 to move.</div>
+
+      <div id="board"></div>
+
+      <div class="dg-bar">
+        <button class="dg-btn" id="reset">Start again</button>
+        <button class="dg-btn" id="swap">Swap sides</button>
+      </div>
+
+      <p class="dg-legend">
+        Yellow squares are where you may move. A black <strong>O</strong> is a
+        square the ball has already been — it can never go back there, which is
+        what makes the game finite. The dots mark the squares that can reach a
+        goal next turn: to score you must start your turn on one of them, and
+        once they are all used up that goal is sealed. The board wraps around
+        left to right, like Pac-Man.
+      </p>
+
+      <h2>Then the real game</h2>
+      <p>
+        Once the controls feel obvious, go and
+        <a href="/soccer-hockey/">play the real one</a>. You will need to be on
+        separate devices, out of sight of each other's screen. That is not
+        ceremony — it is the whole point.
+      </p>
+    </div>
+
+    <script type="module">
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js';
+      import {
+        initialGame,
+        applyMove,
+        legalMovesFor,
+        viewOf,
+        squareFromView,
+        STATUS,
+      } from '../games/core/game.js';
+      import { createBoardView } from '../games/ui/board.js';
+
+      const config = BASKETBALL_TUTORIAL;
+      let game = initialGame(config);
+
+      // Hot seat: one browser, both seats. `seat` is only which side of the
+      // board you are looking at — in the tutorial both lenses are the
+      // identity, so the two views are identical anyway.
+      let seat = 0;
+
+      const boardView = createBoardView(document.getElementById('board'), {
+        board: config.board,
+        theme: 'basketball',
+      });
+
+      const statusEl = document.getElementById('status');
+      const seatEls = [document.getElementById('seat0'), document.getElementById('seat1')];
+
+      function describe() {
+        if (game.outcome.status === STATUS.WON) {
+          return `Player ${game.outcome.winner + 1} scores.`;
+        }
+        if (game.outcome.status === STATUS.TIE) {
+          return 'Stalemate — nobody can move. A draw.';
+        }
+        return `Player ${game.turn + 1} to move.`;
+      }
+
+      function draw() {
+        const view = viewOf(config, game, seat);
+        boardView.render(view, {
+          onSquare: (viewSquare) => {
+            if (game.outcome.status !== STATUS.PLAYING) return;
+            const square = squareFromView(config, seat, viewSquare);
+            game = applyMove(config, game, square);
+            // Follow the turn, so the person at the keyboard always sees the
+            // board of whoever is on move.
+            if (game.outcome.status === STATUS.PLAYING) seat = game.turn;
+            draw();
+          },
+        });
+
+        statusEl.textContent = describe();
+        statusEl.dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
+        seatEls.forEach((el, i) => {
+          el.dataset.active = String(game.outcome.status === STATUS.PLAYING && game.turn === i);
+        });
+        document.getElementById('swap').disabled = game.outcome.status !== STATUS.PLAYING;
+      }
+
+      document.getElementById('reset').addEventListener('click', () => {
+        game = initialGame(config);
+        seat = 0;
+        draw();
+      });
+
+      document.getElementById('swap').addEventListener('click', () => {
+        seat = seat === 0 ? 1 : 0;
+        draw();
+      });
+
+      draw();
+    </script>
+  </body>
+</html>
