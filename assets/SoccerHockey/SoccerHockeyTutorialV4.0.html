@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Basketball — Duality Games tutorial (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css" />
+    <!--
+      The ?v= tokens are cache busters. GitHub Pages serves assets with a
+      ten-minute max-age, so an edited module keeps loading from cache while the
+      page itself is refetched — which looks exactly like the change not having
+      shipped. Bump these together whenever a game module changes; the build
+      stamp at the foot of the page reports which set is actually running.
+    -->
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.0.2" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -47,10 +54,16 @@
         Player 2 at the bottom left. If the player to move has nowhere legal to
         go, the game is a draw.
       </p>
+
+      <p class="dg-legend dg-build">
+        Build <span id="buildStamp">—</span>
+      </p>
     </div>
 
     <script type="module">
-      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js';
+      const BUILD = '4.0.2'; // keep in step with the ?v= tokens below
+
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.0.2';
       import {
         initialGame,
         applyMove,
@@ -58,8 +71,8 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js';
-      import { createBoardView } from '../games/ui/board.js';
+      } from '../games/core/game.js?v=4.0.2';
+      import { createBoardView } from '../games/ui/board.js?v=4.0.2';
       import {
         contextFor,
         stepIndex,
@@ -67,7 +80,7 @@
         STALLED_HINT,
         BASKETBALL_STEPS,
         BASKETBALL_OUTRO,
-      } from '../games/ui/coach.js';
+      } from '../games/ui/coach.js?v=4.0.2';
 
       const config = BASKETBALL_TUTORIAL;
 
@@ -153,6 +166,10 @@
         if (step) skipped.add(step.id);
         drawCoach();
       });
+
+      // Reports which set of modules the browser actually ran, so a stale cache
+      // is visible rather than looking like a change that never shipped.
+      el('buildStamp').textContent = BUILD;
 
       draw();
     </script>
