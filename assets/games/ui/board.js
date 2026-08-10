@@ -16,6 +16,9 @@ const TILE = 40;
 const HALF_DIAGONAL = TILE / 1.41; // how far one step moves a cube on screen
 const SQUASH_X = 0.8;
 const SQUASH_Y = 0.4;
+const BALL_SIZE = 18;
+/** Board units; the 0.4 squash turns this into roughly five pixels on screen. */
+const BALL_LIFT = 12;
 
 /** Where a square sits, before the board-wide squash. */
 function isoPosition(row, col, height) {
@@ -52,6 +55,19 @@ export function createBoardView(container, { board, theme, interactive = true })
   /** row,col -> the cube element, so redraws mutate rather than rebuild. */
   const cells = new Map();
 
+  /*
+   * The ball is drawn once, above the whole board, rather than inside a cube.
+   *
+   * A cell that sets z-index opens a stacking context, so a ball parked inside
+   * one cannot rise above the cube in front however high its own z-index goes.
+   * Raising the whole cell instead brings its coloured side faces up with it,
+   * which paints a slab of court wall across its neighbour. Its own layer
+   * avoids both: the ball stands on the surface, as a ball does.
+   */
+  const ballEl = document.createElement('div');
+  ballEl.className = 'dg-ball';
+  ballEl.hidden = true;
+
   for (let row = 0; row < board.height; row++) {
     for (let col = 0; col < board.width; col++) {
       const cell = document.createElement('div');
@@ -62,6 +78,7 @@ export function createBoardView(container, { board, theme, interactive = true })
       // Painter's order. Depth on an isometric board runs along row + col, not
       // along the DOM order, so without this a far cube can paint over a near
       // one and swallow the ball sitting on it.
+      cell.dataset.depth = String(row + col);
       cell.style.zIndex = String(row + col);
       cell.dataset.row = String(row);
       cell.dataset.col = String(col);
@@ -70,12 +87,7 @@ export function createBoardView(container, { board, theme, interactive = true })
       top_.className = 'dg-face dg-top';
       const glyph = document.createElement('span');
       glyph.className = 'dg-glyph';
-      // The ball is drawn rather than typed: a glyph sits on its font's
-      // baseline, which left it low in the square and at the mercy of whatever
-      // font happened to load.
-      const ballEl = document.createElement('span');
-      ballEl.className = 'dg-ball';
-      top_.append(glyph, ballEl);
+      top_.append(glyph);
 
       const left_ = document.createElement('div');
       left_.className = 'dg-face dg-left';
@@ -87,6 +99,8 @@ export function createBoardView(container, { board, theme, interactive = true })
       cells.set(`${row},${col}`, { cell, glyph });
     }
   }
+
+  surface.append(ballEl);
 
   let onSquare = null;
   if (interactive) {
@@ -155,6 +169,14 @@ export function createBoardView(container, { board, theme, interactive = true })
       }
       glyph.textContent = text;
     }
+
+    // Park the ball on its tile: centre of the cube's top, lifted a little so
+    // it reads as standing on the court rather than painted onto it. BALL_LIFT
+    // is in board units, which the 0.4 vertical squash then flattens.
+    const here = isoPosition(view.ball.row, view.ball.col, board.height);
+    ballEl.hidden = false;
+    ballEl.style.left = `${here.left + TILE / 2 - BALL_SIZE / 2}px`;
+    ballEl.style.top = `${here.top + TILE / 2 - BALL_SIZE / 2 - BALL_LIFT}px`;
 
     fit();
   }

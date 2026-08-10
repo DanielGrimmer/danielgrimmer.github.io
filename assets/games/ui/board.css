@@ -277,20 +277,19 @@ body.dg {
  * 0.8 x 0.4 squash so the ball reads as round rather than as an ellipse.
  */
 .dg-ball {
-  display: none;
-}
-
-.dg-cell.is-ball .dg-ball {
-  display: block;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22px;
-  height: 22px;
-  margin-left: -11px;
-  margin-top: -11px;
+  width: 18px;
+  height: 18px;
+  /* Above every cube, so nothing can slice it; placed by the renderer. */
+  z-index: 9999;
   border-radius: 50%;
-  transform: rotate(-45deg) scaleX(1.25) scaleY(2.5);
+  /*
+   * Undo the board's 0.8 x 0.4 squash so the ball reads as round. It sits on
+   * the surface rather than inside a rotated face, so unlike the glyphs it
+   * needs no counter-rotation. 1.25 x 0.8 and 2.5 x 0.4 both come to 1, so an
+   * 18px box renders as an 18px ball.
+   */
+  transform: scaleX(1.25) scaleY(2.5);
   background: radial-gradient(
     circle at 34% 30%,
     var(--dg-ball-hi) 0%,
@@ -404,6 +403,17 @@ body.dg {
 
 .dg-play .dg-status {
   margin-bottom: 0.5rem;
+}
+
+/*
+ * The board's cubes paint below their own tiles, and the frame reserves that —
+ * but a board with a lifted cube under the cursor can still reach further. The
+ * extra clearance keeps the buttons out of its way, and centring them under the
+ * board reads better than hanging them off the left edge.
+ */
+.dg-play .dg-bar {
+  justify-content: center;
+  margin-top: 2.5rem;
 }
 
 /* ---------------------------------------------------------------- misc ---- */
