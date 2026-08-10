@@ -379,10 +379,26 @@ body.dg {
   --dg-ball-lo: #a9530f;
 }
 
+/*
+ * The soccer ball needs a panel, not just shading: a plain white sphere at this
+ * size reads as a golf ball, because the gradient alone looks like dimpling.
+ * A dark centre spot is enough to say "football" at 18 pixels.
+ */
 .dg-board[data-theme='soccer'] {
   --dg-ball-hi: #ffffff;
-  --dg-ball-mid: #f2f2f2;
-  --dg-ball-lo: #9aa0a6;
+  --dg-ball-mid: #f4f4f4;
+  --dg-ball-lo: #8d949b;
+}
+
+.dg-board[data-theme='soccer'] .dg-ball {
+  background:
+    radial-gradient(circle at 50% 48%, #1c1f24 0 26%, transparent 27%),
+    radial-gradient(
+      circle at 34% 30%,
+      var(--dg-ball-hi) 0%,
+      var(--dg-ball-mid) 48%,
+      var(--dg-ball-lo) 100%
+    );
 }
 
 .dg-board[data-theme='hockey'] {

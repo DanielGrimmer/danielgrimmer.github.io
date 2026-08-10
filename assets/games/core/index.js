@@ -6,7 +6,7 @@
  * renderer sit on top and are swappable.
  */
 
-export * from './duality.js?v=4.1.2';
-export * from './rules.js?v=4.1.2';
-export * from './game.js?v=4.1.2';
-export * from './presets.js?v=4.1.2';
+export * from './duality.js?v=4.1.3';
+export * from './rules.js?v=4.1.3';
+export * from './game.js?v=4.1.3';
+export * from './presets.js?v=4.1.3';

@@ -14,13 +14,12 @@ Most of this can wait. In order:
 | --- | --- | --- | --- |
 | 1 | Check the visitor counters have a `count` number | **Now** — the published rules depend on it | 2 min |
 | 2 | Enable Anonymous Authentication | **Now** — harmless, and V4.0 needs it | 2 min |
-| 3 | Seed the room pool | When V4.0 is ready to test | 10 min |
+| 3 | ~~Seed the room pool~~ | Not needed — rooms appear on first use, under a fixed name list | — |
 | 4 | Turn on App Check enforcement | After V4.0 is live and sending tokens | 10 min |
 | 5 | Restrict the API key by referrer | Any time | 5 min |
 
-Doing 3 or 4 early does no good: the pool would sit empty and unused, and App
-Check enforcement would block the *current* game, which does not request a
-token.
+Doing 4 early does no good — App Check enforcement would block the game, which
+does not yet request a token.
 
 ### 1. Check the visitor counters — do this now
 
@@ -50,39 +49,12 @@ Console → Build → **Authentication** → *Get started* if you have never ope
 
 Nothing changes on the site until V4.0 ships, so this is safe to do at any time.
 
-### 3. Seed the room pool — when V4.0 is ready
+### 3. The room pool — nothing to do
 
-A "room" is one Firestore document holding one game. Clients are not allowed to
-create documents — that is what stops a stranger filling the project with junk —
-so the rooms have to exist before anyone can play in them. Twenty is plenty:
-they are reused, and a room frees itself five minutes after its players leave.
-
-**With a terminal (recommended).** Admin credentials bypass the rules, so
-nothing has to be loosened:
-
-1. Console → ⚙ Project settings → **Service accounts** → *Generate new private
-   key*. That downloads a JSON file. This one **is** a real secret, unlike the
-   API key in the game pages. Save it outside this repository.
-2. In any scratch folder:
-   ```sh
-   npm init -y && npm install firebase-admin
-   GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json \
-     node /path/to/_firebase/seed-rooms.mjs
-   ```
-   Add `--dry-run` first to see the room names without writing anything.
-3. Delete the key afterwards, or keep it somewhere safe. Never commit it.
-
-The script is safe to re-run: it skips any room that already exists, so a game
-in progress is never touched.
-
-**Without a terminal.** Temporarily allow creation, seed from the browser, then
-put the rule back. Slightly less tidy, and the window should be minutes:
-
-1. In the rules, add `allow create: if true;` to a temporary
-   `match /dualityRooms/{roomId}` block and publish.
-2. Open the site, open the browser console, and run the snippet V4.0 will ship
-   for this purpose.
-3. Remove the rule and publish again. Confirm `create` is denied everywhere.
+Rooms are created on first use, but only under one of the twenty names in
+`assets/games/net/rooms.js` and only as an empty game, so the number of
+documents this project can hold is still fixed. `seed-rooms.mjs` is kept in case
+you ever want them pre-created, but it is not part of setup.
 
 ### 4. App Check — after V4.0 is live
 
@@ -175,9 +147,8 @@ actually writes.
 
 | File | What it is |
 | --- | --- |
-| `firestore.rules` | **Publish this now.** Covers the games as they exist today |
-| `firestore-next.rules` | Draft for the rewritten games. Do not publish until the new client is live |
-| `seed-rooms.mjs` | One-off script to create the room pool, run with admin credentials |
+| `firestore.rules` | The whole published rules file. Paste it over what is in the console |
+| `seed-rooms.mjs` | Not needed any more — rooms are created lazily under a fixed name list. Kept in case you ever want to pre-create them |
 
 ## The next round, with the rewrite
 

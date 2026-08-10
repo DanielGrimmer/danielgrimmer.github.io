@@ -1,35 +1,161 @@
 rules_version = '2';
 
 // Firestore Security Rules for the `soccerhockeyduality` project, which serves
-// both Soccer Hockey and Escher Chess.
+// Soccer Hockey and Escher Chess. This is the whole published file: paste it
+// over what is in the console.
 //
-// INTERIM RULES. These lock down the games as they exist today, before the
-// rewrite. They are as tight as is possible while the clients remain
-// anonymous and write a whole state snapshot per move:
+// Requires Anonymous Authentication, and "Enable create (sign-up)" under
+// Authentication -> Settings -> User actions.
 //
-//   * nothing can be created or deleted, anywhere;
-//   * every write must match a known document shape, so no unknown fields;
-//   * lists are length-capped, so a document cannot be inflated;
-//   * `MobiusEuclidGames` is gone entirely — unmatched paths are denied by
-//     default, and it was the only collection open to create and delete.
+// Deliberately plain. Rules run on Google's servers and cannot be tested from
+// this repository, so everything here sticks to operations whose behaviour is
+// unambiguous: equality between primitives, .size(), .keys().hasOnly(), list
+// indexing, and arithmetic. List slicing and whole-map equality are avoided —
+// an earlier version used both and refused every legitimate move, which is not
+// a failure you can see until two people are sat in front of it.
 //
-// What these rules still cannot stop:
-//
-//   * An anonymous visitor who knows a room name overwriting a game in
-//     progress. Nothing here identifies who is writing, so nothing here can
-//     tell a player from a vandal. That needs Anonymous Authentication plus
-//     per-seat ownership, which arrives with the rewrite.
-//   * Sheer volume. The project is on the free Spark plan, where blowing
-//     through the 20,000 daily writes disables Firestore for the rest of the
-//     day rather than costing anything. Rules cannot rate-limit; App Check is
-//     the defence. See _firebase/README.md.
+// The project is on the free Spark plan, where exhausting the daily quota
+// disables Firestore rather than costing anything. Rules cannot rate-limit;
+// App Check is the defence. See README.md in this directory.
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ---------------------------------------------------------------------
-    // Helpers
-    // ---------------------------------------------------------------------
+    // =====================================================================
+    // V4.0 — the rewritten games
+    // =====================================================================
+
+    match /dualityRooms/{roomId} {
+
+      function signedIn() {
+        return request.auth != null && request.auth.uid is string;
+      }
+
+      // The pool is fixed, so the number of documents this project can ever
+      // hold is fixed too. Keep in step with assets/games/net/rooms.js.
+      function known() {
+        return roomId in [
+          'RedPuck', 'BlueGoal', 'GreenField', 'GoldRink', 'SilverNet',
+          'BronzeStripes', 'PurpleSkates', 'OrangeWhistle', 'WhitePuck', 'BlackGoal',
+          'AmberField', 'CoralRink', 'IvoryNet', 'JadeStripes', 'OnyxSkates',
+          'PearlWhistle', 'RustPuck', 'SableGoal', 'TealField', 'UmberRink'
+        ];
+      }
+
+      function before() { return resource.data; }
+      function after() { return request.resource.data; }
+
+      // Seat times are integer milliseconds from the client. They sit inside an
+      // array and Firestore forbids serverTimestamp() there, so the server
+      // cannot stamp them; instead they are bounded against the server clock.
+      // Only the future is bounded — a stale value is harmless and corrects
+      // itself, whereas one far ahead would park a seat indefinitely.
+      function nowMs() { return request.time.toMillis(); }
+
+      function seatShapeOk(i) {
+        return after().seats[i].keys().hasOnly(['uid', 'claimedAt', 'lastSeen', 'lastActive']);
+      }
+
+      function plausibleBeat(i) {
+        return after().seats[i].lastSeen is int
+          && after().seats[i].lastSeen <= nowMs() + 600000;
+      }
+
+      // Only seats and moves ever change; the rest is fixed at creation.
+      function shapeIsIntact() {
+        return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'moves'])
+          && after().version == before().version
+          && after().name == before().name
+          && after().game == before().game
+          && after().seats.size() == 2
+          && seatShapeOk(0) && seatShapeOk(1)
+          && after().moves.size() <= 500;
+      }
+
+      // Vacant: nobody holds it, or its holder has been silent for five minutes.
+      function seatVacant(i) {
+        return before().seats[i].uid == null
+          || before().seats[i].lastSeen == null
+          || nowMs() > before().seats[i].lastSeen + 300000;
+      }
+
+      function seatMine(i) {
+        return before().seats[i].uid == request.auth.uid;
+      }
+
+      // Who holds a seat may only change in your favour, and only from a seat
+      // that is vacant or already yours. Comparing the uid alone rather than
+      // the whole seat map keeps this to primitive equality, and still leaves
+      // a heartbeat free to update its own timestamps.
+      function seatWriteOk(i) {
+        return after().seats[i].uid == before().seats[i].uid
+          || (
+            after().seats[i].uid == request.auth.uid
+            && plausibleBeat(i)
+            && (seatVacant(i) || seatMine(i))
+          )
+          || (seatMine(i) && after().seats[i].uid == null); // releasing your own
+      }
+
+      function seatsUnchanged() {
+        return after().seats[0].uid == before().seats[0].uid
+          && after().seats[1].uid == before().seats[1].uid;
+      }
+
+      // Claiming, beating or releasing. The log does not move.
+      function isSeatOperation() {
+        return after().moves.size() == before().moves.size()
+          && seatWriteOk(0) && seatWriteOk(1);
+      }
+
+      // One move appended, by the seat whose turn it is. Seat 0 opens, so the
+      // seat on move is the parity of the log length — a rule cannot replay a
+      // board, but it can count.
+      function isMoveAppend() {
+        return after().moves.size() == before().moves.size() + 1
+          && before().seats[before().moves.size() % 2].uid == request.auth.uid
+          && seatsUnchanged();
+      }
+
+      // Starting again in the same room, keeping both seats.
+      function isReset() {
+        return after().moves.size() == 0
+          && before().moves.size() > 0
+          && seatsUnchanged();
+      }
+
+      // A new room may be born with one seat taken, provided it is taken by
+      // whoever is creating it: arriving first and sitting down is a single
+      // write, with no instant between the two for a second write to land in.
+      function freshSeat(i) {
+        return after().seats[i].uid == null
+          || (after().seats[i].uid == request.auth.uid && plausibleBeat(i));
+      }
+
+      function isFreshRoom() {
+        return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'moves'])
+          && after().name == roomId
+          && after().version == 1
+          && after().moves.size() == 0
+          && after().seats.size() == 2
+          && seatShapeOk(0) && seatShapeOk(1)
+          && freshSeat(0) && freshSeat(1);
+      }
+
+      allow read: if signedIn() && known();
+      allow create: if signedIn() && known() && isFreshRoom();
+      allow delete: if false;
+      allow update: if signedIn()
+        && known()
+        && shapeIsIntact()
+        && (isSeatOperation() || isMoveAppend() || isReset());
+    }
+
+    // =====================================================================
+    // V3.1 — the old games. Nothing on the site links to these any more, but
+    // the documents are still there and the pages still work if opened
+    // directly. Delete these blocks once the old bundles are retired.
+    // =====================================================================
 
     // Visitor counters are only ever bumped by one, by a transaction that has
     // just read the current value. Any other value is rejected.
@@ -47,9 +173,6 @@ service cloud.firestore {
         || request.resource.data[field].size() <= cap;
     }
 
-    // ---------------------------------------------------------------------
-    // Soccer Hockey — one document per room, `game_<RoomName>`
-    // ---------------------------------------------------------------------
     match /games/{room} {
       allow read: if true;
       allow create, delete: if false;
@@ -60,7 +183,6 @@ service cloud.firestore {
           'previousPositions', 'currentBallPos', 'moveMarks',
           'isPlayer1Turn', 'b', 'winner'
         ])
-        // The board cannot exceed what the game's own inputs permit.
         && (!('width' in request.resource.data)
             || (request.resource.data.width is int
                 && request.resource.data.width >= 1
@@ -69,16 +191,13 @@ service cloud.firestore {
             || (request.resource.data.height is int
                 && request.resource.data.height >= 1
                 && request.resource.data.height <= 22))
-        // 20 x 22 is 440 squares, so no honest game exceeds these.
         && listWithin('previousPositions', 500)
         && listWithin('moveMarks', 500);
     }
 
-    // ---------------------------------------------------------------------
-    // Escher Chess — this collection holds two kinds of document:
+    // This collection holds two kinds of document:
     //   `game_<Room>` / `demo_<Room>`                   game state
     //   `game_visitors_<Room>` / `demo_visitors_<Room>` a visitor counter
-    // ---------------------------------------------------------------------
     match /EscherChessGames/{docId} {
       allow read: if true;
       allow create, delete: if false;
@@ -88,17 +207,9 @@ service cloud.firestore {
              'boardState', 'isWhiteTurn', 'lastUpdated',
              'lastUsed', 'boardSize', 'boardSizeSource'
            ])
-           // The largest board is 5 x 13; 200 leaves generous headroom.
            && listWithin('boardState', 200));
     }
 
-    // ---------------------------------------------------------------------
-    // Soccer Hockey's visitor counters, `visitors_<RoomName>`
-    //
-    // Only the pre-rewrite demo page writes here, to assign player 1 / player 2
-    // by the parity of a site-wide count. The rewrite replaces this with
-    // per-room seat claiming, after which this collection can be deleted.
-    // ---------------------------------------------------------------------
     match /sharedData/{document} {
       allow read: if true;
       allow create, delete: if false;
@@ -106,7 +217,5 @@ service cloud.firestore {
     }
 
     // No other path is matched, so everything else is denied by default.
-    // `MobiusEuclidGames` was removed deliberately: it allowed create and
-    // delete to anyone, which is unbounded document creation on your bill.
   }
 }
