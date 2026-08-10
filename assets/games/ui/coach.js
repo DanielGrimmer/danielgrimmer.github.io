@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.0.6';
-import { replayFrames } from '../core/game.js?v=4.0.6';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.0.7';
+import { replayFrames } from '../core/game.js?v=4.0.7';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -86,12 +86,11 @@ export const STALLED_HINT = 'That game is over — press “Start again” and p
 export const BASKETBALL_STEPS = Object.freeze([
   {
     id: 'welcome',
-    title: 'One ball, Two goals',
+    title: 'One Ball, Two Goals',
     body:
       'The ball is the orange circle in the middle. The single gaps in the black ' +
       "walls are the two goals. Player 1's goal is the one at the top right, " +
-      "Player 2's goal is at the bottom left. Play both sides yourself, or take " +
-      'turns with whoever is sitting next to you.\n\n' +
+      "Player 2's goal is at the bottom left.\n\n" +
       'The yellow highlighted squares show where the ball can go next: short ' +
       'steps to the squares around it, and longer passes further out. Remember ' +
       'the star-shape they make around the ball, you will want to recognize it ' +
@@ -150,13 +149,16 @@ export const BASKETBALL_STEPS = Object.freeze([
  * other's screen.
  */
 export const BASKETBALL_OUTRO = Object.freeze({
-  title: 'Now the real game',
+  title: 'Now the Real Game Begins',
   body:
-    'That is the whole interface. The real game is played in exactly this way, ' +
-    'on a slightly bigger board — except that you and your opponent will not be ' +
-    'looking at the same thing, and working out how that can possibly be fair is ' +
-    'the point of the exercise.\n\n' +
-    'So it only works if each of you can see your own screen and not the other. ' +
-    'If you have been sharing this one, move to separate devices now, and do not ' +
-    'talk to each other during the first game. The next screen will pair you up.',
+    'That is the whole interface. The real game is played exactly the same way ' +
+    'except on a slightly bigger board. The “trick” only works if the two ' +
+    'players are looking at separate screens (on separate devices) and do not ' +
+    'talk to each other until the first game is over. So if you and your ' +
+    'opponent have been working through this demo together (on one device) you ' +
+    'need to split up now. The next screen will make sure that you are paired ' +
+    'up into the same game room.',
+  /** Where the closing button goes. */
+  href: '/soccer-hockey/',
+  cta: 'Play the Real Game →',
 });

@@ -134,6 +134,26 @@ body.dg {
   cursor: not-allowed;
 }
 
+/* The one button the page wants you to press. */
+.dg-btn-primary {
+  display: inline-block;
+  background: var(--dg-accent);
+  color: var(--dg-accent-text);
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+}
+
+.dg-btn-primary:hover {
+  opacity: 0.88;
+  background: var(--dg-accent);
+  color: var(--dg-accent-text);
+}
+
+.dg-intro {
+  color: var(--dg-text-muted);
+  margin-top: -1rem;
+}
+
 .dg-status {
   padding: 0.75rem 1rem;
   border: 1px solid var(--dg-divider);

@@ -1,23 +1,24 @@
 ---
 layout: page
 permalink: /soccer-hockey/
-title: soccer hockey
-description: A two-player game where each player sees a different — but equivalent — version of the same match.
+title: soccer hockey # the navbar label, lower-case like its siblings
+display_title: The Soccer-Hockey Duality Game # the <h1> on the page itself
+description: Soccer and Hockey are very different games... or aren't they?
 nav: false # surfaced via the 'games' dropdown in _pages/games.md
 ---
 
-Two players sit at separate screens and play what each believes is an ordinary
-game. One is playing soccer. The other is playing hockey. Neither can see the
-other's board, and neither is wrong: the two boards are different
-representations of one and the same underlying game state, related by a duality.
-Every move made in one is a legal, sensible move in the other.
-
-It is a playable version of a question I work on in the
-[philosophy of physics]({{ '/publications/' | relative_url }}): when two
-theories are dual to one another, and each describes the world perfectly well in
-its own terms, which one is telling us what the world is really like? See
-*Dualities, Quantum Mechanics, and the Uncommon Common Core* on the
-publications page.
+This game must be played with a friend. There is a mystery at the heart of this
+game which the two players should try to solve together after playing their
+first game. In brief, there are two seemingly contradictory ways of looking at
+this game which are nonetheless somehow perfectly coherent with each other. In
+order to preserve the mystery until the end of the first game, however, **there
+must be a strict firewall** between you and your friend. While you can be
+sitting side-by-side for the demo game, it will be important for the real game
+that you are on **separate devices**, that you **do not peak** at each other's
+screens, and **do not talk** to each other (e.g., mute your audio call). During
+the first game, each player should be focused solely upon their own game
+experience. After this, once you begin comparing notes, the nature of the game's
+central mystery will become apparent.
 
 <!--
   Styled locally rather than with the theme's `btn` classes: those are only given
@@ -43,21 +44,21 @@ publications page.
 </style>
 
 <div class="sh-actions">
-  <a href="{{ '/assets/SoccerHockey/SoccerHockeyDemoV3.1.html' | relative_url }}">Start with the tutorial</a>
-  <a href="{{ '/assets/SoccerHockey/SoccerHockeyGameV3.1.html' | relative_url }}">Go straight to the game</a>
+  <a href="{{ '/assets/SoccerHockey/SoccerHockeyTutorialV4.0.html' | relative_url }}">Start with the tutorial (Basketball)</a>
+  <a href="{{ '/assets/SoccerHockey/SoccerHockeyGameV3.1.html' | relative_url }}">Go straight to the game (Soccer or Hockey)</a>
 </div>
 
-**You need a second player**, and for the real game you need to *not* be able to
-see each other's screens — that is the whole point. Open the page separately on
-your own devices and join the same game room; the state syncs between you. The
-tutorial can be played side by side.
+While the tutorial can be played side-by-side on one device, you will ultimately
+need to open this webpage on two separate devices. Once you get into the same
+game room, the game state will be synchronized automatically behind the scenes.
 
 <!--
-  The game is a static bundle in assets/SoccerHockey/ (two HTML files plus two ES
-  modules). It talks to a Firebase Firestore project for room state.
+  The tutorial is V4.0 and needs nothing but a browser. The game is still V3.1
+  and is next to be rebuilt; until then it depends on the V3.1 demo page having
+  assigned a side, so a player arriving straight from the V4.0 tutorial has no
+  seat. That gap closes when the V4.0 game lands.
 
   Firebase web API keys are designed to be public — access is controlled by
   Firestore Security Rules, not by keeping the key secret — so the key in
-  firebaseConfig.js is not a leak. But it does mean the rules are the only thing
-  guarding that database. See CHECKLIST.md item G1 before relying on this.
+  firebaseConfig.js is not a leak. The rules are in _firebase/.
 -->

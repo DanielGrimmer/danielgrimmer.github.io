@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.0.6" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.0.7" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -24,12 +24,18 @@
         <a href="/soccer-hockey/">← Soccer Hockey</a>
       </header>
 
+      <p class="dg-intro">
+        Play both sides yourself, or take turns with whoever is sitting next to
+        you.
+      </p>
+
       <div class="dg-layout">
         <div class="dg-coach" id="coach" aria-live="polite">
           <div class="dg-coach-progress" id="coachProgress"></div>
           <h2 class="dg-coach-title" id="coachTitle"></h2>
           <p class="dg-coach-body" id="coachBody"></p>
           <p class="dg-coach-hint" id="coachHint"></p>
+          <a class="dg-btn dg-btn-primary" id="playReal" href="/soccer-hockey/" hidden></a>
           <button class="dg-link" id="coachSkip" type="button">Skip this bit</button>
         </div>
 
@@ -61,9 +67,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.0.6'; // keep in step with the ?v= tokens below
+      const BUILD = '4.0.7'; // keep in step with the ?v= tokens below
 
-      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.0.6';
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.0.7';
       import {
         initialGame,
         applyMove,
@@ -71,8 +77,8 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.0.6';
-      import { createBoardView } from '../games/ui/board.js?v=4.0.6';
+      } from '../games/core/game.js?v=4.0.7';
+      import { createBoardView } from '../games/ui/board.js?v=4.0.7';
       import {
         contextFor,
         stepIndex,
@@ -80,7 +86,7 @@
         STALLED_HINT,
         BASKETBALL_STEPS,
         BASKETBALL_OUTRO,
-      } from '../games/ui/coach.js?v=4.0.6';
+      } from '../games/ui/coach.js?v=4.0.7';
 
       const config = BASKETBALL_TUTORIAL;
 
@@ -122,6 +128,11 @@
         // A finished board cannot satisfy the step being asked for, so say so
         // rather than leaving the hint asking for the impossible.
         el('coachHint').textContent = done ? '' : stalled ? STALLED_HINT : step.hint;
+        // The way out, offered only once the tutorial has actually finished.
+        const cta = el('playReal');
+        cta.hidden = !done;
+        cta.textContent = BASKETBALL_OUTRO.cta;
+        cta.href = BASKETBALL_OUTRO.href;
         el('coachSkip').hidden = done;
         el('coach').dataset.done = String(done);
         el('coach').dataset.stalled = String(stalled);
