@@ -13,7 +13,7 @@ first game. In brief, there are two seemingly contradictory ways of looking at
 this game which are nonetheless somehow perfectly coherent with each other. In
 order to preserve the mystery until the end of the first game, however, **there
 must be a strict firewall** between you and your friend. While you can be
-sitting side-by-side for the demo game, it will be important for the real game
+sitting side-by-side for the tutorial, it will be important for the real game
 that you are on **separate devices**, that you **do not peak** at each other's
 screens, and **do not talk** to each other (e.g., mute your audio call). During
 the first game, each player should be focused solely upon their own game

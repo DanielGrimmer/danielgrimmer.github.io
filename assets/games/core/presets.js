@@ -7,7 +7,7 @@
  * which is how it ended up with a stalemate guard the real game lacked.
  */
 
-import { makeConfig } from './game.js?v=4.1.3';
+import { makeConfig } from './game.js?v=4.1.4';
 
 /** Palettes lifted verbatim from v3.1 so the boards keep their look. */
 export const THEMES = Object.freeze({
@@ -47,8 +47,8 @@ export const BASKETBALL_TUTORIAL = makeConfig({
     [-2, 2],
   ],
   seats: [
-    { name: 'Player 1', theme: 'basketball' },
-    { name: 'Player 2', theme: 'basketball' },
+    { name: 'Player 1', theme: 'basketball', goalCorner: 'top right' },
+    { name: 'Player 2', theme: 'basketball', goalCorner: 'bottom left' },
   ],
 });
 
@@ -59,9 +59,16 @@ export const SOCCER_HOCKEY = makeConfig({
   width: 11,
   height: 13,
   duality: 4,
+  /*
+   * `goalCorner` is where that seat is trying to reach, in the words a player
+   * can act on. Seat 0 always defends row 0, which the isometric projection
+   * puts at the top right; seat 1 has the far end, at the bottom left. Which
+   * sport you are handed is unrelated to which way you are heading, and the two
+   * being independent is exactly what makes it easy to lose track of.
+   */
   seats: [
-    { name: 'Player 1', theme: 'soccer', sport: 'Soccer', surface: 'Soccer Field' },
-    { name: 'Player 2', theme: 'hockey', sport: 'Hockey', surface: 'Hockey Rink' },
+    { name: 'Player 1', theme: 'soccer', sport: 'Soccer', surface: 'Soccer Field', goalCorner: 'top right' },
+    { name: 'Player 2', theme: 'hockey', sport: 'Hockey', surface: 'Hockey Rink', goalCorner: 'bottom left' },
   ],
 });
 

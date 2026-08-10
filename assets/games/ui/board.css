@@ -380,9 +380,11 @@ body.dg {
 }
 
 /*
- * The soccer ball needs a panel, not just shading: a plain white sphere at this
- * size reads as a golf ball, because the gradient alone looks like dimpling.
- * A dark centre spot is enough to say "football" at 18 pixels.
+ * A football is recognised by its panels, not by being white — a plain white
+ * sphere reads as a golf ball, and one dark spot reads as an eye. So: the
+ * centre pentagon, and the ring of five around it that a real ball shows from
+ * this angle. Five gradients is more than it sounds like, but at 18px the
+ * pattern is the whole signal.
  */
 .dg-board[data-theme='soccer'] {
   --dg-ball-hi: #ffffff;
@@ -392,7 +394,12 @@ body.dg {
 
 .dg-board[data-theme='soccer'] .dg-ball {
   background:
-    radial-gradient(circle at 50% 48%, #1c1f24 0 26%, transparent 27%),
+    radial-gradient(circle at 50% 50%, #1c1f24 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 4%, #1c1f24 0 13%, transparent 14%),
+    radial-gradient(circle at 93% 35%, #1c1f24 0 13%, transparent 14%),
+    radial-gradient(circle at 74% 94%, #1c1f24 0 13%, transparent 14%),
+    radial-gradient(circle at 26% 94%, #1c1f24 0 13%, transparent 14%),
+    radial-gradient(circle at 7% 35%, #1c1f24 0 13%, transparent 14%),
     radial-gradient(
       circle at 34% 30%,
       var(--dg-ball-hi) 0%,

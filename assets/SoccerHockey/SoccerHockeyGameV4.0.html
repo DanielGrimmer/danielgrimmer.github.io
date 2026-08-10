@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.3" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.4" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -51,25 +51,25 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.1.3';
+      const BUILD = '4.1.4';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.3';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.4';
       import {
         initialGame,
         replay,
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.1.3';
+      } from '../games/core/game.js?v=4.1.4';
       import {
         presenceOf,
         seatOf,
         normaliseSeats,
         occupancy,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.1.3';
-      import { createBoardView } from '../games/ui/board.js?v=4.1.3';
-      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.3';
+      } from '../games/core/seats.js?v=4.1.4';
+      import { createBoardView } from '../games/ui/board.js?v=4.1.4';
+      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.4';
       import {
         signIn,
         chooseRoom,
@@ -82,7 +82,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.1.3';
+      } from '../games/net/room.js?v=4.1.4';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -102,6 +102,10 @@
 
       function sportOf(index) {
         return config.seats[index]?.sport ?? 'Spectating';
+      }
+
+      function cornerOf(index) {
+        return config.seats[index]?.goalCorner ?? '';
       }
 
       function describeOpponent() {
@@ -131,7 +135,12 @@
           return game.outcome.winner === seat ? 'You win.' : 'Your opponent wins.';
         }
         if (game.outcome.status === STATUS.TIE) return 'Nobody can move. A draw.';
-        return game.turn === seat ? 'Your move.' : "Your opponent's move.";
+        // Which way you are heading is the thing players lose track of: the
+        // sport you were handed says nothing about it, and it need not match
+        // the side you had in the tutorial. So it is repeated every turn.
+        return game.turn === seat
+          ? `Your move. You are heading for the goal at the ${cornerOf(seat)}.`
+          : `Your opponent's move. They are heading for the ${cornerOf(seat === 0 ? 1 : 0)}.`;
       }
 
       function draw() {
@@ -189,14 +198,16 @@
           return;
         }
 
-        el('sportTitle').textContent = sportOf(seat);
-        el('sportSub').textContent = `You are Player ${seat + 1}.`;
+        el('sportTitle').textContent = `${sportOf(seat)} — you are Player ${seat + 1}`;
+        el('sportSub').textContent = `Your goal is the gap at the ${cornerOf(seat)}.`;
 
         const full = occupancy(state.seats, now()).held === 2;
         el('coachBody').textContent = full
-          ? 'You are both here. Stop talking to each other now — no comparing ' +
-            'screens, no hints — and play the game out. When it is over, call ' +
-            'each other and compare notes.'
+          ? `You are both here. You are Player ${seat + 1}, playing ` +
+            `${sportOf(seat)}, and your goal is the gap at the ` +
+            `${cornerOf(seat)} — which need not be the side you had in the ` +
+            'tutorial. Stop talking to each other now: no comparing screens, ' +
+            'no hints. When the game is over, call each other and compare notes.'
           : 'You are the only one here. Send your opponent the invite link, or ' +
             'tell them this room name so they can type it in. Once they arrive, ' +
             'stop talking to each other until the game is over.';

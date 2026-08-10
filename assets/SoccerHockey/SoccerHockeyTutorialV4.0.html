@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.3" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.4" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -40,7 +40,7 @@
         </div>
 
         <div class="dg-play">
-          <div class="dg-status" id="status">Player 1 to move.</div>
+          <div class="dg-status" id="status">Player 1 to move, heading for the top right.</div>
           <div id="board"></div>
           <div class="dg-bar">
             <button class="dg-btn" id="undo" type="button">Take that back</button>
@@ -67,9 +67,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.1.3'; // keep in step with the ?v= tokens below
+      const BUILD = '4.1.4'; // keep in step with the ?v= tokens below
 
-      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.1.3';
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.1.4';
       import {
         initialGame,
         applyMove,
@@ -77,8 +77,8 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.1.3';
-      import { createBoardView } from '../games/ui/board.js?v=4.1.3';
+      } from '../games/core/game.js?v=4.1.4';
+      import { createBoardView } from '../games/ui/board.js?v=4.1.4';
       import {
         contextFor,
         stepIndex,
@@ -86,7 +86,7 @@
         STALLED_HINT,
         BASKETBALL_STEPS,
         BASKETBALL_OUTRO,
-      } from '../games/ui/coach.js?v=4.1.3';
+      } from '../games/ui/coach.js?v=4.1.4';
 
       const config = BASKETBALL_TUTORIAL;
 
@@ -107,10 +107,14 @@
       const el = (id) => document.getElementById(id);
       const statusEl = el('status');
 
+      // Which way a player is heading is the thing that gets lost, so the status
+      // line carries it rather than leaving it to the legend underneath.
+      const cornerOf = (index) => config.seats[index]?.goalCorner ?? '';
+
       function statusText() {
         if (game.outcome.status === STATUS.WON) return `Player ${game.outcome.winner + 1} scores.`;
         if (game.outcome.status === STATUS.TIE) return 'Nobody can move. A draw.';
-        return `Player ${game.turn + 1} to move.`;
+        return `Player ${game.turn + 1} to move, heading for the ${cornerOf(game.turn)}.`;
       }
 
       function drawCoach() {

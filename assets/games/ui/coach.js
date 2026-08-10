@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.1.3';
-import { replayFrames } from '../core/game.js?v=4.1.3';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.1.4';
+import { replayFrames } from '../core/game.js?v=4.1.4';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -155,7 +155,7 @@ export const BASKETBALL_OUTRO = Object.freeze({
     'except on a slightly bigger board. The “trick” only works if the two ' +
     'players are looking at separate screens (on separate devices) and do not ' +
     'talk to each other until the first game is over. So if you and your ' +
-    'opponent have been working through this demo together (on one device) you ' +
+    'opponent have been working through this tutorial together (on one device) you ' +
     'need to split up now. The next screen will make sure that you are paired ' +
     'up into the same game room.',
   /** Where the closing button goes. */
