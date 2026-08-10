@@ -128,12 +128,46 @@ No action needed — recorded so you can spot anything wrong.
       `og_image` are off.
 - [ ] **F3. Add PhilPeople** to `_data/socials.yml`.
 
+## H. For you — BibTeX I could not fetch
+
+Bibliography entries should be the official records rather than hand-typed ones.
+Two are done: **Direct From Darwin** (arXiv) and **the Uncommon Common Core**
+(BJPS), both from records you supplied.
+
+The rest I could not do myself: the sandbox this site is edited from blocks
+outbound traffic to `arxiv.org`, `philsci-archive.pitt.edu` and
+`journals.uchicago.edu` (the proxy refuses the connection outright), so there is
+no way to pull the official entries from here. **Paste each record in and I will
+reformat and apply it**, exactly as with Direct From Darwin.
+
+- [ ] **H1. The six remaining unpublished / under-review entries.** Each needs
+      its official record; the key stays short, as you asked.
+
+      | Entry | Where it lives | Source to copy from |
+      | --- | --- | --- |
+      | `grimmer2026innateness` | `papers.bib` (under review) | philsci-archive.pitt.edu/28373/ |
+      | `grimmer2023spacetimerep` | `preprints.bib` | arxiv.org/abs/2306.08110 |
+      | `grimmer2023humean` | `preprints.bib` | arxiv.org/abs/2308.14146 |
+      | `grimmer2023ise` | `preprints.bib` | arxiv.org/abs/2303.04130 |
+      | `grimmer2022discrete2` | `preprints.bib` | arxiv.org/abs/2205.07701 |
+      | `grimmer2022discrete1` | `preprints.bib` | arxiv.org/abs/2204.02276 |
+
+- [ ] **H2. Which title is the real one?** The BJPS export you supplied titles
+      the paper *"Duality, Underdetermination, and the Uncommon Common Core"*;
+      the CV (revised 2026-08) titles it *"Dualities, Quantum Mechanics, and the
+      Uncommon Common Core"*. The export has `number = {ja}` — "just accepted" —
+      along with `volume = {0}` and an empty year, so it may predate the final
+      published version, in which case the CV would be the current title. The
+      site now carries the export's title, since you asked for official sources.
+      Worth one look at the published article; if the CV is right, it is a
+      one-line revert in `papers.bib`.
+
 ## G. Verified
 
-- Builds with zero warnings and zero errors; 11 pages
-- Publications: 2 + 18 + 5, matching the CV exactly
+- Builds with zero warnings and zero errors
 - No broken internal links; no plain-text email anywhere in the output
-- CV page renders all seven sections with real data
+- The CV is served as a PDF only — `/cv/` and `_data/cv.yml` were removed, and
+  `cv_pdf` in `_data/socials.yml` still links the PDF from the social icons
 - Light mode, dark mode and mobile all check out
 - Both game bundles survive the build with ES module imports intact
 - Publications page renders three sections: 2 under review, 18 peer-reviewed,

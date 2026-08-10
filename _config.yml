@@ -396,7 +396,9 @@ filtered_bibtex_keywords:
     blog,
     code,
     dimensions,
-    eprint,
+    # `eprint` is deliberately NOT filtered: entries taken verbatim from arXiv
+    # carry eprint/archivePrefix/primaryClass, and hiding eprint would show a
+    # truncated version of the official record in the Bib popup.
     google_scholar_id,
     hal,
     html,
@@ -688,9 +690,9 @@ third_party_libraries:
 # Get external JSON data
 # -----------------------------------------------------------------------------
 
-# The CV page is driven by _data/cv.yml (cv_format: rendercv in _pages/cv.md),
-# so the JSON Resume fetch below is not used. Re-enable it only if you switch
-# _pages/cv.md to cv_format: jsonresume.
+# There is no CV page: /cv/ and _data/cv.yml were removed, and the CV is served
+# as the PDF at assets/pdf/CV_Grimmer.pdf (linked by cv_pdf in _data/socials.yml).
+# The JSON Resume fetch below is therefore unused.
 jekyll_get_json:
 
 jsonresume:

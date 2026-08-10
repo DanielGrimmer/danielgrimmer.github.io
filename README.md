@@ -17,7 +17,7 @@ still outstanding is listed in [CHECKLIST.md](CHECKLIST.md).
 | Publications | `_bibliography/papers.bib` (under review + peer-reviewed) and `_bibliography/preprints.bib` (unpublished preprints) — the page generates itself |
 | Talks, posters, research visits | `_pages/talks.md` |
 | Teaching | `_pages/teaching.md` |
-| CV | `_data/cv.yml`; the PDF is `assets/pdf/CV_Grimmer.pdf` |
+| CV | `assets/pdf/CV_Grimmer.pdf`, linked by `cv_pdf` in `_data/socials.yml`. There is no CV page — the PDF is the CV |
 | Site title, description, favicon | `_config.yml`, top section |
 | Email and profile links | `_data/socials.yml` |
 | Journal badge colours | `_data/venues.yml`, keyed by the `abbr` field in the .bib |

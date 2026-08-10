@@ -33,18 +33,26 @@
   html        = {https://philsci-archive.pitt.edu/28373/}
 }
 
-@article{grimmer2026darwin,
-  title       = {Direct From Darwin: Deriving Advanced Optimizers From Evolutionary First Principles},
-  author      = {Grimmer, Daniel},
-  year        = {2026},
-  month       = {May},
-  abbr        = {Preprint},
-  status      = {submitted},
-  selected    = {true},
-  bibtex_show = {true},
-  journal     = {arXiv},
-  arxiv       = {2605.05284},
-  code        = {https://github.com/DanielGrimmer/adam-dls}
+%% The arXiv record verbatim, but under a short key. `additional_info` supplies
+%% the "arXiv" venue line that @misc would otherwise leave blank, and is hidden
+%% from the Bib popup by filtered_bibtex_keywords — so the popup shows the
+%% official entry and nothing else.
+@misc{grimmer2026darwin,
+  title           = {Direct From Darwin: Deriving Advanced Optimizers From Evolutionary First Principles},
+  author          = {Grimmer, Daniel},
+  year            = {2026},
+  month           = {May},
+  eprint          = {2605.05284},
+  archivePrefix   = {arXiv},
+  primaryClass    = {cs.NE},
+  url             = {https://arxiv.org/abs/2605.05284},
+  additional_info = {arXiv},
+  abbr            = {Preprint},
+  status          = {submitted},
+  selected        = {true},
+  bibtex_show     = {true},
+  arxiv           = {2605.05284},
+  code            = {https://github.com/DanielGrimmer/adam-dls}
 }
 
 %% ---------------------------------------------------------------------
@@ -72,16 +80,24 @@
   bibtex_show = {true}
 }
 
+%% Title, authors, DOI and URL from the publisher's own BibTeX export. Its
+%% volume = {0}, number = {ja} ("just accepted") and empty year/pages are
+%% dropped: they are pre-publication placeholders, and an empty year would
+%% strip this entry out of the year grouping on /publications/. The March 2024
+%% date is kept from the CV. NOTE: that export titles this "Duality,
+%% Underdetermination…" while the CV titles it "Dualities, Quantum Mechanics…".
+%% See CHECKLIST.md H2 — one of the two is stale and it needs checking.
 @article{grimmer2024dualities,
-  title       = {Dualities, Quantum Mechanics, and the Uncommon Common Core},
+  title       = {Duality, Underdetermination, and the Uncommon Common Core},
   author      = {Grimmer, Daniel and Cinti, Enrico and Jaksland, Rasmus},
   journal     = {The British Journal for the Philosophy of Science},
   year        = {2024},
   month       = {March},
+  doi         = {10.1086/730421},
+  url         = {https://www.journals.uchicago.edu/doi/abs/10.1086/730421},
   abbr        = {BJPS},
   selected    = {true},
   bibtex_show = {true},
-  doi         = {10.1086/730421},
   html        = {https://www.journals.uchicago.edu/doi/10.1086/730421}
 }
 
