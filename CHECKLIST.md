@@ -115,8 +115,10 @@ No action needed — recorded so you can spot anything wrong.
       can join a room and move pieces in someone else's game.
 - [ ] **E3. Optionally restrict the API key** to referrer
       `danielgrimmer.github.io/*` in the Google Cloud console.
-- [ ] **E4. The demos and games keep their own styling** and don't inherit the
-      site theme, as on the old site.
+- [x] ~~**E4. The demos and games keep their own styling**~~ — reversed. The
+      games are to be restyled to match the rest of the site as part of the
+      rewrite. The isometric boards and both palettes stay as they are; it is
+      the page furniture around them that should inherit the site theme.
 - [ ] **E5. Gameplay is untested.** Both bundles load with no JavaScript errors
       and all their assets resolve, but every dynamic field stays on "Loading…"
       here because this build environment cannot reach Firebase. Play a real

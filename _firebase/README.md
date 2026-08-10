@@ -40,6 +40,14 @@ If a legitimate write is refused after publishing, the shape check is the first
 suspect: compare the field list in the rule against the object the client
 actually writes.
 
+## Files here
+
+| File | What it is |
+| --- | --- |
+| `firestore.rules` | **Publish this now.** Covers the games as they exist today |
+| `firestore-next.rules` | Draft for the rewritten games. Do not publish until the new client is live |
+| `seed-rooms.mjs` | One-off script to create the room pool, run with admin credentials |
+
 ## The next round, with the rewrite
 
 These interim rules cannot tell a player from a vandal, because nothing

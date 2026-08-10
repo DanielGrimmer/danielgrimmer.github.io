@@ -1,0 +1,100 @@
+rules_version = '2';
+
+// DRAFT — do not publish yet.
+//
+// These are the rules for the rewritten games, covering the `dualityRooms`
+// collection that does not exist until the pool is seeded. Publish them only
+// once the new client is live; until then `firestore.rules` in this directory
+// is the file to use. Both can coexist: this adds a collection rather than
+// changing the existing ones, so the old game keeps running throughout the
+// changeover and the two collections are cut over independently.
+//
+// The difference from the interim rules is that these can tell who is writing.
+// With Anonymous Authentication enabled, every browser carries a stable uid,
+// a seat is owned by a uid, and a move is refused unless it comes from the
+// seat whose turn it is. Anonymous does not mean unidentified.
+//
+// Two things make that enforceable:
+//
+//   * Whose turn it is is derivable from the log — seat 0 moves first, so the
+//     seat on move is `moves.size() % 2`. No separate turn field to disagree
+//     with, and nothing to forge.
+//   * Timestamps are pinned to `request.time` rather than taken from the
+//     client, so a tab cannot backdate a rival's seat to steal it, nor hold
+//     its own seat open forever while disconnected.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /dualityRooms/{roomId} {
+
+      function signedIn() {
+        return request.auth != null && request.auth.uid is string;
+      }
+
+      function before() { return resource.data; }
+      function after() { return request.resource.data; }
+
+      // Only these fields exist, and only seats and moves ever change.
+      function shapeIsIntact() {
+        return after().keys().hasOnly(['version', 'name', 'game', 'params', 'seats', 'moves'])
+          && after().version == before().version
+          && after().name == before().name
+          && after().game == before().game
+          && after().params == before().params
+          && after().seats.size() == 2
+          && after().moves.size() <= 500;
+      }
+
+      // A seat is vacant if nobody holds it, or its holder has been silent for
+      // longer than five minutes of server time.
+      function seatVacant(i) {
+        return before().seats[i].uid == null
+          || before().seats[i].lastSeen == null
+          || request.time > before().seats[i].lastSeen + duration.value(5, 'm');
+      }
+
+      function seatMine(i) {
+        return before().seats[i].uid == request.auth.uid;
+      }
+
+      // Writing a seat: you may only put your own uid into it, you may only do
+      // so if it is vacant or already yours, and lastSeen must be now.
+      function seatWriteOk(i) {
+        return after().seats[i] == before().seats[i]
+          || (
+            after().seats[i].uid == request.auth.uid
+            && after().seats[i].lastSeen == request.time
+            && (seatVacant(i) || seatMine(i))
+          )
+          || (seatMine(i) && after().seats[i].uid == null); // releasing your own
+      }
+
+      function seatsOk() {
+        return seatWriteOk(0) && seatWriteOk(1);
+      }
+
+      // Claiming, beating or releasing a seat. The move log must not move.
+      function isSeatOperation() {
+        return after().moves == before().moves && seatsOk();
+      }
+
+      // Exactly one move appended, by the seat whose turn it is. Seat 0 opens,
+      // so the seat on move is the parity of the log length.
+      function isMoveAppend() {
+        return after().moves.size() == before().moves.size() + 1
+          && after().moves[0:before().moves.size()] == before().moves
+          && before().seats[before().moves.size() % 2].uid == request.auth.uid
+          && request.time <= before().seats[before().moves.size() % 2].lastSeen
+               + duration.value(5, 'm')
+          && seatsOk();
+      }
+
+      allow read: if signedIn();
+      allow create, delete: if false; // the pool is seeded once, with admin credentials
+      allow update: if signedIn()
+        && shapeIsIntact()
+        && (isSeatOperation() || isMoveAppend());
+    }
+  }
+}
