@@ -12,49 +12,37 @@
       <header class="dg-masthead">
         <div>
           <h1>Basketball</h1>
-          <div class="dg-sub">A practice board. No duality — you are both looking at the same thing.</div>
+          <div class="dg-sub">A practice court. Learn the controls here; the real game comes after.</div>
         </div>
         <a href="/soccer-hockey/">← Soccer Hockey</a>
       </header>
 
-      <p>
-        This teaches the interface, nothing more. Both of you can play it from
-        this one screen, taking turns — use <strong>Swap sides</strong> if you
-        would rather each drive your own player from the same laptop. The real
-        game needs two devices and is where the interesting part lives.
-      </p>
+      <div class="dg-layout">
+        <div class="dg-coach" id="coach" aria-live="polite">
+          <div class="dg-coach-progress" id="coachProgress"></div>
+          <h2 class="dg-coach-title" id="coachTitle"></h2>
+          <p class="dg-coach-body" id="coachBody"></p>
+          <p class="dg-coach-hint" id="coachHint"></p>
+          <button class="dg-link" id="coachSkip" type="button">Skip this bit</button>
+        </div>
 
-      <div class="dg-bar">
-        <div class="dg-seats">
-          <span class="dg-seat" id="seat0">Player 1 — up and right</span>
-          <span class="dg-seat" id="seat1">Player 2 — down and left</span>
+        <div class="dg-play">
+          <div class="dg-status" id="status">Player 1 to move.</div>
+          <div id="board"></div>
+          <div class="dg-bar">
+            <button class="dg-btn" id="undo" type="button">Take that back</button>
+            <button class="dg-btn" id="reset" type="button">Start again</button>
+          </div>
         </div>
       </div>
 
-      <div class="dg-status" id="status">Player 1 to move.</div>
-
-      <div id="board"></div>
-
-      <div class="dg-bar">
-        <button class="dg-btn" id="reset">Start again</button>
-        <button class="dg-btn" id="swap">Swap sides</button>
-      </div>
-
+      <h2>The rules, in one place</h2>
       <p class="dg-legend">
-        Yellow squares are where you may move. A black <strong>O</strong> is a
-        square the ball has already been — it can never go back there, which is
-        what makes the game finite. The dots mark the squares that can reach a
-        goal next turn: to score you must start your turn on one of them, and
-        once they are all used up that goal is sealed. The board wraps around
-        left to right, like Pac-Man.
-      </p>
-
-      <h2>Then the real game</h2>
-      <p>
-        Once the controls feel obvious, go and
-        <a href="/soccer-hockey/">play the real one</a>. You will need to be on
-        separate devices, out of sight of each other's screen. That is not
-        ceremony — it is the whole point.
+        Yellow squares are where the ball may go. A black <strong>O</strong> marks
+        a square it has already visited, which it can never use again. The dots
+        in front of each goal are the squares that can reach it next turn. The
+        board wraps left to right but not top to bottom. A player who cannot
+        move loses nothing — the game is simply drawn.
       </p>
     </div>
 
@@ -63,70 +51,101 @@
       import {
         initialGame,
         applyMove,
-        legalMovesFor,
+        replay,
         viewOf,
         squareFromView,
         STATUS,
       } from '../games/core/game.js';
       import { createBoardView } from '../games/ui/board.js';
+      import {
+        contextFor,
+        stepIndex,
+        isStalled,
+        STALLED_HINT,
+        BASKETBALL_STEPS,
+        BASKETBALL_OUTRO,
+      } from '../games/ui/coach.js';
 
       const config = BASKETBALL_TUTORIAL;
+
+      // The move log is the state, exactly as a networked room will hold it.
+      // Undo is then just dropping the last entry and replaying.
+      let moves = [];
       let game = initialGame(config);
+      const skipped = new Set();
 
-      // Hot seat: one browser, both seats. `seat` is only which side of the
-      // board you are looking at — in the tutorial both lenses are the
-      // identity, so the two views are identical anyway.
-      let seat = 0;
-
+      // In the tutorial the duality is 1, so both lenses are the identity and
+      // the two seats see an identical board. There is nothing to swap between
+      // — the board simply follows whoever is on move.
       const boardView = createBoardView(document.getElementById('board'), {
         board: config.board,
         theme: 'basketball',
       });
 
-      const statusEl = document.getElementById('status');
-      const seatEls = [document.getElementById('seat0'), document.getElementById('seat1')];
+      const el = (id) => document.getElementById(id);
+      const statusEl = el('status');
 
-      function describe() {
-        if (game.outcome.status === STATUS.WON) {
-          return `Player ${game.outcome.winner + 1} scores.`;
-        }
-        if (game.outcome.status === STATUS.TIE) {
-          return 'Stalemate — nobody can move. A draw.';
-        }
+      function statusText() {
+        if (game.outcome.status === STATUS.WON) return `Player ${game.outcome.winner + 1} scores.`;
+        if (game.outcome.status === STATUS.TIE) return 'Nobody can move. A draw.';
         return `Player ${game.turn + 1} to move.`;
       }
 
+      function drawCoach() {
+        const ctx = contextFor(config, moves);
+        const index = stepIndex(BASKETBALL_STEPS, ctx, skipped);
+        const step = BASKETBALL_STEPS[index];
+        const done = index >= BASKETBALL_STEPS.length;
+        const stalled = isStalled(BASKETBALL_STEPS, ctx, skipped);
+
+        el('coachProgress').textContent = done
+          ? 'Done'
+          : `Step ${index + 1} of ${BASKETBALL_STEPS.length}`;
+        el('coachTitle').textContent = done ? BASKETBALL_OUTRO.title : step.title;
+        el('coachBody').textContent = done ? BASKETBALL_OUTRO.body : step.body;
+        // A finished board cannot satisfy the step being asked for, so say so
+        // rather than leaving the hint asking for the impossible.
+        el('coachHint').textContent = done ? '' : stalled ? STALLED_HINT : step.hint;
+        el('coachSkip').hidden = done;
+        el('coach').dataset.done = String(done);
+        el('coach').dataset.stalled = String(stalled);
+      }
+
       function draw() {
-        const view = viewOf(config, game, seat);
-        boardView.render(view, {
+        const seat = game.outcome.status === STATUS.PLAYING ? game.turn : 0;
+        boardView.render(viewOf(config, game, seat), {
           onSquare: (viewSquare) => {
             if (game.outcome.status !== STATUS.PLAYING) return;
             const square = squareFromView(config, seat, viewSquare);
+            moves = [...moves, square];
             game = applyMove(config, game, square);
-            // Follow the turn, so the person at the keyboard always sees the
-            // board of whoever is on move.
-            if (game.outcome.status === STATUS.PLAYING) seat = game.turn;
             draw();
           },
         });
 
-        statusEl.textContent = describe();
+        statusEl.textContent = statusText();
         statusEl.dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
-        seatEls.forEach((el, i) => {
-          el.dataset.active = String(game.outcome.status === STATUS.PLAYING && game.turn === i);
-        });
-        document.getElementById('swap').disabled = game.outcome.status !== STATUS.PLAYING;
+        el('undo').disabled = moves.length === 0;
+        drawCoach();
       }
 
-      document.getElementById('reset').addEventListener('click', () => {
+      el('reset').addEventListener('click', () => {
+        moves = [];
         game = initialGame(config);
-        seat = 0;
         draw();
       });
 
-      document.getElementById('swap').addEventListener('click', () => {
-        seat = seat === 0 ? 1 : 0;
+      el('undo').addEventListener('click', () => {
+        moves = moves.slice(0, -1);
+        game = replay(config, moves);
         draw();
+      });
+
+      el('coachSkip').addEventListener('click', () => {
+        const ctx = contextFor(config, moves);
+        const step = BASKETBALL_STEPS[stepIndex(BASKETBALL_STEPS, ctx, skipped)];
+        if (step) skipped.add(step.id);
+        drawCoach();
       });
 
       draw();

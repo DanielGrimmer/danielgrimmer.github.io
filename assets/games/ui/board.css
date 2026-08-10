@@ -265,6 +265,85 @@ body.dg {
   color: #000;
 }
 
+/* ---------------------------------------------------------------- coach ---- */
+
+/*
+ * Coach beside board on a wide screen, above it on a narrow one. The panel is
+ * never modal: play is never blocked waiting for it to be dismissed.
+ */
+.dg-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 20rem) 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 780px) {
+  .dg-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dg-coach {
+  padding: 1.1rem 1.25rem 1.25rem;
+  border: 1px solid var(--dg-divider);
+  border-left: 3px solid var(--dg-accent);
+  border-radius: 6px;
+  background: var(--dg-surface);
+  position: sticky;
+  top: 1rem;
+}
+
+.dg-coach[data-done='true'] {
+  border-left-color: #2e7d32;
+}
+
+.dg-coach-progress {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dg-text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.dg-coach-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem;
+}
+
+.dg-coach-body {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+}
+
+.dg-coach-hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--dg-accent);
+}
+
+.dg-link {
+  font: inherit;
+  font-size: 0.85rem;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--dg-text-muted);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.dg-link:hover {
+  color: var(--dg-text);
+}
+
+.dg-play .dg-status {
+  margin-bottom: 0.5rem;
+}
+
 /* ---------------------------------------------------------------- misc ---- */
 
 .dg-legend {
