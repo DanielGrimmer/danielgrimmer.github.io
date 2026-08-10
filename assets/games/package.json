@@ -1,0 +1,6 @@
+{
+  "//": "Scopes ES module semantics to assets/games/ only. The repository root must stay CommonJS, because purgecss.config.js uses module.exports. Excluded from the Jekyll build in _config.yml.",
+  "name": "duality-games-engine",
+  "private": true,
+  "type": "module"
+}

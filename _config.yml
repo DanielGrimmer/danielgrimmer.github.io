@@ -235,6 +235,9 @@ exclude:
   - lighthouse_results/
   - package.json
   - package-lock.json
+  # Marks assets/games/ as ES modules for `node --test`; the browser does not
+  # need it, and the site should not serve it.
+  - assets/games/package.json
   - _pages/about_einstein.md
   - purgecss.config.js
   - README.md

@@ -1,0 +1,35 @@
+name: Engine tests
+
+# Deliberately separate from deploy.yml: a failure here reports on the commit
+# but does not stop the site from publishing. The engine and the site content
+# are independent, and a broken test should not keep a typo fix off the web.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "assets/games/**"
+      - "_tests/**"
+      - ".github/workflows/tests.yml"
+  pull_request:
+    paths:
+      - "assets/games/**"
+      - "_tests/**"
+      - ".github/workflows/tests.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run the duality games engine tests
+        # No install step: node:test is built in and the engine has no dependencies.
+        run: node --test --test-reporter=spec _tests/*.test.mjs
