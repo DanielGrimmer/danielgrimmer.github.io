@@ -1,0 +1,107 @@
+rules_version = '2';
+
+// Firestore Security Rules for the `soccerhockeyduality` project, which serves
+// both Soccer Hockey and Escher Chess.
+//
+// INTERIM RULES. These lock down the games as they exist today, before the
+// rewrite. They are as tight as is possible while the clients remain
+// anonymous and write a whole state snapshot per move:
+//
+//   * nothing can be created or deleted, anywhere;
+//   * every write must match a known document shape, so no unknown fields;
+//   * lists are length-capped, so a document cannot be inflated;
+//   * `MobiusEuclidGames` is gone entirely — unmatched paths are denied by
+//     default, and it was the only collection open to create and delete.
+//
+// What these rules still cannot stop: an anonymous visitor who knows a room
+// name overwriting a game in progress. Nothing here identifies who is writing,
+// so nothing here can tell a player from a vandal. Fixing that needs Anonymous
+// Authentication plus per-seat ownership, which arrives with the rewrite (see
+// _firebase/README.md).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------------
+
+    // Visitor counters are only ever bumped by one, by a transaction that has
+    // just read the current value. Any other value is rejected.
+    function isCounterBump() {
+      return request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count is int
+        && request.resource.data.count == resource.data.count + 1;
+    }
+
+    // A list field is either absent or within its cap. Written this way rather
+    // than as a bare `.size()` so that a write omitting the field is rejected
+    // by the shape check rather than erroring here.
+    function listWithin(field, cap) {
+      return !(field in request.resource.data)
+        || request.resource.data[field].size() <= cap;
+    }
+
+    // ---------------------------------------------------------------------
+    // Soccer Hockey — one document per room, `game_<RoomName>`
+    // ---------------------------------------------------------------------
+    match /games/{room} {
+      allow read: if true;
+      allow create, delete: if false;
+      allow update: if request.resource.data.keys().hasOnly([
+          'width', 'height', 'moveGridHeight',
+          'moveCenterRow', 'moveCenterCol',
+          'fieldCenterRow', 'fieldCenterCol',
+          'previousPositions', 'currentBallPos', 'moveMarks',
+          'isPlayer1Turn', 'b', 'winner'
+        ])
+        // The board cannot exceed what the game's own inputs permit.
+        && (!('width' in request.resource.data)
+            || (request.resource.data.width is int
+                && request.resource.data.width >= 1
+                && request.resource.data.width <= 20))
+        && (!('height' in request.resource.data)
+            || (request.resource.data.height is int
+                && request.resource.data.height >= 1
+                && request.resource.data.height <= 22))
+        // 20 x 22 is 440 squares, so no honest game exceeds these.
+        && listWithin('previousPositions', 500)
+        && listWithin('moveMarks', 500);
+    }
+
+    // ---------------------------------------------------------------------
+    // Escher Chess — this collection holds two kinds of document:
+    //   `game_<Room>` / `demo_<Room>`                   game state
+    //   `game_visitors_<Room>` / `demo_visitors_<Room>` a visitor counter
+    // ---------------------------------------------------------------------
+    match /EscherChessGames/{docId} {
+      allow read: if true;
+      allow create, delete: if false;
+      allow update: if docId.matches('.*visitors_.*')
+        ? isCounterBump()
+        : (request.resource.data.keys().hasOnly([
+             'boardState', 'isWhiteTurn', 'lastUpdated',
+             'lastUsed', 'boardSize', 'boardSizeSource'
+           ])
+           // The largest board is 5 x 13; 200 leaves generous headroom.
+           && listWithin('boardState', 200));
+    }
+
+    // ---------------------------------------------------------------------
+    // Soccer Hockey's visitor counters, `visitors_<RoomName>`
+    //
+    // Only the pre-rewrite demo page writes here, to assign player 1 / player 2
+    // by the parity of a site-wide count. The rewrite replaces this with
+    // per-room seat claiming, after which this collection can be deleted.
+    // ---------------------------------------------------------------------
+    match /sharedData/{document} {
+      allow read: if true;
+      allow create, delete: if false;
+      allow update: if isCounterBump();
+    }
+
+    // No other path is matched, so everything else is denied by default.
+    // `MobiusEuclidGames` was removed deliberately: it allowed create and
+    // delete to anyone, which is unbounded document creation on your bill.
+  }
+}
