@@ -22,8 +22,17 @@ export const SEAT_COUNT = 2;
 /** A seat is abandoned once its tab has been silent this long. */
 export const SEAT_TTL_MS = 5 * 60 * 1000;
 
-/** How often a live tab should report in. Comfortably inside the TTL. */
-export const HEARTBEAT_MS = 30 * 1000;
+/**
+ * How often a live tab should report in. Four beats may be missed before a
+ * seat is considered abandoned, so a dropped packet costs nobody their place.
+ *
+ * The interval is a quota decision as much as a UX one. The project runs on
+ * Firebase's free Spark plan, where exceeding a daily quota disables the
+ * service rather than billing for it, and every beat is a write that also
+ * pushes a snapshot read to each listener. A tab that is hidden should stop
+ * beating entirely; see _firebase/README.md for the arithmetic.
+ */
+export const HEARTBEAT_MS = 60 * 1000;
 
 export const OUTCOME = Object.freeze({
   RESUMED: 'resumed',

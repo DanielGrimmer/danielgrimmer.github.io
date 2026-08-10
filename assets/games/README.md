@@ -4,6 +4,11 @@ Shared rules engine for the duality games. Pure functions over plain data — no
 DOM, no network, no framework — so the same files run in the browser and under
 `node --test`.
 
+The rebuilt games ship as **V4.0**, continuing the numbering of the pages they
+replace (`SoccerHockeyGameV3.1.html` and friends, kept in
+`_archive/soccer-hockey-v3.1/`). The engine itself is not versioned separately;
+the page filenames carry the version.
+
 ```
 core/duality.js   Modular arithmetic on Z_w; the Lens each seat reads through
 core/rules.js     Board geometry, move-set derivation, legal moves

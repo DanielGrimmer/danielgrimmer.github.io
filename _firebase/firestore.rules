@@ -13,11 +13,16 @@ rules_version = '2';
 //   * `MobiusEuclidGames` is gone entirely — unmatched paths are denied by
 //     default, and it was the only collection open to create and delete.
 //
-// What these rules still cannot stop: an anonymous visitor who knows a room
-// name overwriting a game in progress. Nothing here identifies who is writing,
-// so nothing here can tell a player from a vandal. Fixing that needs Anonymous
-// Authentication plus per-seat ownership, which arrives with the rewrite (see
-// _firebase/README.md).
+// What these rules still cannot stop:
+//
+//   * An anonymous visitor who knows a room name overwriting a game in
+//     progress. Nothing here identifies who is writing, so nothing here can
+//     tell a player from a vandal. That needs Anonymous Authentication plus
+//     per-seat ownership, which arrives with the rewrite.
+//   * Sheer volume. The project is on the free Spark plan, where blowing
+//     through the 20,000 daily writes disables Firestore for the rest of the
+//     day rather than costing anything. Rules cannot rate-limit; App Check is
+//     the defence. See _firebase/README.md.
 
 service cloud.firestore {
   match /databases/{database}/documents {
