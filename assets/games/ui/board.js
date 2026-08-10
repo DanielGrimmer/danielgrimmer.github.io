@@ -126,6 +126,7 @@ export function createBoardView(container, { board, theme, interactive = true })
     onSquare = handler;
 
     const legal = new Set(view.legalMoves.map(keyOf));
+    const blocked = new Set((view.blockedMoves ?? []).map(keyOf));
     const visited = new Set(view.visited.map(keyOf));
     const approaches = showApproaches ? new Set(view.goalApproaches.map(keyOf)) : new Set();
     const ball = keyOf(view.ball);
@@ -137,6 +138,9 @@ export function createBoardView(container, { board, theme, interactive = true })
 
       cell.classList.toggle('is-wall', isWall);
       cell.classList.toggle('is-legal', legal.has(key));
+      // Still part of the star, but closed. Shown lit but muted, so the shape
+      // survives the trail eating into it.
+      cell.classList.toggle('is-blocked', blocked.has(key));
       cell.classList.toggle('is-ball', key === ball);
       cell.classList.toggle('is-visited', key !== ball && visited.has(key));
       cell.classList.toggle('is-playable', !isWall && legal.has(key));

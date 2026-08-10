@@ -86,7 +86,7 @@ export const STALLED_HINT = 'That game is over — press “Start again” and p
 export const BASKETBALL_STEPS = Object.freeze([
   {
     id: 'welcome',
-    title: 'Two goals, one ball',
+    title: 'One ball, Two goals',
     body:
       'The ball is the orange circle in the middle. The single gaps in the black ' +
       "walls are the two goals. Player 1's goal is the one at the top right, " +
@@ -96,12 +96,12 @@ export const BASKETBALL_STEPS = Object.freeze([
       'steps to the squares around it, and longer passes further out. Remember ' +
       'the star-shape they make around the ball, you will want to recognize it ' +
       'later.',
-    hint: 'Click a yellow highlighted square to move the ball.',
+    hint: 'Click any yellow highlighted square to move the ball there.',
     done: (ctx) => ctx.moveCount >= 1,
   },
   {
     id: 'trail',
-    title: 'The ball burns its path',
+    title: 'There is No Going Back',
     body:
       'Every square the ball leaves is marked with a ✕ and can never be used ' +
       'again. Squares only ever close up, they never open: that is what will ' +
@@ -111,36 +111,34 @@ export const BASKETBALL_STEPS = Object.freeze([
   },
   {
     id: 'wrap',
-    title: 'There are no side edges',
+    title: "It's Pac-Man's World, and We're Just Living In It",
     body:
-      'Top and bottom are walls. Left and right are not: the board is a cylinder, ' +
-      'and the ball leaving one side arrives on the other, like Pac-Man.\n\n' +
-      'Watch the star of yellow squares as the ball crosses. The same moves are ' +
-      'always available to it, wherever it stands — the star just wraps around ' +
-      'with it. Nothing about the ball has changed; only the drawing has.',
+      'The left-most and right-most columns are connected (like in Pac-Man). ' +
+      'Move the ball towards the left or right so that the star pattern crosses ' +
+      'the “seam”. Now move the ball across the seam. The board is a cylinder, ' +
+      'and the ball leaving one side arrives on the other.',
     hint: 'Walk the ball off the left or right edge and see where it comes back.',
     done: (ctx) => ctx.hasWrapped,
   },
   {
     id: 'dots',
-    title: 'The only ways in',
+    title: "You Miss 100% of the Shots You Don't Take",
     body:
-      'The dotted squares in front of each goal are the only ones that can reach ' +
-      'it next turn, so you must start a turn on one to score. Land on one early, ' +
-      'though, and your opponent simply knocks the ball away — and that dot is ' +
-      'burnt. Use up all of them and the goal is sealed for good.',
+      'The six dotted squares in front of each goal are the only ones that can ' +
+      'reach it on the next turn. So to score, you must start your turn on one ' +
+      'of them. Land on one too early, though, and your opponent will simply ' +
+      'knock the ball away, and then that dot is burnt. Use them all up and the ' +
+      'goal is sealed for good. You must be clever…',
     hint: 'Get the ball onto one of the dots.',
     done: (ctx) => ctx.hasReachedApproach,
   },
   {
     id: 'strategy',
-    title: 'So you cannot just charge',
+    title: 'Clever Girl…',
     body:
-      'Winning means scoring — putting the ball through your goal. Getting there ' +
-      'requires that your opponent hand it to you: they must be forced to leave ' +
-      'the ball on one of your dots, because stepping onto one under your own ' +
-      'steam only invites them to knock it away again. Every move is forced ' +
-      'eventually. The trail sees to that.',
+      'To score, you need for your opponent to move onto one of your dots. You ' +
+      'must somehow force them to hand you victory. Late in the game, you will ' +
+      'both have very few options left.',
     hint: 'Play a game through to the end.',
     done: (ctx) => ctx.isOver,
   },

@@ -17,6 +17,7 @@ import {
   makeBoard,
   dualMoveSet,
   legalMoves,
+  blockedMoves,
   goalApproaches,
   scoringSeat,
   squareKey,
@@ -155,6 +156,15 @@ export function viewOf(config, game, seat) {
     ball: toView(game),
     visited: game.visited.map(toView),
     legalMoves: legalMovesFor(config, game).map(toView),
+    /**
+     * The arms of the star that are already burnt. Drawn as part of the star but
+     * plainly unavailable, so its shape stays recognisable once the trail has
+     * eaten into it — and once it is bent around the seam.
+     */
+    blockedMoves:
+      game.outcome.status === STATUS.PLAYING
+        ? blockedMoves(config.board, config.moveSet, game).map(toView)
+        : [],
     goalApproaches: goalApproaches(config.board, config.moveSet, game.visited).map(toView),
     /** What this seat believes its move set to be, e.g. {1,3} against {1,4}. */
     moveSet: config.moveSet.map(([dr, dc]) => [dr, lens.viewDelta(dc)]),

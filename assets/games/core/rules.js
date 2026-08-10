@@ -133,12 +133,14 @@ function dedupeOffsets(offsets) {
 }
 
 /**
- * Every square reachable in one move from (row, col), given the squares already
- * burned. Excludes moves off the top and bottom edges, into the wall beside a
- * goal, and onto any previously visited square.
+ * Every square the move set points at from (row, col) that is part of the field
+ * — on the board and not wall — whether or not it has already been used.
+ *
+ * This is the star the tutorial asks the player to memorise. It is the same
+ * shape wherever the ball stands, which is the fact the duality rests on, so it
+ * is worth being able to draw it whole even where the trail has eaten into it.
  */
-export function legalMoves(board, offsets, { row, col, visited = [] }) {
-  const burned = visited instanceof Set ? visited : new Set(visited.map((s) => squareKey(s.row, s.col)));
+export function moveTargets(board, offsets, { row, col }) {
   const out = [];
   const seen = new Set();
   for (const [dr, dc] of offsets) {
@@ -146,11 +148,35 @@ export function legalMoves(board, offsets, { row, col, visited = [] }) {
     const newCol = mod(col + dc, board.width);
     if (!isPlayable(board, newRow, newCol)) continue;
     const key = squareKey(newRow, newCol);
-    if (burned.has(key) || seen.has(key)) continue;
+    if (seen.has(key)) continue;
     seen.add(key);
     out.push({ row: newRow, col: newCol });
   }
   return out;
+}
+
+function burnedSet(visited) {
+  return visited instanceof Set ? visited : new Set(visited.map((s) => squareKey(s.row, s.col)));
+}
+
+/**
+ * Every square reachable in one move from (row, col), given the squares already
+ * burned. Excludes moves off the top and bottom edges, into the wall beside a
+ * goal, and onto any previously visited square.
+ */
+export function legalMoves(board, offsets, { row, col, visited = [] }) {
+  const burned = burnedSet(visited);
+  return moveTargets(board, offsets, { row, col }).filter(
+    (sq) => !burned.has(squareKey(sq.row, sq.col))
+  );
+}
+
+/** The arms of the star that the trail has already closed off. */
+export function blockedMoves(board, offsets, { row, col, visited = [] }) {
+  const burned = burnedSet(visited);
+  return moveTargets(board, offsets, { row, col }).filter((sq) =>
+    burned.has(squareKey(sq.row, sq.col))
+  );
 }
 
 /**

@@ -6,7 +6,9 @@ import {
   makeBoard,
   isPlayable,
   dualMoveSet,
+  moveTargets,
   legalMoves,
+  blockedMoves,
   goalApproaches,
   scoringSeat,
   squareKey,
@@ -132,6 +134,42 @@ test('legal moves', async (t) => {
     const asList = legalMoves(board, moves, { row: 6, col: 5, visited: [{ row: 7, col: 5 }] });
     const asSet = legalMoves(board, moves, { row: 6, col: 5, visited: new Set(['7,5']) });
     assert.deepEqual(asSet, asList);
+  });
+});
+
+test('the star keeps its shape as the trail eats into it', async (t) => {
+  await t.test('targets ignore the trail; legal moves do not', () => {
+    const at = { row: 6, col: 5 };
+    const clean = moveTargets(board, moves, at);
+    assert.deepEqual(legalMoves(board, moves, { ...at, visited: [] }), clean);
+
+    const visited = [{ row: 5, col: 5 }, { row: 7, col: 5 }];
+    assert.deepEqual(moveTargets(board, moves, at), clean, 'the star does not shrink');
+    assert.equal(legalMoves(board, moves, { ...at, visited }).length, clean.length - 2);
+  });
+
+  await t.test('legal and blocked partition the star exactly', () => {
+    const at = { row: 6, col: 5 };
+    const visited = [{ row: 5, col: 5 }, { row: 6, col: 8 }, { row: 9, col: 1 }];
+    const star = moveTargets(board, moves, at).map((s) => squareKey(s.row, s.col)).sort();
+    const open = legalMoves(board, moves, { ...at, visited }).map((s) => squareKey(s.row, s.col));
+    const shut = blockedMoves(board, moves, { ...at, visited }).map((s) => squareKey(s.row, s.col));
+
+    assert.deepEqual([...open, ...shut].sort(), star, 'every arm is either open or shut');
+    assert.equal(open.filter((k) => shut.includes(k)).length, 0, 'and never both');
+    // (9,1) was never an arm of this star, so it must not appear as blocked
+    assert.ok(!shut.includes('9,1'));
+    assert.deepEqual(shut.sort(), ['5,5', '6,8']);
+  });
+
+  await t.test('the star is the same shape wherever the ball stands', () => {
+    const shapeAt = (row, col) =>
+      moveTargets(board, moves, { row, col })
+        .map((s) => `${s.row - row},${((s.col - col + 11) % 11)}`)
+        .sort();
+    // away from the goal rows, where nothing is clipped, the offsets are identical
+    assert.deepEqual(shapeAt(6, 5), shapeAt(6, 0), 'including across the seam');
+    assert.deepEqual(shapeAt(6, 5), shapeAt(5, 9));
   });
 });
 

@@ -258,6 +258,17 @@ body.dg {
 }
 
 /*
+ * An arm of the star that the trail has already closed. It keeps the full
+ * highlight, so the star stays a single readable shape once it is half eaten
+ * away or bent around the seam — which is the shape the tutorial asks the
+ * player to memorise. What separates it from a playable arm is the gold border
+ * above, and the ✕ sitting on it.
+ */
+.dg-cell.is-blocked .dg-top {
+  background: #ffffcc !important;
+}
+
+/*
  * The ball is drawn, not typed. A glyph rides its font's baseline, which left
  * it sitting low in the square and depending on whichever font loaded. This is
  * a box centred on the face by geometry, so it lands in the middle every time.
