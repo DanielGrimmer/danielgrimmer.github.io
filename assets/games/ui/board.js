@@ -117,10 +117,13 @@ export function createBoardView(container, { board, theme, interactive = true })
       cell.classList.toggle('is-visited', key !== ball && visited.has(key));
       cell.classList.toggle('is-playable', !isWall && legal.has(key));
 
+      // The ball is a filled disc coloured per sport; a spent square is a cross,
+      // so the two read as different kinds of thing at a glance rather than as
+      // two colours of the same O.
       let text = '';
       if (isWall) text = '';
-      else if (key === ball) text = 'O';
-      else if (visited.has(key)) text = 'O';
+      else if (key === ball) text = '●';
+      else if (visited.has(key)) text = '✕';
       else if (approaches.has(key)) text = '•';
       glyph.textContent = text;
     }

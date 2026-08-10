@@ -257,12 +257,35 @@ body.dg {
   border: 2px solid #ffd700;
 }
 
+/*
+ * The ball takes the colour of its sport — orange for basketball, white for
+ * soccer, near-black for a puck — and sits a little larger than the approach
+ * dots so the two are never confused. Spent squares are crosses rather than a
+ * second colour of circle.
+ */
 .dg-cell.is-ball .dg-glyph {
-  color: #c0392b;
+  /* Clearly the ball, not a larger version of an approach dot. */
+  font-size: 40px;
+  text-shadow:
+    0 0 3px rgba(0, 0, 0, 0.55),
+    0 2px 1px rgba(0, 0, 0, 0.3);
+}
+
+.dg-board[data-theme='basketball'] .dg-cell.is-ball .dg-glyph {
+  color: #e8802a;
+}
+
+.dg-board[data-theme='soccer'] .dg-cell.is-ball .dg-glyph {
+  color: #ffffff;
+}
+
+.dg-board[data-theme='hockey'] .dg-cell.is-ball .dg-glyph {
+  color: #16181d;
 }
 
 .dg-cell.is-visited .dg-glyph {
-  color: #000;
+  color: rgba(0, 0, 0, 0.72);
+  font-size: 17px;
 }
 
 /* ---------------------------------------------------------------- coach ---- */
@@ -316,6 +339,8 @@ body.dg {
 .dg-coach-body {
   margin: 0 0 0.75rem;
   font-size: 0.95rem;
+  /* Step copy uses blank lines between paragraphs; keep them without markup. */
+  white-space: pre-line;
 }
 
 .dg-coach-hint {

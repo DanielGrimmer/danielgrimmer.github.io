@@ -38,11 +38,14 @@
 
       <h2>The rules, in one place</h2>
       <p class="dg-legend">
-        Yellow squares are where the ball may go. A black <strong>O</strong> marks
-        a square it has already visited, which it can never use again. The dots
-        in front of each goal are the squares that can reach it next turn. The
-        board wraps left to right but not top to bottom. A player who cannot
-        move loses nothing — the game is simply drawn.
+        The ball is the orange circle. The yellow highlighted squares are where it
+        can go — short steps to the squares around it, longer passes further out.
+        A <strong>✕</strong> marks a square the ball has already used, which is
+        closed for the rest of the game. The dots in front of each goal are the
+        squares that can reach it on the next move. The board wraps from left to
+        right; the top and bottom are walls. Player 1 scores at the top right,
+        Player 2 at the bottom left. If the player to move has nowhere legal to
+        go, the game is a draw.
       </p>
     </div>
 
@@ -129,8 +132,11 @@
         drawCoach();
       }
 
+      // Start again resets the tutorial too, not just the board — otherwise
+      // skipping to the end leaves the panel finished and the button looks dead.
       el('reset').addEventListener('click', () => {
         moves = [];
+        skipped.clear();
         game = initialGame(config);
         draw();
       });

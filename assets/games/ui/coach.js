@@ -88,20 +88,25 @@ export const BASKETBALL_STEPS = Object.freeze([
     id: 'welcome',
     title: 'Two goals, one ball',
     body:
-      'You are both players for now. Player 1 is trying to reach the goal at the ' +
-      'top, Player 2 the one at the bottom — the single gaps in the black walls. ' +
-      'Play both sides yourself, or take turns with whoever is sitting next to you.',
-    hint: 'The yellow squares are where the ball can go. Click one.',
+      'The ball is the orange circle in the middle. Player 1 is aiming for the ' +
+      'goal at the top right, Player 2 for the one at the bottom left — the ' +
+      'single gaps in the black walls. Play both sides yourself, or take turns ' +
+      'with whoever is sitting next to you.\n\n' +
+      'The yellow highlighted squares are where the ball can go: short steps to ' +
+      'the squares around it, and longer passes further out. Look at the star ' +
+      'they make around the ball, and remember its shape — you will want to ' +
+      'recognise it later, when it is bent around an edge or half eaten away.',
+    hint: 'Click a yellow highlighted square to move the ball.',
     done: (ctx) => ctx.moveCount >= 1,
   },
   {
     id: 'trail',
     title: 'The ball burns its path',
     body:
-      'Every square the ball leaves is marked and can never be used again. That ' +
-      'is what stops the game going round in circles forever — and what will ' +
-      'eventually strand somebody.',
-    hint: 'Push it around a little and watch your options thin out.',
+      'Every square the ball leaves is marked with a ✕ and can never be used ' +
+      'again. The board only ever closes up, never opens: that is what will ' +
+      'eventually force a goal, or a tie if the ball runs out of anywhere to go.',
+    hint: 'Push it around a little and watch the yellow squares thin out.',
     done: (ctx) => ctx.moveCount >= 4,
   },
   {
@@ -109,8 +114,10 @@ export const BASKETBALL_STEPS = Object.freeze([
     title: 'There are no side edges',
     body:
       'Top and bottom are walls. Left and right are not: the board is a cylinder, ' +
-      'and the ball leaving one side arrives on the other, like Pac-Man. This is ' +
-      'not decoration. It is the reason the real game can work at all.',
+      'and the ball leaving one side arrives on the other, like Pac-Man.\n\n' +
+      'Watch the star of yellow squares as the ball crosses. The same moves are ' +
+      'always available to it, wherever it stands — the star just wraps around ' +
+      'with it. Nothing about the ball has changed; only the drawing has.',
     hint: 'Walk the ball off the left or right edge and see where it comes back.',
     done: (ctx) => ctx.hasWrapped,
   },
@@ -129,10 +136,12 @@ export const BASKETBALL_STEPS = Object.freeze([
     id: 'strategy',
     title: 'So you cannot just charge',
     body:
-      'Winning means making your opponent move the ball onto one of your dots, ' +
-      'rather than stepping onto it yourself. Every move is forced eventually — ' +
-      'the trail sees to that. Play on until somebody scores or nobody can move.',
-    hint: 'Finish a game to the end.',
+      'Winning means scoring — putting the ball through your goal. Getting there ' +
+      'requires that your opponent hand it to you: they must be forced to leave ' +
+      'the ball on one of your dots, because stepping onto one under your own ' +
+      'steam only invites them to knock it away again. Every move is forced ' +
+      'eventually. The trail sees to that.',
+    hint: 'Play a game through to the end.',
     done: (ctx) => ctx.isOver,
   },
 ]);
@@ -145,9 +154,11 @@ export const BASKETBALL_STEPS = Object.freeze([
 export const BASKETBALL_OUTRO = Object.freeze({
   title: 'Now the real game',
   body:
-    'That is the whole of the interface — the real game is played exactly like ' +
-    'this. What changes is that there is something in it worth discovering, and ' +
-    'you will only discover it if you are looking at your own screen and nobody ' +
-    "else's. If the two of you have been sharing this one, move to separate " +
-    'devices now, join the same room, and do not talk during the first game.',
+    'That is the whole interface. The real game is played in exactly this way, ' +
+    'on a slightly bigger board — except that you and your opponent will not be ' +
+    'looking at the same thing, and working out how that can possibly be fair is ' +
+    'the point of the exercise.\n\n' +
+    'So it only works if each of you can see your own screen and not the other. ' +
+    'If you have been sharing this one, move to separate devices now, and do not ' +
+    'talk to each other during the first game. The next screen will pair you up.',
 });
