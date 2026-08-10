@@ -1,0 +1,39 @@
+---
+layout: default
+---
+{%- comment -%}
+  Local override of al_folio_core 1.0.15's _layouts/page.liquid. The only change
+  from the gem's copy is the <h1> below, which reads `display_title` when a page
+  sets one. `title` doubles as the navbar label, and the navbar is lower-case
+  throughout, so a page that wants a capitalised heading needs the two split
+  apart. Diff against the gem on upgrade:
+  vendor/bundle/ruby/*/gems/al_folio_core-*/_layouts/page.liquid
+{%- endcomment -%}
+{% if page._styles %}
+  <!-- Page/Post style -->
+  <style type="text/css">
+    {{ page._styles }}
+  </style>
+{% endif %}
+
+<div class="post">
+  <header class="post-header">
+    <h1 class="post-title">{{ page.display_title | default: page.title }}</h1>
+    <p class="post-description">{{ page.description }}</p>
+  </header>
+
+  <article>
+    {{ content }}
+  </article>
+
+  {% if page.related_publications %}
+    <h2>References</h2>
+    <div class="publications">
+      {% bibliography --cited_in_order %}
+    </div>
+  {% endif %}
+
+  {% if site.plugins contains 'al_comments' %}
+    {% include plugins/al_comments.liquid %}
+  {% endif %}
+</div>

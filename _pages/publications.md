@@ -1,8 +1,8 @@
 ---
 layout: page
 permalink: /publications/
-title: publications
-description: Generated from <code>_bibliography/papers.bib</code>. Adding a BibTeX entry there adds it here.
+title: publications # the navbar label, lower-case like its siblings
+display_title: Publications # the <h1> on the page itself
 nav: true
 nav_order: 1
 ---
