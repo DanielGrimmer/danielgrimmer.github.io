@@ -103,26 +103,32 @@ No action needed — recorded so you can spot anything wrong.
 
 ## E. The two games
 
-- [ ] **E1. Check the Firestore Security Rules.** The API key in
-      `assets/SoccerHockey/firebaseConfig.js` is *not* a leak — Firebase web keys
-      are meant to be public, and access is controlled by Security Rules. But
-      that means the rules are the only thing guarding the database, and this is
-      now published from a public repo. Confirm rules still disallow *creating*
-      documents, and that the project is still active: "test mode" rules expire
-      after 30 days and then deny everything, which would explain a stale back end.
-      **Escher Chess shares the same Firebase project**, so this covers both games.
-- [ ] **E2. Rooms are unauthenticated** — ten fixed names, no login, so anyone
-      can join a room and move pieces in someone else's game.
+Soccer Hockey has been rebuilt as **V4.0** and is live. See
+[`assets/games/README.md`](assets/games/README.md) for what it now does and what
+comes next. Escher Chess is untouched, and shares the same Firebase project.
+
+- [x] ~~**E1. Check the Firestore Security Rules.**~~ Done. `_firebase/firestore.rules`
+      is the published file: `dualityRooms` allows only the twenty pool names,
+      only signed-in callers, and only the seat whose turn it is may append a
+      move. The API key in `firebaseConfig.js` is *not* a leak — Firebase web
+      keys are meant to be public — but that does mean the rules are the only
+      thing guarding the database, so they are kept in the repo and reviewed
+      alongside the code.
+- [x] ~~**E2. Rooms are unauthenticated.**~~ Fixed. Anonymous Authentication is
+      on, seats are claimed against a uid in a transaction, and the rules refuse
+      a move from anyone but the seat on move. Rooms are still open to whoever
+      knows the name — that is the point of a room name you can say over the
+      phone — but nobody can play your side of a game you are sitting in.
 - [ ] **E3. Optionally restrict the API key** to referrer
-      `danielgrimmer.github.io/*` in the Google Cloud console.
-- [x] ~~**E4. The demos and games keep their own styling**~~ — reversed. The
-      games are to be restyled to match the rest of the site as part of the
-      rewrite. The isometric boards and both palettes stay as they are; it is
-      the page furniture around them that should inherit the site theme.
-- [ ] **E5. Gameplay is untested.** Both bundles load with no JavaScript errors
-      and all their assets resolve, but every dynamic field stays on "Loading…"
-      here because this build environment cannot reach Firebase. Play a real
-      two-browser game once the site is live before trusting either.
+      `danielgrimmer.github.io/*` in the Google Cloud console. Still open, along
+      with App Check — the higher-value of the two.
+- [x] ~~**E4. The demos and games keep their own styling**~~ — reversed, then
+      done. The V4.0 page furniture matches the site, in light and dark; the
+      isometric boards, the hover lift and both palettes carried over unchanged.
+- [x] ~~**E5. Gameplay is untested.**~~ Tested: a real two-browser game, both
+      players moving, state syncing, through to the reveal. Nothing here can
+      reach Firebase, so anything touching the network still has to be checked
+      in a browser rather than in CI.
 
 ## F. Optional
 

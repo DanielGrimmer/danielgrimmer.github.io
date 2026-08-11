@@ -4,8 +4,9 @@ The original Soccer Hockey Duality Game, kept verbatim as it stood before the
 rewrite. Nothing here is served: this directory begins with an underscore, so
 Jekyll skips it.
 
-The live copies of these files are still at `assets/SoccerHockey/`. They stay in
-place and keep working until the rewrite replaces them.
+This is now the only copy. V4.0 replaced these pages, and the originals were
+removed from `assets/SoccerHockey/` once nothing linked to them; `firebaseConfig.js`
+is the one file that stayed, because V4.0 still uses it.
 
 ## What is here
 

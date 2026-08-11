@@ -7,7 +7,7 @@
  * That is what keeps document creation from being an unbounded cost on a plan
  * whose quota, once spent, takes the games offline for the day.
  *
- * Keep this in step with `_firebase/firestore-next.rules`. If you add a name
+ * Keep this in step with `_firebase/firestore.rules`. If you add a name
  * here and not there, joining that room will simply be refused.
  *
  * Names are speakable: "join GreenField" survives a phone call in a way that a

@@ -587,36 +587,16 @@ body.dg {
 }
 
 /*
- * The caption is the arithmetic made visible: the same move, counted on each
- * board. A fixed height keeps the two boards level when one caption wraps and
- * the other does not.
+ * The clearance is for the hover lift: a replay board takes no clicks, but its
+ * cubes still rise under the cursor, and they must not reach the buttons.
  */
-.dg-replay-caption {
-  min-height: 3.2em;
-  text-align: center;
-  font-size: 0.95rem;
-}
-
-.dg-replay-across {
-  display: block;
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: var(--dg-accent);
-}
-
-.dg-replay-rows {
-  display: block;
-  color: var(--dg-text-muted);
-  font-size: 0.9rem;
-}
-
 .dg-replay-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .dg-btn.dg-step {

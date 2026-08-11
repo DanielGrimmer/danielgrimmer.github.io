@@ -17,7 +17,7 @@
  */
 
 import { firebaseConfig } from '../../SoccerHockey/firebaseConfig.js';
-import { ROOM_NAMES, ROOMS_COLLECTION, emptyRoomDoc, isRoomName } from './rooms.js?v=4.1.5';
+import { ROOM_NAMES, ROOMS_COLLECTION, emptyRoomDoc, isRoomName } from './rooms.js?v=4.1.6';
 import {
   claimSeat,
   touchSeat,
@@ -26,7 +26,7 @@ import {
   findOpenRoom,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.1.5';
+} from '../core/seats.js?v=4.1.6';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -55,7 +55,7 @@ export function explain(err) {
     case 'permission-denied':
       return (
         'The Firestore rules refused that. Check the dualityRooms block from ' +
-        '_firebase/firestore-next.rules is published alongside the others.'
+        '_firebase/firestore.rules is what is actually published in the console.'
       );
     case 'unavailable':
       return 'Firestore is unreachable right now — the network dropped, or the daily quota is spent.';

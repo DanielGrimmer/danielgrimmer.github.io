@@ -55,7 +55,8 @@ game room, the game state will be synchronized automatically behind the scenes.
 <!--
   Both pages are V4.0. The tutorial needs nothing but a browser; the game needs
   Anonymous Authentication and the dualityRooms rules from _firebase/. The V3.1
-  pages are still on disk but nothing links to them any more.
+  pages they replaced are gone from assets/, kept verbatim in
+  _archive/soccer-hockey-v3.1/.
 
   Firebase web API keys are designed to be public — access is controlled by
   Firestore Security Rules, not by keeping the key secret — so the key in

@@ -1,14 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
+import { frameCount, clampFrame, reachText, moverAt } from '../assets/games/ui/replay.js';
 import {
-  frameCount,
-  clampFrame,
-  stepSummary,
-  reachText,
-  moverAt,
-} from '../assets/games/ui/replay.js';
-import { replayFrames, viewOf, legalMovesFor, applyMove, initialGame, STATUS } from '../assets/games/core/game.js';
+  replayFrames,
+  viewOf,
+  legalMovesFor,
+  applyMove,
+  initialGame,
+  STATUS,
+} from '../assets/games/core/game.js';
 import { SOCCER_HOCKEY } from '../assets/games/core/presets.js';
 
 const config = SOCCER_HOCKEY;
@@ -40,74 +41,18 @@ test('frame arithmetic', async (t) => {
   });
 });
 
-test('a move, measured through each seat', async (t) => {
-  const from = { row: 6, col: 5 };
-
-  await t.test('one across for soccer is four across for hockey', () => {
-    const to = { row: 5, col: 6 };
-    assert.equal(stepSummary(config, { seat: 0, from, to }).across, 1);
-    assert.equal(stepSummary(config, { seat: 1, from, to }).across, 4);
-  });
-
-  await t.test('three across for soccer is only one across for hockey', () => {
-    const to = { row: 5, col: 8 };
-    assert.equal(stepSummary(config, { seat: 0, from, to }).across, 3);
-    assert.equal(stepSummary(config, { seat: 1, from, to }).across, 1);
-  });
-
-  await t.test('a move across the seam counts the short way round', () => {
-    // Column 10 to column 0 is one step on a cylinder, not ten.
-    const summary = stepSummary(config, { seat: 0, from: { row: 6, col: 10 }, to: { row: 6, col: 0 } });
-    assert.equal(summary.across, 1);
-  });
-
-  await t.test('the row step names the goal it heads for, by sport', () => {
-    const up = stepSummary(config, { seat: 0, from, to: { row: 5, col: 5 } });
-    assert.equal(up.rows, 1);
-    assert.equal(up.towards, 'Soccer');
-    assert.equal(up.rowsText, 'and 1 row towards the Soccer goal');
-
-    const down = stepSummary(config, { seat: 0, from, to: { row: 9, col: 5 } });
-    assert.equal(down.rows, 3);
-    assert.equal(down.towards, 'Hockey');
-    assert.equal(down.rowsText, 'and 3 rows towards the Hockey goal');
-  });
-
-  await t.test('a move along one row names no goal', () => {
-    const summary = stepSummary(config, { seat: 0, from, to: { row: 6, col: 8 } });
-    assert.equal(summary.rows, 0);
-    assert.equal(summary.towards, null);
-    assert.equal(summary.rowsText, 'along the same row');
-    assert.equal(summary.acrossText, '3 across');
-  });
-
-  await t.test('a move straight up a column says so rather than reading "0 across"', () => {
-    const summary = stepSummary(config, { seat: 0, from, to: { row: 3, col: 5 } });
-    assert.equal(summary.across, 0);
-    assert.equal(summary.acrossText, 'no sideways step');
-  });
-
-  await t.test('there is no seat 2', () => {
-    assert.throws(() => stepSummary(config, { seat: 2, from, to: { row: 5, col: 5 } }), RangeError);
-  });
-});
-
-test('what the two boards agree about', async (t) => {
+/*
+ * What the reveal claims, checked against the engine. The note above the boards
+ * tells the player that the two perspectives disagree about the column and the
+ * trail but agree about the goals and the winner; if any of that stopped being
+ * true the page would be lying to them in prose.
+ */
+test('what the two boards do and do not agree about', async (t) => {
   const moves = someGame();
   const frames = replayFrames(config, moves);
 
   await t.test('the game used for these checks is a real one of some length', () => {
     assert.ok(moves.length >= 5, `expected a few moves, got ${moves.length}`);
-  });
-
-  await t.test('every move has the same row step and the same goal on both boards', () => {
-    for (let i = 1; i < frames.length; i++) {
-      const args = { from: frames[i - 1], to: frames[i] };
-      const mine = stepSummary(config, { ...args, seat: 0 });
-      const theirs = stepSummary(config, { ...args, seat: 1 });
-      assert.equal(mine.rows, theirs.rows, `move ${i} disagreed about the row step`);
-      assert.equal(mine.towards, theirs.towards, `move ${i} disagreed about the goal`);
-    }
   });
 
   await t.test('the goals stand in the same column on both boards', () => {
@@ -116,11 +61,10 @@ test('what the two boards agree about', async (t) => {
     }
   });
 
-  await t.test('but the ball does not stay in the same column', () => {
-    const differs = frames.some(
-      (frame) => viewOf(config, frame, 0).ball.col !== viewOf(config, frame, 1).ball.col
-    );
-    assert.ok(differs, 'the two boards should part company almost at once');
+  await t.test('both boards agree who won, and when the game ended', () => {
+    for (const frame of frames) {
+      assert.deepEqual(viewOf(config, frame, 0).outcome, viewOf(config, frame, 1).outcome);
+    }
   });
 
   await t.test('the ball is on the same row on both boards, always', () => {
@@ -128,9 +72,25 @@ test('what the two boards agree about', async (t) => {
       assert.equal(viewOf(config, frame, 0).ball.row, viewOf(config, frame, 1).ball.row);
     }
   });
+
+  await t.test('but the two boards disagree about the column, and soon', () => {
+    const differs = frames.filter(
+      (frame) => viewOf(config, frame, 0).ball.col !== viewOf(config, frame, 1).ball.col
+    );
+    assert.ok(differs.length >= frames.length - 2, 'the two boards should part company at once');
+  });
+
+  await t.test('and about the shape of the trail', () => {
+    const last = frames[frames.length - 1];
+    const trail = (seat) =>
+      viewOf(config, last, seat)
+        .visited.map((s) => `${s.row},${s.col}`)
+        .join(' ');
+    assert.notEqual(trail(0), trail(1));
+  });
 });
 
-test('captions and credits', async (t) => {
+test('the boards and the credits', async (t) => {
   await t.test('each seat is told the reach it actually perceives', () => {
     assert.equal(reachText(config, 0), '1 or 3');
     assert.equal(reachText(config, 1), '1 or 4');

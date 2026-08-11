@@ -14,12 +14,14 @@
  * is a different width. Only the row and the goal column survive the crossing,
  * and that is easier to notice when both are on screen together.
  *
- * The measuring and phrasing are pure functions, exported and tested. The DOM
- * factory underneath them does no arithmetic of its own.
+ * The boards are left to speak for themselves. An earlier version captioned
+ * every move with its own arithmetic ("1 across" beside "4 across"); it was
+ * accurate and it flattened the thing into a spot-the-difference puzzle. The
+ * note above the boards says what to look for once, and then stops talking.
  */
 
-import { replayFrames, viewOf, sidewaysReach } from '../core/game.js?v=4.1.5';
-import { createBoardView } from './board.js?v=4.1.5';
+import { replayFrames, viewOf, sidewaysReach } from '../core/game.js?v=4.1.6';
+import { createBoardView } from './board.js?v=4.1.6';
 
 /** How long each move is held when the replay is playing itself. */
 export const AUTOPLAY_MS = 1100;
@@ -32,38 +34,6 @@ export function frameCount(moves) {
 export function clampFrame(index, total) {
   if (!Number.isFinite(index)) return 0;
   return Math.max(0, Math.min(total - 1, Math.trunc(index)));
-}
-
-/**
- * One move, measured as the given seat sees it.
- *
- * `across` is the whole point: the canonical sideways step passes through that
- * seat's lens, so the same move is three columns on one board and four on the
- * other. The row step does not pass through anything — rows are not permuted —
- * so `rows` and `towards` come out the same on both boards, which is what makes
- * the difference in `across` stand out rather than look like general noise.
- */
-export function stepSummary(config, { seat, from, to }) {
-  const lens = config.lenses[seat];
-  if (!lens) throw new RangeError(`no seat ${seat}`);
-
-  const across = Math.abs(lens.viewDelta(to.col - from.col));
-  const rows = Math.abs(to.row - from.row);
-  // Seat 0 scores on row 0 and seat 1 on the last row, so the direction of the
-  // row step names a goal, and naming it by sport keeps both captions in the
-  // same words.
-  const towards = rows === 0 ? null : config.seats[to.row < from.row ? 0 : 1].sport;
-
-  return {
-    across,
-    rows,
-    towards,
-    acrossText: across === 0 ? 'no sideways step' : `${across} across`,
-    rowsText:
-      rows === 0
-        ? 'along the same row'
-        : `and ${rows} row${rows === 1 ? '' : 's'} towards the ${towards} goal`,
-  };
 }
 
 /** "1 or 3" — the sideways steps a seat believes its short passes to have. */
@@ -104,14 +74,10 @@ export function createReplayView(container, { config, moves, seatOrder, labels }
     );
 
     const mount = element('div', 'dg-replay-board');
-    const caption = element('div', 'dg-replay-caption');
-    const across = element('span', 'dg-replay-across');
-    const rows = element('span', 'dg-replay-rows');
-    caption.append(across, rows);
 
-    side.append(head, mount, caption);
+    side.append(head, mount);
     boards.append(side);
-    return { seat, mount, across, rows, view: null };
+    return { seat, mount, view: null };
   });
 
   const controls = element('div', 'dg-replay-controls');
@@ -159,21 +125,7 @@ export function createReplayView(container, { config, moves, seatOrder, labels }
 
   function paint() {
     const frame = frames[index];
-    for (const side of sides) {
-      side.view.render(viewOf(config, frame, side.seat));
-      if (index === 0) {
-        side.across.textContent = 'The kick-off.';
-        side.rows.textContent = '';
-      } else {
-        const summary = stepSummary(config, {
-          seat: side.seat,
-          from: frames[index - 1],
-          to: frames[index],
-        });
-        side.across.textContent = summary.acrossText;
-        side.rows.textContent = summary.rowsText;
-      }
-    }
+    for (const side of sides) side.view.render(viewOf(config, frame, side.seat));
 
     const mover = moverAt(frames, index);
     count.textContent =

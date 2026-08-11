@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.5" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.6" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -56,7 +56,7 @@
         <div class="dg-replay-intro">
           <div class="dg-status" id="replayStatus"></div>
           <div class="dg-coach dg-coach-band" id="replayCoach">
-            <div class="dg-coach-progress">The reveal</div>
+            <div class="dg-coach-progress">The Big Reveal</div>
             <h2 class="dg-coach-title" id="replayTitle"></h2>
             <p class="dg-coach-body" id="replayBody"></p>
           </div>
@@ -73,27 +73,27 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.1.5';
+      const BUILD = '4.1.6';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.5';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.6';
       import {
         initialGame,
         replay,
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.1.5';
+      } from '../games/core/game.js?v=4.1.6';
       import {
         presenceOf,
         seatOf,
         normaliseSeats,
         occupancy,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.1.5';
-      import { createBoardView } from '../games/ui/board.js?v=4.1.5';
-      import { createReplayView } from '../games/ui/replay.js?v=4.1.5';
-      import { replayNote } from '../games/ui/coach.js?v=4.1.5';
-      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.5';
+      } from '../games/core/seats.js?v=4.1.6';
+      import { createBoardView } from '../games/ui/board.js?v=4.1.6';
+      import { createReplayView } from '../games/ui/replay.js?v=4.1.6';
+      import { replayNote } from '../games/ui/coach.js?v=4.1.6';
+      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.6';
       import {
         signIn,
         chooseRoom,
@@ -106,7 +106,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.1.5';
+      } from '../games/net/room.js?v=4.1.6';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -158,10 +158,13 @@
         // The result comes first: a finished game stays finished even after the
         // other player closes their tab, and the replay underneath would look
         // absurd above the words "waiting for a second player".
+        const callThem = 'Call your friend, to talk through your respective experiences.';
         if (game.outcome.status === STATUS.WON) {
-          return game.outcome.winner === seat ? 'You win.' : 'Your opponent wins.';
+          return game.outcome.winner === seat
+            ? `You win! ${callThem}`
+            : `Your opponent wins. ${callThem}`;
         }
-        if (game.outcome.status === STATUS.TIE) return 'Nobody can move. A draw.';
+        if (game.outcome.status === STATUS.TIE) return `Nobody can move — a draw. ${callThem}`;
         const full = occupancy(state.seats, now()).held === 2;
         if (!full) return 'Waiting for a second player to join this room.';
         // Which way you are heading is the thing players lose track of: the
@@ -288,11 +291,8 @@
 
         const full = occupancy(state.seats, now()).held === 2;
         el('coachBody').textContent = full
-          ? `You are both here. You are Player ${seat + 1}, playing ` +
-            `${sportOf(seat)}, and your goal is the gap at the ` +
-            `${cornerOf(seat)} — which need not be the side you had in the ` +
-            'tutorial. Stop talking to each other now: no comparing screens, ' +
-            'no hints. When the game is over, call each other and compare notes.'
+          ? 'You are both here. Please stop talking to each other now. Once the ' +
+            'first game is over, you can call each other and compare notes.'
           : 'You are the only one here. Send your opponent the invite link, or ' +
             'tell them this room name so they can type it in. Once they arrive, ' +
             'stop talking to each other until the game is over.';

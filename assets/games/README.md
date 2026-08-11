@@ -10,13 +10,13 @@ This is the single entry point for everything about the games. The site's own
 
 | Game | Live pages | State |
 | --- | --- | --- |
-| Soccer Hockey | `assets/SoccerHockey/…V3.1.html` | V3.1, being replaced by V4.0 |
+| Soccer Hockey | `assets/SoccerHockey/…V4.0.html` | **V4.0, rebuilt on this engine and live** |
 | Escher Chess | `assets/EscherChess/…V1.2.html` | V1.2, untouched so far |
 
 Each game has a tutorial page and a real game page. The tutorial teaches the
-interface with the duality switched off; the real game turns it on. Landing
-pages are `_pages/soccerhockey.md`, `_pages/escherchess.md`, grouped under
-`_pages/games.md`.
+interface with the duality switched off; the real game turns it on, and ends in
+the reveal. Landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md`,
+grouped under `_pages/games.md`.
 
 ## Where things live
 
@@ -38,11 +38,27 @@ core/rules.js     Board geometry, move-set derivation, legal moves
 core/game.js      Game state, move log, replay, per-seat views, reframing
 core/seats.js     Seat claiming, heartbeats, who may move
 core/presets.js   The two published configurations, and the palettes
-core/index.js     Barrel
 ```
 
 Pure functions over plain data — no DOM, no network, no framework — so the same
 files run in the browser and under `node --test`.
+
+Around that sit the two impure layers, each with one job:
+
+```
+net/rooms.js      The fixed room pool; share links
+net/room.js       Firestore: sign in, claim a seat, append a move, watch
+ui/board.js       The isometric board renderer
+ui/board.css      Page furniture and both palettes
+ui/coach.js       Tutorial steps and the reveal's prose — all copy lives here
+ui/replay.js      The reveal: both seats' boards, stepping through one move log
+```
+
+Every intra-project import carries a `?v=` token. GitHub Pages serves assets
+with a ten-minute max-age, so an edited module keeps loading from cache while
+the page itself is refetched — which looks exactly like a change that never
+shipped. Bump them together, and the build stamp at the foot of each page
+reports which set the browser actually ran.
 
 ### One world, two lenses
 
@@ -75,7 +91,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 102 tests
+node --test _tests/*.test.mjs                      # 147 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
@@ -92,24 +108,43 @@ replay determinism, frame-independence, seat claiming and abandonment, and the
 property that both seats' legal moves correspond one-to-one across every valid
 board size and duality number. Four V3.1 bugs are pinned as regression tests.
 
-## Rebuild status
+The reveal's claims are tested too — that both seats agree about the goal
+column, the row and the winner, and disagree about the ball's column and the
+shape of the trail. The page asserts all five of those in prose, so they are
+checked rather than trusted.
 
-Done:
+What cannot be tested here is anything that needs the network: the Firestore
+rules, seat claiming against a live room, and two browsers in the same game.
+That is why `net/` is kept as thin as it is — it reads and writes documents and
+decides nothing.
 
-1. **Rules audit.** See `_firebase/`.
-2. **Engine extracted, with tests.** Fixes the stalemate bug and removes the
-   tutorial/game divergence that caused it.
-3. **Seat claiming.** Fixes the softlock on opening the game directly, the
-   collision where two players in a room could be handed the same seat, and the
-   permanently cached side.
+## Status
+
+Soccer Hockey is **done and live at V4.0**. The rewrite closed every defect
+listed in the archive's README, and the pages now carry:
+
+- one rules engine shared by the tutorial and the game, so they cannot drift
+  apart the way V3.1's two implementations did;
+- the move log as the room's state, which is what lets a Security Rule refuse a
+  move from anybody but the seat on move — a rule cannot replay a board, but it
+  can count;
+- seats claimed against a Firebase anonymous uid, with heartbeats, a five-minute
+  abandonment timeout, and presence ("your opponent is here, and moving about");
+- a room pool of twenty fixed names, matched by the published rules, so document
+  creation can never be unbounded on a free plan;
+- the guided tutorial, which advances on what the player does rather than on a
+  Next button;
+- **the reveal**: both seats' boards side by side at full size, stepping through
+  the one move log together.
 
 Next:
 
-4. **Move log as the state**, so a room stores the moves rather than a snapshot
-   and the security rules can enforce "only the seat whose turn it is may add a
-   move".
-5. **The V4.0 pages**: seat claiming wired to a Firebase uid, the reveal
-   delivered as a replay of the same move log through the other lens, and the
-   page furniture restyled to match the site. The isometric boards, the hover
-   lift and both palettes carry over unchanged.
-6. **Escher Chess** onto the same engine.
+1. **The sandbox.** Multiplayer like the real game, but opened up: choose the
+   board size and the duality number, swap which sport each seat is playing,
+   and watch what the lens does to a board you have configured yourself. Meant
+   for after the reveal, when the question "what else could it have been?" is
+   the live one.
+2. **Escher Chess** onto the same engine.
+
+Still open on the Firebase side: App Check, and restricting the web API key to
+the site's own referrer. Both are in [`_firebase/`](../../_firebase/README.md).

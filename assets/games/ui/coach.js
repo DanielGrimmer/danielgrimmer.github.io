@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.1.5';
-import { replayFrames } from '../core/game.js?v=4.1.5';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.1.6';
+import { replayFrames } from '../core/game.js?v=4.1.6';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -164,44 +164,63 @@ export const BASKETBALL_OUTRO = Object.freeze({
 });
 
 /**
- * The note above the two replay boards, once the real game has finished.
+ * The note above the two replay boards, once the real game has finished. The
+ * one place in the game where the thing being demonstrated is said out loud.
  *
- * Seat-aware only in its first sentence, because a spectator has no board of
- * their own to be told about. Everything after that is the same for everybody,
- * and is the one place in the game where the thing being demonstrated is
- * finally said out loud.
+ * Only the two second-person openings are assembled: which sport each player
+ * had depends on the seat, and a spectator holds neither. Everything after that
+ * is the same for everybody and is left as one block of prose, because that is
+ * what it is — the copy is meant to be edited here, not reasoned about.
  */
 export function replayNote(config, seat) {
-  // Not "on the left": below 900px the two boards stack, and the headings above
-  // them are what says which is which in either layout.
-  const lead =
+  const yours = config.seats[seat ?? 0].sport;
+  const theirs = config.seats[seat === 1 ? 0 : 1].sport;
+
+  const opening =
     seat === null
-      ? 'Both boards below show the game that has just finished. Each is what ' +
-        'one of the two players was looking at.'
-      : 'Both boards below show the game you have just played. The one marked ' +
-        'as yours is exactly what you were looking at; the other is what your ' +
-        'opponent was looking at, at the same moments.';
+      ? 'Both boards below show the game that has just finished, from two ' +
+        `radically different perspectives. ${config.seats[0].name} thought they ` +
+        `were playing ${config.seats[0].sport}, whereas ${config.seats[1].name} ` +
+        `thought they were playing ${config.seats[1].sport};`
+      : 'Both boards below show the game you just played, from two radically ' +
+        `different perspectives. Whereas you thought you were playing ${yours}, ` +
+        `your opponent thought you were playing ${theirs};`;
+
+  const divergence =
+    seat === null
+      ? 'But the two players saw completely different things. Almost nothing ' +
+        'about the one perspective agrees with the other.'
+      : 'But your friend saw something completely different. Almost nothing ' +
+        'about their perspective agrees with yours.';
 
   return {
-    title: 'The Same Game, Twice',
+    title: 'It Was Both Soccer and Hockey, At Once',
     body:
-      `${lead} Every move is a move that was actually made, in the order it was ` +
-      'made; nothing has been redrawn to make a point.\n\n' +
-      'Step through it. Almost nothing agrees. The ball stands in two different ' +
-      'columns. The trails of ✕s behind it are different shapes. The star of ' +
-      'options around it is a different width. A pass that crossed one column on ' +
-      'one board crossed four on the other; a pass that crossed three columns ' +
-      'crossed only one. The captions under the boards count them out, move by ' +
-      'move.\n\n' +
-      'Two things do agree, at every single move: the row the ball is on, and the ' +
-      'column the goals stand in. That is the whole of the relationship between ' +
-      `the two boards. One is got from the other by relabelling the ` +
-      `${config.board.width} columns — a relabelling that leaves the goals where ` +
-      'they are, and that carries every legal move to a legal move. Nothing ' +
-      'either of you could have seen while playing tells them apart.\n\n' +
-      'So there is no fact of the matter about which column the ball was really ' +
-      'in. Neither board is a distorted copy of the other, because there is no ' +
-      'third board for either of them to be a copy of. You were never looking at ' +
-      'the same board. You were always playing the same game.',
+      `${opening} And this is more than just an aesthetic difference (no mere ` +
+      'palette swap). Compare the pattern of available moves on each board, the ' +
+      'Soccer player can kick the ball three spaces to the right, whereas the ' +
+      'Hockey player can move it four spaces.\n\n' +
+      'Now advance through the replay. Every move is exactly as it was actually ' +
+      `made, in the order it was made. ${divergence} What seems like a short ` +
+      'move to the Soccer player, seems like a long move to the Hockey player ' +
+      'and vice versa. In general, you will disagree about what column the ' +
+      "ball/puck stands in, as well as the shape of the trails of ✕'s.\n\n" +
+      'Nonetheless, you both agree where the two goals are and who ultimately ' +
+      'won the game. What structural features of the game are common across the ' +
+      'two perspectives, allowing for this kind of consensus? What kind of ' +
+      "mathematical transformation relates the two players' different " +
+      'representations of this common structure? These kinds of dual ' +
+      'representations of one underlying structure are now-common on the front ' +
+      'lines of physics: the AdS-CFT correspondence, T-duality in String ' +
+      'Theory, etc.\n\n' +
+      'My research seeks to draw epistemic and metaphysical consequences from ' +
+      'the possibility of such dualities: Are space and time aspects of ' +
+      'things-in-themselves, or rather an organizational framework which we ' +
+      'apply to the world? Could an alien society use completely different ' +
+      'categories and intuitions to make sense of the world? How did we come to ' +
+      'have our basic metaphysical concepts (quid facti), and what justifies ' +
+      'our continued use of them (quid juris)? That is, which are ' +
+      'universal/objective, and which are idiosyncratic/contingent, e.g., upon ' +
+      'our particular evolutionary history?',
   };
 }
