@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.4" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.5" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -17,7 +17,7 @@
         <a href="/soccer-hockey/">← Soccer Hockey</a>
       </header>
 
-      <div class="dg-layout">
+      <div class="dg-layout" id="playLayout">
         <div class="dg-coach" id="coach" aria-live="polite">
           <div class="dg-coach-progress" id="coachProgress">Room</div>
           <h2 class="dg-coach-title" id="roomName">…</h2>
@@ -40,36 +40,60 @@
           <div class="dg-status" id="status">Connecting…</div>
           <div class="dg-presence" id="presence"></div>
           <div id="board"></div>
-          <div class="dg-bar">
-            <button class="dg-btn" id="newGame" type="button" hidden>New game</button>
-            <button class="dg-btn" id="leave" type="button" hidden>Leave this room</button>
+        </div>
+      </div>
+
+      <!--
+        The reveal. Hidden until the game is over, and then it replaces the
+        board rather than sitting under it: there is nothing left to play, and
+        the two replay boards want the whole width.
+      -->
+      <section id="replay" hidden>
+        <!--
+          The reading holds the site's measure and sits centred over the boards;
+          only the boards themselves take the extra width.
+        -->
+        <div class="dg-replay-intro">
+          <div class="dg-status" id="replayStatus"></div>
+          <div class="dg-coach dg-coach-band" id="replayCoach">
+            <div class="dg-coach-progress">The reveal</div>
+            <h2 class="dg-coach-title" id="replayTitle"></h2>
+            <p class="dg-coach-body" id="replayBody"></p>
           </div>
         </div>
+        <div id="replayStage"></div>
+      </section>
+
+      <div class="dg-bar dg-bar-main">
+        <button class="dg-btn" id="newGame" type="button" hidden>New game</button>
+        <button class="dg-btn" id="leave" type="button" hidden>Leave this room</button>
       </div>
 
       <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
     </div>
 
     <script type="module">
-      const BUILD = '4.1.4';
+      const BUILD = '4.1.5';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.4';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.5';
       import {
         initialGame,
         replay,
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.1.4';
+      } from '../games/core/game.js?v=4.1.5';
       import {
         presenceOf,
         seatOf,
         normaliseSeats,
         occupancy,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.1.4';
-      import { createBoardView } from '../games/ui/board.js?v=4.1.4';
-      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.4';
+      } from '../games/core/seats.js?v=4.1.5';
+      import { createBoardView } from '../games/ui/board.js?v=4.1.5';
+      import { createReplayView } from '../games/ui/replay.js?v=4.1.5';
+      import { replayNote } from '../games/ui/coach.js?v=4.1.5';
+      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.5';
       import {
         signIn,
         chooseRoom,
@@ -82,7 +106,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.1.4';
+      } from '../games/net/room.js?v=4.1.5';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -93,6 +117,8 @@
       let state = { seats: normaliseSeats([]), moves: [] };
       let game = initialGame(config);
       let boardView = null;
+      let replayView = null;
+      let replayKey = null; // what the replay on screen is currently showing
       let unwatch = null;
       let interacted = false; // has anyone touched this tab since the last beat
 
@@ -129,12 +155,15 @@
         if (seat === null) {
           return 'Both seats in this room are taken — you are watching. Join another room to play.';
         }
-        const full = occupancy(state.seats, now()).held === 2;
-        if (!full) return 'Waiting for a second player to join this room.';
+        // The result comes first: a finished game stays finished even after the
+        // other player closes their tab, and the replay underneath would look
+        // absurd above the words "waiting for a second player".
         if (game.outcome.status === STATUS.WON) {
           return game.outcome.winner === seat ? 'You win.' : 'Your opponent wins.';
         }
         if (game.outcome.status === STATUS.TIE) return 'Nobody can move. A draw.';
+        const full = occupancy(state.seats, now()).held === 2;
+        if (!full) return 'Waiting for a second player to join this room.';
         // Which way you are heading is the thing players lose track of: the
         // sport you were handed says nothing about it, and it need not match
         // the side you had in the tutorial. So it is repeated every turn.
@@ -183,6 +212,62 @@
         el('presence').textContent = describeOpponent();
         el('newGame').hidden = seat === null || game.outcome.status === STATUS.PLAYING;
         el('leave').hidden = seat === null;
+        drawReplay();
+      }
+
+      /*
+       * The reveal, shown in place of the board once there is nothing left to
+       * play.
+       *
+       * Rebuilt only when what it is showing changes. Every heartbeat delivers a
+       * fresh snapshot and calls draw(), so rebuilding unconditionally would
+       * throw the viewer back to the kick-off once a minute while they were
+       * still reading their way through it.
+       */
+      function drawReplay() {
+        const over = game.outcome.status !== STATUS.PLAYING;
+        const key = over ? `${room}:${seat}:${state.moves.length}` : null;
+
+        el('playLayout').hidden = over;
+        el('replay').hidden = !over;
+        // Two boards at full size need more than the site's text measure.
+        document.querySelector('.dg-wrap').classList.toggle('dg-wide', over);
+
+        if (key === replayKey) {
+          if (over) el('replayStatus').textContent = describeStatus();
+          return;
+        }
+        replayKey = key;
+
+        if (replayView) {
+          replayView.destroy();
+          replayView = null;
+        }
+        if (!over) return;
+
+        const note = replayNote(config, seat);
+        el('replayTitle').textContent = note.title;
+        el('replayBody').textContent = note.body;
+        el('replayStatus').textContent = describeStatus();
+        el('replayStatus').dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
+
+        // Your own board first, so "on the left" in the note is true for both
+        // players even though they hold different seats.
+        const order = seat === null ? [0, 1] : [seat, seat === 0 ? 1 : 0];
+        const labels = order.map((s, i) =>
+          seat === null
+            ? `${config.seats[s].name} — ${sportOf(s)}`
+            : `${i === 0 ? 'Your board' : "Your opponent's board"} — ${sportOf(s)}`
+        );
+
+        // Built after the section is unhidden: each board measures itself as it
+        // is created, and a hidden parent measures as nothing at all.
+        replayView = createReplayView(el('replayStage'), {
+          config,
+          moves: state.moves,
+          seatOrder: order,
+          labels,
+        });
       }
 
       function drawRoom() {

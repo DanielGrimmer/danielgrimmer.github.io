@@ -461,7 +461,12 @@ body.dg {
   margin-bottom: 0.4rem;
 }
 
-.dg-coach-title {
+/*
+ * `.dg h2` above is more specific than a bare class, so the panel's title was
+ * inheriting the page's 2.5rem top margin and floating a long way from the
+ * label that introduces it.
+ */
+.dg .dg-coach-title {
   font-size: 1.05rem;
   font-weight: 500;
   margin: 0 0 0.5rem;
@@ -509,6 +514,132 @@ body.dg {
 .dg-play .dg-bar {
   justify-content: center;
   margin-top: 2.5rem;
+}
+
+/* --------------------------------------------------------------- replay ---- */
+
+/*
+ * Two full-size boards side by side need more room than the site's text column,
+ * so the replay screen widens the wrapper. It is only ever applied once the
+ * game is over, so the page furniture keeps the site's measure while there is
+ * still reading to do.
+ */
+.dg-wrap.dg-wide {
+  max-width: 1180px;
+}
+
+/*
+ * The coach runs the full width here rather than sitting in a column beside the
+ * board, which is what makes room for two boards at full size. Its paragraphs
+ * still hold the site's measure, so it does not become a 1180px-wide slab of
+ * text.
+ */
+.dg-replay-intro {
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.dg-coach-band {
+  position: static;
+  margin: 1rem 0 0;
+}
+
+.dg-bar-main {
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+.dg-replay-boards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+  margin-top: 1.5rem;
+}
+
+/*
+ * Below this the two boards would be scaled down far enough that the trails
+ * stop being readable, which defeats the comparison. Stacked, they are still
+ * one above the other on the same screen.
+ */
+@media (max-width: 900px) {
+  .dg-replay-boards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dg-replay-side {
+  min-width: 0;
+}
+
+.dg-replay-head {
+  border-bottom: 1px solid var(--dg-divider);
+  padding-bottom: 0.4rem;
+}
+
+.dg-replay-label {
+  font-weight: 500;
+}
+
+.dg-replay-reach {
+  font-size: 0.85rem;
+  color: var(--dg-text-muted);
+}
+
+/*
+ * The caption is the arithmetic made visible: the same move, counted on each
+ * board. A fixed height keeps the two boards level when one caption wraps and
+ * the other does not.
+ */
+.dg-replay-caption {
+  min-height: 3.2em;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.dg-replay-across {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--dg-accent);
+}
+
+.dg-replay-rows {
+  display: block;
+  color: var(--dg-text-muted);
+  font-size: 0.9rem;
+}
+
+.dg-replay-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.dg-btn.dg-step {
+  padding: 0.45rem 0.7rem;
+  line-height: 1;
+}
+
+.dg-replay-scrub {
+  flex: 1 1 14rem;
+  min-width: 8rem;
+  max-width: 26rem;
+  accent-color: var(--dg-accent);
+}
+
+.dg-replay-count {
+  flex: 1 0 100%;
+  text-align: center;
+  color: var(--dg-text-muted);
+  font-size: 0.9rem;
+}
+
+.dg-board-frame[data-interactive='false'] .dg-cell.is-playable {
+  cursor: default;
 }
 
 /* ---------------------------------------------------------------- misc ---- */

@@ -40,6 +40,10 @@ function keyOf(sq) {
 export function createBoardView(container, { board, theme, interactive = true }) {
   const frame = document.createElement('div');
   frame.className = 'dg-board-frame';
+  // A replay board still lifts its cubes under the cursor — that is most of the
+  // charm — but it must not offer a pointer, which promises a click it will
+  // not accept.
+  frame.dataset.interactive = String(interactive);
 
   const surface = document.createElement('div');
   surface.className = 'dg-board';

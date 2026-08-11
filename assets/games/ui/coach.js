@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.1.4';
-import { replayFrames } from '../core/game.js?v=4.1.4';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.1.5';
+import { replayFrames } from '../core/game.js?v=4.1.5';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -162,3 +162,46 @@ export const BASKETBALL_OUTRO = Object.freeze({
   href: '/soccer-hockey/',
   cta: 'Play the Real Game →',
 });
+
+/**
+ * The note above the two replay boards, once the real game has finished.
+ *
+ * Seat-aware only in its first sentence, because a spectator has no board of
+ * their own to be told about. Everything after that is the same for everybody,
+ * and is the one place in the game where the thing being demonstrated is
+ * finally said out loud.
+ */
+export function replayNote(config, seat) {
+  // Not "on the left": below 900px the two boards stack, and the headings above
+  // them are what says which is which in either layout.
+  const lead =
+    seat === null
+      ? 'Both boards below show the game that has just finished. Each is what ' +
+        'one of the two players was looking at.'
+      : 'Both boards below show the game you have just played. The one marked ' +
+        'as yours is exactly what you were looking at; the other is what your ' +
+        'opponent was looking at, at the same moments.';
+
+  return {
+    title: 'The Same Game, Twice',
+    body:
+      `${lead} Every move is a move that was actually made, in the order it was ` +
+      'made; nothing has been redrawn to make a point.\n\n' +
+      'Step through it. Almost nothing agrees. The ball stands in two different ' +
+      'columns. The trails of ✕s behind it are different shapes. The star of ' +
+      'options around it is a different width. A pass that crossed one column on ' +
+      'one board crossed four on the other; a pass that crossed three columns ' +
+      'crossed only one. The captions under the boards count them out, move by ' +
+      'move.\n\n' +
+      'Two things do agree, at every single move: the row the ball is on, and the ' +
+      'column the goals stand in. That is the whole of the relationship between ' +
+      `the two boards. One is got from the other by relabelling the ` +
+      `${config.board.width} columns — a relabelling that leaves the goals where ` +
+      'they are, and that carries every legal move to a legal move. Nothing ' +
+      'either of you could have seen while playing tells them apart.\n\n' +
+      'So there is no fact of the matter about which column the ball was really ' +
+      'in. Neither board is a distorted copy of the other, because there is no ' +
+      'third board for either of them to be a copy of. You were never looking at ' +
+      'the same board. You were always playing the same game.',
+  };
+}
