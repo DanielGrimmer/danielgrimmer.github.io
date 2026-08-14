@@ -13,6 +13,7 @@ import {
   normaliseSpec,
   configFromSpec,
   isDegenerate,
+  changeDials,
   encodeSpec,
   decodeSpec,
   offsetThroughLens,
@@ -231,5 +232,50 @@ test('the sandbox still plays', async (t) => {
       game = applyMove(config, game, next);
     }
     assert.notEqual(game.outcome.status, STATUS.PLAYING);
+  });
+});
+
+test('turning a dial', async (t) => {
+  const edited = normaliseSpec({ ...DEFAULT_SPEC, moveSet: [[1, 0], [0, 1], [0, 3]] }).spec;
+
+  await t.test('a height change keeps a hand-edited move set — the lens has not moved', () => {
+    const { spec } = changeDials(edited, { width: 11, height: 9, duality: 4 });
+    assert.deepEqual(spec.moveSet, edited.moveSet);
+  });
+
+  await t.test('a duality change re-derives it, so neither star is the privileged one', () => {
+    const { spec, notes } = changeDials(edited, { width: 11, height: 13, duality: 5 });
+    assert.notDeepEqual(spec.moveSet, edited.moveSet);
+    assert.match(notes.join(' '), /neither/);
+  });
+
+  await t.test('a width change re-derives it too', () => {
+    const { spec } = changeDials(edited, { width: 13, height: 13, duality: 4 });
+    assert.deepEqual(spec.moveSet, derivedMoveSet({ width: 13, height: 13, duality: 4 }));
+  });
+
+  /*
+   * The claim the re-derivation exists to make good on: each player's own
+   * single sideways step is legal for them, and so is whatever the other
+   * player's single step looks like from where they are standing. Neither ends
+   * up with the tidy pattern and the other with the leftovers.
+   */
+  await t.test('every duality number leaves both seats a step of one, and the other seat’s', () => {
+    for (const width of [7, 11, 13]) {
+      for (const duality of validMultipliers(width)) {
+        if (duality === 1) continue; // both lenses the identity; nothing to balance
+        const { spec } = changeDials(normaliseSpec({ width, height: 13, duality: 1 }).spec, {
+          width,
+          height: 13,
+          duality,
+        });
+        const config = configFromSpec(spec);
+        const reach0 = sidewaysReach(config, 0);
+        const reach1 = sidewaysReach(config, 1);
+        assert.ok(reach0.includes(1), `seat 0 lost its single step at ${width}/${duality}`);
+        assert.ok(reach1.includes(1), `seat 1 lost its single step at ${width}/${duality}`);
+        assert.equal(reach0.length, reach1.length, `lopsided reach at ${width}/${duality}`);
+      }
+    }
   });
 });

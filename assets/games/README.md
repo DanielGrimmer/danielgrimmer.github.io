@@ -98,7 +98,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 176 tests
+node --test _tests/*.test.mjs                      # 181 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 

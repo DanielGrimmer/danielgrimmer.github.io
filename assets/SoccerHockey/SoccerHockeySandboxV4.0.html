@@ -42,8 +42,8 @@
         <label>Width <input type="number" id="width" min="3" max="19" step="1" /></label>
         <label>Height <input type="number" id="height" min="3" max="21" step="1" /></label>
         <label>Duality number <input type="number" id="duality" min="0" step="1" /></label>
-        <button class="dg-btn" id="resetBall" type="button">Put the ball back</button>
-        <button class="dg-btn" id="restore" type="button">Restore the published game</button>
+        <button class="dg-btn" id="resetBall" type="button">Put the ball back at mid-field</button>
+        <button class="dg-btn" id="restore" type="button">Restore the published game settings</button>
       </div>
       <p class="dg-dial-note" id="dialNote"></p>
 
@@ -55,7 +55,7 @@
           </div>
           <div id="board0"></div>
           <div class="dg-palette-wrap">
-            <div class="dg-palette-title">Soccer moves</div>
+            <div class="dg-palette-title">Toggle-able Soccer Moves</div>
             <div id="palette0"></div>
           </div>
         </div>
@@ -66,7 +66,7 @@
           </div>
           <div id="board1"></div>
           <div class="dg-palette-wrap">
-            <div class="dg-palette-title">Hockey moves</div>
+            <div class="dg-palette-title">Toggle-able Hockey Moves</div>
             <div id="palette1"></div>
           </div>
         </div>
@@ -97,6 +97,7 @@
         normaliseSpec,
         configFromSpec,
         toggleOffset,
+        changeDials,
         derivedMoveSet,
         encodeSpec,
         decodeSpec,
@@ -230,8 +231,9 @@
           });
 
           const reach = sidewaysReach(config, i, 1);
+          const plural = reach.length === 1 && reach[0] === 1 ? 'column' : 'columns';
           el(`reach${i}`).textContent = reach.length
-            ? `Short passes reach ${reach.join(' or ')} columns.`
+            ? `Short passes reach ${reach.join(' or ')} ${plural}.`
             : 'No short passes at all.';
         }
 
@@ -281,13 +283,18 @@
       async function push(desired) {
         const result = normaliseSpec(desired);
         notes = result.notes;
-        if (alone) return apply(result.spec);
+        await share(result.spec);
+      }
+
+      /** Send an already-normalised specification, or adopt it if alone. */
+      async function share(next) {
+        if (alone) return apply(next);
         if (seat === null || !room) {
           draw(); // watching: the notes show, nothing shared changes
           return;
         }
         try {
-          await setSandboxConfig({ name: room, uid, config: encodeSpec(result.spec) });
+          await setSandboxConfig({ name: room, uid, config: encodeSpec(next) });
         } catch (err) {
           el('status').textContent = `That did not take: ${explain(err)}`;
         }
@@ -309,15 +316,21 @@
         }
       }
 
-      const readDials = () => ({
-        ...spec,
-        width: Number(el('width').value),
-        height: Number(el('height').value),
-        duality: Number(el('duality').value),
-      });
-
+      /*
+       * Dials go through `changeDials` rather than straight into `push`, so a
+       * change of width or duality re-derives the move set instead of carrying
+       * the canonical — that is, the soccer player's — one across.
+       */
       for (const id of ['width', 'height', 'duality']) {
-        el(id).addEventListener('change', () => push(readDials()));
+        el(id).addEventListener('change', () => {
+          const result = changeDials(spec, {
+            width: el('width').value,
+            height: el('height').value,
+            duality: el('duality').value,
+          });
+          notes = result.notes;
+          share(result.spec);
+        });
       }
 
       el('resetBall').addEventListener('click', async () => {

@@ -97,9 +97,48 @@ export function toggleOffset(moveSet, offset) {
   return without.length === moveSet.length ? [...moveSet, [...offset]] : without;
 }
 
-/** The move set the published game would derive for these numbers. */
+/**
+ * The move set the published game would derive for these numbers.
+ *
+ * Balanced between the seats by construction. The canonical set contains ±1 and
+ * ±a⁻¹, so the soccer player sees {1, a⁻¹} and the hockey player sees {a, 1}:
+ * each gets their own single step across, plus whatever the *other* player's
+ * single step looks like from where they are standing. Neither is the one with
+ * the tidy pattern.
+ */
 export function derivedMoveSet({ width, height, duality }) {
   return dualMoveSet({ width, height, duality }).map((o) => [...o]);
+}
+
+/**
+ * Turn one of the dials.
+ *
+ * A hand-edited move set is kept when only the height changes, because the
+ * height does not touch the lens. Changing the width or the duality number
+ * re-derives it, and that is the point rather than a convenience: the move set
+ * is stored in canonical columns, which are the soccer player's, so carrying it
+ * across a change of lens silently preserves the soccer player's star and hands
+ * the hockey player whatever falls out. Re-deriving gives both of them the
+ * balanced pattern again.
+ */
+export function changeDials(previous, { width, height, duality }) {
+  const lensMoved = Number(width) !== previous.width || Number(duality) !== previous.duality;
+  const result = normaliseSpec({
+    width,
+    height,
+    duality,
+    moveSet: lensMoved ? null : previous.moveSet,
+  });
+  return lensMoved && previous.moveSet.length
+    ? {
+        ...result,
+        notes: [
+          ...result.notes,
+          'The moves were worked out again from the new numbers, so that neither ' +
+            "player's pattern is the privileged one.",
+        ],
+      }
+    : result;
 }
 
 /**
