@@ -12,7 +12,10 @@ import {
   derivedMoveSet,
   normaliseSpec,
   configFromSpec,
-  isDegenerate,
+  trivialityOf,
+  TRIVIAL,
+  describeSpec,
+  nearestMultiplier,
   changeDials,
   encodeSpec,
   decodeSpec,
@@ -102,9 +105,23 @@ test('normalising a specification', async (t) => {
 
   await t.test('a duality number sharing a factor with the width is refused, with the valid list', () => {
     const { spec, notes } = normaliseSpec({ ...DEFAULT_SPEC, width: 12, duality: 4 });
-    assert.equal(spec.duality, 1);
-    assert.match(notes.join(' '), /must be one of/);
+    assert.match(notes.join(' '), /cannot share any prime factors/);
     assert.match(notes.join(' '), new RegExp(validMultipliers(12).join(', ')));
+    // The nearest legal value, not 1: answering a complaint about the number by
+    // making the two boards identical would be a worse outcome than the fault.
+    assert.equal(spec.duality, 5);
+    assert.notEqual(trivialityOf(spec), TRIVIAL.IDENTITY);
+  });
+
+  await t.test('the duality number is bounded by the width, not wrapped around it', () => {
+    // Reducing mod the width would turn 12 on a board 11 wide into 1, which is
+    // the single value that collapses the whole thing.
+    assert.equal(normaliseSpec({ ...DEFAULT_SPEC, duality: 12 }).spec.duality, 10);
+    assert.equal(normaliseSpec({ ...DEFAULT_SPEC, duality: 0 }).spec.duality, 1);
+    assert.equal(normaliseSpec({ ...DEFAULT_SPEC, duality: -4 }).spec.duality, 1);
+    for (const d of [1, 4, 10]) {
+      assert.equal(normaliseSpec({ ...DEFAULT_SPEC, duality: d }).spec.duality, d);
+    }
   });
 
   await t.test('sizes are clamped rather than refused', () => {
@@ -147,9 +164,63 @@ test('normalising a specification', async (t) => {
     assert.deepEqual(legalMovesFor(config, initialGame(config)), []);
   });
 
-  await t.test('duality 1 is flagged: both lenses become the identity', () => {
-    assert.equal(isDegenerate(normaliseSpec({ ...DEFAULT_SPEC, duality: 1 }).spec), true);
-    assert.equal(isDegenerate(published), false);
+  await t.test('the two trivial choices are recognised, and nothing else is', () => {
+    const at = (duality) => trivialityOf(normaliseSpec({ ...DEFAULT_SPEC, duality }).spec);
+    assert.equal(at(1), TRIVIAL.IDENTITY);
+    assert.equal(at(10), TRIVIAL.MIRROR); // width 11, so 10 ≡ −1: a reflection
+    assert.equal(at(4), null);
+    assert.equal(trivialityOf(published), null);
+  });
+});
+
+test('the one line under the dials', async (t) => {
+  const line = (spec) => {
+    const r = normaliseSpec(spec);
+    return describeSpec(r.spec, r.notes);
+  };
+
+  await t.test('says nothing when there is nothing to say', () => {
+    assert.equal(line(DEFAULT_SPEC), '');
+  });
+
+  await t.test('names each trivial choice for what it is', () => {
+    assert.match(line({ ...DEFAULT_SPEC, duality: 1 }), /identical/);
+    assert.match(line({ ...DEFAULT_SPEC, duality: 10 }), /mirror images/);
+  });
+
+  /*
+   * The bug this replaced: refusing a duality number used to fall back to 1,
+   * which then also tripped the triviality note, so a single mistake produced
+   * two complaints — the second of which was only a consequence of the first.
+   */
+  await t.test('shows one thing at a time, and the correction wins', () => {
+    const messy = normaliseSpec({ width: 999, height: 999, duality: 6, moveSet: [[8, 8]] });
+    assert.ok(messy.notes.length > 1, 'this case really does have several faults');
+    const shown = describeSpec(messy.spec, messy.notes);
+    assert.equal(shown, messy.notes[0]);
+    assert.doesNotMatch(shown, /identical|mirror images/);
+  });
+});
+
+test('choosing a legal duality number for you', async (t) => {
+  await t.test('lands on the nearest one', () => {
+    assert.equal(nearestMultiplier(4, 12), 5);
+    assert.equal(nearestMultiplier(6, 9), 5);
+  });
+
+  await t.test('breaks a tie away from the two boring answers', () => {
+    // 7 and 11 are both two away from 9 on a board 12 wide, but 11 is width − 1
+    // and would hand back a mirror image.
+    assert.equal(nearestMultiplier(9, 12), 7);
+  });
+
+  await t.test('always returns something coprime with the width', () => {
+    for (let width = 3; width <= 19; width++) {
+      for (let want = 1; want < width; want++) {
+        const got = nearestMultiplier(want, width);
+        assert.ok(validMultipliers(width).includes(got), `${want} on ${width} gave ${got}`);
+      }
+    }
   });
 });
 

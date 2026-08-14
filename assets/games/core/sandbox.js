@@ -138,45 +138,75 @@ export function changeDials(previous, { width, height, duality }) {
  * changed under the player's hands.
  */
 export function normaliseSpec(spec = {}) {
-  const notes = [];
-
   const width = clampInt(spec.width, LIMITS.minWidth, LIMITS.maxWidth, DEFAULT_SPEC.width);
   const height = clampInt(spec.height, LIMITS.minHeight, LIMITS.maxHeight, DEFAULT_SPEC.height);
+
+  const sizeNotes = [];
   if (width !== spec.width && Number.isFinite(spec.width)) {
-    notes.push(`Width has to be between ${LIMITS.minWidth} and ${LIMITS.maxWidth}.`);
+    sizeNotes.push(`Width has to be between ${LIMITS.minWidth} and ${LIMITS.maxWidth}.`);
   }
   if (height !== spec.height && Number.isFinite(spec.height)) {
-    notes.push(`Height has to be between ${LIMITS.minHeight} and ${LIMITS.maxHeight}.`);
+    sizeNotes.push(`Height has to be between ${LIMITS.minHeight} and ${LIMITS.maxHeight}.`);
   }
 
-  // The duality number has to be invertible mod the width, or it is not a
-  // relabelling of the columns at all — two of them would collide.
+  /*
+   * The duality number lives in 1..width-1, and is clamped there rather than
+   * reduced modulo the width. Reducing is arithmetically the same and worse to
+   * use: typing 12 on a board 11 wide would silently become 1, which is the one
+   * value that makes the whole thing collapse. A spinner that stops at the ends
+   * of the range is what somebody turning a dial expects.
+   */
   const valid = validMultipliers(width);
-  let duality = Math.trunc(Number(spec.duality));
-  if (!Number.isFinite(duality)) duality = 1;
-  duality = mod(duality, width);
+  let duality = clampInt(spec.duality, 1, width - 1, 1);
+  let dualityNote = null;
+
+  // It also has to be invertible mod the width, or it is not a relabelling of
+  // the columns at all — two of them would collide.
   if (!areCoprime(duality, width)) {
-    notes.push(
-      `${duality} shares a factor with ${width}, so it cannot relabel the columns. ` +
-        `On a board ${width} wide the duality number must be one of: ${valid.join(', ')}.`
-    );
-    duality = 1;
+    dualityNote =
+      `The duality number (here ${duality}) cannot share any prime factors with ` +
+      `the board width (here ${width}). On a board ${width} wide the duality ` +
+      `number must be one of: ${valid.join(', ')}.`;
+    // The nearest legal value rather than 1: falling back to 1 would answer a
+    // complaint about the number by quietly making the two boards identical.
+    duality = nearestMultiplier(duality, width);
   }
 
   const geometry = paletteGeometry({ width, height });
   let moveSet = Array.isArray(spec.moveSet) ? spec.moveSet.map(readOffset).filter(Boolean) : null;
+  let movesNote = null;
 
   if (moveSet === null) {
     moveSet = derivedMoveSet({ width, height, duality });
   } else {
     const kept = dedupe(moveSet.filter((o) => withinPalette(geometry, o)));
     if (kept.length !== moveSet.length) {
-      notes.push('Some moves fell outside the new board and were dropped.');
+      movesNote = 'Some moves fell outside the new board and were dropped.';
     }
     moveSet = kept.slice(0, LIMITS.maxOffsets);
   }
 
+  // Ordered by how much the reader needs to hear it, because only the first is
+  // ever shown. Two notes at once read as two faults.
+  const notes = [dualityNote, movesNote, ...sizeNotes].filter(Boolean);
   return { spec: Object.freeze({ width, height, duality, moveSet }), notes, validMultipliers: valid };
+}
+
+/**
+ * The legal duality number closest to the one asked for.
+ *
+ * Ties are broken away from 1 and width − 1, because those are the two that
+ * give a board with nothing to see. Substituting a value nobody asked for is
+ * already a liberty; substituting a boring one would be a worse one.
+ */
+export function nearestMultiplier(want, width) {
+  const trivial = (d) => d === 1 || d === width - 1;
+  return [...validMultipliers(width)].sort(
+    (a, b) =>
+      Math.abs(a - want) - Math.abs(b - want) ||
+      Number(trivial(a)) - Number(trivial(b)) ||
+      a - b
+  )[0];
 }
 
 /** Build a runnable config. Only ever called with a spec `normaliseSpec` returned. */
@@ -196,15 +226,44 @@ export function configFromSpec(spec) {
 }
 
 /**
- * Whether the two seats can tell their boards apart at all.
+ * The two ways of choosing a duality number that give nothing away.
  *
- * Duality 1 makes both lenses the identity — the sandbox's version of the
- * tutorial — and it is easy to land on by accident, because it is what a width
- * change falls back to. Worth saying out loud rather than leaving the player
- * wondering why the two boards have gone identical.
+ * 1 leaves both lenses the identity — the sandbox's version of the tutorial.
+ * width − 1 is ≡ −1, so it negates every column displacement: the second board
+ * is the first one reflected, which looks like a difference and is not one.
+ * Both are worth saying out loud rather than leaving somebody wondering why the
+ * boards have stopped being interesting.
  */
-export function isDegenerate(spec) {
-  return mod(spec.duality, spec.width) === 1;
+export const TRIVIAL = Object.freeze({ IDENTITY: 'identity', MIRROR: 'mirror' });
+
+export function trivialityOf({ width, duality }) {
+  const d = mod(duality, width);
+  if (d === 1) return TRIVIAL.IDENTITY;
+  if (d === width - 1) return TRIVIAL.MIRROR;
+  return null;
+}
+
+/**
+ * The single line of feedback under the dials.
+ *
+ * One line, never two. A correction always wins: being told that the number was
+ * refused *and* that the boards are now identical reads as two separate faults,
+ * when the second is only a consequence of the first. Where nothing had to be
+ * corrected, the line describes what the current numbers actually give you.
+ */
+export function describeSpec(spec, notes = []) {
+  if (notes.length) return notes[0];
+  switch (trivialityOf(spec)) {
+    case TRIVIAL.IDENTITY:
+      return 'Duality number 1 makes the two boards identical (up to a palette swap).';
+    case TRIVIAL.MIRROR:
+      return (
+        'When the duality number is one less than the width (as it is now) the ' +
+        'two boards are mirror images of each other.'
+      );
+    default:
+      return '';
+  }
 }
 
 /* --------------------------------------------------------- serialisation ---- */

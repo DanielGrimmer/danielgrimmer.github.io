@@ -41,7 +41,7 @@
       <div class="dg-dials">
         <label>Width <input type="number" id="width" min="3" max="19" step="1" /></label>
         <label>Height <input type="number" id="height" min="3" max="21" step="1" /></label>
-        <label>Duality number <input type="number" id="duality" min="0" step="1" /></label>
+        <label>Duality number <input type="number" id="duality" min="1" step="1" /></label>
         <button class="dg-btn" id="resetBall" type="button">Put the ball back at mid-field</button>
         <button class="dg-btn" id="restore" type="button">Restore the published game settings</button>
       </div>
@@ -94,7 +94,7 @@
         derivedMoveSet,
         encodeSpec,
         decodeSpec,
-        isDegenerate,
+        describeSpec,
       } from '../games/core/sandbox.js?v=4.2.1';
       import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.2.1';
       import { createBoardView } from '../games/ui/board.js?v=4.2.1';
@@ -161,11 +161,11 @@
         "any time. Try changing the board's width, its height, and its " +
         '"duality number" (which must not share any prime factor with the ' +
         'width).\n\n' +
-        'The grids under the boards are the move sets — each cell is one ' +
-        'relative move, and the ball sits at the centre. Switch one on and ' +
-        'watch where it appears on the other board. Then try a different ' +
-        'duality number, and a board of a different width, and see which of ' +
-        'them still give you two boards worth telling apart.';
+        'The two grids under the boards allow you to adjust the allowed move ' +
+        'sets for both players in unison. Switch one move on and off to see ' +
+        'what this changes about the other board. Then try this again with a ' +
+        'different duality number. See if you can figure out what is going on ' +
+        'behind the scenes.';
 
       /* ------------------------------------------------------------ drawing */
 
@@ -253,13 +253,13 @@
           if (document.activeElement !== input) input.value = String(value);
           input.disabled = !editable;
         }
+        // The duality number runs 1..width-1, so its ceiling moves with the board.
+        el('duality').max = String(spec.width - 1);
         el('resetBall').disabled = !editable;
         el('restore').disabled = !editable;
 
-        const degenerate = isDegenerate(spec)
-          ? 'Duality number 1 makes both lenses the identity — the two boards are now the same board. That is the tutorial.'
-          : '';
-        el('dialNote').textContent = [...notes, degenerate].filter(Boolean).join(' ');
+        // One line, never a pile of them: `describeSpec` decides which.
+        el('dialNote').textContent = describeSpec(spec, notes);
       }
 
       /* ------------------------------------------------------------ writing */
@@ -326,6 +326,18 @@
             duality: el('duality').value,
           });
           notes = result.notes;
+          // Write the corrected values back even though the box still has
+          // focus. `draw` leaves a focused input alone so a value cannot jump
+          // mid-keystroke, but `change` means the value has been committed, and
+          // leaving a refused number sitting there contradicts both the note
+          // underneath it and the board above.
+          for (const [box, value] of [
+            ['width', result.spec.width],
+            ['height', result.spec.height],
+            ['duality', result.spec.duality],
+          ]) {
+            el(box).value = String(value);
+          }
           share(result.spec);
         });
       }
