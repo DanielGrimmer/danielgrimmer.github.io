@@ -20,11 +20,11 @@
  * note above the boards says what to look for once, and then stops talking.
  */
 
-import { replayFrames, viewOf } from '../core/game.js?v=4.2.1';
-import { createBoardView } from './board.js?v=4.2.1';
+import { replayFrames, viewOf } from '../core/game.js?v=4.2.2';
+import { createBoardView } from './board.js?v=4.2.2';
 
 /** How long each move is held when the replay is playing itself. */
-export const AUTOPLAY_MS = 1100;
+const AUTOPLAY_MS = 1100;
 
 /** Frame 0 is the kick-off, so a log of n moves has n + 1 frames. */
 export function frameCount(moves) {

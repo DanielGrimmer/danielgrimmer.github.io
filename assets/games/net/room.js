@@ -24,7 +24,7 @@ import {
   emptyRoomDoc,
   emptySandboxDoc,
   isRoomName,
-} from './rooms.js?v=4.2.1';
+} from './rooms.js?v=4.2.2';
 import {
   claimSeat,
   touchSeat,
@@ -34,7 +34,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.2.1';
+} from '../core/seats.js?v=4.2.2';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -159,7 +159,7 @@ function roomRef(name, collection = ROOMS_COLLECTION) {
  * A room that does not exist yet reads as empty rather than as an error: the
  * pool is materialised lazily, on first use, by whoever gets there first.
  */
-export async function readPool(collection = ROOMS_COLLECTION) {
+async function readPool(collection = ROOMS_COLLECTION) {
   await ensureApp();
   const snapshots = await Promise.all(
     ROOM_NAMES.map(async (name) => {
@@ -256,7 +256,7 @@ export async function joinRoom({ name, uid, now, collection = ROOMS_COLLECTION, 
 }
 
 /** Read a room without joining it. Used to check a remembered room is still ours. */
-export async function peekRoom({ name, collection = ROOMS_COLLECTION }) {
+async function peekRoom({ name, collection = ROOMS_COLLECTION }) {
   await ensureApp();
   try {
     const snap = await sdk.getDoc(roomRef(name, collection));
@@ -420,10 +420,3 @@ export function watchSandbox(name, onChange, onError) {
 }
 
 export { HEARTBEAT_MS, ACTIVE_HEARTBEAT_MS, ROOM_NAMES, SANDBOX_COLLECTION };
-
-/** Reset module state. Only used when a page wants a clean slate. */
-export function _resetForTests() {
-  app = null;
-  db = null;
-  auth = null;
-}

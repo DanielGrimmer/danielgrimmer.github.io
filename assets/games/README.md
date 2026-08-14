@@ -13,9 +13,10 @@ This is the single entry point for everything about the games. The site's own
 | Soccer Hockey | `assets/SoccerHockey/…V4.0.html` | **V4.0, rebuilt on this engine and live** |
 | Escher Chess | `assets/EscherChess/…V1.2.html` | V1.2, untouched so far |
 
-Each game has a tutorial page and a real game page. The tutorial teaches the
-interface with the duality switched off; the real game turns it on, and ends in
-the reveal. Landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md`,
+Soccer Hockey has three pages: a tutorial, which teaches the interface with the
+duality switched off; the real game, which turns it on and ends in the reveal;
+and a sandbox, which opens every dial. Escher Chess still has the two it always
+had. Landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md`,
 grouped under `_pages/games.md`.
 
 ## Where things live
@@ -24,7 +25,7 @@ grouped under `_pages/games.md`.
 | --- | --- |
 | Shared rules engine | `assets/games/core/` |
 | Tests | `_tests/*.test.mjs` — run with `node --test _tests/*.test.mjs` |
-| Firestore rules, room seeding, console steps | [`_firebase/`](../../_firebase/README.md) |
+| Firestore rules and console steps | [`_firebase/`](../../_firebase/README.md) |
 | The pre-rewrite bundle, kept verbatim | [`_archive/soccer-hockey-v3.1/`](../../_archive/soccer-hockey-v3.1/README.md) |
 
 The rebuilt pages ship as **V4.0**, continuing the numbering of the pages they
@@ -37,7 +38,7 @@ core/duality.js   Modular arithmetic on Z_w; the Lens each seat reads through
 core/rules.js     Board geometry, move-set derivation, legal moves
 core/game.js      Game state, move log, replay, per-seat views, reframing
 core/seats.js     Seat claiming, heartbeats, who may move
-core/presets.js   The two published configurations, and the palettes
+core/presets.js   The two published configurations
 core/sandbox.js   Editable configurations: validation, the move palette
 ```
 
@@ -50,7 +51,7 @@ Around that sit the two impure layers, each with one job:
 net/rooms.js      The fixed room pool; share links
 net/room.js       Firestore: sign in, claim a seat, append a move, watch
 ui/board.js       The isometric board renderer
-ui/board.css      Page furniture and both palettes
+ui/board.css      Page furniture, the palettes, the move-set grid
 ui/coach.js       Tutorial steps and the reveal's prose — all copy lives here
 ui/replay.js      The reveal: both seats' boards, stepping through one move log
 ui/palette.js     The move-set editor, drawn once per lens
@@ -98,7 +99,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 211 tests
+node --test _tests/*.test.mjs                      # 208 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
@@ -182,7 +183,34 @@ document over a network and a briefly nonsensical value has to be survivable.
 It also degrades to a private, local sandbox if Firebase cannot be reached at
 all, since it is the one screen that still means something on your own.
 
-Next: **Escher Chess** onto the same engine.
+### What Escher Chess can take from this
+
+Next job, and the reason the layers are split where they are. Roughly:
+
+**Reusable unchanged.** `core/duality.js` is arithmetic, not a game: a `Lens` is
+an affine map on `Z_w` and knows nothing about balls or goals. `core/seats.js`
+is about chairs, heartbeats and abandonment, and would not notice what is being
+played. `net/rooms.js` and `net/room.js` read and write documents whose only
+game-specific field is the move log. `ui/board.css`'s page furniture, and the
+whole room/seat/presence half of a page, carry straight over.
+
+**Reusable with a seam to cut.** `ui/replay.js` and `ui/coach.js` are written
+around a config and a move log rather than around Soccer Hockey, but the reveal
+prose and the tutorial steps are Soccer Hockey's own, and want lifting out into
+a per-game module. `core/sandbox.js` generalises the same way: the palette
+geometry is general, the specific dials are not.
+
+**Soccer Hockey's own.** `core/rules.js` (one ball, a trail, two goal mouths),
+`core/game.js`'s notion of a game state, `core/presets.js`, and the isometric
+cube renderer in `ui/board.js` — though that last one is worth reading closely
+rather than rewriting, since the projection and the scaling are fiddly and
+already work on a phone.
+
+The obvious question to settle first is whether chess pieces can be expressed as
+a move log at all. If they can, the whole net/ layer and the Security Rules come
+free, because the rule counts moves rather than understanding them.
+
+**Escher Chess** is otherwise untouched, and still V1.2 on the old bundle.
 
 Still open on the Firebase side: App Check, and restricting the web API key to
 the site's own referrer. Both are in [`_firebase/`](../../_firebase/README.md).

@@ -8,20 +8,21 @@ Jekyll skips it.
 
 ## What to do, and when
 
-Most of this can wait. In order:
+V4.0 is live, and the console side of it is done. What is left is hardening.
 
-| # | Step | When | How long |
-| --- | --- | --- | --- |
-| 1 | Check the visitor counters have a `count` number | **Now** — the published rules depend on it | 2 min |
-| 2 | Enable Anonymous Authentication | **Now** — harmless, and V4.0 needs it | 2 min |
-| 3 | ~~Seed the room pool~~ | Not needed — rooms appear on first use, under a fixed name list | — |
-| 4 | Turn on App Check enforcement | After V4.0 is live and sending tokens | 10 min |
-| 5 | Restrict the API key by referrer | Any time | 5 min |
+| # | Step | State |
+| --- | --- | --- |
+| 1 | Check the visitor counters have a `count` number | **Done** |
+| 2 | Enable Anonymous Authentication | **Done** — the games sign in on load |
+| 3 | ~~Seed the room pool~~ | Not needed: rooms appear on first use, under a fixed name list |
+| 4 | Publish the rules, including `dualitySandboxes` | **Done** |
+| 5 | Turn on App Check enforcement | **Open**, and the highest-value thing left — 10 min |
+| 6 | Restrict the API key by referrer | **Open** — 5 min |
 
-Doing 4 early does no good — App Check enforcement would block the game, which
-does not yet request a token.
+Step 5 needs the page to request a token before enforcement is switched on, or
+it will block the game. See below.
 
-### 1. Check the visitor counters — do this now
+### 1. Check the visitor counters — done
 
 The published rules say a counter may only be replaced by a number exactly one
 higher than the one already there. That rule can only work if the document
@@ -38,7 +39,7 @@ or is a string, click the document, add or fix the field, and save. Anyone who
 has played before is unaffected either way — their side is already cached in
 their browser.
 
-### 2. Enable Anonymous Authentication — do this now
+### 2. Enable Anonymous Authentication — done
 
 This does not add a login screen. It lets a browser quietly obtain a stable ID,
 so a seat can belong to *somebody* rather than to whoever writes first.
@@ -47,16 +48,16 @@ Console → Build → **Authentication** → *Get started* if you have never ope
 → **Sign-in method** tab → **Anonymous** in the provider list → toggle *Enable*
 → *Save*.
 
-Nothing changes on the site until V4.0 ships, so this is safe to do at any time.
+Both V4.0 collections require it: their rules begin `request.auth != null`.
 
 ### 3. The room pool — nothing to do
 
 Rooms are created on first use, but only under one of the twenty names in
 `assets/games/net/rooms.js` and only as an empty game, so the number of
-documents this project can hold is still fixed. `seed-rooms.mjs` is kept in case
-you ever want them pre-created, but it is not part of setup.
+documents this project can hold is still fixed — twice twenty, since the game
+and the sandbox each keep their own document per name.
 
-### 4. App Check — after V4.0 is live
+### 4. App Check — now worth doing
 
 The project ID and API key sit in the page source, as they are meant to. That
 means anyone can send writes to the database from outside your site. On the
@@ -108,9 +109,9 @@ There is no personal data here and no login, so:
 | Risk | Severity | Addressed by |
 | --- | --- | --- |
 | Scripted writes exhausting the daily quota and taking the games offline | **High** | App Check — see below. Rules cannot rate-limit |
-| Unbounded document creation | **High** | `create: if false` everywhere; removing `MobiusEuclidGames` |
+| Unbounded document creation | **High** | Denied outright for the V3.1 collections; for the V4.0 ones, `create` is allowed only under one of twenty fixed names, so the count is bounded whatever anybody sends |
 | Junk or oversized fields inflating documents toward the 1 GB cap | Medium | shape and length checks |
-| A stranger overwriting a game in progress | Medium | *not fixable without auth* — see below |
+| A stranger overwriting a game in progress | Medium | Fixed for V4.0: seats are held against an anonymous uid, and only the seat on move may append. Still open for the V3.1 collections, which nothing links to |
 | Reading someone else's game | Negligible | no private data exists |
 
 **App Check is the highest-value remaining step**, and it is free. It attests
@@ -149,7 +150,10 @@ actually writes.
 | File | What it is |
 | --- | --- |
 | `firestore.rules` | The whole published rules file. Paste it over what is in the console |
-| `seed-rooms.mjs` | Not needed any more — rooms are created lazily under a fixed name list. Kept in case you ever want to pre-create them |
+
+There is nothing else. A seeding script lived here for a while; rooms are
+created lazily under a fixed name list, so it was never needed, and it was the
+only thing in the repository that would have wanted a service-account key.
 
 ## The collections, and what guards each
 

@@ -142,18 +142,6 @@ export function claimSeat(seats, { uid, now, ttl = SEAT_TTL_MS }) {
 }
 
 /**
- * Take both seats for one browser — the tutorial on a single laptop, with a
- * button to swap which side you are playing. Only ever used locally.
- */
-export function claimAllSeats(seats, { uid, now }) {
-  assertUid(uid);
-  assertNow(now);
-  return Object.freeze(
-    normaliseSeats(seats).map(() => frozenSeat({ uid, claimedAt: now, lastSeen: now }))
-  );
-}
-
-/**
  * Report in. A no-op for anyone not holding a seat.
  *
  * `active` marks a beat that followed real interaction — a mouse move, a key,

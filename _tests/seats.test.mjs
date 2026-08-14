@@ -16,7 +16,6 @@ import {
   isVacant,
   seatOf,
   claimSeat,
-  claimAllSeats,
   touchSeat,
   releaseSeat,
   occupancy,
@@ -176,21 +175,6 @@ test('leaving', async (t) => {
     seats = releaseSeat(seats, { uid: 'alice' });
     seats = releaseSeat(seats, { uid: 'bob' });
     assert.equal(claimSeat(seats, { uid: 'bob', now: T0 }).seat, 0, 'bob may now sit on the other side');
-  });
-});
-
-test('one laptop, two players', async (t) => {
-  await t.test('hot seat takes both places for a single browser', () => {
-    const seats = claimAllSeats(emptySeats(), { uid: 'laptop', now: T0 });
-    assert.equal(seatOf(seats, 'laptop'), 0);
-    assert.ok(seats.every((s) => s.uid === 'laptop'));
-    assert.equal(occupancy(seats, T0).status, 'full');
-  });
-
-  await t.test('and may move on either side, so the swap button works', () => {
-    const seats = claimAllSeats(emptySeats(), { uid: 'laptop', now: T0 });
-    assert.ok(mayMove(seats, { uid: 'laptop', turn: 0, now: T0 }));
-    assert.ok(mayMove(seats, { uid: 'laptop', turn: 1, now: T0 }));
   });
 });
 

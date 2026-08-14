@@ -125,6 +125,10 @@ fine to play side by side; the game itself is not.
 Afterwards, play a second time looking at each other's screens, and compare notes.
 That is when it lands.
 
+Soccer Hockey then has a third screen — a sandbox, opened from the end of the
+reveal — where the board size, the duality number and the moves themselves
+become dials the two of you share.
+
 ## Further reading
 
 The philosophical case behind these games is set out in _Dualities, Quantum

@@ -7,16 +7,14 @@
  * which is how it ended up with a stalemate guard the real game lacked.
  */
 
-import { makeConfig } from './game.js?v=4.2.1';
+import { makeConfig } from './game.js?v=4.2.2';
 
-/** Palettes lifted verbatim from v3.1 so the boards keep their look. */
-export const THEMES = Object.freeze({
-  basketball: Object.freeze({ top: '#dfbb85', left: '#981717', right: '#f9c852' }),
-  soccer: Object.freeze({ top: '#98e070', left: '#8B4513', right: '#A0522D' }),
-  hockey: Object.freeze({ top: '#e0f4ff', left: '#c0e8ff', right: '#a0dcff' }),
-  highlight: Object.freeze({ fill: '#ffffcc', border: '#FFD700' }),
-  blocked: '#000000',
-});
+/*
+ * A seat's `theme` is a name, not a palette: the colours themselves live in
+ * `ui/board.css`, keyed on `[data-theme]`. Keeping a second copy here — as an
+ * earlier version did — gives you two places to change a colour and one place
+ * to forget.
+ */
 
 /**
  * The tutorial: 9x11, no duality, eight neighbours plus a few long passes.
@@ -70,9 +68,4 @@ export const SOCCER_HOCKEY = makeConfig({
     { name: 'Player 1', theme: 'soccer', sport: 'Soccer', surface: 'Soccer Field', goalCorner: 'top right' },
     { name: 'Player 2', theme: 'hockey', sport: 'Hockey', surface: 'Hockey Rink', goalCorner: 'bottom left' },
   ],
-});
-
-export const PRESETS = Object.freeze({
-  [BASKETBALL_TUTORIAL.id]: BASKETBALL_TUTORIAL,
-  [SOCCER_HOCKEY.id]: SOCCER_HOCKEY,
 });
