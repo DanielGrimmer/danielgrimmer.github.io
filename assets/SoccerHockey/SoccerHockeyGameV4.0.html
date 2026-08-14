@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.1.6" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.2.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -62,6 +62,15 @@
           </div>
         </div>
         <div id="replayStage"></div>
+        <!--
+          Where to go once the reveal has landed. The room name travels with the
+          link, so following it puts both players in the same sandbox.
+        -->
+        <div class="dg-bar dg-bar-main">
+          <a class="dg-btn dg-btn-primary" id="toSandbox" href="SoccerHockeySandboxV4.0.html">
+            Take the lid off →
+          </a>
+        </div>
       </section>
 
       <div class="dg-bar dg-bar-main">
@@ -73,27 +82,27 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.1.6';
+      const BUILD = '4.2.0';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.1.6';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.2.0';
       import {
         initialGame,
         replay,
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.1.6';
+      } from '../games/core/game.js?v=4.2.0';
       import {
         presenceOf,
         seatOf,
         normaliseSeats,
         occupancy,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.1.6';
-      import { createBoardView } from '../games/ui/board.js?v=4.1.6';
-      import { createReplayView } from '../games/ui/replay.js?v=4.1.6';
-      import { replayNote } from '../games/ui/coach.js?v=4.1.6';
-      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.1.6';
+      } from '../games/core/seats.js?v=4.2.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.2.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.2.0';
+      import { replayNote } from '../games/ui/coach.js?v=4.2.0';
+      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.2.0';
       import {
         signIn,
         chooseRoom,
@@ -106,7 +115,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.1.6';
+      } from '../games/net/room.js?v=4.2.0';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -251,6 +260,11 @@
         const note = replayNote(config, seat);
         el('replayTitle').textContent = note.title;
         el('replayBody').textContent = note.body;
+        // Carry the room across, so both players land in the same sandbox
+        // simply by pressing the button in front of them.
+        el('toSandbox').href = room
+          ? `SoccerHockeySandboxV4.0.html?room=${encodeURIComponent(room)}`
+          : 'SoccerHockeySandboxV4.0.html';
         el('replayStatus').textContent = describeStatus();
         el('replayStatus').dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
 

@@ -17,7 +17,14 @@
  */
 
 import { firebaseConfig } from '../../SoccerHockey/firebaseConfig.js';
-import { ROOM_NAMES, ROOMS_COLLECTION, emptyRoomDoc, isRoomName } from './rooms.js?v=4.1.6';
+import {
+  ROOM_NAMES,
+  ROOMS_COLLECTION,
+  SANDBOX_COLLECTION,
+  emptyRoomDoc,
+  emptySandboxDoc,
+  isRoomName,
+} from './rooms.js?v=4.2.0';
 import {
   claimSeat,
   touchSeat,
@@ -26,7 +33,7 @@ import {
   findOpenRoom,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.1.6';
+} from '../core/seats.js?v=4.2.0';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -133,9 +140,16 @@ export async function signIn() {
   });
 }
 
-/** Requires the SDK to be loaded already; every caller awaits ensureApp first. */
-function roomRef(name) {
-  return sdk.doc(db, ROOMS_COLLECTION, name);
+/**
+ * Requires the SDK to be loaded already; every caller awaits ensureApp first.
+ *
+ * The collection is a parameter because the sandbox keeps its own documents
+ * under the same twenty names. Seat handling is identical for both — claiming,
+ * beating and releasing a chair does not care what is on the table — so those
+ * functions take a collection and the sandbox reuses them whole.
+ */
+function roomRef(name, collection = ROOMS_COLLECTION) {
+  return sdk.doc(db, collection, name);
 }
 
 /**
@@ -144,12 +158,12 @@ function roomRef(name) {
  * A room that does not exist yet reads as empty rather than as an error: the
  * pool is materialised lazily, on first use, by whoever gets there first.
  */
-export async function readPool() {
+export async function readPool(collection = ROOMS_COLLECTION) {
   await ensureApp();
   const snapshots = await Promise.all(
     ROOM_NAMES.map(async (name) => {
       try {
-        const snap = await sdk.getDoc(roomRef(name));
+        const snap = await sdk.getDoc(roomRef(name, collection));
         return { id: name, exists: snap.exists(), ...(snap.data() ?? emptyRoomDoc(name)) };
       } catch {
         return { id: name, exists: false, ...emptyRoomDoc(name) };
@@ -160,9 +174,9 @@ export async function readPool() {
 }
 
 /** Pick a room: the one asked for, else one with somebody already waiting. */
-export async function chooseRoom({ preferred = null, now }) {
+export async function chooseRoom({ preferred = null, now, collection = ROOMS_COLLECTION }) {
   if (isRoomName(preferred)) return preferred;
-  const pool = await readPool();
+  const pool = await readPool(collection);
   const open = findOpenRoom(pool, now);
   return open ? open.id : ROOM_NAMES[0];
 }
@@ -173,12 +187,12 @@ export async function chooseRoom({ preferred = null, now }) {
  *
  * @returns {{seat: number|null, outcome: string, room: object}}
  */
-export async function joinRoom({ name, uid, now }) {
+export async function joinRoom({ name, uid, now, collection = ROOMS_COLLECTION, blank = null }) {
   const { sdk: fb, db: d } = await ensureApp();
   return fb.runTransaction(d, async (tx) => {
-    const ref = roomRef(name);
+    const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
-    const room = snap.exists() ? snap.data() : emptyRoomDoc(name);
+    const room = snap.exists() ? snap.data() : (blank ?? emptyRoomDoc(name));
 
     const result = claimSeat(room.seats, { uid, now });
     const next = { ...room, seats: result.seats.map((s) => ({ ...s })) };
@@ -191,10 +205,10 @@ export async function joinRoom({ name, uid, now }) {
 }
 
 /** Report in. `active` marks a beat that followed real interaction. */
-export async function heartbeat({ name, uid, now, active = false }) {
+export async function heartbeat({ name, uid, now, active = false, collection = ROOMS_COLLECTION }) {
   const { sdk: fb, db: d } = await ensureApp();
   await fb.runTransaction(d, async (tx) => {
-    const ref = roomRef(name);
+    const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
     if (!snap.exists()) return;
     const room = snap.data();
@@ -205,11 +219,11 @@ export async function heartbeat({ name, uid, now, active = false }) {
 }
 
 /** Give the seat up immediately rather than making the next player wait it out. */
-export async function leaveRoom({ name, uid }) {
+export async function leaveRoom({ name, uid, collection = ROOMS_COLLECTION }) {
   const { sdk: fb, db: d } = await ensureApp();
   try {
     await fb.runTransaction(d, async (tx) => {
-      const ref = roomRef(name);
+      const ref = roomRef(name, collection);
       const snap = await tx.get(ref);
       if (!snap.exists()) return;
       const seats = releaseSeat(snap.data().seats, { uid }).map((s) => ({ ...s }));
@@ -257,10 +271,10 @@ export async function resetRoom({ name }) {
 }
 
 /** Live updates. Returns an unsubscribe function. */
-export async function watchRoom(name, onChange, onError) {
+export async function watchRoom(name, onChange, onError, collection = ROOMS_COLLECTION) {
   await ensureApp();
   return sdk.onSnapshot(
-    roomRef(name),
+    roomRef(name, collection),
     (snap) => {
       if (!snap.exists()) return;
       const room = snap.data();
@@ -274,7 +288,73 @@ export async function watchRoom(name, onChange, onError) {
   );
 }
 
-export { HEARTBEAT_MS, ACTIVE_HEARTBEAT_MS, ROOM_NAMES };
+/* -------------------------------------------------------------- sandbox ---- */
+
+/**
+ * The sandbox, where both players may change anything at any time.
+ *
+ * No turn order and no seat-on-move check: with both boards on both screens
+ * there is nothing left to keep secret, and taking turns to adjust a slider
+ * would only be in the way. Holding a seat is still required — that is what
+ * stops a third browser reaching in — and it is what gives the page presence.
+ */
+export async function joinSandbox({ name, uid, now, config }) {
+  return joinRoom({
+    name,
+    uid,
+    now,
+    collection: SANDBOX_COLLECTION,
+    blank: emptySandboxDoc(name, config),
+  });
+}
+
+/**
+ * Write a new configuration. The move log goes with it: a board of a different
+ * size has different squares, so the old moves would be nonsense on it.
+ */
+export async function setSandboxConfig({ name, uid, config }) {
+  const { sdk: fb, db: d } = await ensureApp();
+  await fb.runTransaction(d, async (tx) => {
+    const ref = roomRef(name, SANDBOX_COLLECTION);
+    const snap = await tx.get(ref);
+    if (!snap.exists()) throw new Error('sandbox has gone');
+    if (seatOf(snap.data().seats, uid) === null) throw new Error('you are watching, not playing');
+    tx.update(ref, { config, moves: [] });
+  });
+}
+
+/** Push the ball. Either player, any time — see above. */
+export async function appendSandboxMove({ name, uid, square, expectedLength }) {
+  const { sdk: fb, db: d } = await ensureApp();
+  await fb.runTransaction(d, async (tx) => {
+    const ref = roomRef(name, SANDBOX_COLLECTION);
+    const snap = await tx.get(ref);
+    if (!snap.exists()) throw new Error('sandbox has gone');
+    const room = snap.data();
+    const moves = Array.isArray(room.moves) ? room.moves : [];
+    if (seatOf(room.seats, uid) === null) throw new Error('you are watching, not playing');
+    if (moves.length !== expectedLength) throw new Error('the board moved under you');
+    tx.update(ref, { moves: [...moves, { row: square.row, col: square.col }] });
+  });
+}
+
+/** Put the ball back in the middle, keeping the configuration. */
+export async function resetSandbox({ name, uid }) {
+  const { sdk: fb, db: d } = await ensureApp();
+  await fb.runTransaction(d, async (tx) => {
+    const ref = roomRef(name, SANDBOX_COLLECTION);
+    const snap = await tx.get(ref);
+    if (!snap.exists()) return;
+    if (seatOf(snap.data().seats, uid) === null) throw new Error('you are watching, not playing');
+    tx.update(ref, { moves: [] });
+  });
+}
+
+export function watchSandbox(name, onChange, onError) {
+  return watchRoom(name, onChange, onError, SANDBOX_COLLECTION);
+}
+
+export { HEARTBEAT_MS, ACTIVE_HEARTBEAT_MS, ROOM_NAMES, SANDBOX_COLLECTION };
 
 /** Reset module state. Only used when a page wants a clean slate. */
 export function _resetForTests() {

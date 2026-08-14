@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Sandbox — Soccer Hockey Duality Game (V4.0)</title>
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.2.0" />
+  </head>
+  <body class="dg">
+    <div class="dg-wrap dg-wide">
+      <header class="dg-masthead">
+        <div>
+          <h1>The Sandbox</h1>
+          <div class="dg-sub" id="sub">Connecting…</div>
+        </div>
+        <a href="/soccer-hockey/">← Soccer Hockey</a>
+      </header>
+
+      <div class="dg-replay-intro">
+        <div class="dg-status" id="status">Connecting…</div>
+        <div class="dg-coach dg-coach-band">
+          <div class="dg-coach-progress" id="roomLabel">Connecting</div>
+          <h2 class="dg-coach-title">Both Lids Off</h2>
+          <p class="dg-coach-body" id="note"></p>
+          <div class="dg-room-tools" id="roomTools" hidden>
+            <button class="dg-btn dg-btn-primary" id="copyLink" type="button">Copy the invite link</button>
+            <label class="dg-join">
+              Or join a room by name:
+              <span class="dg-join-row">
+                <input id="roomInput" list="roomList" placeholder="GreenField" autocomplete="off" />
+                <button class="dg-btn" id="joinRoom" type="button">Join</button>
+              </span>
+            </label>
+            <datalist id="roomList"></datalist>
+          </div>
+          <div class="dg-presence" id="presence"></div>
+        </div>
+      </div>
+
+      <div class="dg-dials">
+        <label>Width <input type="number" id="width" min="3" max="19" step="1" /></label>
+        <label>Height <input type="number" id="height" min="3" max="21" step="1" /></label>
+        <label>Duality number <input type="number" id="duality" min="0" step="1" /></label>
+        <button class="dg-btn" id="resetBall" type="button">Put the ball back</button>
+        <button class="dg-btn" id="restore" type="button">Restore the published game</button>
+      </div>
+      <p class="dg-dial-note" id="dialNote"></p>
+
+      <div class="dg-replay-boards">
+        <div class="dg-replay-side">
+          <div class="dg-replay-head">
+            <div class="dg-replay-label">Soccer Field — Player 1</div>
+            <div class="dg-replay-reach" id="reach0"></div>
+          </div>
+          <div id="board0"></div>
+          <div class="dg-palette-wrap">
+            <div class="dg-palette-title">Soccer moves</div>
+            <div id="palette0"></div>
+          </div>
+        </div>
+        <div class="dg-replay-side">
+          <div class="dg-replay-head">
+            <div class="dg-replay-label">Hockey Rink — Player 2</div>
+            <div class="dg-replay-reach" id="reach1"></div>
+          </div>
+          <div id="board1"></div>
+          <div class="dg-palette-wrap">
+            <div class="dg-palette-title">Hockey moves</div>
+            <div id="palette1"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dg-bar dg-bar-main">
+        <a class="dg-btn" href="SoccerHockeyGameV4.0.html">Back to the real game</a>
+        <button class="dg-btn" id="leave" type="button" hidden>Leave this room</button>
+      </div>
+
+      <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
+    </div>
+
+    <script type="module">
+      const BUILD = '4.2.0';
+
+      import {
+        initialGame,
+        applyMove,
+        replay,
+        viewOf,
+        squareFromView,
+        sidewaysReach,
+        STATUS,
+      } from '../games/core/game.js?v=4.2.0';
+      import {
+        DEFAULT_SPEC,
+        normaliseSpec,
+        configFromSpec,
+        toggleOffset,
+        derivedMoveSet,
+        encodeSpec,
+        decodeSpec,
+        isDegenerate,
+      } from '../games/core/sandbox.js?v=4.2.0';
+      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.2.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.2.0';
+      import { createPaletteView } from '../games/ui/palette.js?v=4.2.0';
+      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.2.0';
+      import {
+        signIn,
+        chooseRoom,
+        joinSandbox,
+        setSandboxConfig,
+        appendSandboxMove,
+        resetSandbox,
+        watchSandbox,
+        heartbeat,
+        leaveRoom,
+        explain,
+        HEARTBEAT_MS,
+        SANDBOX_COLLECTION,
+      } from '../games/net/room.js?v=4.2.0';
+
+      const el = (id) => document.getElementById(id);
+      const now = () => Date.now();
+
+      let uid = null;
+      let room = null;
+      let seat = null;
+      let spec = normaliseSpec(DEFAULT_SPEC).spec;
+      let config = configFromSpec(spec);
+      let state = { seats: normaliseSeats([]), moves: [] };
+      let game = initialGame(config);
+      let unwatch = null;
+      let interacted = false;
+      let notes = [];
+      /*
+       * Set when the room could not be reached at all — a blocked network, a
+       * spent quota, a console switch turned off. The sandbox is the one screen
+       * that still means something on your own: there is no hidden information
+       * left to share, so it carries on locally rather than showing an error
+       * over a dead page. What is lost is only that your friend sees it too.
+       */
+      let alone = false;
+
+      // Rebuilt whenever the board's dimensions change, since a board view is
+      // built around a fixed grid. Keyed so a duality change — which changes
+      // what the boards show but not their shape — costs nothing.
+      let shape = null;
+      const boards = [null, null];
+      const palettes = [
+        createPaletteView(el('palette0'), { theme: 'soccer' }),
+        createPaletteView(el('palette1'), { theme: 'hockey' }),
+      ];
+
+      const NOTE =
+        'This is the same game with nothing hidden. Both boards are on both ' +
+        'screens now, either of you can move the ball at any time, and every ' +
+        'dial below is shared: change one and it changes for both of you.\n\n' +
+        'The grids under the boards are the move sets — each cell is one ' +
+        'relative move, and the ball sits at the centre. Switch one on and ' +
+        'watch where it appears on the other board. Then try a different ' +
+        'duality number, and a board of a different width, and see which of ' +
+        'them still give you two boards worth telling apart.';
+
+      /* ------------------------------------------------------------ drawing */
+
+      const mayEdit = () => alone || seat !== null;
+
+      function describeStatus() {
+        if (!mayEdit()) return 'Both seats here are taken — you are watching, and cannot change anything.';
+        if (game.outcome.status === STATUS.WON) {
+          return `${config.seats[game.outcome.winner].name} scored. Put the ball back to carry on.`;
+        }
+        if (game.outcome.status === STATUS.TIE) {
+          return 'Nowhere left to go. Put the ball back, or change something.';
+        }
+        if (config.moveSet.length === 0) {
+          return 'There are no legal moves at all. Switch some on in the grids below.';
+        }
+        return `${config.seats[game.turn].name} to move — though either of you may push the ball.`;
+      }
+
+      function describePresence() {
+        if (alone) return 'Nothing here is being shared — you are working on your own copy.';
+        if (seat === null) return '';
+        switch (presenceOf(state.seats[seat === 0 ? 1 : 0], now())) {
+          case PRESENCE.EMPTY:
+            return 'Nobody else is here yet. Send them the link.';
+          case PRESENCE.ACTIVE:
+            return 'Your friend is here, and moving about.';
+          case PRESENCE.IDLE:
+            return 'Your friend is here but has been still for a while.';
+          case PRESENCE.GONE:
+            return 'Your friend has stopped responding. Their seat frees up after five minutes.';
+          default:
+            return '';
+        }
+      }
+
+      function ensureBoards() {
+        const key = `${config.board.width}x${config.board.height}`;
+        if (shape === key) return;
+        shape = key;
+        for (const i of [0, 1]) {
+          if (boards[i]) boards[i].destroy();
+          boards[i] = createBoardView(el(`board${i}`), {
+            board: config.board,
+            theme: config.seats[i].theme,
+          });
+        }
+      }
+
+      function draw() {
+        ensureBoards();
+        const editable = mayEdit();
+
+        for (const i of [0, 1]) {
+          boards[i].render(viewOf(config, game, i), {
+            onSquare: editable
+              ? (viewSquare) => move(squareFromView(config, i, viewSquare))
+              : null,
+          });
+
+          palettes[i].render(config, i, {
+            editable,
+            onToggle: editable
+              ? (offset) => push({ ...spec, moveSet: toggleOffset(spec.moveSet, offset) })
+              : null,
+          });
+
+          const reach = sidewaysReach(config, i, 1);
+          el(`reach${i}`).textContent = reach.length
+            ? `Short passes reach ${reach.join(' or ')} columns.`
+            : 'No short passes at all.';
+        }
+
+        el('status').textContent = describeStatus();
+        el('status').dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
+        el('presence').textContent = describePresence();
+        el('roomLabel').textContent = alone ? 'Working alone' : room ? `Room ${room}` : 'Connecting';
+        el('sub').textContent = alone
+          ? 'On your own — nothing here is shared.'
+          : seat === null
+            ? 'Watching.'
+            : `You are ${config.seats[seat].name}, and so is the left-hand board.`;
+        el('leave').hidden = seat === null;
+        el('roomTools').hidden = alone;
+
+        // Only write the boxes when they are not being typed in, so a value
+        // does not jump under the cursor mid-edit.
+        for (const [id, value] of [['width', spec.width], ['height', spec.height], ['duality', spec.duality]]) {
+          const input = el(id);
+          if (document.activeElement !== input) input.value = String(value);
+          input.disabled = !editable;
+        }
+        el('resetBall').disabled = !editable;
+        el('restore').disabled = !editable;
+
+        const degenerate = isDegenerate(spec)
+          ? 'Duality number 1 makes both lenses the identity — the two boards are now the same board. That is the tutorial.'
+          : '';
+        el('dialNote').textContent = [...notes, degenerate].filter(Boolean).join(' ');
+      }
+
+      /* ------------------------------------------------------------ writing */
+
+      /** Adopt a configuration here and now. Used alone, and by every snapshot. */
+      function apply(next) {
+        spec = next;
+        config = configFromSpec(spec);
+        state = { ...state, moves: [] };
+        game = initialGame(config);
+        draw();
+      }
+
+      /**
+       * Normalise, keep the notes, and share. The snapshot that comes back is
+       * what redraws — except when alone, where there is nothing to come back.
+       */
+      async function push(desired) {
+        const result = normaliseSpec(desired);
+        notes = result.notes;
+        if (alone) return apply(result.spec);
+        if (seat === null || !room) {
+          draw(); // watching: the notes show, nothing shared changes
+          return;
+        }
+        try {
+          await setSandboxConfig({ name: room, uid, config: encodeSpec(result.spec) });
+        } catch (err) {
+          el('status').textContent = `That did not take: ${explain(err)}`;
+        }
+        draw();
+      }
+
+      async function move(square) {
+        if (game.outcome.status !== STATUS.PLAYING) return;
+        if (alone) {
+          state = { ...state, moves: [...state.moves, square] };
+          game = applyMove(config, game, square);
+          draw();
+          return;
+        }
+        try {
+          await appendSandboxMove({ name: room, uid, square, expectedLength: state.moves.length });
+        } catch (err) {
+          el('status').textContent = `That did not take: ${explain(err)}`;
+        }
+      }
+
+      const readDials = () => ({
+        ...spec,
+        width: Number(el('width').value),
+        height: Number(el('height').value),
+        duality: Number(el('duality').value),
+      });
+
+      for (const id of ['width', 'height', 'duality']) {
+        el(id).addEventListener('change', () => push(readDials()));
+      }
+
+      el('resetBall').addEventListener('click', async () => {
+        if (alone) {
+          state = { ...state, moves: [] };
+          game = initialGame(config);
+          draw();
+          return;
+        }
+        try {
+          await resetSandbox({ name: room, uid });
+        } catch (err) {
+          el('status').textContent = explain(err);
+        }
+      });
+
+      el('restore').addEventListener('click', () => {
+        notes = [];
+        push({ ...DEFAULT_SPEC, moveSet: derivedMoveSet(DEFAULT_SPEC) });
+      });
+
+      el('copyLink').addEventListener('click', async () => {
+        const link = shareLink(location.origin, location.pathname, room);
+        try {
+          await navigator.clipboard.writeText(link);
+          el('copyLink').textContent = 'Link copied';
+          setTimeout(() => (el('copyLink').textContent = 'Copy the invite link'), 2000);
+        } catch {
+          window.prompt('Copy this link:', link);
+        }
+      });
+
+      el('joinRoom').addEventListener('click', async () => {
+        const wanted = el('roomInput').value.trim();
+        if (!ROOM_NAMES.includes(wanted)) {
+          el('status').textContent = `There is no room called “${wanted}”. Pick one from the list.`;
+          return;
+        }
+        await enterRoom(wanted);
+      });
+
+      el('leave').addEventListener('click', async () => {
+        await leaveRoom({ name: room, uid, collection: SANDBOX_COLLECTION });
+        location.href = '/soccer-hockey/';
+      });
+
+      /* ------------------------------------------------------------ network */
+
+      function adopt(next) {
+        state = { seats: normaliseSeats(next.seats), moves: next.moves ?? [] };
+        seat = seatOf(state.seats, uid);
+        // A configuration written by somebody else — or by a future version of
+        // this page — is put through the same normaliser as our own input, so
+        // nothing that arrives over the wire can leave the page unable to draw.
+        spec = decodeSpec(next.config);
+        config = configFromSpec(spec);
+        // Moves logged against an older configuration may not be legal under
+        // this one. The log is the state, so an illegal prefix means starting
+        // from the position we can actually reconstruct.
+        try {
+          game = replay(config, state.moves);
+        } catch {
+          game = initialGame(config);
+          state = { ...state, moves: [] };
+        }
+        draw();
+      }
+
+      async function enterRoom(name) {
+        if (unwatch) {
+          unwatch();
+          unwatch = null;
+        }
+        if (room && seat !== null) {
+          await leaveRoom({ name: room, uid, collection: SANDBOX_COLLECTION });
+        }
+
+        room = name;
+        const joined = await joinSandbox({
+          name,
+          uid,
+          now: now(),
+          config: encodeSpec(normaliseSpec(DEFAULT_SPEC).spec),
+        });
+        seat = joined.seat;
+        adopt(joined.room);
+
+        history.replaceState(null, '', `?room=${encodeURIComponent(name)}`);
+        el('roomTools').hidden = false;
+
+        unwatch = await watchSandbox(
+          name,
+          adopt,
+          (err) => {
+            el('status').textContent = `Lost contact with the room. ${explain(err)}`;
+          }
+        );
+      }
+
+      function startBeating() {
+        setInterval(async () => {
+          if (!room || seat === null) return;
+          try {
+            await heartbeat({
+              name: room,
+              uid,
+              now: now(),
+              active: interacted,
+              collection: SANDBOX_COLLECTION,
+            });
+            interacted = false;
+          } catch {
+            // A missed beat is survivable; the seat holds for five minutes.
+          }
+        }, HEARTBEAT_MS);
+
+        for (const evt of ['pointermove', 'keydown', 'pointerdown']) {
+          window.addEventListener(evt, () => {
+            interacted = true;
+          }, { passive: true });
+        }
+        window.addEventListener('pagehide', () => {
+          if (room && seat !== null) leaveRoom({ name: room, uid, collection: SANDBOX_COLLECTION });
+        });
+      }
+
+      el('roomList').append(
+        ...ROOM_NAMES.map((name) => {
+          const option = document.createElement('option');
+          option.value = name;
+          return option;
+        })
+      );
+      el('note').textContent = NOTE;
+      el('buildStamp').textContent = BUILD;
+      draw();
+
+      (async () => {
+        try {
+          uid = await signIn();
+          const wanted = roomFromLocation(location.search);
+          const name = await chooseRoom({
+            preferred: wanted,
+            now: now(),
+            collection: SANDBOX_COLLECTION,
+          });
+          await enterRoom(name);
+          startBeating();
+        } catch (err) {
+          // Carry on locally rather than showing an error over a dead page.
+          alone = true;
+          draw();
+          el('status').textContent =
+            `Working on your own — the room could not be reached. ${explain(err)}`;
+          console.error(err);
+        }
+      })();
+    </script>
+  </body>
+</html>

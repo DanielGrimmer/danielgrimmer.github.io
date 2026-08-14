@@ -7,7 +7,7 @@
  * into blocked cells was never declared stalemated and the game hung.
  */
 
-import { mod, modInverse, signedRep, areCoprime, validMultipliers } from './duality.js?v=4.1.6';
+import { mod, modInverse, signedRep, areCoprime, validMultipliers } from './duality.js?v=4.2.0';
 
 /** @typedef {{row:number, col:number}} Square */
 /** @typedef {[number, number]} Offset  a [rowStep, colStep] pair */
@@ -181,13 +181,18 @@ export function blockedMoves(board, offsets, { row, col, visited = [] }) {
 
 /**
  * The squares from which a goal can be reached next move — the bullet points
- * the board marks. The move set is symmetric under negation, so these are just
- * the legal moves out of each goal mouth.
+ * the board marks.
+ *
+ * Walked backwards, out of each goal mouth along the *negated* offsets. For the
+ * published move set, which is symmetric under negation, that is the same list
+ * as walking forwards; for a hand-edited one it is not, and walking forwards
+ * would mark squares the ball could never actually score from.
  */
 export function goalApproaches(board, offsets, visited = []) {
+  const reversed = offsets.map(([dr, dc]) => [-dr, -dc]);
   const out = new Map();
   for (const goalRow of [board.goalRows.top, board.goalRows.bottom]) {
-    for (const sq of legalMoves(board, offsets, { row: goalRow, col: board.goalCol, visited })) {
+    for (const sq of legalMoves(board, reversed, { row: goalRow, col: board.goalCol, visited })) {
       out.set(squareKey(sq.row, sq.col), sq);
     }
   }

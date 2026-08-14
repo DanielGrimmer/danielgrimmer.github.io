@@ -136,7 +136,8 @@ Rules Playground on that page to spot-check before publishing:
 
 - a write to `games/game_RedPuck` carrying an unexpected field → **denied**
 - a write to `sharedData/visitors_RedPuck` setting `count` to 999 → **denied**
-- a create anywhere → **denied**
+- an unauthenticated read of `dualityRooms/RedPuck` → **denied**
+- a write to `dualitySandboxes/NotARoom` → **denied**
 - a normal move on an existing game document → **allowed**
 
 If a legitimate write is refused after publishing, the shape check is the first
@@ -150,23 +151,34 @@ actually writes.
 | `firestore.rules` | The whole published rules file. Paste it over what is in the console |
 | `seed-rooms.mjs` | Not needed any more — rooms are created lazily under a fixed name list. Kept in case you ever want to pre-create them |
 
-## The next round, with the rewrite
+## The collections, and what guards each
 
-These interim rules cannot tell a player from a vandal, because nothing
-identifies the writer. Two changes fix that together:
+| Collection | Written by | The guarantee |
+| --- | --- | --- |
+| `dualityRooms` | The real game | One move appended at a time, by the seat whose turn it is |
+| `dualitySandboxes` | The sandbox | Anything, by either seat — but only by a seat |
+| `games`, `EscherChessGames`, `sharedData` | V3.1 and Escher Chess | Shape and field caps only; nothing identifies the writer |
 
-1. **Enable Anonymous Authentication** (Console → Authentication → Sign-in
-   method → Anonymous). Every browser silently gets a stable `uid`, with no
-   login for the user. Rules can then require `request.auth != null`.
-2. **Store a move log rather than a state snapshot.** Seats are claimed against
-   a `uid`, and a rule can enforce *append exactly one move, and only if you
-   hold the seat whose turn it is* — which is checkable in the rules language,
-   whereas validating a whole board state is not.
+The two V4.0 collections both require Anonymous Authentication and both restrict
+document ids to the twenty room names, so the number of documents this project
+can hold is fixed no matter what anybody sends.
 
-Together those turn "anyone who knows the room name can overwrite anything"
-into "only the player whose turn it is can add a move".
+They are separate because their contracts are opposites. In the game, the whole
+point is that neither player can meddle: the rule counts the move log and checks
+its parity, which is checkable in the rules language where validating a board
+state is not. In the sandbox the reveal has already happened, there is nothing
+left to keep from anybody, and either player may change the board size, the
+duality number, the move set or the ball's position at will. Keeping those two
+in one document would mean one rule trying to be both, and a mistake in the
+loose half could reach a game in progress.
 
-Independent of the rewrite:
+What the sandbox rule cannot check is the *contents* of the move set — the rules
+language will not walk a list — so it compares its length instead. Somebody
+signed in who knew a room name could therefore swap one offset for another
+without sitting down. That is the loosest thing the file permits, on a
+scratchpad either seat can overwrite with one click.
+
+Still worth doing:
 
 - **App Check** with reCAPTCHA. On Spark this is the only thing standing between
   a bored stranger and a day of downtime. See above.

@@ -39,6 +39,20 @@ export const ROOM_NAMES = Object.freeze([
 
 export const ROOMS_COLLECTION = 'dualityRooms';
 
+/**
+ * The sandbox keeps its own document per room name, not a field on the game's.
+ *
+ * A game room is under a strict rule — only the seat on move may append, and
+ * only one move at a time — because the whole point is that neither player can
+ * meddle. The sandbox is the opposite: both players may change anything at any
+ * moment. Those two contracts do not belong in one document, and separating
+ * them means a bug in the loose rule cannot reach a game in progress.
+ *
+ * Sharing the room *names* is deliberate, though: whoever you just played, you
+ * carry on with, by following the same link.
+ */
+export const SANDBOX_COLLECTION = 'dualitySandboxes';
+
 export function isRoomName(name) {
   return typeof name === 'string' && ROOM_NAMES.includes(name);
 }
@@ -54,16 +68,35 @@ export function shareLink(origin, pathname, room) {
   return `${origin}${pathname}?room=${encodeURIComponent(room)}`;
 }
 
+function emptySeats() {
+  return [
+    { uid: null, claimedAt: null, lastSeen: null, lastActive: null },
+    { uid: null, claimedAt: null, lastSeen: null, lastActive: null },
+  ];
+}
+
 /** An unplayed room. Must match what the Security Rules will accept on create. */
 export function emptyRoomDoc(name) {
   return {
     version: 1,
     name,
     game: 'soccer-hockey',
-    seats: [
-      { uid: null, claimedAt: null, lastSeen: null, lastActive: null },
-      { uid: null, claimedAt: null, lastSeen: null, lastActive: null },
-    ],
+    seats: emptySeats(),
+    moves: [],
+  };
+}
+
+/**
+ * A fresh sandbox. `config` is an encoded spec — plain numbers and a list of
+ * `{dr, dc}` maps, because Firestore will not store a nested array.
+ */
+export function emptySandboxDoc(name, config) {
+  return {
+    version: 1,
+    name,
+    game: 'sandbox',
+    seats: emptySeats(),
+    config,
     moves: [],
   };
 }

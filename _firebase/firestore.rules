@@ -151,6 +151,154 @@ service cloud.firestore {
         && (isSeatOperation() || isMoveAppend() || isReset());
     }
 
+    // ---------------------------------------------------------------------
+    // The sandbox. Same twenty room names, its own documents.
+    //
+    // A deliberately looser contract than the game above: once the reveal has
+    // happened there is nothing left to keep from either player, so whoever
+    // holds a seat may change anything — the board size, the duality number,
+    // which moves exist, where the ball is. What the rules still guarantee is
+    // that a passer-by cannot: a seat is required, and it is claimed under the
+    // same terms as a game seat.
+    //
+    // Separate from dualityRooms precisely because the contract is different.
+    // A mistake in this block cannot reach a game in progress.
+    // ---------------------------------------------------------------------
+
+    match /dualitySandboxes/{roomId} {
+
+      function signedIn() {
+        return request.auth != null && request.auth.uid is string;
+      }
+
+      // Keep in step with assets/games/net/rooms.js — the same list as above.
+      function known() {
+        return roomId in [
+          'RedPuck', 'BlueGoal', 'GreenField', 'GoldRink', 'SilverNet',
+          'BronzeStripes', 'PurpleSkates', 'OrangeWhistle', 'WhitePuck', 'BlackGoal',
+          'AmberField', 'CoralRink', 'IvoryNet', 'JadeStripes', 'OnyxSkates',
+          'PearlWhistle', 'RustPuck', 'SableGoal', 'TealField', 'UmberRink'
+        ];
+      }
+
+      function before() { return resource.data; }
+      function after() { return request.resource.data; }
+      function nowMs() { return request.time.toMillis(); }
+
+      function seatShapeOk(i) {
+        return after().seats[i].keys().hasOnly(['uid', 'claimedAt', 'lastSeen', 'lastActive']);
+      }
+
+      function plausibleBeat(i) {
+        return after().seats[i].lastSeen is int
+          && after().seats[i].lastSeen <= nowMs() + 600000;
+      }
+
+      // The bounds are the ones the page enforces, restated here because the
+      // page is not what protects the database. A board cannot be so large
+      // that one document becomes an expensive thing to store or to serve.
+      function configOk() {
+        return after().config.keys().hasOnly(['width', 'height', 'duality', 'moveSet'])
+          && after().config.width is int
+          && after().config.width >= 3 && after().config.width <= 19
+          && after().config.height is int
+          && after().config.height >= 3 && after().config.height <= 21
+          && after().config.duality is int
+          && after().config.duality >= 0
+          && after().config.duality < after().config.width
+          && after().config.moveSet.size() <= 200;
+      }
+
+      // As close to "the configuration did not move" as primitives get. The
+      // move set is compared by length rather than by contents, for the same
+      // reason the game's rules count moves rather than replay them: this is
+      // not a language in which a list can be walked. Someone signed in who
+      // knew a room name could therefore swap one offset for another without
+      // sitting down. That is the loosest thing this block permits, and it is
+      // a scratchpad either seat can overwrite in a click regardless.
+      function configHeld() {
+        return after().config.width == before().config.width
+          && after().config.height == before().config.height
+          && after().config.duality == before().config.duality
+          && after().config.moveSet.size() == before().config.moveSet.size();
+      }
+
+      function shapeIsIntact() {
+        return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'config', 'moves'])
+          && after().version == before().version
+          && after().name == before().name
+          && after().game == before().game
+          && after().seats.size() == 2
+          && seatShapeOk(0) && seatShapeOk(1)
+          && configOk()
+          && after().moves.size() <= 500;
+      }
+
+      function seatVacant(i) {
+        return before().seats[i].uid == null
+          || before().seats[i].lastSeen == null
+          || nowMs() > before().seats[i].lastSeen + 300000;
+      }
+
+      function seatMine(i) {
+        return before().seats[i].uid == request.auth.uid;
+      }
+
+      function seatWriteOk(i) {
+        return after().seats[i].uid == before().seats[i].uid
+          || (
+            after().seats[i].uid == request.auth.uid
+            && plausibleBeat(i)
+            && (seatVacant(i) || seatMine(i))
+          )
+          || (seatMine(i) && after().seats[i].uid == null);
+      }
+
+      // Anything that is not a seat change has to come from somebody sitting
+      // down. Both chairs are checked because either seat may be the writer.
+      function holdsASeat() {
+        return seatMine(0) || seatMine(1);
+      }
+
+      // Sitting down is the one write allowed from outside a seat, so it must
+      // not carry anything else along with it.
+      function isSeatOperation() {
+        return configHeld() && after().moves.size() == before().moves.size();
+      }
+
+      function freshSeat(i) {
+        return after().seats[i].uid == null
+          || (after().seats[i].uid == request.auth.uid && plausibleBeat(i));
+      }
+
+      function isFreshSandbox() {
+        return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'config', 'moves'])
+          && after().name == roomId
+          && after().version == 1
+          && after().game == 'sandbox'
+          && after().moves.size() == 0
+          && after().seats.size() == 2
+          && seatShapeOk(0) && seatShapeOk(1)
+          && freshSeat(0) && freshSeat(1)
+          && after().config.keys().hasOnly(['width', 'height', 'duality', 'moveSet'])
+          && after().config.width is int
+          && after().config.width >= 3 && after().config.width <= 19
+          && after().config.height is int
+          && after().config.height >= 3 && after().config.height <= 21
+          && after().config.duality is int
+          && after().config.moveSet.size() <= 200;
+      }
+
+      allow read: if signedIn() && known();
+      allow create: if signedIn() && known() && isFreshSandbox();
+      allow delete: if false;
+      allow update: if signedIn()
+        && known()
+        && shapeIsIntact()
+        && seatWriteOk(0) && seatWriteOk(1)
+        && (holdsASeat() || isSeatOperation());
+    }
+
     // =====================================================================
     // V3.1 — the old games. Nothing on the site links to these any more, but
     // the documents are still there and the pages still work if opened

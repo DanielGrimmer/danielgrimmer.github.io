@@ -38,6 +38,7 @@ core/rules.js     Board geometry, move-set derivation, legal moves
 core/game.js      Game state, move log, replay, per-seat views, reframing
 core/seats.js     Seat claiming, heartbeats, who may move
 core/presets.js   The two published configurations, and the palettes
+core/sandbox.js   Editable configurations: validation, the move palette
 ```
 
 Pure functions over plain data — no DOM, no network, no framework — so the same
@@ -52,7 +53,13 @@ ui/board.js       The isometric board renderer
 ui/board.css      Page furniture and both palettes
 ui/coach.js       Tutorial steps and the reveal's prose — all copy lives here
 ui/replay.js      The reveal: both seats' boards, stepping through one move log
+ui/palette.js     The move-set editor, drawn once per lens
 ```
+
+Three pages, in the order a pair of players meets them: the tutorial (no
+network, duality off), the real game (one board each, ending in the reveal), and
+the sandbox (both boards, every dial shared). Each is a thin HTML file over
+those modules; none of them holds a rule.
 
 Every intra-project import carries a `?v=` token. GitHub Pages serves assets
 with a ten-minute max-age, so an edited module keeps loading from cache while
@@ -91,7 +98,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 147 tests
+node --test _tests/*.test.mjs                      # 176 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
@@ -135,16 +142,23 @@ listed in the archive's README, and the pages now carry:
 - the guided tutorial, which advances on what the player does rather than on a
   Next button;
 - **the reveal**: both seats' boards side by side at full size, stepping through
-  the one move log together.
+  the one move log together;
+- **the sandbox**, reached from the end of the reveal with the room name in the
+  link, so both players land in it together. Both boards on both screens, and
+  the width, the height, the duality number and the move set all shared and all
+  editable. The move set is edited through a palette drawn once per lens: tick a
+  cell on the soccer grid and a different cell lights up on the hockey one,
+  which is the duality with the game taken away from it.
 
-Next:
+The sandbox is deliberately loose. There is no turn order — with nothing left to
+hide, taking turns to adjust a number would only be in the way — and no value
+you can type into it can break it: `normaliseSpec` never throws and never
+returns something the engine will refuse, because two people are editing one
+document over a network and a briefly nonsensical value has to be survivable.
+It also degrades to a private, local sandbox if Firebase cannot be reached at
+all, since it is the one screen that still means something on your own.
 
-1. **The sandbox.** Multiplayer like the real game, but opened up: choose the
-   board size and the duality number, swap which sport each seat is playing,
-   and watch what the lens does to a board you have configured yourself. Meant
-   for after the reveal, when the question "what else could it have been?" is
-   the live one.
-2. **Escher Chess** onto the same engine.
+Next: **Escher Chess** onto the same engine.
 
 Still open on the Firebase side: App Check, and restricting the web API key to
 the site's own referrer. Both are in [`_firebase/`](../../_firebase/README.md).

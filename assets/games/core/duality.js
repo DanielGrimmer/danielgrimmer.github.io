@@ -104,6 +104,17 @@ export class Lens {
     return signedRep(this.multiplier * canonicalDelta, this.width);
   }
 
+  /**
+   * The inverse of `viewDelta`: a displacement this seat perceives, in
+   * canonical terms. What the sandbox needs when somebody clicks a cell in the
+   * hockey player's move palette — they are pointing at a hockey displacement,
+   * and the move set is stored canonically.
+   */
+  canonicalDelta(viewDelta) {
+    const inv = modInverse(this.multiplier, this.width);
+    return signedRep(inv * viewDelta, this.width);
+  }
+
   /** The lens that undoes this one. */
   inverse() {
     return new Lens({

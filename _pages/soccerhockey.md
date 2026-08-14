@@ -46,6 +46,7 @@ central mystery will become apparent.
 <div class="sh-actions">
   <a href="{{ '/assets/SoccerHockey/SoccerHockeyTutorialV4.0.html' | relative_url }}">Start with the tutorial (Basketball)</a>
   <a href="{{ '/assets/SoccerHockey/SoccerHockeyGameV4.0.html' | relative_url }}">Go straight to the game (Soccer or Hockey)</a>
+  <a href="{{ '/assets/SoccerHockey/SoccerHockeySandboxV4.0.html' | relative_url }}">The sandbox (after your first game)</a>
 </div>
 
 While the tutorial can be played side-by-side on one device, you will ultimately

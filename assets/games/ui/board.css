@@ -622,6 +622,129 @@ body.dg {
   cursor: default;
 }
 
+/* -------------------------------------------------------------- sandbox ---- */
+
+.dg-dials {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0 0.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--dg-divider);
+  border-radius: 6px;
+  background: var(--dg-surface);
+}
+
+.dg-dials label {
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dg-dials input {
+  font: inherit;
+  width: 4.5rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--dg-divider);
+  border-radius: 4px;
+  background: var(--dg-bg);
+  color: var(--dg-text);
+}
+
+.dg-dial-note {
+  text-align: center;
+  color: var(--dg-accent);
+  font-size: 0.9rem;
+  min-height: 1.4em;
+  margin: 0 auto 0.5rem;
+  max-width: 62ch;
+}
+
+/*
+ * The move palette. Flat, on purpose: it is a diagram of displacements, not a
+ * board, and drawing it isometrically would invite counting squares on it as
+ * though the ball were standing there.
+ */
+.dg-palette-wrap {
+  margin-top: 1rem;
+  text-align: center;
+  /* A nineteen-wide palette is wider than a phone. It scrolls inside its own
+     box rather than pushing the page sideways. */
+  overflow-x: auto;
+}
+
+.dg-palette-title {
+  font-size: 0.85rem;
+  color: var(--dg-text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.dg-palette {
+  display: inline-block;
+}
+
+/*
+ * Fixed cells rather than fractions. The palette sits in a shrink-wrapped box,
+ * where `1fr` columns of empty buttons have no width to divide up and the whole
+ * grid collapses to a few pixels. Fixed cells also make the palette grow with
+ * the board: a nineteen-wide palette is visibly wider than an eleven-wide one,
+ * which is the right thing for it to say.
+ */
+.dg-palette-grid {
+  --dg-palette-cell: 22px;
+  display: grid;
+  grid-template-columns: repeat(var(--dg-palette-cols, 11), var(--dg-palette-cell));
+  gap: 2px;
+  margin: 0 auto;
+}
+
+.dg-palette-cell {
+  width: var(--dg-palette-cell);
+  height: var(--dg-palette-cell);
+  padding: 0;
+  border: 1px solid var(--dg-divider);
+  border-radius: 2px;
+  background: var(--dg-bg);
+  cursor: pointer;
+}
+
+.dg-palette-cell:disabled {
+  cursor: default;
+}
+
+.dg-palette-cell:hover:not(:disabled) {
+  border-color: var(--dg-accent);
+}
+
+/* Lit exactly as a legal square is lit on the board, so the two read as one. */
+.dg-palette-cell[data-on='true'] {
+  background: #ffffcc;
+  border-color: #ffd700;
+}
+
+/* The ball's own cell. It is not a move, so it does not toggle. */
+.dg-palette-cell[data-centre='true'] {
+  border-color: var(--dg-text);
+}
+
+.dg-palette[data-theme='soccer'] .dg-palette-cell[data-centre='true'] {
+  background: radial-gradient(circle at 50% 50%, #1c1f24 0 22%, #ffffff 23%);
+}
+
+.dg-palette[data-theme='hockey'] .dg-palette-cell[data-centre='true'] {
+  background: #23262b;
+}
+
+.dg-palette-note {
+  font-size: 0.8rem;
+  color: var(--dg-text-muted);
+  min-height: 1.2em;
+  margin-top: 0.35rem;
+}
+
 /* ---------------------------------------------------------------- misc ---- */
 
 .dg-legend {
