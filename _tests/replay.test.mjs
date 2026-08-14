@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { frameCount, clampFrame, reachText, moverAt } from '../assets/games/ui/replay.js';
+import { frameCount, clampFrame, moverAt } from '../assets/games/ui/replay.js';
 import {
   replayFrames,
   viewOf,
@@ -91,11 +91,6 @@ test('what the two boards do and do not agree about', async (t) => {
 });
 
 test('the boards and the credits', async (t) => {
-  await t.test('each seat is told the reach it actually perceives', () => {
-    assert.equal(reachText(config, 0), '1 or 3');
-    assert.equal(reachText(config, 1), '1 or 4');
-  });
-
   await t.test('the kick-off has no mover; after that the seats alternate', () => {
     const moves = someGame(6);
     const frames = replayFrames(config, moves);

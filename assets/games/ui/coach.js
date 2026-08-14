@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.2.0';
-import { replayFrames } from '../core/game.js?v=4.2.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.2.1';
+import { replayFrames } from '../core/game.js?v=4.2.1';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -104,7 +104,7 @@ export const BASKETBALL_STEPS = Object.freeze([
     body:
       'Every square the ball leaves is marked with a ✕ and can never be used ' +
       'again. Squares only ever close up, they never open: that is what will ' +
-      'eventually force a goal (or a tie if the ball runs out of anywhere to go).',
+      'eventually force a goal (or a tie if the ball runs out of places to go).',
     hint: 'Push it around a little and watch the available spaces thin out.',
     done: (ctx) => ctx.moveCount >= 4,
   },
@@ -155,11 +155,14 @@ export const BASKETBALL_OUTRO = Object.freeze({
     'except on a slightly bigger board. The “trick” only works if the two ' +
     'players are looking at separate screens (on separate devices) and do not ' +
     'talk to each other until the first game is over. So if you and your ' +
-    'opponent have been working through this tutorial together (on one device) you ' +
+    'friend have been working through this tutorial together (on one device) you ' +
     'need to split up now. The next screen will make sure that you are paired ' +
     'up into the same game room.',
-  /** Where the closing button goes. */
-  href: '/soccer-hockey/',
+  /**
+   * Straight to the game. Sending them to the landing page first would only
+   * ask them to press a second button saying the same thing.
+   */
+  href: '/assets/SoccerHockey/SoccerHockeyGameV4.0.html',
   cta: 'Play the Real Game →',
 });
 
@@ -199,15 +202,22 @@ export function replayNote(config, seat) {
       `${opening} And this is more than just an aesthetic difference (no mere ` +
       'palette swap). Compare the pattern of available moves on each board, the ' +
       'Soccer player can kick the ball three spaces to the right, whereas the ' +
-      'Hockey player can move it four spaces.\n\n' +
+      'Hockey player can move it, not three, but four spaces.\n\n' +
       'Now advance through the replay. Every move is exactly as it was actually ' +
       `made, in the order it was made. ${divergence} What seems like a short ` +
       'move to the Soccer player, seems like a long move to the Hockey player ' +
       'and vice versa. In general, you will disagree about what column the ' +
       "ball/puck stands in, as well as the shape of the trails of ✕'s.\n\n" +
       'Nonetheless, you both agree where the two goals are and who ultimately ' +
-      'won the game. What structural features of the game are common across the ' +
-      'two perspectives, allowing for this kind of consensus? What kind of ' +
+      'won the game. Weird!',
+    /**
+     * Carried below the two boards rather than above them. The reveal only
+     * works if the boards are reached quickly; the questions they raise keep
+     * perfectly well until after somebody has stepped through the replay.
+     */
+    after:
+      'What structural features of the game are common across the two ' +
+      'perspectives, allowing for this kind of consensus? What kind of ' +
       "mathematical transformation relates the two players' different " +
       'representations of this common structure? These kinds of dual ' +
       'representations of one underlying structure are now-common on the front ' +

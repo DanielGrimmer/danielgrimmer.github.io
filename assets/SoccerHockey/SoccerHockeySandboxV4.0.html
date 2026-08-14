@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Sandbox — Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.2.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.2.1" />
   </head>
   <body class="dg">
     <div class="dg-wrap dg-wide">
@@ -21,7 +21,7 @@
         <div class="dg-status" id="status">Connecting…</div>
         <div class="dg-coach dg-coach-band">
           <div class="dg-coach-progress" id="roomLabel">Connecting</div>
-          <h2 class="dg-coach-title">Both Lids Off</h2>
+          <h2 class="dg-coach-title">Let's Look under the Hood</h2>
           <p class="dg-coach-body" id="note"></p>
           <div class="dg-room-tools" id="roomTools" hidden>
             <button class="dg-btn dg-btn-primary" id="copyLink" type="button">Copy the invite link</button>
@@ -49,10 +49,7 @@
 
       <div class="dg-replay-boards">
         <div class="dg-replay-side">
-          <div class="dg-replay-head">
-            <div class="dg-replay-label">Soccer Field — Player 1</div>
-            <div class="dg-replay-reach" id="reach0"></div>
-          </div>
+          <div class="dg-replay-head dg-replay-label">Soccer Field — Player 1</div>
           <div id="board0"></div>
           <div class="dg-palette-wrap">
             <div class="dg-palette-title">Toggle-able Soccer Moves</div>
@@ -60,10 +57,7 @@
           </div>
         </div>
         <div class="dg-replay-side">
-          <div class="dg-replay-head">
-            <div class="dg-replay-label">Hockey Rink — Player 2</div>
-            <div class="dg-replay-reach" id="reach1"></div>
-          </div>
+          <div class="dg-replay-head dg-replay-label">Hockey Rink — Player 2</div>
           <div id="board1"></div>
           <div class="dg-palette-wrap">
             <div class="dg-palette-title">Toggle-able Hockey Moves</div>
@@ -81,7 +75,7 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.2.0';
+      const BUILD = '4.2.1';
 
       import {
         initialGame,
@@ -89,9 +83,8 @@
         replay,
         viewOf,
         squareFromView,
-        sidewaysReach,
         STATUS,
-      } from '../games/core/game.js?v=4.2.0';
+      } from '../games/core/game.js?v=4.2.1';
       import {
         DEFAULT_SPEC,
         normaliseSpec,
@@ -102,10 +95,10 @@
         encodeSpec,
         decodeSpec,
         isDegenerate,
-      } from '../games/core/sandbox.js?v=4.2.0';
-      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.2.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.2.0';
-      import { createPaletteView } from '../games/ui/palette.js?v=4.2.0';
+      } from '../games/core/sandbox.js?v=4.2.1';
+      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.2.1';
+      import { createBoardView } from '../games/ui/board.js?v=4.2.1';
+      import { createPaletteView } from '../games/ui/palette.js?v=4.2.1';
       import {
         ROOM_NAMES,
         roomFromLocation,
@@ -113,7 +106,7 @@
         rememberRoom,
         recallRoom,
         LAST_SANDBOX_KEY,
-      } from '../games/net/rooms.js?v=4.2.0';
+      } from '../games/net/rooms.js?v=4.2.1';
       import {
         signIn,
         chooseRoom,
@@ -127,7 +120,7 @@
         explain,
         HEARTBEAT_MS,
         SANDBOX_COLLECTION,
-      } from '../games/net/room.js?v=4.2.0';
+      } from '../games/net/room.js?v=4.2.1';
 
       const el = (id) => document.getElementById(id);
       const now = () => Date.now();
@@ -162,9 +155,12 @@
       ];
 
       const NOTE =
-        'This is the same game with nothing hidden. Both boards are on both ' +
-        'screens now, either of you can move the ball at any time, and every ' +
-        'dial below is shared: change one and it changes for both of you.\n\n' +
+        "Here is a sandbox where you can play around with the game's free " +
+        'parameters to see for yourself how the magic happens. All of the dials ' +
+        "below are shared (and sync'd) and either of you can move the ball at " +
+        "any time. Try changing the board's width, its height, and its " +
+        '"duality number" (which must not share any prime factor with the ' +
+        'width).\n\n' +
         'The grids under the boards are the move sets — each cell is one ' +
         'relative move, and the ball sits at the centre. Switch one on and ' +
         'watch where it appears on the other board. Then try a different ' +
@@ -236,12 +232,6 @@
               ? (offset) => push({ ...spec, moveSet: toggleOffset(spec.moveSet, offset) })
               : null,
           });
-
-          const reach = sidewaysReach(config, i, 1);
-          const plural = reach.length === 1 && reach[0] === 1 ? 'column' : 'columns';
-          el(`reach${i}`).textContent = reach.length
-            ? `Short passes reach ${reach.join(' or ')} ${plural}.`
-            : 'No short passes at all.';
         }
 
         el('status').textContent = describeStatus();

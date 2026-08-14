@@ -244,9 +244,9 @@ test('turning a dial', async (t) => {
   });
 
   await t.test('a duality change re-derives it, so neither star is the privileged one', () => {
-    const { spec, notes } = changeDials(edited, { width: 11, height: 13, duality: 5 });
+    const { spec } = changeDials(edited, { width: 11, height: 13, duality: 5 });
     assert.notDeepEqual(spec.moveSet, edited.moveSet);
-    assert.match(notes.join(' '), /neither/);
+    assert.deepEqual(spec.moveSet, derivedMoveSet({ width: 11, height: 13, duality: 5 }));
   });
 
   await t.test('a width change re-derives it too', () => {

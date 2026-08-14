@@ -20,8 +20,8 @@
  * note above the boards says what to look for once, and then stops talking.
  */
 
-import { replayFrames, viewOf, sidewaysReach } from '../core/game.js?v=4.2.0';
-import { createBoardView } from './board.js?v=4.2.0';
+import { replayFrames, viewOf } from '../core/game.js?v=4.2.1';
+import { createBoardView } from './board.js?v=4.2.1';
 
 /** How long each move is held when the replay is playing itself. */
 export const AUTOPLAY_MS = 1100;
@@ -34,11 +34,6 @@ export function frameCount(moves) {
 export function clampFrame(index, total) {
   if (!Number.isFinite(index)) return 0;
   return Math.max(0, Math.min(total - 1, Math.trunc(index)));
-}
-
-/** "1 or 3" — the sideways steps a seat believes its short passes to have. */
-export function reachText(config, seat) {
-  return sidewaysReach(config, seat, 1).join(' or ');
 }
 
 /** Who played the move that produced frame `index`, or null for the kick-off. */
@@ -67,11 +62,8 @@ export function createReplayView(container, { config, moves, seatOrder, labels }
   const boards = element('div', 'dg-replay-boards');
   const sides = seatOrder.map((seat, i) => {
     const side = element('div', 'dg-replay-side');
-    const head = element('div', 'dg-replay-head');
-    head.append(
-      element('div', 'dg-replay-label', labels[i]),
-      element('div', 'dg-replay-reach', `Short passes reach ${reachText(config, seat)} columns.`)
-    );
+    const head = element('div', 'dg-replay-head', labels[i]);
+    head.classList.add('dg-replay-label');
 
     const mount = element('div', 'dg-replay-board');
 

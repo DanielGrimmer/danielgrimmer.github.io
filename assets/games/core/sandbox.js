@@ -17,10 +17,10 @@
  * must not take the page down for both of them.
  */
 
-import { mod, areCoprime, validMultipliers } from './duality.js?v=4.2.0';
-import { dualMoveSet } from './rules.js?v=4.2.0';
-import { makeConfig } from './game.js?v=4.2.0';
-import { THEMES } from './presets.js?v=4.2.0';
+import { mod, areCoprime, validMultipliers } from './duality.js?v=4.2.1';
+import { dualMoveSet } from './rules.js?v=4.2.1';
+import { makeConfig } from './game.js?v=4.2.1';
+import { THEMES } from './presets.js?v=4.2.1';
 
 /**
  * Wider and taller than this and two boards no longer fit side by side at a
@@ -123,22 +123,12 @@ export function derivedMoveSet({ width, height, duality }) {
  */
 export function changeDials(previous, { width, height, duality }) {
   const lensMoved = Number(width) !== previous.width || Number(duality) !== previous.duality;
-  const result = normaliseSpec({
+  return normaliseSpec({
     width,
     height,
     duality,
     moveSet: lensMoved ? null : previous.moveSet,
   });
-  return lensMoved && previous.moveSet.length
-    ? {
-        ...result,
-        notes: [
-          ...result.notes,
-          'The moves were worked out again from the new numbers, so that neither ' +
-            "player's pattern is the privileged one.",
-        ],
-      }
-    : result;
 }
 
 /**

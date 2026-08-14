@@ -447,6 +447,23 @@ body.dg {
   background: var(--dg-surface);
   position: sticky;
   top: 1rem;
+  /* Positioned siblings later in the DOM would otherwise paint over it. */
+  z-index: 1;
+}
+
+/*
+ * Sticky is for when the coach sits *beside* the board. Stacked on a phone it
+ * pins itself to the top of the screen and the board scrolls up over it — the
+ * cubes are positioned, so they win the paint. Above the board it should scroll
+ * away like anything else.
+ *
+ * This has to come *after* the rule above rather than joining the layout query
+ * further up: same specificity, so the later one wins, and up there it lost.
+ */
+@media (max-width: 780px) {
+  .dg-coach {
+    position: static;
+  }
 }
 
 .dg-coach[data-done='true'] {
@@ -579,11 +596,6 @@ body.dg {
 
 .dg-replay-label {
   font-weight: 500;
-}
-
-.dg-replay-reach {
-  font-size: 0.85rem;
-  color: var(--dg-text-muted);
 }
 
 /*
