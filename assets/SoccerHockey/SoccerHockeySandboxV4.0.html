@@ -106,7 +106,14 @@
       import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.2.0';
       import { createBoardView } from '../games/ui/board.js?v=4.2.0';
       import { createPaletteView } from '../games/ui/palette.js?v=4.2.0';
-      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.2.0';
+      import {
+        ROOM_NAMES,
+        roomFromLocation,
+        shareLink,
+        rememberRoom,
+        recallRoom,
+        LAST_SANDBOX_KEY,
+      } from '../games/net/rooms.js?v=4.2.0';
       import {
         signIn,
         chooseRoom,
@@ -418,7 +425,16 @@
         seat = joined.seat;
         adopt(joined.room);
 
+        // A sandbox everybody walked out of is holding somebody else's board,
+        // which is more confusing here than in the game: the dials would be
+        // theirs too. `joinSandbox` has already dropped the moves; put the
+        // numbers back as well, in the one write the rules allow.
+        if (joined.abandoned && joined.seat !== null) {
+          await share(normaliseSpec(DEFAULT_SPEC).spec);
+        }
+
         history.replaceState(null, '', `?room=${encodeURIComponent(name)}`);
+        if (seat !== null) rememberRoom(window.localStorage, name, LAST_SANDBOX_KEY);
         el('roomTools').hidden = false;
 
         unwatch = await watchSandbox(
@@ -474,6 +490,8 @@
           const wanted = roomFromLocation(location.search);
           const name = await chooseRoom({
             preferred: wanted,
+            remembered: recallRoom(window.localStorage, LAST_SANDBOX_KEY),
+            uid,
             now: now(),
             collection: SANDBOX_COLLECTION,
           });

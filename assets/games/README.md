@@ -98,7 +98,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 181 tests
+node --test _tests/*.test.mjs                      # 203 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
@@ -150,7 +150,31 @@ listed in the archive's README, and the pages now carry:
   cell on the soccer grid and a different cell lights up on the hockey one,
   which is the duality with the game taken away from it.
 
-The sandbox is deliberately loose. There is no turn order — with nothing left to
+### Which room you land in
+
+The invite link always wins. Failing that, the room this browser was last in, if
+its seat is still yours — a returning player keeps their game, which is what the
+anonymous uid is for. Failing *that*, `findOpenRoom` takes somebody who is
+waiting to start (one live occupant, no moves played) before an empty room, and
+picks the empty room quiet longest rather than the first in the list.
+
+The two rules that stop a stranger inheriting a game:
+
+- A room with a lone occupant who has already started is not offered. They are
+  playing, or reading their reveal, and are not waiting for company.
+- A room everybody walked out of forgets its game as the next person sits down
+  — unless that person is resuming their own seat, which is a dropped
+  connection rather than an abandoned game. This is a second write rather than
+  part of the claim: the published rule for a seat operation requires the move
+  count not to change, while a bare reset is already allowed.
+
+The design assumes two people who know each other and can talk on another
+channel — the reveal does not land otherwise — so pairing strangers is not a
+goal, and spreading arrivals across rooms costs nothing.
+
+### The sandbox
+
+Deliberately loose. There is no turn order — with nothing left to
 hide, taking turns to adjust a number would only be in the way — and no value
 you can type into it can break it: `normaliseSpec` never throws and never
 returns something the engine will refuse, because two people are editing one

@@ -212,25 +212,71 @@ export function occupancy(seats, now, ttl = SEAT_TTL_MS) {
   };
 }
 
+/** When this room last had a tab reporting in. Zero if it never has. */
+export function lastActivity(seats) {
+  return normaliseSeats(seats).reduce((latest, s) => Math.max(latest, s.lastSeen ?? 0), 0);
+}
+
 /**
- * Pick a room from the pool: one with somebody already waiting first, an empty
- * one only if there is nobody to join.
+ * Pick a room from the pool for somebody who did not arrive by invite link.
  *
- * The order matters more than it looks. Preferring empty rooms means two people
- * arriving independently are each given a room of their own and never meet —
- * they would have to notice, and swap links, before the game could start at
- * all. Preferring a room with a seat going spare pairs them automatically, and
- * the share link is then for choosing your opponent rather than for finding one.
+ * Three tiers, and the order carries most of the design:
  *
- * @param {{id:string, seats:any}[]} rooms
+ * 1. **Somebody waiting to start.** One live occupant and no moves played: a
+ *    player who has opened the game and is waiting for their friend. Joining
+ *    them is what lets two people meet without swapping a link at all — the
+ *    second one simply follows a minute later. A room that is *mid-game*, or
+ *    sitting on a finished one, is deliberately not in this tier: whoever is
+ *    there is busy, or reading their reveal, and does not want company.
+ * 2. **An empty room, the one quiet longest.** Not the first in the list —
+ *    always taking index 0 funnels every unaccompanied arrival into the same
+ *    room, which is both where stale state accumulates and where two unrelated
+ *    people are most likely to collide.
+ *
+ * Nothing suitable returns null, which with twenty rooms means twenty games are
+ * in progress at once. The caller decides what to do about that.
+ *
+ * `moves` is read but never required: a pool entry without one is treated as an
+ * unplayed room, which is what a room document that does not exist yet is.
+ *
+ * @param {{id:string, seats:any, moves?:any[]}[]} rooms
  */
 export function findOpenRoom(rooms, now, ttl = SEAT_TTL_MS) {
-  const rated = rooms.map((room) => ({ room, ...occupancy(room.seats, now, ttl) }));
-  return (
-    rated.find((r) => r.status === 'joinable')?.room ??
-    rated.find((r) => r.status === 'empty')?.room ??
-    null
-  );
+  if (!Array.isArray(rooms) || rooms.length === 0) return null;
+
+  const rated = rooms.map((room) => ({
+    room,
+    held: occupancy(room.seats, now, ttl).held,
+    played: Array.isArray(room.moves) ? room.moves.length : 0,
+    quiet: lastActivity(room.seats),
+  }));
+
+  // Freshest arrival first: if two people are somehow waiting, the one who sat
+  // down most recently is the likelier to be the friend who just clicked.
+  const waiting = rated
+    .filter((r) => r.held === 1 && r.played === 0)
+    .sort((a, b) => b.quiet - a.quiet);
+  if (waiting.length) return waiting[0].room;
+
+  const free = rated.filter((r) => r.held === 0).sort((a, b) => a.quiet - b.quiet);
+  return free.length ? free[0].room : null;
+}
+
+/**
+ * Should this room's game be thrown away as this player sits down?
+ *
+ * Yes when nobody was left in it and the newcomer is not the one coming back.
+ * A room that everybody walked out of is holding a finished game that belongs
+ * to strangers, and inheriting it drops the next arrival straight into somebody
+ * else's reveal. Resuming your own seat is the exception that matters: both
+ * players dropping for ten minutes and returning is a dropped connection, not
+ * an abandoned game, and their uids are still in the chairs to prove it.
+ */
+export function isAbandonedGame(seats, { moves, outcome, now, ttl = SEAT_TTL_MS }) {
+  const played = Array.isArray(moves) ? moves.length : 0;
+  if (played === 0) return false;
+  if (outcome === OUTCOME.RESUMED) return false;
+  return occupancy(seats, now, ttl).held === 0;
 }
 
 /**

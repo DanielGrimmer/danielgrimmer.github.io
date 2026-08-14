@@ -21,6 +21,8 @@ import {
   releaseSeat,
   occupancy,
   findOpenRoom,
+  isAbandonedGame,
+  lastActivity,
   mayMove,
 } from '../assets/games/core/seats.js';
 
@@ -269,6 +271,32 @@ test('finding a room in the pool', async (t) => {
     assert.equal(findOpenRoom(rooms, T0).id, 'half');
   });
 
+  await t.test('leaves alone somebody who is already playing, or reading a reveal', () => {
+    // A lone occupant with moves on the board is not waiting for company. This
+    // is what stopped an unaccompanied arrival being dropped into the middle
+    // of somebody else's game — or, worse, straight into their reveal.
+    const rooms = [
+      { id: 'midgame', seats: [held('c', T0), null], moves: [{ row: 6, col: 5 }] },
+      { id: 'empty', seats: emptySeats() },
+    ];
+    assert.equal(findOpenRoom(rooms, T0).id, 'empty');
+  });
+
+  await t.test('spreads unaccompanied arrivals rather than funnelling them into the first room', () => {
+    // Always taking index 0 makes one room both the stalest and the most
+    // crowded. The quietest free room wins instead.
+    const rooms = [
+      { id: 'busy-recently', seats: [{ uid: null, lastSeen: null }, { uid: null, lastSeen: null }], moves: [] },
+      { id: 'never-used', seats: emptySeats() },
+    ];
+    rooms[0].seats = [
+      { uid: 'a', claimedAt: T0, lastSeen: T0 },
+      { uid: null, claimedAt: null, lastSeen: null },
+    ];
+    // Long enough ago that the seat is stale, so the room counts as free.
+    assert.equal(findOpenRoom(rooms, T0 + SEAT_TTL_MS + 1).id, 'never-used');
+  });
+
   await t.test('opens an empty room only when there is nobody to join', () => {
     const rooms = [
       { id: 'full', seats: [held('a', T0), held('b', T0)] },
@@ -299,5 +327,48 @@ test('finding a room in the pool', async (t) => {
   await t.test('returns nothing when every room is genuinely busy', () => {
     const rooms = [{ id: 'full', seats: [held('a', T0), held('b', T0)] }];
     assert.equal(findOpenRoom(rooms, T0), null);
+  });
+});
+
+test('a room that everybody walked out of', async (t) => {
+  const held = (uid, now) => ({ uid, claimedAt: now, lastSeen: now });
+  const moves = [{ row: 6, col: 5 }, { row: 5, col: 5 }];
+
+  await t.test('forgets its game, so the next arrival does not inherit it', () => {
+    const gone = [held('a', T0), held('b', T0)];
+    assert.equal(
+      isAbandonedGame(gone, { moves, outcome: OUTCOME.CLAIMED, now: T0 + SEAT_TTL_MS + 1 }),
+      true
+    );
+  });
+
+  await t.test('but not while anybody is still in it', () => {
+    const one = [held('a', T0), { uid: null, claimedAt: null, lastSeen: null }];
+    assert.equal(isAbandonedGame(one, { moves, outcome: OUTCOME.CLAIMED, now: T0 }), false);
+  });
+
+  await t.test('and not for the player coming back to their own seat', () => {
+    // Both tabs dropping for ten minutes is a bad connection, not an abandoned
+    // game — and their uids are still in the chairs to prove it.
+    const gone = [held('a', T0), held('b', T0)];
+    assert.equal(
+      isAbandonedGame(gone, { moves, outcome: OUTCOME.RESUMED, now: T0 + SEAT_TTL_MS + 1 }),
+      false
+    );
+  });
+
+  await t.test('an unplayed room has nothing to forget', () => {
+    const gone = [held('a', T0), held('b', T0)];
+    for (const empty of [[], undefined]) {
+      assert.equal(
+        isAbandonedGame(gone, { moves: empty, outcome: OUTCOME.CLAIMED, now: T0 + SEAT_TTL_MS + 1 }),
+        false
+      );
+    }
+  });
+
+  await t.test('a room nobody has ever used reports no activity', () => {
+    assert.equal(lastActivity(emptySeats()), 0);
+    assert.equal(lastActivity([held('a', T0), held('b', T0 + 50)]), T0 + 50);
   });
 });

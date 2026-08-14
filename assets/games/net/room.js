@@ -31,6 +31,7 @@ import {
   releaseSeat,
   normaliseSeats,
   findOpenRoom,
+  isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
 } from '../core/seats.js?v=4.2.0';
@@ -173,9 +174,28 @@ export async function readPool(collection = ROOMS_COLLECTION) {
   return snapshots.map((r) => ({ ...r, seats: normaliseSeats(r.seats) }));
 }
 
-/** Pick a room: the one asked for, else one with somebody already waiting. */
-export async function chooseRoom({ preferred = null, now, collection = ROOMS_COLLECTION }) {
+/**
+ * Pick a room, in order of how much the choice was actually somebody's.
+ *
+ * 1. The one in the link. An invite always wins.
+ * 2. The one this browser was last in, if its seat is still ours. That is a
+ *    returning player, and sending them anywhere else loses their game.
+ * 3. Whatever the pool suggests — see `findOpenRoom`.
+ */
+export async function chooseRoom({
+  preferred = null,
+  remembered = null,
+  uid = null,
+  now,
+  collection = ROOMS_COLLECTION,
+}) {
   if (isRoomName(preferred)) return preferred;
+
+  if (uid && isRoomName(remembered)) {
+    const mine = await peekRoom({ name: remembered, collection });
+    if (mine && seatOf(mine.seats, uid) !== null) return remembered;
+  }
+
   const pool = await readPool(collection);
   const open = findOpenRoom(pool, now);
   return open ? open.id : ROOM_NAMES[0];
@@ -189,7 +209,7 @@ export async function chooseRoom({ preferred = null, now, collection = ROOMS_COL
  */
 export async function joinRoom({ name, uid, now, collection = ROOMS_COLLECTION, blank = null }) {
   const { sdk: fb, db: d } = await ensureApp();
-  return fb.runTransaction(d, async (tx) => {
+  const joined = await fb.runTransaction(d, async (tx) => {
     const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
     const room = snap.exists() ? snap.data() : (blank ?? emptyRoomDoc(name));
@@ -200,8 +220,52 @@ export async function joinRoom({ name, uid, now, collection = ROOMS_COLLECTION, 
     if (!snap.exists()) tx.set(ref, next);
     else tx.update(ref, { seats: next.seats });
 
-    return { seat: result.seat, outcome: result.outcome, room: next };
+    return {
+      seat: result.seat,
+      outcome: result.outcome,
+      room: next,
+      // Judged against the seats as they stood *before* this claim: whether
+      // anybody was still in the room when we walked in.
+      abandoned: isAbandonedGame(room.seats, {
+        moves: room.moves,
+        outcome: result.outcome,
+        now,
+      }),
+    };
   });
+
+  /*
+   * A room forgets a game nobody is left to finish.
+   *
+   * A separate write rather than part of the claim above, because the published
+   * rule for a seat operation requires the move count not to change — clearing
+   * the log alongside a claim is refused, while clearing it on its own is
+   * exactly the reset the rule already allows. It only runs when a stranger
+   * walks into an empty room holding somebody else's finished game, so the
+   * extra round trip costs nothing that anybody waits on.
+   */
+  if (joined.abandoned && joined.seat !== null) {
+    try {
+      await resetRoom({ name, collection });
+      return { ...joined, room: { ...joined.room, moves: [] } };
+    } catch {
+      // Refused or offline: the stale log stays, and the page says so.
+    }
+  }
+  return joined;
+}
+
+/** Read a room without joining it. Used to check a remembered room is still ours. */
+export async function peekRoom({ name, collection = ROOMS_COLLECTION }) {
+  await ensureApp();
+  try {
+    const snap = await sdk.getDoc(roomRef(name, collection));
+    if (!snap.exists()) return null;
+    const room = snap.data();
+    return { ...room, seats: normaliseSeats(room.seats), moves: Array.isArray(room.moves) ? room.moves : [] };
+  } catch {
+    return null;
+  }
 }
 
 /** Report in. `active` marks a beat that followed real interaction. */
@@ -260,12 +324,13 @@ export async function appendMove({ name, uid, square, expectedLength }) {
 }
 
 /** Start a fresh game in the same room, keeping both seats. */
-export async function resetRoom({ name }) {
+export async function resetRoom({ name, collection = ROOMS_COLLECTION }) {
   const { sdk: fb, db: d } = await ensureApp();
   await fb.runTransaction(d, async (tx) => {
-    const ref = roomRef(name);
+    const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
     if (!snap.exists()) return;
+    if (!(snap.data().moves ?? []).length) return; // the rule refuses a no-op reset
     tx.update(ref, { moves: [] });
   });
 }

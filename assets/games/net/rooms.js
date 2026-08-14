@@ -63,6 +63,37 @@ export function roomFromLocation(search = '') {
   return isRoomName(asked) ? asked : null;
 }
 
+/*
+ * The room a browser was last in, kept locally.
+ *
+ * Firebase hands the same anonymous uid back to a returning browser, so a seat
+ * can still be yours a day later — but only if we know which room to look in.
+ * The invite link carries that; arriving from the site's own menu does not, and
+ * without this a returning player is handed a stranger's room instead of their
+ * own game. Storage is passed in rather than reached for, so this is testable
+ * and so a browser with storage disabled degrades to the pool logic.
+ */
+export const LAST_ROOM_KEY = 'dg.lastRoom';
+export const LAST_SANDBOX_KEY = 'dg.lastSandbox';
+
+export function rememberRoom(storage, name, key = LAST_ROOM_KEY) {
+  if (!isRoomName(name)) return;
+  try {
+    storage?.setItem(key, name);
+  } catch {
+    // Private mode, or storage full. Losing the memory is not worth an error.
+  }
+}
+
+export function recallRoom(storage, key = LAST_ROOM_KEY) {
+  try {
+    const name = storage?.getItem(key);
+    return isRoomName(name) ? name : null;
+  } catch {
+    return null;
+  }
+}
+
 /** A link that drops someone straight into this room. */
 export function shareLink(origin, pathname, room) {
   return `${origin}${pathname}?room=${encodeURIComponent(room)}`;

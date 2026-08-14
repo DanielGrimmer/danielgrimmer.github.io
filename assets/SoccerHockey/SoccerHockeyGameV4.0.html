@@ -102,7 +102,13 @@
       import { createBoardView } from '../games/ui/board.js?v=4.2.0';
       import { createReplayView } from '../games/ui/replay.js?v=4.2.0';
       import { replayNote } from '../games/ui/coach.js?v=4.2.0';
-      import { ROOM_NAMES, roomFromLocation, shareLink } from '../games/net/rooms.js?v=4.2.0';
+      import {
+        ROOM_NAMES,
+        roomFromLocation,
+        shareLink,
+        rememberRoom,
+        recallRoom,
+      } from '../games/net/rooms.js?v=4.2.0';
       import {
         signIn,
         chooseRoom,
@@ -128,6 +134,13 @@
       let boardView = null;
       let replayView = null;
       let replayKey = null; // what the replay on screen is currently showing
+      /*
+       * True when the game in this room was already finished at the moment we
+       * sat down — somebody else's game, which we have no business being shown
+       * the reveal of. Cleared the moment a fresh game starts, which is the one
+       * way the log can return to empty.
+       */
+      let inheritedGame = false;
       let unwatch = null;
       let interacted = false; // has anyone touched this tab since the last beat
 
@@ -219,8 +232,12 @@
             : null,
         });
 
-        el('status').textContent = describeStatus();
-        el('status').dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
+        el('status').textContent = inheritedGame
+          ? 'This room still has somebody else\u2019s finished game in it. Press ' +
+            '\u201cNew game\u201d to clear the board and start your own.'
+          : describeStatus();
+        el('status').dataset.tone =
+          !inheritedGame && game.outcome.status === STATUS.WON ? 'win' : '';
         el('presence').textContent = describeOpponent();
         el('newGame').hidden = seat === null || game.outcome.status === STATUS.PLAYING;
         el('leave').hidden = seat === null;
@@ -237,7 +254,10 @@
        * still reading their way through it.
        */
       function drawReplay() {
-        const over = game.outcome.status !== STATUS.PLAYING;
+        if (state.moves.length === 0) inheritedGame = false;
+        // A finished game we walked in on is not a reveal; it is somebody
+        // else's board that nobody cleared. Say so and offer a fresh one.
+        const over = game.outcome.status !== STATUS.PLAYING && !inheritedGame;
         const key = over ? `${room}:${seat}:${state.moves.length}` : null;
 
         el('playLayout').hidden = over;
@@ -333,6 +353,13 @@
         }
 
         history.replaceState(null, '', `?room=${encodeURIComponent(name)}`);
+        if (seat !== null) rememberRoom(window.localStorage, name);
+        // Whether the game was already over when we arrived, before any of our
+        // own moves can have changed it.
+        inheritedGame =
+          joined.seat !== null &&
+          !joined.abandoned &&
+          replay(config, state.moves).outcome.status !== STATUS.PLAYING;
         drawRoom();
         draw();
 
@@ -432,7 +459,12 @@
         try {
           uid = await signIn();
           const wanted = roomFromLocation(location.search);
-          const name = await chooseRoom({ preferred: wanted, now: now() });
+          const name = await chooseRoom({
+            preferred: wanted,
+            remembered: recallRoom(window.localStorage),
+            uid,
+            now: now(),
+          });
           await enterRoom(name);
           startBeating();
         } catch (err) {
