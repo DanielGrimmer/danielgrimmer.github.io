@@ -79,23 +79,42 @@ does not accept a wildcard port, so `http://localhost:*/*` is refused; if you
 ever want to run the site locally against real Firebase, name the port —
 `http://localhost:8080/*`. It is not otherwise needed.
 
-**API restrictions.** If the console offers *Don't restrict key*, take it: the
-gain over the website restriction is close to nothing, and the cost of getting
-the list wrong is a sign-in failure that names nothing useful. If it insists on
-a selection, the games need all of:
+**API restrictions.** A Firebase project enables around twenty-six APIs, and
+this key is allowed to call all of them by default. The web client uses five:
 
 | API | What breaks without it |
 | --- | --- |
 | Identity Toolkit API | Anonymous sign-in — that is, everything |
 | Token Service API | Refreshing the ID token, so play stops after an hour |
 | Cloud Firestore API | Every read and write |
-| Firebase Installations API | App Check, once it is on |
-| Firebase App Check API | App Check, once it is on |
+| Firebase Installations API | App Check, which needs an installation id |
+| Firebase App Check API | App Check |
 
-If sign-in stops working after saving, this list is the first suspect. The page
-says so itself: `explain()` names a rejected key, and a restriction that does
-not cover this site looks identical from the browser to a key that was
-deleted.
+Everything else on the list belongs to a Firebase product these games do not
+touch — Storage, Hosting, Messaging, Remote Config, ML, Crashlytics, the
+Realtime Database — or is an admin API the console uses on its own credentials
+rather than this key. Narrowing to the five is safe and is worth doing for one
+reason in particular: **Firebase AI Logic API** is on the default list, and it
+is the door to the billable generative APIs that produced the unrestricted-key
+banner in the first place. A key that cannot call it cannot run up a bill,
+whatever else goes wrong.
+
+Be honest about the rest of the benefit, though: the key is public by design and
+the website restriction already says where it may be called from, so narrowing
+the API list is hygiene rather than defence.
+
+If sign-in stops working after saving, this list is the first suspect — put
+Identity Toolkit and Token Service back. The page says so itself: `explain()`
+names a rejected key, and a restriction that does not cover this site looks
+identical from the browser to a key that was deleted.
+
+**One trap worth recording**, because it cost half an hour: the Google Cloud
+console's project picker only lists projects you have opened before, and a
+Firebase project does not appear there until something makes you visit it. So
+"there is only one project, and its key is not the one in `firebaseConfig.js`"
+means you are looking at the wrong project, not that the key has gone. The
+games' key lives in the Cloud project called `soccerhockeyduality`, which is the
+same thing as the Firebase project of that name.
 
 Be clear about what this buys. A `Referer` header is trivially forged by
 anything that is not a browser, so it stops somebody pasting the config into
@@ -111,11 +130,13 @@ thing that can actually take these games down — see the quota table below — 
 no Security Rule can substitute for it, because a rule judges each write alone
 and has no memory.
 
-**The client side is done.** `assets/games/net/room.js` starts App Check in
-`ensureApp()`, before the first read or write, but only if
-`appCheckSiteKey` in `firebaseConfig.js` is non-empty. It ships empty, so
-nothing happens: no reCAPTCHA script is fetched and no third-party request is
-made. Paste the site key in and every request starts carrying a token.
+**The client side is done, and the key is in.** `assets/games/net/room.js`
+starts App Check in `ensureApp()`, before the first read or write, whenever
+`appCheckSiteKey` in `firebaseConfig.js` is non-empty — which it now is, so
+every request from the live site carries a token and the reCAPTCHA script loads
+with the page. Blanking that one string turns the whole thing off again,
+including the third-party request, which is the way back if enforcement ever
+proves more trouble than it is worth.
 
 Two keys are involved and only one of them is public:
 

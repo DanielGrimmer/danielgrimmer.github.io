@@ -23,4 +23,4 @@ export const firebaseConfig = {
  * it in and every request carries an attestation token, which the console can
  * then be told to require.
  */
-export const appCheckSiteKey = '';
+export const appCheckSiteKey = '6LfBeoctAAAAADEiuUwVwscDfSbvhgUDcq4QXuVv';

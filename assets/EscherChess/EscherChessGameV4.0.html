@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Escher Chess (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.3.2" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.4.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -90,9 +90,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.3.2';
+      const BUILD = '4.4.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.3.2';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.4.0';
       import {
         initialGame,
         replay,
@@ -100,7 +100,7 @@
         viewOf,
         fromView,
         STATUS,
-      } from '../games/escher/game.js?v=4.3.2';
+      } from '../games/escher/game.js?v=4.4.0';
       import {
         presenceOf,
         seatOf,
@@ -108,10 +108,10 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.3.2';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.3.2';
-      import { createReplayView } from '../games/ui/replay.js?v=4.3.2';
-      import { revealNote } from '../games/escher/coach.js?v=4.3.2';
+      } from '../games/core/seats.js?v=4.4.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.4.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.4.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.4.0';
       import {
         ROOM_NAMES,
         roomFromLocation,
@@ -120,14 +120,14 @@
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.3.2';
+      } from '../games/net/rooms.js?v=4.4.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.3.2';
+      } from '../games/net/room.js?v=4.4.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
