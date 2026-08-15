@@ -62,22 +62,40 @@ console whenever it changes; there is no partial update.
 
 Google Cloud console (not the Firebase one) → APIs & Services → **Credentials**.
 
+**Check the project first.** The picker at the top of the Cloud console must
+read `soccerhockeyduality`; it opens on whichever project you last used, and
+every other instruction here is about the wrong thing if it is showing another
+one.
+
 The key may not be called "Browser key"; what identifies it is the value, which
-must match `apiKey` in `assets/SoccerHockey/firebaseConfig.js`. A key with the
-note *"this key can currently be used with any application"* is an unrestricted
-one, which is what this step fixes.
+must match `apiKey` in `assets/SoccerHockey/firebaseConfig.js` —
+`AIzaSyAAQi…`. A key with the note *"this key can currently be used with any
+application"* is an unrestricted one, which is what this step fixes. If the
+project holds no key with that prefix, do not restrict anything: find out why
+first, because the games sign in with that key and nothing else.
 
-**Application restrictions → Websites.** Add `https://danielgrimmer.github.io/*`.
-If you ever run the site locally against real Firebase, add
-`http://localhost:*/*` as well, or anonymous sign-in fails there and the games
-report that they could not start.
+**Websites.** `https://danielgrimmer.github.io/*` is the whole of it. Google
+does not accept a wildcard port, so `http://localhost:*/*` is refused; if you
+ever want to run the site locally against real Firebase, name the port —
+`http://localhost:8080/*`. It is not otherwise needed.
 
-**API restrictions → leave as "Don't restrict key".** This is the setting that
-bites. Restricting it means listing every API the games use, and missing one
-breaks sign-in with an error that names nothing useful. The list would be
-Identity Toolkit (anonymous sign-in), Cloud Firestore, Token Service (ID-token
-refresh) and, once step 6 is on, Firebase App Check. The gain over the referrer
-restriction alone is close to nothing.
+**API restrictions.** If the console offers *Don't restrict key*, take it: the
+gain over the website restriction is close to nothing, and the cost of getting
+the list wrong is a sign-in failure that names nothing useful. If it insists on
+a selection, the games need all of:
+
+| API | What breaks without it |
+| --- | --- |
+| Identity Toolkit API | Anonymous sign-in — that is, everything |
+| Token Service API | Refreshing the ID token, so play stops after an hour |
+| Cloud Firestore API | Every read and write |
+| Firebase Installations API | App Check, once it is on |
+| Firebase App Check API | App Check, once it is on |
+
+If sign-in stops working after saving, this list is the first suspect. The page
+says so itself: `explain()` names a rejected key, and a restriction that does
+not cover this site looks identical from the browser to a key that was
+deleted.
 
 Be clear about what this buys. A `Referer` header is trivially forged by
 anything that is not a browser, so it stops somebody pasting the config into
@@ -108,17 +126,27 @@ Two keys are involved and only one of them is public:
 
 The order to do this in, and the one part that cannot be got wrong:
 
-1. **Register.** Firebase console → Build → App Check → *Apps* tab → the web
-   app → reCAPTCHA v3. It asks for the site key and the secret key, both from
-   the reCAPTCHA admin console. A token time-to-live of one day is a reasonable
+1. **Get the pair.** Both keys come from the reCAPTCHA admin console at
+   <https://www.google.com/recaptcha/admin/create>, not from Firebase: register
+   a site, choose **reCAPTCHA v3** (score-based), and add the domain
+   `danielgrimmer.github.io` — bare, with no scheme and no path. It issues a
+   site key and a secret key, both long strings beginning `6L`.
+2. **Register.** Firebase console → Build → App Check → *Apps* tab → the web
+   app → reCAPTCHA. Its one field is the **secret** key, pasted verbatim.
+   Firebase keeps it server-side to verify tokens; it never asks for the site
+   key, because that lives in the page. A token time-to-live of one day is a reasonable
    default: longer means fewer reCAPTCHA round trips and a slightly longer
    window in which a stolen token is still good.
-2. **Paste the site key** into `appCheckSiteKey` and deploy.
-3. **Watch, and do not enforce.** App Check → *APIs* tab → Cloud Firestore.
+3. **Paste the site key** into `appCheckSiteKey` and deploy.
+4. **Watch, and do not enforce.** App Check → *APIs* tab → Cloud Firestore.
    Registering an app does not enforce anything, so there is nothing to switch
    off; a newly registered project sits at **Unenforced** and reports metrics.
    Play a game and confirm your own requests are counted as verified.
-4. **Only then**, if you ever want to, press *Enforce*.
+5. **Only then**, if you ever want to, press *Enforce*.
+
+A wrong secret key is invisible until step 5: unenforced, nothing checks it, so
+the registration looks fine and every token silently fails to verify. If the
+secret was ever typed by hand rather than pasted, replace it before enforcing.
 
 Enforcing before step 2 has shipped blocks your own game immediately, and that
 is the only irreversible-feeling mistake available here. Note also that

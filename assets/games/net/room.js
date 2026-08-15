@@ -22,7 +22,7 @@
  * games differ by a collection name.
  */
 
-import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.3.1';
+import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.3.2';
 import {
   ROOM_NAMES,
   ROOMS_COLLECTION,
@@ -31,7 +31,7 @@ import {
   emptyRoomDoc,
   emptySandboxDoc,
   isRoomName,
-} from './rooms.js?v=4.3.1';
+} from './rooms.js?v=4.3.2';
 import {
   claimSeat,
   touchSeat,
@@ -41,7 +41,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.3.1';
+} from '../core/seats.js?v=4.3.2';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -67,6 +67,23 @@ export function explain(err) {
       );
     case 'auth/network-request-failed':
       return 'Could not reach Firebase. Check the network, and any extension blocking Google domains.';
+    /*
+     * The key in firebaseConfig.js is not one this project will accept. Usually
+     * it was deleted or restricted in the Google Cloud console — a referrer
+     * restriction that does not list this site looks exactly the same from here
+     * as a key that no longer exists.
+     */
+    case 'auth/api-key-not-valid':
+    case 'auth/api-key-not-valid.-please-pass-a-valid-api-key.':
+    case 'auth/invalid-api-key':
+      return (
+        'Firebase rejected this page’s API key. Either the key in ' +
+        'assets/SoccerHockey/firebaseConfig.js is no longer one of the ' +
+        'project’s keys, or its restrictions do not allow this site. Google ' +
+        'Cloud console → APIs & Services → Credentials, in project ' +
+        'soccerhockeyduality: the key there must match the one in that file, ' +
+        'and its website restrictions must include this page’s origin.'
+      );
     case 'permission-denied':
       return (
         'The Firestore rules refused that. Check the block for this collection ' +
