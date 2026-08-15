@@ -71,7 +71,13 @@ reports which set the browser actually ran.
 ### One world, two lenses
 
 There is one game state, stored in **canonical** columns that belong to neither
-player. Each seat holds a `Lens`: an affine map on `Z_w` fixing the goal column.
+player. Each seat holds a `Lens`: an affine map on `Z_w`, written
+`view = multiplier * canonical + offset`. Soccer Hockey gives it a *fixed
+point* instead — the goal column, which cannot move because both players have
+to agree where the goals are — and that is the same thing said differently. A
+fixed point is a luxury rather than a feature of affine maps, though: Escher
+Chess's eight-wide relabelling is `3c - 1 (mod 8)`, and `f = 3f - 1` has no
+solution because `2f` is never odd. There, no file is agreed upon at all.
 Canonical is bookkeeping, not a player. No code path assumes either seat's lens
 is the identity, and `reframe(config, k)` rewrites a game into a different
 canonical frame while leaving both seats' views pointwise identical — there is a
@@ -99,7 +105,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 208 tests
+node --test _tests/*.test.mjs                      # 218 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 

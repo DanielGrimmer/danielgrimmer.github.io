@@ -56,11 +56,25 @@ export function validMultipliers(width) {
   return out;
 }
 
+/**
+ * An affine relabelling of the columns: `view = multiplier * canonical + offset`.
+ *
+ * The offset is the primitive, not the fixed point. Soccer Hockey is naturally
+ * written with a fixed point — both players must agree where the goals are, so
+ * the goal column is the one that cannot move — and that form is still
+ * accepted. But a fixed point is a luxury, not a feature of affine maps: Escher
+ * Chess's eight-wide relabelling is `3c - 1 (mod 8)`, and `f = 3f - 1` has no
+ * solution mod 8 because `2f` is never odd. There is no file the two players
+ * agree about, and the lens has to be able to say so.
+ */
 export class Lens {
   /**
-   * @param {{width:number, multiplier:number, fixedPoint:number}} spec
+   * Exactly one of `fixedPoint` and `offset`; they are two ways of writing the
+   * same thing whenever a fixed point exists at all.
+   *
+   * @param {{width:number, multiplier:number, fixedPoint?:number, offset?:number}} spec
    */
-  constructor({ width, multiplier, fixedPoint }) {
+  constructor({ width, multiplier, fixedPoint, offset }) {
     if (!Number.isInteger(width) || width < 1) {
       throw new RangeError(`width must be a positive integer, got ${width}`);
     }
@@ -70,29 +84,49 @@ export class Lens {
           `valid multipliers: ${validMultipliers(width).join(', ')}`
       );
     }
+    const byFixedPoint = fixedPoint != null;
+    const byOffset = offset != null;
+    if (byFixedPoint === byOffset) {
+      throw new RangeError('a lens needs exactly one of fixedPoint and offset');
+    }
+
     this.width = width;
     this.multiplier = mod(multiplier, width);
-    this.fixedPoint = mod(fixedPoint, width);
+    this.offset = byOffset
+      ? mod(offset, width)
+      : mod(fixedPoint * (1 - this.multiplier), width);
     Object.freeze(this);
   }
 
   /**
-   * The additive offset in the equivalent `m * canonical + b` form. The legacy
-   * v3.1 game stored exactly this as `state.b`.
+   * The column this lens leaves alone, or null when it leaves none alone.
+   *
+   * Solving `f = m*f + b` means solving `(1 - m)f = -b`, which has a solution
+   * only when `gcd(1 - m, width)` divides `b` — and several when it divides it
+   * more than once. Rather than pick one arbitrarily this reports the single
+   * unambiguous case and null otherwise; `fixedPoints()` gives the whole story.
    */
-  get offset() {
-    return mod(this.fixedPoint * (1 - this.multiplier), this.width);
+  get fixedPoint() {
+    const all = this.fixedPoints();
+    return all.length === 1 ? all[0] : null;
+  }
+
+  /** Every column this lens leaves alone. Empty, one, or (for the identity) all. */
+  fixedPoints() {
+    const out = [];
+    for (let c = 0; c < this.width; c++) if (this.toView(c) === c) out.push(c);
+    return out;
   }
 
   /** Canonical column -> the column this seat sees. */
   toView(canonicalCol) {
-    return mod(this.multiplier * (canonicalCol - this.fixedPoint) + this.fixedPoint, this.width);
+    return mod(this.multiplier * canonicalCol + this.offset, this.width);
   }
 
   /** A column this seat sees -> canonical. */
   toCanonical(viewCol) {
     const inv = modInverse(this.multiplier, this.width);
-    return mod(inv * (viewCol - this.fixedPoint) + this.fixedPoint, this.width);
+    return mod(inv * (viewCol - this.offset), this.width);
   }
 
   /**
@@ -115,24 +149,31 @@ export class Lens {
     return signedRep(inv * viewDelta, this.width);
   }
 
-  /** The lens that undoes this one. */
+  /**
+   * The lens that undoes this one. From `v = m*c + b`, `c = m⁻¹v - m⁻¹b`.
+   */
   inverse() {
+    const inv = modInverse(this.multiplier, this.width);
     return new Lens({
       width: this.width,
-      multiplier: modInverse(this.multiplier, this.width),
-      fixedPoint: this.fixedPoint,
+      multiplier: inv,
+      offset: mod(-inv * this.offset, this.width),
     });
   }
 
-  /** This lens followed by `next`. */
+  /**
+   * This lens followed by `next`: `m₂(m₁c + b₁) + b₂`. Only the width has to
+   * match — a shared fixed point was never required for the composition to be
+   * well defined, only for the old way of writing it down.
+   */
   compose(next) {
-    if (next.width !== this.width || next.fixedPoint !== this.fixedPoint) {
-      throw new RangeError('lenses must share a width and a fixed point to compose');
+    if (next.width !== this.width) {
+      throw new RangeError('lenses must share a width to compose');
     }
     return new Lens({
       width: this.width,
       multiplier: mod(next.multiplier * this.multiplier, this.width),
-      fixedPoint: this.fixedPoint,
+      offset: mod(next.multiplier * this.offset + next.offset, this.width),
     });
   }
 }

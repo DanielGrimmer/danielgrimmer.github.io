@@ -20,8 +20,8 @@
  * note above the boards says what to look for once, and then stops talking.
  */
 
-import { replayFrames, viewOf } from '../core/game.js?v=4.2.2';
-import { createBoardView } from './board.js?v=4.2.2';
+import { replayFrames, viewOf } from '../core/game.js?v=4.2.3';
+import { createBoardView } from './board.js?v=4.2.3';
 
 /** How long each move is held when the replay is playing itself. */
 const AUTOPLAY_MS = 1100;

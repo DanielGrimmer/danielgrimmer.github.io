@@ -24,7 +24,7 @@ import {
   emptyRoomDoc,
   emptySandboxDoc,
   isRoomName,
-} from './rooms.js?v=4.2.2';
+} from './rooms.js?v=4.2.3';
 import {
   claimSeat,
   touchSeat,
@@ -34,7 +34,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.2.2';
+} from '../core/seats.js?v=4.2.3';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
