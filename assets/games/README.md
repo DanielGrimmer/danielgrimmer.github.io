@@ -42,6 +42,8 @@ core/presets.js   The two published configurations
 core/sandbox.js   Editable configurations: validation, the move palette
 
 escher/pieces.js  Escher Chess: the piece move sets, and what each becomes
+escher/presets.js The two published boards: lenses, armies, file names
+escher/game.js    Escher Chess state: legal moves, check, mate, the log
 ```
 
 Pure functions over plain data — no DOM, no network, no framework — so the same
@@ -107,7 +109,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 240 tests
+node --test _tests/*.test.mjs                      # 271 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
@@ -222,8 +224,23 @@ free, because the rule counts moves rather than understanding them.
 pieces) are in; the game state, the board renderer and the pages are not, so the
 live pages are still V1.2 on the old bundle.
 
-Its two relabellings are `3c + 2 (mod 5)` and `3c - 1 (mod 8)`, and the design
-turns on which pieces survive them:
+### What the two players share
+
+The *names*. White says "the pawn on D3 to D5" and Black finds the pawn on their
+own D file — that is the whole communication channel. What they do not share is
+which file is next to which: White's board reads ARMED left to right and Black's
+reads DREAM, so "one file across" is a step in a different order for each of
+them. Ranks are shared outright; Black simply draws them from the other end.
+
+Matching the names gives Black's file position as White's `2b + 4 (mod 5)`.
+Black also sits opposite, so their board is turned around, and composing the
+mirror with the relabelling gives `3b + 2` — which is the map the rule
+booklets' figures show. `presets.js` keeps the two apart: `lens` carries the
+composite, because that is what places a piece, and `flipsRanks` carries the
+half of the rotation a lens cannot express.
+
+Its two composite relabellings are `3b + 2 (mod 5)` and `3b - 1 (mod 8)`, and
+the design turns on which pieces survive them:
 
 | | five wide | eight wide |
 | --- | --- | --- |
@@ -244,6 +261,15 @@ The king is last, and is the endgame's puzzle.
 
 `dualityReport` computes that table from the dials, so changing a range says
 immediately what it costs.
+
+### Keeping the secret
+
+You are never told how your opponent's pieces move, so `viewOf` hands a seat its
+*own* legal moves and nothing else. The enemy's reachable squares are computed —
+they have to be, to know whether a king is in check — but they never reach the
+view, so they are not sitting in the page for anybody who opens a console.
+Check is a bare flag rather than a diagram: you are told you are in check and
+left to work out which piece is doing it.
 
 Still open on the Firebase side: App Check, and restricting the web API key to
 the site's own referrer. Both are in [`_firebase/`](../../_firebase/README.md).
