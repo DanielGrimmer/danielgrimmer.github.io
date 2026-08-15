@@ -22,7 +22,7 @@
  * games differ by a collection name.
  */
 
-import { firebaseConfig } from '../../SoccerHockey/firebaseConfig.js';
+import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.3.1';
 import {
   ROOM_NAMES,
   ROOMS_COLLECTION,
@@ -31,7 +31,7 @@ import {
   emptyRoomDoc,
   emptySandboxDoc,
   isRoomName,
-} from './rooms.js?v=4.3.0';
+} from './rooms.js?v=4.3.1';
 import {
   claimSeat,
   touchSeat,
@@ -41,7 +41,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.3.0';
+} from '../core/seats.js?v=4.3.1';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -69,8 +69,19 @@ export function explain(err) {
       return 'Could not reach Firebase. Check the network, and any extension blocking Google domains.';
     case 'permission-denied':
       return (
-        'The Firestore rules refused that. Check the dualityRooms block from ' +
-        '_firebase/firestore.rules is what is actually published in the console.'
+        'The Firestore rules refused that. Check the block for this collection ' +
+        'in _firebase/firestore.rules is what is actually published in the ' +
+        'console — and, if App Check enforcement has just been switched on, ' +
+        'that this page is sending a token.'
+      );
+    // App Check itself, which surfaces before the rules ever run.
+    case 'appCheck/recaptcha-error':
+    case 'appCheck/fetch-status-error':
+    case 'appCheck/throttled':
+      return (
+        'App Check could not vouch for this page. Usually reCAPTCHA is blocked ' +
+        'by an extension or a privacy setting; on a machine that is not the ' +
+        'live site, it needs a debug token registered in the console.'
       );
     case 'unavailable':
       return 'Firestore is unreachable right now — the network dropped, or the daily quota is spent.';
@@ -99,12 +110,15 @@ let auth = null;
 async function loadSdk() {
   if (sdk) return sdk;
   try {
-    const [appMod, authMod, dbMod] = await Promise.all([
+    const mods = await Promise.all([
       import(`${SDK}/firebase-app.js`),
       import(`${SDK}/firebase-auth.js`),
       import(`${SDK}/firebase-firestore.js`),
+      // Only fetched when there is a key to use it with, so a project without
+      // App Check pays nothing for the option.
+      appCheckSiteKey ? import(`${SDK}/firebase-app-check.js`) : Promise.resolve({}),
     ]);
-    sdk = { ...appMod, ...authMod, ...dbMod };
+    sdk = Object.assign({}, ...mods);
     return sdk;
   } catch (cause) {
     throw new Error(
@@ -114,10 +128,50 @@ async function loadSdk() {
   }
 }
 
+/**
+ * App Check: proof that a request came from this site rather than from a script
+ * holding a copy of the config.
+ *
+ * It is the only defence available against the one thing that can actually take
+ * these games down. The project is on the free plan, where exceeding the daily
+ * write quota disables Firestore rather than costing anything — and a Security
+ * Rule cannot help, because it judges each write alone and has no memory. So
+ * rate limiting has to happen before the rules run, which is what this is.
+ *
+ * Three things it deliberately does not do:
+ *
+ * - **Fail loudly.** Until enforcement is switched on in the console, a missing
+ *   token changes nothing, so a reCAPTCHA that will not load must not stop the
+ *   page. After enforcement it becomes a permission error, which `explain`
+ *   names.
+ * - **Run without a key.** No key, no App Check, no reCAPTCHA script, no
+ *   third-party request. That is the state this ships in.
+ * - **Block local work.** Off the live site it asks for a debug token instead,
+ *   which is registered by hand in the console and is the only way to keep
+ *   playing locally once enforcement is on.
+ */
+function startAppCheck(s, instance) {
+  if (!appCheckSiteKey || typeof s.initializeAppCheck !== 'function') return;
+  const local = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+  // Must be set before initializeAppCheck; prints a token to the console for
+  // registering under App Check -> Apps -> Manage debug tokens.
+  if (local) self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  try {
+    s.initializeAppCheck(instance, {
+      provider: new s.ReCaptchaV3Provider(appCheckSiteKey),
+      isTokenAutoRefreshEnabled: true,
+    });
+  } catch (err) {
+    console.warn('App Check did not start; requests will go out unattested.', err);
+  }
+}
+
 async function ensureApp() {
   const s = await loadSdk();
   if (!app) {
     app = s.initializeApp(firebaseConfig);
+    // Before the first read or write, so that no request goes out unattested.
+    startAppCheck(s, app);
     db = s.getFirestore(app);
     auth = s.getAuth(app);
   }
