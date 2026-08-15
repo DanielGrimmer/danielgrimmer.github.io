@@ -27,7 +27,7 @@ import {
   STATUS,
 } from '../assets/games/escher/game.js';
 
-import { legalMovesFrom } from '../assets/games/escher/game.js';
+import { legalMovesFrom, legalMoves } from '../assets/games/escher/game.js';
 
 const asMove = (m) => ({ from: m.from, to: m.to, promote: null });
 /** The first `n` scripted moves of a tutorial, as a log. */
@@ -250,6 +250,7 @@ test('the 5x10 script, move by move', async (t) => {
 test('the 8x8 script teaches the two pieces that are new', async (t) => {
   const tut = WIDE_TUTORIAL;
   const board = tut.board;
+
   /** The position a beat is looked at from: every move before it, played. */
   const positionAt = (beat) => {
     let game = initialGame(board);
@@ -260,50 +261,97 @@ test('the 8x8 script teaches the two pieces that are new', async (t) => {
   };
   const selectBeat = (step) => tut.script.find((b) => b.kind === 'select' && b.step === step);
 
-  await t.test('three steps: the board, the queen, the knight', () => {
-    assert.deepEqual(tut.steps.map((s) => s.id), ['board', 'queen', 'knight']);
+  await t.test('three steps, and nothing spent getting into position', () => {
+    assert.deepEqual(tut.steps.map((s) => s.id), ['queen', 'knight', 'check']);
+    // Short on purpose: every move is about a piece rather than about reaching
+    // one, which is what starting from a set position buys.
+    assert.ok(tut.moves.length <= 6, `${tut.moves.length} moves`);
   });
 
-  // Selected on an otherwise empty rank, so the gap is unmistakable: three
-  // squares each way on eight files reaches six of the seven other files.
-  await t.test('the queen is shown where her blind square is visible', () => {
+  /*
+   * Both demonstrations are the reason the board starts where it does, so both
+   * are pinned: the whole pattern visible, nothing blocked, and — the point of
+   * the layout — no part of it wrapped round to the far side of the screen.
+   */
+  const noneWrap = (from, to) => {
+    for (const s of to) {
+      const df = s.file - from.file;
+      assert.ok(
+        Math.abs(df) <= board.width / 2,
+        `${from.file} -> ${s.file} crosses the seam`
+      );
+    }
+  };
+
+  await t.test('the queen shows all twenty of her squares, none of them wrapped', () => {
     const beat = selectBeat('queen');
     const game = positionAt(beat);
     assert.equal(pieceAt(game, beat.from.rank, beat.from.file).type, 'queen');
+    const to = legalMovesFrom(board, game, beat.from);
+    // Three each way along the rank and the file, two along each diagonal.
+    assert.equal(to.length, 6 + 6 + 8);
+    noneWrap(beat.from, to);
+  });
+
+  // Six of the seven other files: three squares each way on eight files always
+  // leaves the one directly opposite, and the copy asks the reader to count.
+  await t.test('and her blind file is visible as a gap on her own rank', () => {
+    const beat = selectBeat('queen');
     const rank = new Set(
-      legalMovesFrom(board, game, beat.from)
+      legalMovesFrom(board, positionAt(beat), beat.from)
         .filter((s) => s.rank === beat.from.rank)
         .map((s) => s.file)
     );
-    assert.equal(rank.size, 6, 'six of the seven other files');
-    assert.equal(rank.has((beat.from.file + 4) % 8), false, 'and never the one opposite');
+    assert.equal(rank.size, board.width - 2);
+    assert.equal(rank.has((beat.from.file + board.width / 2) % board.width), false);
   });
 
   // Eight destinations, none of them a two-and-one: that is the whole lesson.
-  await t.test('the knight is shown standing in the open, with all eight', () => {
+  await t.test('the knight shows all eight, in one piece', () => {
     const beat = selectBeat('knight');
     const game = positionAt(beat);
     assert.equal(pieceAt(game, beat.from.rank, beat.from.file).type, 'knight');
     const to = legalMovesFrom(board, game, beat.from);
     assert.equal(to.length, 8);
+    noneWrap(beat.from, to);
     for (const s of to) {
       const dr = Math.abs(s.rank - beat.from.rank);
-      const df = Math.min((s.file - beat.from.file + 8) % 8, (beat.from.file - s.file + 8) % 8);
-      assert.ok(
-        (dr === 2 && df === 2) || (dr === 1 && df === 3),
-        `${dr},${df} is two-and-two or one-and-three`
-      );
+      const df = Math.abs(s.file - beat.from.file);
+      assert.ok((dr === 2 && df === 2) || (dr === 1 && df === 3), `${dr},${df}`);
     }
   });
 
-  await t.test('and the check at the end is the knight, from a wrapping square', () => {
+  await t.test('and one of the eight has something on it to take', () => {
+    const beat = selectBeat('knight');
+    const game = positionAt(beat);
+    const takes = legalMovesFrom(board, game, beat.from).filter((s) =>
+      pieceAt(game, s.rank, s.file)
+    );
+    assert.equal(takes.length, 1, 'exactly one, so "take it" is unambiguous');
+    // And the script does.
+    const next = tut.script[tut.script.indexOf(beat) + 1];
+    assert.deepEqual(next.to, takes[0]);
+  });
+
+  /*
+   * The payoff: the closing check is answerable by walking into the file the
+   * queen cannot reach. It is the first step's lesson doing something, so if
+   * the geometry ever stops working the copy is wrong and this says so.
+   */
+  await t.test('the check leaves the king an escape into her blind file', () => {
     const last = tut.script[tut.script.length - 1];
-    const game = positionAt(last);
-    assert.equal(pieceAt(game, last.from.rank, last.from.file).type, 'knight');
-    const df = Math.min((last.to.file - last.from.file + 8) % 8, (last.from.file - last.to.file + 8) % 8);
-    assert.equal(df, 3, 'three files, which on eight is across the seam');
-    const after = applyMove(board, game, asMove(last));
-    assert.ok(inCheck(board, after, after.turn));
+    const before = positionAt(last);
+    assert.equal(pieceAt(before, last.from.rank, last.from.file).type, 'queen');
+    const after = applyMove(board, before, asMove(last));
+    assert.ok(inCheck(board, after, after.turn), 'it is check');
+    assert.equal(after.outcome.status, STATUS.PLAYING, 'and not mate');
+
+    const blind = (last.to.file + board.width / 2) % board.width;
+    const escapes = legalMoves(board, after).map((m) => m.to);
+    assert.ok(
+      escapes.some((s) => s.rank === last.to.rank && s.file === blind),
+      'the king can step onto the one file she does not cover'
+    );
   });
 });
 

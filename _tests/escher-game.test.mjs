@@ -216,14 +216,16 @@ test('the condition without which there is no game', async (t) => {
 });
 
 /*
- * Both practice boards, held to the same standard. "Duality off" is the mirror,
- * not the identity: two people sitting opposite each other see the files in
- * opposite orders with a perfectly normal chess set. Getting this wrong would
- * make a tutorial the one board in the game where the two players genuinely
- * disagree — and there are two of them now, so it is worth asking twice.
+ * Both practice boards, held to the same standard where the standard applies.
+ *
+ * "Duality off" is the mirror, not the identity: two people sitting opposite
+ * each other see the files in opposite orders with a perfectly normal chess
+ * set. Getting this wrong would make a practice board the one board in the game
+ * where the two players genuinely disagree — and there are two of them now, so
+ * it is worth asking twice.
  */
-for (const [name, TUT] of [['5x10', TUTORIAL], ['8x8', TUTORIAL_WIDE]]) {
-  test(`the ${name} tutorial is ordinary chess`, async (t) => {
+for (const [name, TUT, real] of [['5x10', TUTORIAL, NARROW], ['8x8', TUTORIAL_WIDE, WIDE]]) {
+  test(`the ${name} practice board is ordinary chess`, async (t) => {
     await t.test("Black's names are White's backwards", () => {
       assert.deepEqual(
         [...TUT.files[SIDE.BLACK]].reverse().join(''),
@@ -231,18 +233,7 @@ for (const [name, TUT] of [['5x10', TUTORIAL], ['8x8', TUTORIAL_WIDE]]) {
       );
     });
 
-    await t.test('the two armies mirror each other file for file', () => {
-      const game = initialGame(TUT);
-      for (let rank = 0; rank < 3; rank++) {
-        assert.equal(
-          rowSeenBy(TUT, game, SIDE.WHITE, rank),
-          rowSeenBy(TUT, game, SIDE.WHITE, TUT.height - 1 - rank),
-          `rank ${rank} against its opposite number`
-        );
-      }
-    });
-
-    await t.test('and every piece moves the same way for both players', () => {
+    await t.test('every piece moves the same way for both players', () => {
       for (const type of Object.keys(TUT.pieces)) {
         const shape = (seat) =>
           [
@@ -264,21 +255,72 @@ for (const [name, TUT] of [['5x10', TUTORIAL], ['8x8', TUTORIAL_WIDE]]) {
       }
     });
 
-    // The practice board must be the real one with the trick taken out, or the
-    // player learns a position they will never sit down in front of.
-    await t.test('and it is the real board in every other respect', () => {
-      const real = TUT === TUTORIAL ? NARROW : WIDE;
+    // A practice board must be the real board's rules on the real board's grid,
+    // or the player learns a game they will not then sit down to.
+    await t.test('and it is the real board in every respect but the trick', () => {
       assert.equal(TUT.width, real.width);
       assert.equal(TUT.height, real.height);
       assert.deepEqual(Object.keys(TUT.pieces).sort(), Object.keys(real.pieces).sort());
-      assert.equal(
-        rowSeenBy(TUT, initialGame(TUT), SIDE.WHITE, 0),
-        rowSeenBy(real, initialGame(real), SIDE.WHITE, 0),
-        'the same back rank as White reads it'
-      );
+      for (const type of Object.keys(real.pieces)) {
+        assert.deepEqual(steps(TUT.pieces[type]), steps(real.pieces[type]), type);
+      }
+    });
+
+    await t.test('both kings are on it, and nobody starts in check', () => {
+      const game = initialGame(TUT);
+      for (const seat of [SIDE.WHITE, SIDE.BLACK]) {
+        assert.equal(
+          TUT.placement.filter((m) => m.side === seat && m.type === PIECE.KING).length,
+          1,
+          `seat ${seat} has exactly one king`
+        );
+        assert.equal(inCheck(TUT, game, seat), false, `seat ${seat} is not already in check`);
+      }
+      assert.ok(legalMoves(TUT, game).length > 0, 'and White has something to do');
     });
   });
 }
+
+/*
+ * The narrow practice board is the narrow army facing itself, so its two halves
+ * are mirror images. The wide one is a hand-made teaching position — see the
+ * layout in presets.js — and is deliberately lopsided: White has a queen and a
+ * knight in the middle of the board and Black has almost nothing, because the
+ * point of it is to show two pieces rather than to play a game.
+ */
+test('the 5x10 practice board is the opening position, mirrored', async (t) => {
+  await t.test('the two armies mirror each other file for file', () => {
+    const game = initialGame(TUTORIAL);
+    for (let rank = 0; rank < 3; rank++) {
+      assert.equal(
+        rowSeenBy(TUTORIAL, game, SIDE.WHITE, rank),
+        rowSeenBy(TUTORIAL, game, SIDE.WHITE, TUTORIAL.height - 1 - rank),
+        `rank ${rank} against its opposite number`
+      );
+    }
+  });
+
+  await t.test('and it is the real opening, as White reads it', () => {
+    assert.equal(
+      rowSeenBy(TUTORIAL, initialGame(TUTORIAL), SIDE.WHITE, 0),
+      rowSeenBy(NARROW, initialGame(NARROW), SIDE.WHITE, 0)
+    );
+  });
+});
+
+test('the 8x8 practice board is a position somebody chose', async (t) => {
+  await t.test('a diagram, read straight off the page', () => {
+    const at = (rank, file) => TUTORIAL_WIDE.placement.find(
+      (m) => m.rank === rank - 1 && m.file === file - 1
+    );
+    // The two squares the whole tutorial is built on: the queen where three
+    // files each way stays on the board, the knight where three does too.
+    assert.deepEqual(at(4, 5), { type: PIECE.QUEEN, side: SIDE.WHITE, rank: 3, file: 4 });
+    assert.deepEqual(at(6, 4), { type: PIECE.KNIGHT, side: SIDE.WHITE, rank: 5, file: 3 });
+    // Six men in all: those two, both kings, and a rook and a pawn for black.
+    assert.equal(TUTORIAL_WIDE.placement.length, 6, 'and nothing else in the way');
+  });
+});
 
 test('a square is a square, whoever is looking', async (t) => {
   await t.test('every canonical square round-trips through both seats', () => {

@@ -13,9 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.12.0';
-import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.12.0';
-import { PIECE } from './pieces.js?v=4.12.0';
+import { replayFrames, inCheck } from './game.js?v=4.13.0';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.13.0';
+import { PIECE } from './pieces.js?v=4.13.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -99,68 +99,49 @@ const NARROW_SCRIPT = [
 /**
  * The eight-file tutorial, played after the first real game is over.
  *
- * Much shorter, because almost nothing is new: this reader has already learnt
- * that everything is jumpy, that everything is short-ranged, and that the board
- * is a cylinder. Two pieces are not the ones they learnt. The knight is a file
- * wider here, and there is a queen, who does not exist on the narrow board at
- * all — and with her comes the one fact about eight files that catches people
- * out, which is that three squares each way no longer covers a rank.
+ * Short, because almost nothing is new: this reader has already learnt that
+ * everything is jumpy, that everything is short-ranged, and that the board is a
+ * cylinder. Two pieces are not the ones they learnt — the knight, which is a
+ * file wider here, and the queen, who is not on the narrow board at all — and
+ * this exists to show them those two and nothing else.
+ *
+ * Which is why it does not start from the opening position. See the layout in
+ * presets.js: both pieces begin in the middle of an almost empty board, on the
+ * squares where their whole pattern comes out at once and none of it runs off
+ * the side. There is nothing to manoeuvre and nothing in the way, so every beat
+ * below is about a piece rather than about getting to a piece.
  */
 const WIDE_SCRIPT = [
-  // Step 1 — where you are.
-  ['board', 'select', at(2, 5), null,
-    'Click the white pawn in front of the king. Its two moves are marked, exactly as before: every pawn here stands on its own opening rank, so every one of them still has its double step.'],
-  ['board', 'move', at(2, 5), at(4, 5),
-    'Push it two.'],
-  ['board', 'move', at(7, 5), at(5, 5),
-    'And black’s pawn down to meet it.'],
+  // Step 1 — the queen, and the one file she cannot reach.
+  ['queen', 'select', at(4, 5), null,
+    'Click the white queen. Every square she can reach is marked at once, and nothing is standing in the way of any of them: three along her rank, three along her file, two along each diagonal. Now count along the rank she is on. Six of the other seven files are marked and one is not — file 1. Three squares each way on an eight-file board always leaves exactly one file out of reach, the one directly opposite, and your rooks have the same blind spot. It is worth knowing where it is.'],
+  ['queen', 'move', at(4, 5), at(7, 5),
+    'Take her three squares straight up the board, which is as far as she goes in a line.'],
+  ['queen', 'move', at(7, 2), at(5, 2),
+    'Black has nothing to do about any of this. Push the black pawn two squares.'],
 
-  // Step 2 — the queen, and the blind square she and the rooks share.
-  ['queen', 'move', at(1, 4), at(3, 2),
-    'Bring the queen out two squares diagonally, to the left. She jumps her own pawn on the way, as everything on this board does.'],
-  ['queen', 'move', at(8, 7), at(6, 5),
-    'Black brings out a knight. Do not worry about what it did just yet.'],
-  ['queen', 'select', at(3, 2), null,
-    'Now click the queen. Everything she can reach is marked: three squares along the rank or the file, two along a diagonal. Look along her own rank, though. Six squares are marked and one is not — and there is nothing standing on it. Three each way on eight files leaves exactly one square out of reach: the one directly opposite. Your rooks have the same blind spot.'],
-  ['queen', 'move', at(3, 2), at(3, 7),
-    'Note also that three of her moves along that rank are on the far side of the seam. Take her three squares to the left, off the edge and back on the other side.'],
+  // Step 2 — the knight, which is the piece that has actually changed.
+  ['knight', 'select', at(6, 4), null,
+    'Now click the white knight. Eight squares in a ring: four of them two-and-two, four of them one-and-three, and not one of them the two-and-one you have been playing with. It starts on file 4 for the same reason the queen starts in the middle — its long arm is three files, so from anywhere nearer an edge half the ring would be round the back of the board and you would be reading it in two pieces.'],
+  ['knight', 'move', at(6, 4), at(8, 2),
+    'One of those eight squares has a black rook standing on it. Take it.'],
+  ['knight', 'move', at(5, 2), at(4, 2),
+    'And black pushes the pawn again.'],
 
-  // Step 3 — the knight, which is the piece that has actually changed.
-  ['knight', 'move', at(8, 2), at(6, 4),
-    'Black develops the other knight.'],
-  ['knight', 'move', at(1, 2), at(3, 4),
-    'Now white’s left knight. On the narrow board it moved two and one; here it moves two and two, or one and three. Take it two forward and two to the right.'],
-  ['knight', 'move', at(7, 2), at(6, 2),
-    'Black advances a pawn.'],
-  ['knight', 'move', at(3, 4), at(5, 6),
-    'Two and two again, into the middle of the board.'],
-  ['knight', 'move', at(7, 8), at(6, 8),
-    'And another black pawn.'],
-  ['knight', 'select', at(5, 6), null,
-    'Click the knight. Standing in the open it shows the whole shape at once: eight squares in a ring, four of them two-and-two and four of them one-and-three. Two are across the seam — three files is very nearly half of eight, so this piece leaves the board and comes back almost every time it moves.'],
-  ['knight', 'move', at(5, 6), at(6, 3),
-    'Take it one forward and three to the left, over the seam. That is check: from there it attacks the square the black king is standing on, and a knight cannot be blocked. The board is yours.'],
+  // Step 3 — the blind file, doing something.
+  ['check', 'move', at(7, 5), at(8, 4),
+    'Move the queen one square diagonally, up and to the left. That is check: she is three files from the black king along rank 8, which is exactly her reach. But look where the king can go. File 8 is four files from her, and four is the one distance she cannot cover — so the king walks into her blind spot and is safe there. The board is yours.'],
 ];
 
 const WIDE_STEPS = [
   {
-    id: 'board',
-    title: 'The Same Game, a Wider Board',
-    body:
-      'Eight files, eight ranks, and the pieces set out as in ordinary chess — ' +
-      'one rank of pawns, and a queen. Everything you have just learnt still ' +
-      'holds: every piece is jumpy, every piece is short-ranged, and the left ' +
-      'and right edges are joined. Only two pieces are not the ones you played ' +
-      'with, and this is where you meet them.',
-  },
-  {
     id: 'queen',
-    title: 'The Queen, and Her Blind Spot',
+    title: 'The Queen',
     body:
-      'There is no queen on the narrow board, so she is new — but there is ' +
-      'nothing to learn about her that you do not know. She is a rook and a ' +
-      'bishop at once: three squares along a rank or a file, two along a ' +
-      'diagonal, all of it jumpy, all of it wrapping.',
+      'There is no queen on the narrow board, so she is the one piece here you ' +
+      'have never moved. Nothing about her is new, though: she is a rook and a ' +
+      'bishop at once, and you know both. She is standing in the middle of an ' +
+      'almost empty board so that you can see the whole of her at once.',
   },
   {
     id: 'knight',
@@ -170,6 +151,13 @@ const WIDE_STEPS = [
       'of the board. On five files it went two and one. On eight it goes two ' +
       'and two, or one and three. Why it should depend on the board at all is ' +
       'worth wondering about; the game will answer it.',
+  },
+  {
+    id: 'check',
+    title: 'And the Square She Cannot Reach',
+    body:
+      'One move to finish on, and it is the blind file from the first step ' +
+      'turning out to matter.',
   },
 ];
 
@@ -377,7 +365,8 @@ export const ESCHER_OUTRO = Object.freeze({
 const WIDE_OUTRO = Object.freeze({
   title: 'Now the Wider Game',
   body:
-    'The board is yours from here on out; play on if you like.\n\n' +
+    'That was a practice position rather than a game — black is a queen and a ' +
+    'knight down, and the board is yours if you want to finish it off.\n\n' +
     'That is everything that changes. The same trick is waiting on this board ' +
     'as on the last one: one of you will play with the pieces just described, ' +
     'and will watch the other play with something else. You know what to do ' +

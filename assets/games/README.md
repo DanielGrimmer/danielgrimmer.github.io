@@ -22,10 +22,19 @@ different activity rather than a closer look at this one.
 Escher Chess is played in four sittings, in order — 5×10 tutorial, 5×10 game,
 8×8 tutorial, 8×8 game — and the order is load-bearing rather than advisory:
 the second tutorial is written for somebody who has seen the first reveal, and
-teaches only the two pieces the wider board changes. Both tutorials are the one
-page, picked apart by `?board=`; `escher/coach.js` holds a `TUTORIALS` table
-keyed by the *real* board each one prepares you for. Landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md`,
-grouped under `_pages/games.md`.
+teaches only the two pieces the wider board changes. It also does not start
+from the opening position: a queen has four moves from her own back rank and
+seven of her own men in the way, so the practice board puts her and the knight
+in the middle of an almost empty one, where the whole of each pattern fits on
+the screen without running off the side. That position is a diagram in
+`escher/presets.js` — `layout`, read by `fromDiagram` — and it is the one place
+in the game where a starting position is chosen rather than derived.
+
+Both tutorials are the one page, picked apart by `?board=`; `escher/coach.js`
+holds a `TUTORIALS` table keyed by the *real* board each one prepares you for.
+
+Landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md`, grouped
+under `_pages/games.md`.
 
 ## Where things live
 
@@ -119,7 +128,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 322 tests
+node --test _tests/*.test.mjs                      # 377 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 

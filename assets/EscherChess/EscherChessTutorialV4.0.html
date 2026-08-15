@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.12.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.13.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -104,9 +104,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.12.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.13.0'; // keep in step with the ?v= tokens below
 
-      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.12.0';
+      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.13.0';
       import {
         initialGame,
         applyMove,
@@ -115,8 +115,8 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.12.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.12.0';
+      } from '../games/escher/game.js?v=4.13.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.13.0';
       import {
         contextFor,
         stepIndex,
@@ -124,7 +124,7 @@
         STALLED_HINT,
         TUTORIALS,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.12.0';
+      } from '../games/escher/coach.js?v=4.13.0';
 
       /*
        * Which of the two practice boards this is.
@@ -148,9 +148,10 @@
         document.getElementById('sub').textContent =
           'The second practice board. Two pieces are not the ones you learnt.';
         document.getElementById('intro').textContent =
-          'You have played the narrow game and seen how it ends. This is the ' +
-          'same board game on eight files — and, again, both sides are yours ' +
-          'to move.';
+          'You have played the narrow game and seen how it ends. What follows ' +
+          'is not an opening position but a practice one: your queen and your ' +
+          'knight stand in the middle of an almost empty board, where the whole ' +
+          'of what each of them does fits on the screen at once.';
       }
 
       // The move log is the state, exactly as a networked room will hold it.

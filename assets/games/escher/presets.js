@@ -45,8 +45,8 @@
  * through their lenses and never asks which one is the identity.
  */
 
-import { Lens, dualityBetween } from '../core/duality.js?v=4.12.0';
-import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.12.0';
+import { Lens, dualityBetween } from '../core/duality.js?v=4.13.0';
+import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.13.0';
 
 const { PAWN: P, KNIGHT: N, BISHOP: B, ROOK: R, QUEEN: Q, KING: K } = PIECE;
 
@@ -110,7 +110,7 @@ const FAMILIES = Object.freeze({
  * wants and what "duality off" means on a board with two players sitting
  * opposite each other.
  */
-function boardFor({ id, label, width, height, dials, mirror = false }) {
+function boardFor({ id, label, width, height, dials, mirror = false, layout = null }) {
   const family = FAMILIES[width];
   if (!family) throw new RangeError(`no Escher Chess board is ${width} files wide`);
   return makeBoard({
@@ -121,11 +121,54 @@ function boardFor({ id, label, width, height, dials, mirror = false }) {
     multiplier: mirror ? width - 1 : family.multiplier,
     offset: mirror ? width - 1 : family.offset,
     army: family.army,
+    layout,
     dials,
     files: mirror
       ? [family.files[0], [...family.files[0]].reverse()]
       : family.files,
   });
+}
+
+const DIAGRAM = Object.freeze({ p: P, n: N, b: B, r: R, q: Q, k: K });
+
+/**
+ * A starting position written out as a picture, for a board that is teaching
+ * rather than playing.
+ *
+ * Rows run from the far rank down to rank 1 and files left to right, both as
+ * White sees them — and White's lens is the identity, so what is drawn is what
+ * is stored. Upper case is White, lower case is Black; a dot is an empty
+ * square, and spaces are ignored so the thing can be laid out squarely.
+ *
+ * The half turn that `army` applies does not happen here: a diagram is not two
+ * armies facing each other, it is a position somebody chose, and both sides of
+ * it are written down.
+ */
+function fromDiagram(rows, { width, height }) {
+  if (rows.length !== height) {
+    throw new RangeError(`the diagram has ${rows.length} ranks, the board has ${height}`);
+  }
+  const placement = [];
+  rows.forEach((row, i) => {
+    const cells = [...row.replace(/\s+/g, '')];
+    if (cells.length !== width) {
+      throw new RangeError(`rank ${height - i} of the diagram has ${cells.length} files, not ${width}`);
+    }
+    cells.forEach((ch, file) => {
+      if (ch === '.') return;
+      const type = DIAGRAM[ch.toLowerCase()];
+      if (!type) throw new RangeError(`"${ch}" is not a piece`);
+      placement.push(
+        Object.freeze({
+          type,
+          side: ch === ch.toUpperCase() ? SIDE.WHITE : SIDE.BLACK,
+          rank: height - 1 - i,
+          file,
+        })
+      );
+    });
+  });
+  return placement;
 }
 
 /**
@@ -137,7 +180,7 @@ function boardFor({ id, label, width, height, dials, mirror = false }) {
  * @param {string[][]} spec.army    rows nearest-first, as White reads them
  * @param {string[][]} spec.files   each side's names, in that side's own order
  */
-function makeBoard({ id, label, width, height, multiplier, offset, army, dials, files }) {
+function makeBoard({ id, label, width, height, multiplier, offset, army, layout, dials, files }) {
   const lenses = Object.freeze([
     // White's ordering is the canonical one, so White's lens does nothing.
     new Lens({ width, multiplier: 1, offset: 0 }),
@@ -153,25 +196,31 @@ function makeBoard({ id, label, width, height, multiplier, offset, army, dials, 
    * near rank at the far end of the canonical board; `width - 1 - i` reads the
    * army row backwards, because Black's leftmost column is the one White sees
    * last. The lens then says which canonical file that column is.
+   *
+   * A `layout` skips all of it: see `fromDiagram`.
    */
   const placement = [];
-  for (const side of [SIDE.WHITE, SIDE.BLACK]) {
-    const lens = lenses[side];
-    const turned = side === SIDE.BLACK;
-    army.forEach((row, ownRank) => {
-      row.forEach((type, i) => {
-        if (!type) return;
-        const column = turned ? width - 1 - i : i;
-        placement.push(
-          Object.freeze({
-            type,
-            side,
-            rank: turned ? height - 1 - ownRank : ownRank,
-            file: lens.toCanonical(column),
-          })
-        );
+  if (layout) {
+    placement.push(...fromDiagram(layout, { width, height }));
+  } else {
+    for (const side of [SIDE.WHITE, SIDE.BLACK]) {
+      const lens = lenses[side];
+      const turned = side === SIDE.BLACK;
+      army.forEach((row, ownRank) => {
+        row.forEach((type, i) => {
+          if (!type) return;
+          const column = turned ? width - 1 - i : i;
+          placement.push(
+            Object.freeze({
+              type,
+              side,
+              rank: turned ? height - 1 - ownRank : ownRank,
+              file: lens.toCanonical(column),
+            })
+          );
+        });
       });
-    });
+    }
   }
 
   const named = Object.freeze(files.map((f) => Object.freeze([...f])));
@@ -298,7 +347,41 @@ export const TUTORIAL = boardFor({
  * lesson. What it has to teach is the two pieces that are not the ones learnt
  * on the narrow board — the knight, which is a file wider here, and the queen,
  * who does not exist there at all.
+ *
+ * ## Why it does not start from the opening position
+ *
+ * Because the lesson is a shape, and a shape has to be *shown*. From her own
+ * back rank a queen has four moves and seven of her own men in the way; the
+ * knight has two. Getting either of them somewhere their whole pattern is
+ * visible takes half a dozen moves of shuffling, and the reader spends that
+ * time being told about pieces they cannot yet see.
+ *
+ * So the two of them start in the middle of an almost empty board, on the
+ * squares where the pattern comes out whole:
+ *
+ * - The queen on file 5. A rook reaches three each way, which on eight files
+ *   spans seven of the eight — from file 5 that is files 2 to 8, and no part of
+ *   it runs off the edge. The one file she cannot reach is the one directly
+ *   opposite, and here it is the far left, sitting there unmarked.
+ * - The knight on file 4, three ranks from either end. Its long arm is three
+ *   files, so anywhere but the middle two files it would leave the board and
+ *   come back, and the ring would be cut in half on the screen.
+ *
+ * The rook on the far rank is there to be taken, so that the ring has something
+ * in it besides empty squares; the kings are there because a chess position
+ * without them is not one.
  */
+const WIDE_TUTORIAL_LAYOUT = Object.freeze([
+  '. r . . . . k .',
+  '. p . . . . . .',
+  '. . . N . . . .',
+  '. . . . . . . .',
+  '. . . . Q . . .',
+  '. . . . . . . .',
+  '. . . . . . . .',
+  '. K . . . . . .',
+]);
+
 export const TUTORIAL_WIDE = boardFor({
   id: 'escher-tutorial-8x8',
   label: 'Escher Chess (8×8 tutorial)',
@@ -306,6 +389,7 @@ export const TUTORIAL_WIDE = boardFor({
   height: 8,
   dials: ESCHER_DIALS.wide,
   mirror: true,
+  layout: WIDE_TUTORIAL_LAYOUT,
 });
 
 export const BOARDS = Object.freeze({
