@@ -460,10 +460,18 @@ body.dg {
   }
 }
 
+/*
+ * Labels on all four sides: rank numbers down both edges, file names along the
+ * top and the bottom. On a ten-rank board a single row of letters underneath is
+ * a long way from the far end, and naming a square out loud is how the game is
+ * played.
+ */
 .dg-chess-grid {
   display: grid;
-  grid-template-columns: var(--dg-gutter, 20px) repeat(var(--dg-files), var(--dg-square, 40px));
-  grid-template-rows: repeat(var(--dg-ranks), var(--dg-square, 40px)) auto;
+  grid-template-columns:
+    var(--dg-gutter, 20px) repeat(var(--dg-files), var(--dg-square, 40px))
+    var(--dg-gutter, 20px);
+  grid-template-rows: auto repeat(var(--dg-ranks), var(--dg-square, 40px)) auto;
   border-radius: 3px;
   overflow: hidden;
 }
@@ -1065,6 +1073,30 @@ body.dg {
 .dg-legend {
   color: var(--dg-text-muted);
   font-size: 0.9rem;
+}
+
+/*
+ * The whole rule set, folded shut, above the board rather than below it.
+ *
+ * Shut by default because the tutorial's job is to teach these one at a time;
+ * open, it is the reference to check an argument against.
+ */
+.dg-rules {
+  border: 1px solid var(--dg-divider);
+  border-radius: 6px;
+  background: var(--dg-surface);
+  padding: 0.6rem 0.9rem;
+  margin: 1rem 0 0;
+}
+
+.dg-rules > summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.dg-rules > .dg-legend {
+  margin: 0.75rem 0 0.25rem;
 }
 
 .dg-build {

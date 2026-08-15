@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.8.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.9.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -30,6 +30,30 @@
         Play both sides yourself, or take turns with whoever is sitting next to
         you.
       </p>
+
+      <!--
+        Above the board, not below it.
+
+        A ten-rank board and a coach panel fill a screen on their own, so a
+        summary underneath them can be — and was — played straight past. Folded
+        shut it costs one line here and is in front of the reader from the
+        first move; a reader who wants the rules in one place opens it, and a
+        reader who would rather be told them a step at a time never has to.
+      -->
+      <details class="dg-rules">
+        <summary>The rules, in one place</summary>
+        <p class="dg-legend">
+          Ordinary chess, on a board five files wide and ten ranks deep, with
+          four changes. <strong>All movement is jumpy</strong>: every piece goes
+          straight to its destination and nothing can be blocked, including a
+          pawn's opening double step. <strong>Everything is short range</strong>:
+          a rook reaches four squares along a rank or a file, a bishop two along
+          a diagonal. <strong>The board is a cylinder</strong>, so the leftmost
+          and rightmost files are neighbours. There is no queen on this board, no
+          castling and no en passant; a pawn reaching the far rank promotes.
+          Checkmate wins; a player with no legal move who is not in check draws.
+        </p>
+      </details>
 
       <div class="dg-layout">
         <div class="dg-coach" id="coach" aria-live="polite">
@@ -51,26 +75,13 @@
         </div>
       </div>
 
-      <h2>The rules, in one place</h2>
-      <p class="dg-legend">
-        Ordinary chess, on a board five files wide and ten ranks deep, with four
-        changes. <strong>All movement is jumpy</strong>: every piece goes
-        straight to its destination and nothing can be blocked, including a
-        pawn's opening double step. <strong>Everything is short range</strong>:
-        a rook reaches four squares along a rank or a file, a bishop two along a
-        diagonal. <strong>The board is a cylinder</strong>, so the leftmost and
-        rightmost files are neighbours. There is no queen on this board, no
-        castling and no en passant; a pawn reaching the far rank promotes.
-        Checkmate wins; a player with no legal move who is not in check draws.
-      </p>
-
       <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
     </div>
 
     <script type="module">
-      const BUILD = '4.8.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.9.0'; // keep in step with the ?v= tokens below
 
-      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.8.0';
+      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.9.0';
       import {
         initialGame,
         applyMove,
@@ -79,8 +90,8 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.8.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.8.0';
+      } from '../games/escher/game.js?v=4.9.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.9.0';
       import {
         contextFor,
         stepIndex,
@@ -89,7 +100,7 @@
         ESCHER_STEPS,
         ESCHER_OUTRO,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.8.0';
+      } from '../games/escher/coach.js?v=4.9.0';
 
       const board = TUTORIAL;
 

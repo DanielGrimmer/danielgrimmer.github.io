@@ -13,9 +13,8 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.8.0';
-import { SIDE } from './presets.js?v=4.8.0';
-import { PIECE } from './pieces.js?v=4.8.0';
+import { replayFrames, inCheck } from './game.js?v=4.9.0';
+import { PIECE } from './pieces.js?v=4.9.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -59,9 +58,9 @@ export const TUTORIAL_SCRIPT = Object.freeze(
     ['jumpy', 'move', at(10, 2), at(8, 3),
       'Move black’s left knight into the central file. So far, so normal.'],
     ['jumpy', 'select', at(2, 2), null,
-      'Now click on white’s left bishop. Notice that it can move between the two pawns on its left (as usual) but it can also jump over the pawn to its right.'],
+      'Now click on white’s left bishop. As we shall see, it is jumpy and short-ranged (just like everything else).'],
     ['jumpy', 'move', at(2, 2), at(4, 4),
-      'Notice also that bishops are short-ranged in Escher Chess: it can move at most two spaces diagonally. Now have this bishop jump over the central pawn.'],
+      'Notice that it can move between the two pawns on its left (as usual) but it can also jump over the pawn to its right. Moreover, note that bishops are short-ranged in Escher Chess: it can move at most two spaces diagonally. Now have this bishop jump over the central pawn.'],
     ['jumpy', 'move', at(10, 1), at(6, 1),
       'Lastly, have black’s left-most rook move four spaces forward (from rank 10 to rank 6), jumping over the pawn. It too is short-ranged in Escher Chess, moving at most four spaces in any direction.'],
 
@@ -267,20 +266,28 @@ const PIECE_NAME = Object.freeze({
   [PIECE.KING]: 'king',
 });
 
+const plural = (name) => `${PIECE_NAME[name]}s`;
+
+/** "pawns and kings", "pawns, kings and queens". */
+const list = (names) =>
+  names.length <= 1
+    ? (names[0] ?? '')
+    : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+
 /**
- * What each piece turned out to be, in one line apiece.
+ * The pieces that turned out to be somebody else's, as clauses.
  *
- * Read off `board.duality` rather than written down, so that it cannot end up
- * describing a board nobody is playing on. A piece that is dual to nothing gets
- * no line: "your king is not like anything" is a sentence that teaches nobody
- * anything, and the table reads better as a short list of surprises.
+ * Read off `board.duality` rather than written down, so the paragraph cannot
+ * end up describing a board nobody is playing on — the five-file and eight-file
+ * games swap different pieces, and only one of them is ever on screen. The
+ * first clause carries the verb and the rest elide it, which is how the
+ * sentence is spoken.
  */
 export function pieceRevelations(board) {
   const out = [];
   for (const [name, { selfDual, dualTo }] of Object.entries(board.duality)) {
-    if (selfDual) continue;
-    if (!dualTo) continue;
-    out.push(`Their ${PIECE_NAME[name]} has been moving like your ${PIECE_NAME[dualTo]}.`);
+    if (selfDual || !dualTo) continue;
+    out.push(`their ${plural(name)}${out.length ? '' : ' moved'} like ${plural(dualTo)}`);
   }
   return out;
 }
@@ -293,49 +300,71 @@ export function unchangedPieces(board) {
 }
 
 /**
+ * The pieces that are like nothing at all in the other description.
+ *
+ * A duality does not have to send every piece to another piece: on both
+ * published boards the pawn and the king come out as things that are not in the
+ * opponent's set at all, and saying so is more honest than leaving them out.
+ */
+export function strangePieces(board) {
+  return Object.entries(board.duality)
+    .filter(([, d]) => !d.selfDual && !d.dualTo)
+    .map(([name]) => PIECE_NAME[name]);
+}
+
+/** "…their knights moved like bishops; …; and while their rooks were still rooks, …" */
+function whatTheirPiecesWere(board) {
+  const swaps = pieceRevelations(board);
+  const held = unchangedPieces(board).map((n) => `${n}s`);
+  const odd = strangePieces(board).map((n) => `${n}s`);
+
+  const tail = held.length
+    ? odd.length
+      ? `while their ${list(held)} were still ${list(held)}, their ${list(odd)} were very strange`
+      : `their ${list(held)} were still ${list(held)}`
+    : odd.length
+      ? `their ${list(odd)} were very strange`
+      : '';
+
+  if (!swaps.length) return tail ? `${tail[0].toUpperCase()}${tail.slice(1)}.` : '';
+  return `${swaps.join('; ')}${tail ? `; and ${tail}` : ''}.`;
+}
+
+/**
  * The note above the two replay boards, once the real game has finished. The
  * one place in the game where the thing being demonstrated is said out loud.
  */
 export function revealNote(board, seat) {
-  const files = board.files;
-  const yours = files[seat ?? SIDE.WHITE].join('');
-  const theirs = files[seat === SIDE.BLACK ? SIDE.WHITE : SIDE.BLACK].join('');
-
   const opening =
     seat === null
-      ? 'Both boards below show the game that has just finished. They are the ' +
-        'same game — the same moves, in the same order — drawn once for each ' +
-        'player.'
-      : 'Both boards below show the game you just played. They are the same ' +
-        'game — the same moves, in the same order — drawn once for each of you. ' +
-        'The left-hand one is the board you were looking at.';
+      ? 'Both boards below show the game that has just finished, but from two ' +
+        'radically different perspectives. The left-hand one is White’s board, ' +
+        'whereas the right-hand board is what Black saw. Now advance through ' +
+        'the replay. Every move is exactly as it was actually made, in the ' +
+        'order it was made. But the two players saw something completely ' +
+        'different.'
+      : 'Both boards below show the game you just played, but from two ' +
+        'radically different perspectives. The left-hand one is the board you ' +
+        'were looking at, whereas the right-hand board is what your opponent ' +
+        'saw. Now advance through the replay. Every move is exactly as it was ' +
+        'actually made, in the order it was made. But your friend saw ' +
+        'something completely different.';
 
-  const swaps = pieceRevelations(board);
-  const held = unchangedPieces(board);
-
-  const table = swaps.length
-    ? `${swaps.join(' ')}${
-        held.length
-          ? ` The ${held.join(' and ')} was the same piece for both of you, which ` +
-            'is why nothing looked wrong for the first few moves.'
-          : ''
-      }`
-    : '';
+  const theirs = whatTheirPiecesWere(board);
+  const both =
+    seat === null
+      ? 'Each of them thought they were playing with the normal pieces whereas ' +
+        `their opponent had very strange pieces: ${theirs} Both of them thought ` +
+        'this! Nonetheless, they agreed about when every piece was captured and ' +
+        'whenever the king was in check. Weird!'
+      : 'You both thought you were playing with the normal pieces whereas your ' +
+        `opponent had very strange pieces: ${theirs} You both thought this! ` +
+        'Nonetheless, you both agree when every piece was captured and whenever ' +
+        'the king was in check. Weird!';
 
   return {
-    title: 'You Were Not Playing the Same Game',
-    body:
-      `${opening} And yet you never once disagreed about a move: every time one ` +
-      'of you said “D3 to D5”, the other found a legal move of their own and ' +
-      'played it.\n\n' +
-      `You were not reading the board the same way. Your five files ran ${yours}; ` +
-      `theirs ran ${theirs}. Both of you were right, because a file is a name, ` +
-      'not a place, and the two of you never had to agree about which name sat ' +
-      'next to which.\n\n' +
-      `${table}\n\n` +
-      'Step through the replay and watch a single move land on two different ' +
-      'squares. Nothing has been recomputed or dramatised: this is the log, ' +
-      'folded twice.',
+    title: 'You Were Both Playing with the Normal Pieces!',
+    body: `${opening}\n\n${both}`,
     after:
       'This is a duality in the sense the word carries in physics: two ' +
       'descriptions of one system, neither of them the true one, related by a ' +
@@ -346,6 +375,6 @@ export function revealNote(board, seat) {
       'My research is about what follows from that. If two theories are related ' +
       'this way, the question of which one is *true* stops being a question ' +
       'about the world and becomes a question about the language you happened ' +
-      'to start in — a matter of quid juris rather than quid facti.',
+      'to start in — a matter of quid facti rather than quid juris.',
   };
 }

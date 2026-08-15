@@ -1,17 +1,21 @@
 /**
- * The room pool.
+ * The room pools.
  *
- * A fixed list, not a generator. Clients may only ever touch a document whose
- * id is on it, and the Security Rules carry the same list — so the number of
- * documents this project can ever hold is twenty, no matter what anybody sends.
+ * Fixed lists, not generators. Clients may only ever touch a document whose id
+ * is on one, and the Security Rules carry the same lists — so the number of
+ * documents a collection can ever hold is twenty, no matter what anybody sends.
  * That is what keeps document creation from being an unbounded cost on a plan
  * whose quota, once spent, takes the games offline for the day.
  *
- * Keep this in step with `_firebase/firestore.rules`. If you add a name
- * here and not there, joining that room will simply be refused.
+ * Keep these in step with `_firebase/firestore.rules`. If you add a name here
+ * and not there, joining that room will simply be refused; there is a test that
+ * reads the rules file and compares the two.
  *
  * Names are speakable: "join GreenField" survives a phone call in a way that a
  * hex code does not.
+ *
+ * Soccer Hockey and its sandbox share this list. Escher Chess has its own,
+ * further down.
  */
 
 export const ROOM_NAMES = Object.freeze([
@@ -54,25 +58,68 @@ export const ROOMS_COLLECTION = 'dualityRooms';
 export const SANDBOX_COLLECTION = 'dualitySandboxes';
 
 /**
- * Escher Chess keeps its own collection, and shares the room *names*.
+ * Escher Chess keeps its own collection, and its own names.
  *
- * Sharing the names means "meet me in GreenField" works whichever game you are
- * playing, and the twenty-document ceiling that keeps this project inside a
- * free plan holds per collection. Sharing the *documents* would mean a chess
- * log landing in a room a Soccer Hockey game is being played in, which no rule
- * could sort out afterwards, since a rule counts moves rather than reading
- * them.
+ * Its own documents, because a chess log landing in a room a Soccer Hockey game
+ * is being played in is not something a counting rule could sort out
+ * afterwards. Its own *names* because the two games have nothing to do with
+ * each other and a room name is the one piece of the machinery a player says
+ * out loud: "meet me in ImpossibleCastle" belongs to one of these games and not
+ * the other. The twenty-document ceiling that keeps this project inside a free
+ * plan holds per collection, so a second list of twenty costs nothing.
+ *
+ * The names are V1.2's, which were the ones with the jokes in them, with ten
+ * more in the same register to fill the pool out.
  */
 export const ESCHER_COLLECTION = 'escherRooms';
 
-export function isRoomName(name) {
-  return typeof name === 'string' && ROOM_NAMES.includes(name);
+export const ESCHER_ROOM_NAMES = Object.freeze([
+  'RelativityRoom',
+  'MobiusCheck',
+  'ImpossibleCastle',
+  'WaterfallWar',
+  'MysteriousMoves',
+  'ParadoxPawn',
+  'InfiniteKnight',
+  'MirroredGambit',
+  'TessellatedTactics',
+  'RecursiveRook',
+  'AscendingBishop',
+  'BelvedereBoard',
+  'PenroseStairs',
+  'MetamorphosisMate',
+  'DrosteDefence',
+  'SkyAndWater',
+  'CircleLimit',
+  'DayAndNight',
+  'ReptileRank',
+  'CurvedSpace',
+]);
+
+/**
+ * Which pool a collection draws on.
+ *
+ * Everything that walks the pool — choosing a room, validating a link, filling
+ * the "join by name" list — goes through here rather than reaching for
+ * `ROOM_NAMES`, so adding a third game means adding a line here and not hunting
+ * for the places that assumed there was only one list.
+ */
+const POOLS = Object.freeze({
+  [ROOMS_COLLECTION]: ROOM_NAMES,
+  [SANDBOX_COLLECTION]: ROOM_NAMES,
+  [ESCHER_COLLECTION]: ESCHER_ROOM_NAMES,
+});
+
+export const namesFor = (collection) => POOLS[collection] ?? ROOM_NAMES;
+
+export function isRoomName(name, names = ROOM_NAMES) {
+  return typeof name === 'string' && names.includes(name);
 }
 
 /** The room asked for in the URL, if it is one we recognise. */
-export function roomFromLocation(search = '') {
+export function roomFromLocation(search = '', names = ROOM_NAMES) {
   const asked = new URLSearchParams(search).get('room');
-  return isRoomName(asked) ? asked : null;
+  return isRoomName(asked, names) ? asked : null;
 }
 
 /*
@@ -89,8 +136,8 @@ export const LAST_ROOM_KEY = 'dg.lastRoom';
 export const LAST_SANDBOX_KEY = 'dg.lastSandbox';
 export const LAST_ESCHER_KEY = 'dg.lastEscher';
 
-export function rememberRoom(storage, name, key = LAST_ROOM_KEY) {
-  if (!isRoomName(name)) return;
+export function rememberRoom(storage, name, key = LAST_ROOM_KEY, names = ROOM_NAMES) {
+  if (!isRoomName(name, names)) return;
   try {
     storage?.setItem(key, name);
   } catch {
@@ -98,10 +145,10 @@ export function rememberRoom(storage, name, key = LAST_ROOM_KEY) {
   }
 }
 
-export function recallRoom(storage, key = LAST_ROOM_KEY) {
+export function recallRoom(storage, key = LAST_ROOM_KEY, names = ROOM_NAMES) {
   try {
     const name = storage?.getItem(key);
-    return isRoomName(name) ? name : null;
+    return isRoomName(name, names) ? name : null;
   } catch {
     return null;
   }

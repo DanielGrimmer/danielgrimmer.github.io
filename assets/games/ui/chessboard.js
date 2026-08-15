@@ -31,7 +31,7 @@
  * stand side by side in the reveal.
  */
 
-import { pieceSvg } from './pieces-svg.js?v=4.8.0';
+import { pieceSvg } from './pieces-svg.js?v=4.9.0';
 
 const MIN_SQUARE = 26;
 const MAX_SQUARE = 58;
@@ -84,18 +84,51 @@ export function createChessboard(
 
   /** view `rank,file` -> its square element. Built once; render mutates. */
   const squares = new Map();
+  /**
+   * Each rank's labels and each file's — two apiece, because the board is
+   * ringed on all four sides.
+   *
+   * A ten-rank board is tall enough that a row of file letters along the bottom
+   * alone is no use to somebody looking at the far end, and the whole game is
+   * played by reading a square's name off the board and saying it out loud.
+   * Cheap to draw, and it is what a printed chess diagram does.
+   */
   const rankLabels = [];
   const fileLabels = [];
+
+  const corner = () => {
+    const tag = document.createElement('div');
+    tag.className = 'dg-chess-corner';
+    return tag;
+  };
+
+  /** A row of file names, drawn above the board and again below it. */
+  function fileRow() {
+    grid.append(corner());
+    for (let file = 0; file < width; file++) {
+      const tag = document.createElement('div');
+      tag.className = 'dg-chess-file';
+      grid.append(tag);
+      (fileLabels[file] ??= []).push(tag);
+    }
+    grid.append(corner());
+  }
+
+  const rankTag = (row) => {
+    const tag = document.createElement('div');
+    tag.className = 'dg-chess-rank';
+    grid.append(tag);
+    (rankLabels[row] ??= []).push(tag);
+  };
+
+  fileRow();
 
   /*
    * Rank 0 of a view is that seat's own back rank, and a player looks at their
    * own men from the near edge, so the rows are laid out from the far end down.
    */
   for (let row = height - 1; row >= 0; row--) {
-    const tag = document.createElement('div');
-    tag.className = 'dg-chess-rank';
-    grid.append(tag);
-    rankLabels[row] = tag;
+    rankTag(row);
 
     for (let file = 0; file < width; file++) {
       const cell = document.createElement('button');
@@ -116,18 +149,11 @@ export function createChessboard(
       // rebuilds the artwork when the piece standing there actually changes.
       squares.set(`${row},${file}`, { cell, glyph, shown: null });
     }
+
+    rankTag(row);
   }
 
-  // The bottom-left corner is empty; then one label under each file.
-  const corner = document.createElement('div');
-  corner.className = 'dg-chess-corner';
-  grid.append(corner);
-  for (let file = 0; file < width; file++) {
-    const tag = document.createElement('div');
-    tag.className = 'dg-chess-file';
-    grid.append(tag);
-    fileLabels[file] = tag;
-  }
+  fileRow();
 
   /* The promotion chooser, built once and shown when a pawn arrives. */
   const promo = document.createElement('div');
@@ -334,8 +360,10 @@ export function createChessboard(
   function fit() {
     const room = available();
     if (!room) return;
-    const gutter = Math.max(18, Math.round(room * 0.05));
-    const byWidth = Math.floor((room - gutter) / width);
+    // Two gutters now, one down each side, so each takes rather less than the
+    // single one did.
+    const gutter = Math.max(16, Math.round(room * 0.04));
+    const byWidth = Math.floor((room - gutter * 2) / width);
     const byHeight = Math.floor((window.innerHeight * HEIGHT_SHARE) / height);
     const size = Math.min(byWidth, Math.max(MIN_SQUARE, Math.min(byHeight, MAX_SQUARE)));
     frame.style.setProperty('--dg-square', `${Math.max(8, size)}px`);
@@ -377,10 +405,10 @@ export function createChessboard(
      * numbers stay, since both players agree about those.
      */
     next.files.forEach((name, file) => {
-      fileLabels[file].textContent = showFiles ? name : '';
+      for (const tag of fileLabels[file]) tag.textContent = showFiles ? name : '';
     });
     next.rankLabels.forEach((name, rank) => {
-      rankLabels[rank].textContent = String(name);
+      for (const tag of rankLabels[rank]) tag.textContent = String(name);
     });
 
     paint();

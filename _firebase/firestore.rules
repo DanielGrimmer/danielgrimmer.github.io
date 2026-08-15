@@ -302,7 +302,7 @@ service cloud.firestore {
     }
 
     // ---------------------------------------------------------------------
-    // Escher Chess. Same twenty room names, its own documents.
+    // Escher Chess. Its own twenty room names, and its own documents.
     //
     // Structurally the same contract as dualityRooms: seats are claimed and
     // beaten the same way, and a move is one append by the seat whose turn it
@@ -322,13 +322,14 @@ service cloud.firestore {
         return request.auth != null && request.auth.uid is string;
       }
 
-      // Keep in step with assets/games/net/rooms.js — the same list as above.
+      // Escher Chess's own pool — NOT the Soccer Hockey list above. Keep in
+      // step with ESCHER_ROOM_NAMES in assets/games/net/rooms.js.
       function known() {
         return roomId in [
-          'RedPuck', 'BlueGoal', 'GreenField', 'GoldRink', 'SilverNet',
-          'BronzeStripes', 'PurpleSkates', 'OrangeWhistle', 'WhitePuck', 'BlackGoal',
-          'AmberField', 'CoralRink', 'IvoryNet', 'JadeStripes', 'OnyxSkates',
-          'PearlWhistle', 'RustPuck', 'SableGoal', 'TealField', 'UmberRink'
+          'RelativityRoom', 'MobiusCheck', 'ImpossibleCastle', 'WaterfallWar', 'MysteriousMoves',
+          'ParadoxPawn', 'InfiniteKnight', 'MirroredGambit', 'TessellatedTactics', 'RecursiveRook',
+          'AscendingBishop', 'BelvedereBoard', 'PenroseStairs', 'MetamorphosisMate', 'DrosteDefence',
+          'SkyAndWater', 'CircleLimit', 'DayAndNight', 'ReptileRank', 'CurvedSpace'
         ];
       }
 

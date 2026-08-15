@@ -22,16 +22,18 @@
  * games differ by a collection name.
  */
 
-import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.8.0';
+import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.9.0';
 import {
   ROOM_NAMES,
+  ESCHER_ROOM_NAMES,
   ROOMS_COLLECTION,
   SANDBOX_COLLECTION,
   ESCHER_COLLECTION,
   emptyRoomDoc,
   emptySandboxDoc,
   isRoomName,
-} from './rooms.js?v=4.8.0';
+  namesFor,
+} from './rooms.js?v=4.9.0';
 import {
   claimSeat,
   touchSeat,
@@ -41,7 +43,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.8.0';
+} from '../core/seats.js?v=4.9.0';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -240,7 +242,7 @@ function roomRef(name, collection = ROOMS_COLLECTION) {
 async function readPool(collection = ROOMS_COLLECTION) {
   await ensureApp();
   const snapshots = await Promise.all(
-    ROOM_NAMES.map(async (name) => {
+    namesFor(collection).map(async (name) => {
       try {
         const snap = await sdk.getDoc(roomRef(name, collection));
         return { id: name, exists: snap.exists(), ...(snap.data() ?? emptyRoomDoc(name)) };
@@ -267,16 +269,17 @@ export async function chooseRoom({
   now,
   collection = ROOMS_COLLECTION,
 }) {
-  if (isRoomName(preferred)) return preferred;
+  const names = namesFor(collection);
+  if (isRoomName(preferred, names)) return preferred;
 
-  if (uid && isRoomName(remembered)) {
+  if (uid && isRoomName(remembered, names)) {
     const mine = await peekRoom({ name: remembered, collection });
     if (mine && seatOf(mine.seats, uid) !== null) return remembered;
   }
 
   const pool = await readPool(collection);
   const open = findOpenRoom(pool, now);
-  return open ? open.id : ROOM_NAMES[0];
+  return open ? open.id : names[0];
 }
 
 /**
@@ -551,4 +554,11 @@ export const escher = Object.freeze({
 });
 
 
-export { HEARTBEAT_MS, ACTIVE_HEARTBEAT_MS, ROOM_NAMES, SANDBOX_COLLECTION, ESCHER_COLLECTION };
+export {
+  HEARTBEAT_MS,
+  ACTIVE_HEARTBEAT_MS,
+  ROOM_NAMES,
+  ESCHER_ROOM_NAMES,
+  SANDBOX_COLLECTION,
+  ESCHER_COLLECTION,
+};

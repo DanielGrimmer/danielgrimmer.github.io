@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Escher Chess (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.8.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.9.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -30,7 +30,7 @@
             <label class="dg-join">
               Or join a room by name:
               <span class="dg-join-row">
-                <input id="roomInput" list="roomList" placeholder="GreenField" autocomplete="off" />
+                <input id="roomInput" list="roomList" placeholder="ParadoxPawn" autocomplete="off" />
                 <button class="dg-btn" id="joinRoom" type="button">Join</button>
               </span>
             </label>
@@ -41,8 +41,12 @@
         <div class="dg-play">
           <div class="dg-status" id="status">Connecting…</div>
           <div class="dg-presence" id="presence"></div>
+          <!--
+            No legend under the board naming the files. They are written along
+            the top and bottom edges of the board itself, which is where a
+            player looks for them.
+          -->
           <div id="board"></div>
-          <p class="dg-legend" id="fileNote"></p>
         </div>
       </div>
 
@@ -90,9 +94,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.8.0';
+      const BUILD = '4.9.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.8.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.9.0';
       import {
         initialGame,
         replay,
@@ -100,7 +104,7 @@
         viewOf,
         fromView,
         STATUS,
-      } from '../games/escher/game.js?v=4.8.0';
+      } from '../games/escher/game.js?v=4.9.0';
       import {
         presenceOf,
         seatOf,
@@ -108,26 +112,26 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.8.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.8.0';
-      import { createReplayView } from '../games/ui/replay.js?v=4.8.0';
-      import { revealNote } from '../games/escher/coach.js?v=4.8.0';
+      } from '../games/core/seats.js?v=4.9.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.9.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.9.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.9.0';
       import {
-        ROOM_NAMES,
+        ESCHER_ROOM_NAMES,
         roomFromLocation,
         shareLink,
         rememberRoom,
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.8.0';
+      } from '../games/net/rooms.js?v=4.9.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.8.0';
+      } from '../games/net/room.js?v=4.9.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
@@ -263,9 +267,6 @@
         el('status').dataset.tone =
           !inheritedGame && game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
         el('presence').textContent = describeOpponent();
-        el('fileNote').textContent =
-          `Your files are named ${board.files[lens].join(', ')}, left to right. ` +
-          'Announce your moves by file and rank, and nothing else.';
         el('newGame').hidden = seat === null || game.outcome.status === STATUS.PLAYING;
         el('leave').hidden = seat === null;
         drawReplay();
@@ -386,15 +387,19 @@
         el('sideSub').textContent =
           seat === SIDE.WHITE ? 'You move first.' : 'White moves first.';
 
+        /*
+         * Word for word what Soccer Hockey says. Both games rest on the same
+         * instruction — stop talking — and a player who has done one and then
+         * the other should hear the same sentence rather than wonder whether
+         * the rules have quietly changed.
+         */
         const full = occupancy(state.seats, now()).held === 2;
         el('coachBody').textContent = full
-          ? 'You are both here. From now until the game is over, the only thing ' +
-            'you may tell each other is which piece you moved, from where, to ' +
-            'where — by file and rank. Nothing about how your pieces move, and ' +
-            'nothing about what you can see.'
-          : 'You are the only one here. Send your friend the invite link, or ' +
+          ? 'You are both here. Please stop talking to each other now. Once the ' +
+            'first game is over, you can call each other and compare notes.'
+          : 'You are the only one here. Send your opponent the invite link, or ' +
             'tell them this room name so they can type it in. Once they arrive, ' +
-            'the only thing you may say to each other is your moves.';
+            'stop talking to each other until the game is over.';
       }
 
       /* ------------------------------------------------------------ network */
@@ -427,7 +432,8 @@
         const query = new URLSearchParams({ room: name });
         if (board !== NARROW) query.set('board', board.id);
         history.replaceState(null, '', `?${query}`);
-        if (seat !== null) rememberRoom(window.localStorage, name, LAST_ESCHER_KEY);
+        if (seat !== null)
+          rememberRoom(window.localStorage, name, LAST_ESCHER_KEY, ESCHER_ROOM_NAMES);
         // Whether the game was already over when we arrived, before any of our
         // own moves can have changed it.
         inheritedGame =
@@ -511,7 +517,7 @@
 
       el('joinRoom').addEventListener('click', async () => {
         const wanted = el('roomInput').value.trim();
-        if (!ROOM_NAMES.includes(wanted)) {
+        if (!ESCHER_ROOM_NAMES.includes(wanted)) {
           el('coachBody').textContent = `There is no room called “${wanted}”. Pick one from the list.`;
           return;
         }
@@ -544,7 +550,7 @@
       });
 
       el('roomList').append(
-        ...ROOM_NAMES.map((name) => {
+        ...ESCHER_ROOM_NAMES.map((name) => {
           const option = document.createElement('option');
           option.value = name;
           return option;
@@ -556,10 +562,10 @@
       (async () => {
         try {
           uid = await signIn();
-          const wanted = roomFromLocation(location.search);
+          const wanted = roomFromLocation(location.search, ESCHER_ROOM_NAMES);
           const name = await escher.choose({
             preferred: wanted,
-            remembered: recallRoom(window.localStorage, LAST_ESCHER_KEY),
+            remembered: recallRoom(window.localStorage, LAST_ESCHER_KEY, ESCHER_ROOM_NAMES),
             uid,
             now: now(),
           });

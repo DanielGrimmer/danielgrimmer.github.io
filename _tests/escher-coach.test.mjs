@@ -16,6 +16,7 @@ import {
   revealNote,
   pieceRevelations,
   unchangedPieces,
+  strangePieces,
 } from '../assets/games/escher/coach.js';
 import { TUTORIAL, NARROW, WIDE, SIDE } from '../assets/games/escher/presets.js';
 import {
@@ -216,31 +217,50 @@ test('the steps follow the script', async (t) => {
 test('the reveal describes the board it is actually on', async (t) => {
   await t.test('the swaps are read off the board, not written down', () => {
     const narrow = pieceRevelations(NARROW);
-    assert.ok(narrow.some((l) => /knight has been moving like your bishop/.test(l)));
-    assert.ok(narrow.some((l) => /bishop has been moving like your knight/.test(l)));
-    // A piece that is dual to nothing gets no line: naming it teaches nobody.
-    assert.ok(!narrow.some((l) => /king/.test(l)));
+    assert.deepEqual(narrow, [
+      'their knights moved like bishops',
+      'their bishops like knights',
+    ]);
     assert.deepEqual(unchangedPieces(NARROW), ['rook']);
+    assert.deepEqual(strangePieces(NARROW), ['pawn', 'king']);
+  });
+
+  // The same duality, one more piece to be strange about — which is the whole
+  // reason this sentence is generated rather than typed out.
+  await t.test('the eight-file board gets its queen named too', () => {
+    assert.deepEqual(pieceRevelations(WIDE), pieceRevelations(NARROW));
+    assert.deepEqual(strangePieces(WIDE), ['pawn', 'king', 'queen']);
+    assert.match(revealNote(WIDE, SIDE.WHITE).body, /pawns, kings and queens were very strange/);
+    assert.match(revealNote(NARROW, SIDE.WHITE).body, /pawns and kings were very strange/);
   });
 
   await t.test('and the tutorial board, where nothing swaps, produces no swaps', () => {
     assert.deepEqual(pieceRevelations(TUTORIAL), []);
+    assert.deepEqual(strangePieces(TUTORIAL), []);
     assert.equal(unchangedPieces(TUTORIAL).length, Object.keys(TUTORIAL.duality).length);
   });
 
-  await t.test('each seat is told its own file order, and its opponent’s', () => {
-    const white = revealNote(NARROW, SIDE.WHITE);
-    assert.match(white.body, /ran ARMED/);
-    assert.match(white.body, /theirs ran DREAM/);
-    const black = revealNote(NARROW, SIDE.BLACK);
-    assert.match(black.body, /ran DREAM/);
-    assert.match(black.body, /theirs ran ARMED/);
+  await t.test('both players are told they had the normal pieces', () => {
+    for (const seat of [SIDE.WHITE, SIDE.BLACK]) {
+      const note = revealNote(NARROW, seat);
+      assert.match(note.title, /Both Playing with the Normal Pieces/);
+      assert.match(note.body, /The left-hand one is the board you were looking at/);
+      assert.match(note.body, /their knights moved like bishops; their bishops like knights/);
+    }
   });
 
   await t.test('a spectator is not addressed as a player', () => {
     const note = revealNote(WIDE, null);
     assert.ok(!/the game you just played/.test(note.body));
+    assert.ok(!/your opponent/.test(note.body));
     assert.match(note.body, /the game that has just finished/);
+  });
+
+  // Reversed once already, and the two are easy to swap back: the claim is
+  // that the choice between the two descriptions is a matter of where you
+  // started, not of which one is entitled to be called true.
+  await t.test('the closing line has the Latin the right way round', () => {
+    assert.match(revealNote(NARROW, SIDE.WHITE).after, /quid facti rather than quid juris/);
   });
 
   await t.test('the note has all three parts, everywhere', () => {

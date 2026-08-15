@@ -1,13 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
   ROOM_NAMES,
+  ESCHER_ROOM_NAMES,
   ROOMS_COLLECTION,
   SANDBOX_COLLECTION,
+  ESCHER_COLLECTION,
   LAST_ROOM_KEY,
   LAST_SANDBOX_KEY,
+  LAST_ESCHER_KEY,
   isRoomName,
+  namesFor,
   roomFromLocation,
   shareLink,
   rememberRoom,
@@ -53,6 +58,82 @@ test('the pool', async (t) => {
   await t.test('a share link round-trips through roomFromLocation', () => {
     const link = shareLink('https://example.com', '/game.html', 'JadeStripes');
     assert.equal(roomFromLocation(new URL(link).search), 'JadeStripes');
+  });
+});
+
+test('Escher Chess has its own pool', async (t) => {
+  await t.test('twenty speakable names of its own', () => {
+    assert.equal(ESCHER_ROOM_NAMES.length, 20);
+    assert.equal(new Set(ESCHER_ROOM_NAMES).size, 20);
+    assert.ok(ESCHER_ROOM_NAMES.every((n) => /^[A-Za-z]+$/.test(n)));
+  });
+
+  // The point of a second list. "Meet me in ImpossibleCastle" says which game
+  // as well as which room, and a link pasted into the wrong page is refused
+  // rather than quietly opening an empty room of the same name next door.
+  await t.test('and shares none of them with Soccer Hockey', () => {
+    const shared = ESCHER_ROOM_NAMES.filter((n) => ROOM_NAMES.includes(n));
+    assert.deepEqual(shared, []);
+  });
+
+  await t.test('each collection draws on the right pool', () => {
+    assert.equal(namesFor(ROOMS_COLLECTION), ROOM_NAMES);
+    assert.equal(namesFor(SANDBOX_COLLECTION), ROOM_NAMES);
+    assert.equal(namesFor(ESCHER_COLLECTION), ESCHER_ROOM_NAMES);
+  });
+
+  await t.test('a name is only a name against its own pool', () => {
+    assert.equal(isRoomName('ParadoxPawn', ESCHER_ROOM_NAMES), true);
+    assert.equal(isRoomName('ParadoxPawn'), false);
+    assert.equal(isRoomName('RedPuck', ESCHER_ROOM_NAMES), false);
+    assert.equal(roomFromLocation('?room=MobiusCheck', ESCHER_ROOM_NAMES), 'MobiusCheck');
+    assert.equal(roomFromLocation('?room=MobiusCheck'), null);
+  });
+
+  await t.test('and what is remembered is checked against it too', () => {
+    const storage = fakeStorage();
+    rememberRoom(storage, 'PenroseStairs', LAST_ESCHER_KEY, ESCHER_ROOM_NAMES);
+    assert.equal(recallRoom(storage, LAST_ESCHER_KEY, ESCHER_ROOM_NAMES), 'PenroseStairs');
+    // A Soccer Hockey name in the Escher slot is not a room this game has.
+    rememberRoom(storage, 'RedPuck', LAST_ESCHER_KEY, ESCHER_ROOM_NAMES);
+    assert.equal(recallRoom(storage, LAST_ESCHER_KEY, ESCHER_ROOM_NAMES), 'PenroseStairs');
+  });
+});
+
+/**
+ * The lists in the Security Rules are the ones that actually decide, and they
+ * are a hand-kept copy of the ones above. A name added here and not there does
+ * not fail loudly — it fails as "joining that room is refused", which looks
+ * like a network problem from the outside.
+ */
+test('the published rules carry the same pools', async (t) => {
+  const rules = readFileSync(new URL('../_firebase/firestore.rules', import.meta.url), 'utf8');
+
+  const blockFor = (collection) => {
+    const start = rules.indexOf(`match /${collection}/{roomId}`);
+    assert.notEqual(start, -1, `no rules block for ${collection}`);
+    const next = rules.indexOf('match /', start + 1);
+    return rules.slice(start, next === -1 ? rules.length : next);
+  };
+
+  const knownIn = (collection) => {
+    const found = /function known\(\)\s*\{\s*return roomId in \[([^\]]*)\]/.exec(
+      blockFor(collection)
+    );
+    assert.ok(found, `no known() list for ${collection}`);
+    return found[1]
+      .split(',')
+      .map((s) => s.trim().replace(/^'|'$/g, ''))
+      .filter(Boolean);
+  };
+
+  await t.test('Soccer Hockey and its sandbox', () => {
+    assert.deepEqual(knownIn(ROOMS_COLLECTION), [...ROOM_NAMES]);
+    assert.deepEqual(knownIn(SANDBOX_COLLECTION), [...ROOM_NAMES]);
+  });
+
+  await t.test('Escher Chess', () => {
+    assert.deepEqual(knownIn(ESCHER_COLLECTION), [...ESCHER_ROOM_NAMES]);
   });
 });
 
