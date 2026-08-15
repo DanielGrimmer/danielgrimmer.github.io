@@ -31,37 +31,12 @@
  * stand side by side in the reveal.
  */
 
+import { pieceSvg } from './pieces-svg.js?v=4.6.0';
+
 const MIN_SQUARE = 26;
 const MAX_SQUARE = 58;
 /** Of the viewport, so a ten-rank board still leaves the coach box visible. */
 const HEIGHT_SHARE = 0.72;
-
-/**
- * Solid glyphs for both sides, coloured by CSS.
- *
- * The outline set (♔♕♖…) is drawn by most fonts as a much thinner shape than
- * the solid set, so a board using both looks like two different piece sets. One
- * shape, two fills, and an outline for contrast reads better — and survives
- * dark mode, where a black-filled glyph on a dark square disappears.
- *
- * Every glyph carries U+FE0E, VARIATION SELECTOR-15, which asks for text
- * presentation. Only the pawn actually needs it: U+265F is the one piece in the
- * set with an emoji form, so several platforms hand it to the colour emoji
- * font, which paints its own black pawn and ignores `color` entirely. White's
- * pawns came out black while White's every other piece was white. The selector
- * costs nothing on the five that were never at risk, and stops the next font
- * update from doing the same to one of them.
- */
-const TEXT_PRESENTATION = '\uFE0E';
-
-const GLYPH = Object.freeze({
-  pawn: `♟${TEXT_PRESENTATION}`,
-  knight: `♞${TEXT_PRESENTATION}`,
-  bishop: `♝${TEXT_PRESENTATION}`,
-  rook: `♜${TEXT_PRESENTATION}`,
-  queen: `♛${TEXT_PRESENTATION}`,
-  king: `♚${TEXT_PRESENTATION}`,
-});
 
 const SIDE_NAME = ['White', 'Black'];
 
@@ -137,7 +112,9 @@ export function createChessboard(
       cell.append(glyph);
 
       grid.append(cell);
-      squares.set(`${row},${file}`, { cell, glyph });
+      // `shown` is what the square is currently drawing, so a repaint only
+      // rebuilds the artwork when the piece standing there actually changes.
+      squares.set(`${row},${file}`, { cell, glyph, shown: null });
     }
   }
 
@@ -197,7 +174,7 @@ export function createChessboard(
         // Coloured as the pawn that is arriving, not as the seat: at a shared
         // screen those differ on every other move.
         btn.dataset.side = String(view.men.find((m) => sameSquare(m, from))?.side ?? view.seat);
-        btn.textContent = GLYPH[type];
+        btn.replaceChildren(pieceSvg(type));
         btn.title = type;
         btn.setAttribute('aria-label', `promote to ${type}`);
         btn.addEventListener('click', () => {
@@ -276,7 +253,12 @@ export function createChessboard(
       // a 5x10 board bearable: only the squares you can act on take focus.
       cell.disabled = !(canStart || canLand) || pending !== null;
 
-      glyph.textContent = man ? GLYPH[man.type] : '';
+      const entry = squares.get(key);
+      const wants = man ? man.type : null;
+      if (entry.shown !== wants) {
+        glyph.replaceChildren(...(wants ? [pieceSvg(wants)] : []));
+        entry.shown = wants;
+      }
       if (man) {
         glyph.dataset.side = String(man.side);
         cell.setAttribute(

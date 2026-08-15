@@ -13,10 +13,10 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { mod, signedRep } from '../core/duality.js?v=4.5.0';
-import { replayFrames, inCheck, squareKey } from './game.js?v=4.5.0';
-import { SIDE } from './presets.js?v=4.5.0';
-import { PIECE } from './pieces.js?v=4.5.0';
+import { mod, signedRep } from '../core/duality.js?v=4.6.0';
+import { replayFrames, inCheck, squareKey } from './game.js?v=4.6.0';
+import { SIDE } from './presets.js?v=4.6.0';
+import { PIECE } from './pieces.js?v=4.6.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -53,22 +53,62 @@ export function leapsSomething(before, move, width) {
 }
 
 /**
+ * The opening the first step asks for.
+ *
+ * Read off the board rather than written down, so that moving a piece in
+ * `presets.js` cannot leave the tutorial asking for a move nobody can play.
+ * White's king pawn is the one directly in front of the king, and one square is
+ * as far as it goes — the double step would clear the third rank a move early
+ * and spoil the picture the next step is built on.
+ */
+export function openingPawnStep(board) {
+  const king = board.placement.find((m) => m.side === SIDE.WHITE && m.type === PIECE.KING);
+  return Object.freeze({
+    from: Object.freeze({ rank: king.rank + 1, file: king.file }),
+    to: Object.freeze({ rank: king.rank + 2, file: king.file }),
+  });
+}
+
+/** Rank 8, in canonical terms. Rank labels are White's, and start at one. */
+const KNIGHT_TARGET_RANK = 7;
+
+const isSquare = (a, b) => a.rank === b.rank && a.file === b.file;
+
+/**
  * Reduce a game to the facts the steps care about. Each is cumulative — once
  * true it stays true — so the tutorial only ever moves forwards.
  */
 export function contextFor(board, moves) {
   const frames = replayFrames(board, moves);
+  const opening = openingPawnStep(board);
 
   let hasWrapped = false;
   let hasLeapt = false;
   let hasChecked = false;
   let hasTaken = false;
+  let kingPawnUp = false;
+  let knightOut = false;
 
   for (let i = 0; i < moves.length; i++) {
     const move = frames[i + 1].lastMove;
     if (isWrapMove(move.from, move.to, board.width)) hasWrapped = true;
     if (leapsSomething(frames[i], move, board.width)) hasLeapt = true;
     if (move.captured) hasTaken = true;
+    if (
+      move.side === SIDE.WHITE &&
+      move.type === PIECE.PAWN &&
+      isSquare(move.from, opening.from) &&
+      isSquare(move.to, opening.to)
+    ) {
+      kingPawnUp = true;
+    }
+    if (
+      move.side === SIDE.BLACK &&
+      move.type === PIECE.KNIGHT &&
+      move.to.rank === KNIGHT_TARGET_RANK
+    ) {
+      knightOut = true;
+    }
     // Check is asked of the side about to move, which is whoever did not just
     // move — the only king a move can newly expose.
     if (inCheck(board, frames[i + 1], frames[i + 1].turn)) hasChecked = true;
@@ -81,6 +121,8 @@ export function contextFor(board, moves) {
     hasLeapt,
     hasChecked,
     hasTaken,
+    kingPawnUp,
+    knightOut,
     isOver: last.outcome.status !== 'playing',
     outcome: last.outcome,
   };
@@ -120,23 +162,29 @@ export const ESCHER_STEPS = Object.freeze([
     title: 'A Narrower Board',
     body:
       'Chess, on a board five files wide and ten ranks deep. You are playing ' +
-      'both sides here; White moves first.\n\n' +
-      'Five files and a ten-rank run change the game more than they sound like ' +
-      'they should. There is nowhere to hide a king sideways, and the two ' +
-      'armies start far enough apart that you get several moves to look at ' +
-      'yours before anything is at stake. Use them.',
-    hint: 'Move any piece.',
-    done: (ctx) => ctx.moveCount >= 1,
+      'both sides here; White moves first, and the back rank reads rook, ' +
+      'knight, king, knight, rook.\n\n' +
+      'Play these two moves and nothing else, so that the board is set up for ' +
+      'what comes next. First, push the white pawn in front of the king one ' +
+      'square. Then bring one of Black’s knights out to the 8th rank.',
+    /* Two gates, so the hint says which one is still open. */
+    hint: (ctx) =>
+      !ctx.kingPawnUp
+        ? 'Move the white pawn directly in front of the king forward one square.'
+        : 'Now move one of Black’s knights out to the 8th rank.',
+    done: (ctx) => ctx.kingPawnUp && ctx.knightOut,
   },
   {
     id: 'jumpy',
     title: 'Everything Jumps',
     body:
-      'Every piece moves the way a knight moves in ordinary chess: it goes ' +
-      'straight to its destination and never minds what is in the way. Rooks ' +
-      'and bishops leap over your own pawns from the very first move, which is ' +
-      'why this game opens quickly.\n\n' +
-      'There is one rule, and it has no exceptions. Nothing here can be blocked.',
+      'Look at White’s bishops, on either side of that pawn you just moved. In ' +
+      'ordinary chess they would be shut in behind their own men. Here they are ' +
+      'not, because every piece moves the way a knight moves: straight to its ' +
+      'destination, never minding what is in the way.\n\n' +
+      'There is one rule and it has no exceptions. Nothing on this board can ' +
+      'be blocked — not a rook, not a bishop, not a pawn taking its opening ' +
+      'double step.',
     hint: 'Move a rook or a bishop over a piece standing in its way.',
     done: (ctx) => ctx.hasLeapt,
   },

@@ -45,8 +45,8 @@
  * through their lenses and never asks which one is the identity.
  */
 
-import { Lens, dualityBetween } from '../core/duality.js?v=4.5.0';
-import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.5.0';
+import { Lens, dualityBetween } from '../core/duality.js?v=4.6.0';
+import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.6.0';
 
 const { PAWN: P, KNIGHT: N, BISHOP: B, ROOK: R, QUEEN: Q, KING: K } = PIECE;
 
@@ -63,8 +63,8 @@ export const SIDE = Object.freeze({ WHITE: 0, BLACK: 1 });
  * and it is applied here rather than written out twice.
  */
 const NARROW_ARMY = Object.freeze([
-  [R, B, K, B, R],
-  [P, N, P, N, P],
+  [R, N, K, N, R],
+  [P, B, P, B, P],
   [null, P, null, P, null],
 ]);
 

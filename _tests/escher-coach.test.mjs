@@ -7,6 +7,7 @@ import {
   contextFor,
   stepIndex,
   isStalled,
+  openingPawnStep,
   ESCHER_STEPS,
   ESCHER_OUTRO,
   revealNote,
@@ -69,29 +70,40 @@ test('what the tutorial watches for', async (t) => {
       hasLeapt: false,
       hasChecked: false,
       hasTaken: false,
+      kingPawnUp: false,
+      knightOut: false,
       isOver: false,
       outcome: ctx.outcome,
     });
     assert.equal(stepIndex(ESCHER_STEPS, ctx), 0);
   });
 
-  await t.test('the very first move leaps, because everything jumps', () => {
-    // Both back ranks are behind two ranks of pawns, so a rook or bishop
-    // opening necessarily passes over something. This is the step-2 promise.
-    const moves = playUntil(TUTORIAL, (board, game, m) => m.from.rank === 0);
-    const ctx = contextFor(TUTORIAL, moves.slice(0, 1));
-    assert.equal(ctx.hasLeapt, true, 'a back-rank piece got out on move one');
+  await t.test('a rook can leap on move one, which is the step-2 promise', () => {
+    // Every back-rank piece stands behind a full rank of its own men, so a
+    // straight-line opening necessarily passes over something.
+    const game = initialGame(TUTORIAL);
+    const leaper = legalMoves(TUTORIAL, game).find((m) => {
+      const ctx = contextFor(TUTORIAL, [m]);
+      return ctx.hasLeapt;
+    });
+    assert.ok(leaper, 'some opening move passes over an occupied square');
+    assert.equal(leaper.from.rank, 0, 'and it comes off the back rank');
   });
 
   await t.test('the steps advance, and only ever forwards', () => {
     let seen = 0;
+    const base = {
+      kingPawnUp: false, knightOut: false,
+      hasLeapt: false, hasTaken: false, hasWrapped: false, hasChecked: false, isOver: false,
+    };
     const facts = [
-      { moveCount: 0, hasLeapt: false, hasTaken: false, hasWrapped: false, hasChecked: false, isOver: false },
-      { moveCount: 1, hasLeapt: false, hasTaken: false, hasWrapped: false, hasChecked: false, isOver: false },
-      { moveCount: 2, hasLeapt: true, hasTaken: false, hasWrapped: false, hasChecked: false, isOver: false },
-      { moveCount: 3, hasLeapt: true, hasTaken: true, hasWrapped: false, hasChecked: false, isOver: false },
-      { moveCount: 4, hasLeapt: true, hasTaken: true, hasWrapped: true, hasChecked: false, isOver: false },
-      { moveCount: 5, hasLeapt: true, hasTaken: true, hasWrapped: true, hasChecked: true, isOver: false },
+      { ...base },
+      { ...base, kingPawnUp: true }, // half of step one is not step two
+      { ...base, kingPawnUp: true, knightOut: true },
+      { ...base, kingPawnUp: true, knightOut: true, hasLeapt: true },
+      { ...base, kingPawnUp: true, knightOut: true, hasLeapt: true, hasTaken: true },
+      { ...base, kingPawnUp: true, knightOut: true, hasLeapt: true, hasTaken: true, hasWrapped: true },
+      { ...base, kingPawnUp: true, knightOut: true, hasLeapt: true, hasTaken: true, hasWrapped: true, hasChecked: true },
     ];
     for (const ctx of facts) {
       const at = stepIndex(ESCHER_STEPS, ctx);
@@ -99,6 +111,7 @@ test('what the tutorial watches for', async (t) => {
       seen = at;
     }
     assert.equal(seen, ESCHER_STEPS.length, 'the last fact finishes the tutorial');
+    assert.equal(stepIndex(ESCHER_STEPS, facts[1]), 0, 'one gate open is still step one');
   });
 
   await t.test('skipping a step moves past it without satisfying it', () => {
@@ -107,7 +120,10 @@ test('what the tutorial watches for', async (t) => {
   });
 
   await t.test('a game that ends early stalls rather than asking the impossible', () => {
-    const ctx = { moveCount: 4, hasLeapt: false, hasTaken: false, hasWrapped: false, hasChecked: true, isOver: true };
+    const ctx = {
+      kingPawnUp: true, knightOut: true,
+      hasLeapt: false, hasTaken: false, hasWrapped: false, hasChecked: true, isOver: true,
+    };
     assert.equal(isStalled(ESCHER_STEPS, ctx), true);
     // And a finished tutorial is not stalled, however the game ended.
     const done = { ...ctx, hasLeapt: true, hasTaken: true, hasWrapped: true };
@@ -119,10 +135,14 @@ test('what the tutorial watches for', async (t) => {
     for (const step of ESCHER_STEPS) {
       assert.ok(step.id && !ids.has(step.id), `${step.id} is unique`);
       ids.add(step.id);
-      for (const field of ['title', 'body', 'hint']) {
+      for (const field of ['title', 'body']) {
         assert.equal(typeof step[field], 'string');
         assert.ok(step[field].length > 0, `${step.id}.${field}`);
       }
+      // A hint may be a function of the context, for a step with two gates.
+      const hint = typeof step.hint === 'function' ? step.hint(contextFor(TUTORIAL, [])) : step.hint;
+      assert.equal(typeof hint, 'string');
+      assert.ok(hint.length > 0, `${step.id}.hint`);
       assert.equal(typeof step.done, 'function');
     }
   });

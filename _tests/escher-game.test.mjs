@@ -46,21 +46,26 @@ const steps = (moves) => moves.map((m) => `${m.step[0]},${m.step[1]}`).sort();
 
 test('the boards match the rule booklets', async (t) => {
   /*
-   * The figures in the booklets show White's board with Black's men on it. If
-   * these two rows are right, the lens, the rotation and the starting position
-   * are all right together — they are the only things that could make them
-   * wrong.
+   * These rows are White's board with Black's men on it — the figure each
+   * booklet prints. If they are right, the lens, the rotation and the starting
+   * position are all right together; they are the only things that could make
+   * them wrong.
+   *
+   * The narrow board's own back rank is no longer the booklet's. Its knights
+   * and bishops were swapped, so that the order reads rook-knight-king from
+   * either edge as ordinary chess does, and so that the knights point at the
+   * gaps in the third rank. The eight-wide board is untouched.
    */
-  await t.test('five wide: White sees Black as B,B,R,K,R', () => {
+  await t.test('five wide: White sees Black as N,N,R,K,R', () => {
     const game = initialGame(NARROW);
-    assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, NARROW.height - 1), 'BBRKR');
-    assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, NARROW.height - 2), 'NNPPP');
+    assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, NARROW.height - 1), 'NNRKR');
+    assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, NARROW.height - 2), 'BBPPP');
   });
 
-  await t.test('and White sees their own men the way the booklet writes them', () => {
+  await t.test('and White sees their own men in the standard order', () => {
     const game = initialGame(NARROW);
-    assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, 0), 'RBKBR');
-    assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, 1), 'PNPNP');
+    assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, 0), 'RNKNR');
+    assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, 1), 'PBPBP');
     assert.equal(rowSeenBy(NARROW, game, SIDE.WHITE, 2), '.P.P.');
   });
 
@@ -91,8 +96,8 @@ test('the boards match the rule booklets', async (t) => {
     assert.equal(rowSeenBy(WIDE, initialGame(WIDE), SIDE.BLACK, 0), 'RNBKQBNR');
     // The narrow army is a palindrome, so there it looks the same either way.
     for (const seat of [SIDE.WHITE, SIDE.BLACK]) {
-      assert.equal(rowSeenBy(NARROW, initialGame(NARROW), seat, 0), 'RBKBR');
-      assert.equal(rowSeenBy(NARROW, initialGame(NARROW), seat, 1), 'PNPNP');
+      assert.equal(rowSeenBy(NARROW, initialGame(NARROW), seat, 0), 'RNKNR');
+      assert.equal(rowSeenBy(NARROW, initialGame(NARROW), seat, 1), 'PBPBP');
       assert.equal(rowSeenBy(NARROW, initialGame(NARROW), seat, 2), '.P.P.');
     }
   });

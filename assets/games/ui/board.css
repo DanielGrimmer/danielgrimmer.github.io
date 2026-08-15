@@ -566,37 +566,42 @@ body.dg {
 }
 
 /*
- * One glyph shape per piece, filled two ways.
- *
- * The outline set (♔♕♖…) is drawn much lighter than the solid set by most
- * fonts, so a board using both looks like two piece sets rather than two
- * colours. The outline is what keeps a dark piece legible on a dark square.
+ * The pieces are drawn, not typed — see ui/pieces-svg.js for why. Filled with
+ * the side's colour and outlined in the other, so one set of shapes reads as
+ * two sets of men, and no font is consulted at any point.
  */
 .dg-man {
-  font-size: calc(var(--dg-square, 40px) * 0.76);
-  line-height: 1;
-  user-select: none;
+  display: block;
+  width: 88%;
+  height: 88%;
   pointer-events: none;
   position: relative;
   z-index: 1;
 }
 
+.dg-man svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.dg-man svg path {
+  fill: currentColor;
+  stroke: var(--dg-man-edge);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+
 .dg-man[data-side='0'] {
-  color: #fdfdfb;
-  text-shadow:
-    -1px -1px 0 #1b1b1b,
-    1px -1px 0 #1b1b1b,
-    -1px 1px 0 #1b1b1b,
-    1px 1px 0 #1b1b1b;
+  color: #fbfbf8;
+  --dg-man-edge: #1b1b1b;
 }
 
 .dg-man[data-side='1'] {
-  color: #16181c;
-  text-shadow:
-    -1px -1px 0 rgba(255, 255, 255, 0.45),
-    1px -1px 0 rgba(255, 255, 255, 0.45),
-    -1px 1px 0 rgba(255, 255, 255, 0.45),
-    1px 1px 0 rgba(255, 255, 255, 0.45);
+  color: #17191d;
+  --dg-man-edge: #f0f0ee;
 }
 
 .dg-promo {
@@ -617,26 +622,37 @@ body.dg {
 }
 
 .dg-promo-choice {
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.6rem;
+  height: 2.6rem;
   display: grid;
   place-items: center;
-  font-size: 1.7rem;
-  line-height: 1;
+  padding: 0.15rem;
   cursor: pointer;
   background: var(--dg-sq-light, #f0d9b5);
   border: 1px solid var(--dg-divider);
   border-radius: 6px;
-  color: #16181c;
+  color: #17191d;
+  --dg-man-edge: #f0f0ee;
+}
+
+.dg-promo-choice svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.dg-promo-choice svg path {
+  fill: currentColor;
+  stroke: var(--dg-man-edge);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
 }
 
 .dg-promo-choice[data-side='0'] {
-  color: #fdfdfb;
-  text-shadow:
-    -1px -1px 0 #1b1b1b,
-    1px -1px 0 #1b1b1b,
-    -1px 1px 0 #1b1b1b,
-    1px 1px 0 #1b1b1b;
+  color: #fbfbf8;
+  --dg-man-edge: #1b1b1b;
 }
 
 .dg-promo-choice:hover {
