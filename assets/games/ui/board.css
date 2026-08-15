@@ -594,6 +594,13 @@ body.dg {
   paint-order: stroke fill;
 }
 
+/* A hole in the piece rather than more of it — the bishop's cross. */
+.dg-man svg path[data-cut],
+.dg-promo-choice svg path[data-cut] {
+  fill: var(--dg-man-edge);
+  stroke: none;
+}
+
 .dg-man[data-side='0'] {
   color: #fbfbf8;
   --dg-man-edge: #1b1b1b;

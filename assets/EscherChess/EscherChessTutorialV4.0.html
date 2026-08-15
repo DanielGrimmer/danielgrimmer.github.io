@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.6.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.7.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -70,18 +70,19 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.6.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.7.0'; // keep in step with the ?v= tokens below
 
-      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.6.0';
+      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.7.0';
       import {
         initialGame,
         applyMove,
         replay,
         viewOf,
         fromView,
+        toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.6.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.6.0';
+      } from '../games/escher/game.js?v=4.7.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.7.0';
       import {
         contextFor,
         stepIndex,
@@ -89,7 +90,8 @@
         STALLED_HINT,
         ESCHER_STEPS,
         ESCHER_OUTRO,
-      } from '../games/escher/coach.js?v=4.6.0';
+        nextScripted,
+      } from '../games/escher/coach.js?v=4.7.0';
 
       const board = TUTORIAL;
 
@@ -161,8 +163,34 @@
         el('coach').dataset.stalled = String(stalled);
       }
 
+      /**
+       * The board, with the opening on rails.
+       *
+       * While the script has moves left, exactly one of them is offered: the
+       * rest are filtered out of the view before the renderer ever sees them,
+       * so the only piece that lights up is the one the coach is talking
+       * about. Filtering here rather than in the engine keeps `legalMoves`
+       * meaning what it says. If the script and the board ever disagree the
+       * filter would leave nothing playable, so in that case it stands aside
+       * and hands back the full set rather than wedging the page.
+       */
+      function onRails(full) {
+        const step = nextScripted(moves);
+        if (!step) return full;
+        const from = toView(board, seat, step.from);
+        const to = toView(board, seat, step.to);
+        const only = full.myMoves.filter(
+          (m) =>
+            m.from.rank === from.rank &&
+            m.from.file === from.file &&
+            m.to.rank === to.rank &&
+            m.to.file === to.file
+        );
+        return only.length ? { ...full, myMoves: only } : full;
+      }
+
       function draw() {
-        view.render(viewOf(board, game, seat, { hotSeat: true }), {
+        view.render(onRails(viewOf(board, game, seat, { hotSeat: true })), {
           onMove(move) {
             if (game.outcome.status !== STATUS.PLAYING) return;
             const played = {

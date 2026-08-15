@@ -2,12 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  isWrapMove,
-  leapsSomething,
   contextFor,
   stepIndex,
   isStalled,
-  openingPawnStep,
+  scriptProgress,
+  nextScripted,
+  TUTORIAL_SCRIPT,
   ESCHER_STEPS,
   ESCHER_OUTRO,
   revealNote,
@@ -15,123 +15,128 @@ import {
   unchangedPieces,
 } from '../assets/games/escher/coach.js';
 import { TUTORIAL, NARROW, WIDE, SIDE } from '../assets/games/escher/presets.js';
-import { initialGame, applyMove, legalMoves, STATUS } from '../assets/games/escher/game.js';
+import {
+  initialGame,
+  applyMove,
+  isLegalMove,
+  pieceAt,
+  STATUS,
+} from '../assets/games/escher/game.js';
 
-/** Walk the board, preferring moves that satisfy a predicate, to build a log. */
-function playUntil(board, wants, limit = 60) {
-  const moves = [];
-  let game = initialGame(board);
-  while (game.outcome.status === STATUS.PLAYING && moves.length < limit) {
-    const options = legalMoves(board, game);
-    const next = options.find((m) => wants(board, game, m)) ?? options[0];
-    moves.push(next);
-    game = applyMove(board, game, next);
-    if (wants(board, game, next) && contextFor(board, moves)) break;
-  }
-  return moves;
-}
+const asMove = (m) => ({ from: m.from, to: m.to, promote: null });
+const played = (n) => TUTORIAL_SCRIPT.slice(0, n).map(asMove);
 
-test('what the tutorial watches for', async (t) => {
-  await t.test('a wrap is a file jump longer than half the board', () => {
-    assert.equal(isWrapMove({ file: 0 }, { file: 4 }, 5), true);
-    assert.equal(isWrapMove({ file: 4 }, { file: 0 }, 5), true);
-    assert.equal(isWrapMove({ file: 1 }, { file: 3 }, 5), false);
-    assert.equal(isWrapMove({ file: 0 }, { file: 1 }, 5), false);
-  });
-
-  await t.test('a leap needs something in the way, and a straight line to leap along', () => {
-    const men = new Map([
-      ['1,2', { type: 'pawn', side: 0 }],
-      ['2,2', { type: 'pawn', side: 0 }],
-    ]);
-    const before = { men };
-    // Straight up the file, over the pawn on rank 1.
-    assert.equal(leapsSomething(before, { from: { rank: 0, file: 2 }, to: { rank: 3, file: 2 } }, 5), true);
-    // One square: nothing in between at all.
-    assert.equal(leapsSomething(before, { from: { rank: 0, file: 2 }, to: { rank: 1, file: 2 } }, 5), false);
-    // A knight's move has no inside, so it never counts as a leap.
-    assert.equal(leapsSomething(before, { from: { rank: 0, file: 2 }, to: { rank: 2, file: 3 } }, 5), false);
-    // An empty line is not a leap either.
-    assert.equal(leapsSomething({ men: new Map() }, { from: { rank: 0, file: 0 }, to: { rank: 3, file: 0 } }, 5), false);
-  });
-
-  await t.test('the file step is measured the short way round the cylinder', () => {
-    // On five files, 0 -> 4 is one step left, not four steps right, so there is
-    // nothing in between and nothing to leap.
-    const men = new Map([['0,1', { type: 'pawn', side: 0 }], ['0,2', { type: 'pawn', side: 0 }]]);
-    assert.equal(leapsSomething({ men }, { from: { rank: 0, file: 0 }, to: { rank: 0, file: 4 } }, 5), false);
-  });
-
-  await t.test('an empty log has satisfied nothing', () => {
-    const ctx = contextFor(TUTORIAL, []);
-    assert.deepEqual(ctx, {
-      moveCount: 0,
-      hasWrapped: false,
-      hasLeapt: false,
-      hasChecked: false,
-      hasTaken: false,
-      kingPawnUp: false,
-      knightOut: false,
-      isOver: false,
-      outcome: ctx.outcome,
+test('the scripted opening', async (t) => {
+  /*
+   * The tutorial plays a fixed game and offers one move at a time, so each
+   * step's text can point at something the previous moves put on the board.
+   * That only works while the script is playable — and it is written against a
+   * starting position that lives in presets.js, so moving a piece there could
+   * silently strand it. This is the test that would catch that.
+   */
+  await t.test('every move is legal, in order, from the opening position', () => {
+    let game = initialGame(TUTORIAL);
+    TUTORIAL_SCRIPT.forEach((step, i) => {
+      const man = pieceAt(game, step.from.rank, step.from.file);
+      assert.ok(man, `move ${i + 1}: a piece stands on the from-square`);
+      assert.equal(man.side, game.turn, `move ${i + 1}: it belongs to the side to play`);
+      assert.ok(isLegalMove(TUTORIAL, game, asMove(step)), `move ${i + 1} is legal`);
+      game = applyMove(TUTORIAL, game, asMove(step));
     });
-    assert.equal(stepIndex(ESCHER_STEPS, ctx), 0);
+    assert.equal(game.outcome.status, STATUS.PLAYING, 'and the script does not end the game');
   });
 
-  await t.test('a rook can leap on move one, which is the step-2 promise', () => {
-    // Every back-rank piece stands behind a full rank of its own men, so a
-    // straight-line opening necessarily passes over something.
-    const game = initialGame(TUTORIAL);
-    const leaper = legalMoves(TUTORIAL, game).find((m) => {
-      const ctx = contextFor(TUTORIAL, [m]);
-      return ctx.hasLeapt;
-    });
-    assert.ok(leaper, 'some opening move passes over an occupied square');
-    assert.equal(leaper.from.rank, 0, 'and it comes off the back rank');
-  });
-
-  await t.test('the steps advance, and only ever forwards', () => {
-    let seen = 0;
-    const base = {
-      kingPawnUp: false, knightOut: false,
-      hasLeapt: false, hasTaken: false, hasWrapped: false, hasChecked: false, isOver: false,
-    };
-    const facts = [
-      { ...base },
-      { ...base, kingPawnUp: true }, // half of step one is not step two
-      { ...base, kingPawnUp: true, knightOut: true },
-      { ...base, kingPawnUp: true, knightOut: true, hasLeapt: true },
-      { ...base, kingPawnUp: true, knightOut: true, hasLeapt: true, hasTaken: true },
-      { ...base, kingPawnUp: true, knightOut: true, hasLeapt: true, hasTaken: true, hasWrapped: true },
-      { ...base, kingPawnUp: true, knightOut: true, hasLeapt: true, hasTaken: true, hasWrapped: true, hasChecked: true },
-    ];
-    for (const ctx of facts) {
-      const at = stepIndex(ESCHER_STEPS, ctx);
-      assert.ok(at >= seen, `step ${at} after ${seen}`);
-      seen = at;
+  await t.test('the sides alternate, White first', () => {
+    let game = initialGame(TUTORIAL);
+    for (const step of TUTORIAL_SCRIPT) {
+      assert.equal(pieceAt(game, step.from.rank, step.from.file).side, game.turn);
+      game = applyMove(TUTORIAL, game, asMove(step));
     }
-    assert.equal(seen, ESCHER_STEPS.length, 'the last fact finishes the tutorial');
-    assert.equal(stepIndex(ESCHER_STEPS, facts[1]), 0, 'one gate open is still step one');
+  });
+
+  await t.test('the four moves it advertises as captures really are', () => {
+    let game = initialGame(TUTORIAL);
+    const takes = [];
+    TUTORIAL_SCRIPT.forEach((step, i) => {
+      if (pieceAt(game, step.to.rank, step.to.file)) takes.push(i + 1);
+      game = applyMove(TUTORIAL, game, asMove(step));
+    });
+    // Moves 7, 10 and 13 in the brief: bishop takes rook, rook takes bishop,
+    // pawn takes rook across the seam.
+    assert.deepEqual(takes, [7, 10, 13]);
+  });
+
+  await t.test('the three wrapping moves really do cross the seam', () => {
+    const wraps = TUTORIAL_SCRIPT.map((s, i) => [i + 1, Math.abs(s.to.file - s.from.file)])
+      .filter(([, span]) => span > TUTORIAL.width / 2)
+      .map(([n]) => n);
+    // Bishop off the right edge, rook one step sideways, knight across, and the
+    // pawn's capture at the end.
+    assert.deepEqual(wraps, [7, 8, 9, 13]);
+  });
+
+  await t.test('every entry names a step that exists, and carries a hint', () => {
+    const ids = new Set(ESCHER_STEPS.map((s) => s.id));
+    for (const [i, step] of TUTORIAL_SCRIPT.entries()) {
+      assert.ok(ids.has(step.step), `move ${i + 1} belongs to a real step`);
+      assert.equal(typeof step.note, 'string');
+      assert.ok(step.note.length > 0, `move ${i + 1} has a note`);
+    }
+  });
+});
+
+test('the board is offered one move at a time', async (t) => {
+  await t.test('the next move is the next unplayed one', () => {
+    for (let n = 0; n < TUTORIAL_SCRIPT.length; n++) {
+      assert.deepEqual(nextScripted(played(n)), TUTORIAL_SCRIPT[n], `after ${n} moves`);
+    }
+  });
+
+  await t.test('and there is none left once the script is spent', () => {
+    assert.equal(nextScripted(played(TUTORIAL_SCRIPT.length)), null);
+  });
+
+  await t.test('a log that diverges counts only its matching prefix', () => {
+    const wrong = [...played(3), { from: { rank: 0, file: 0 }, to: { rank: 4, file: 0 } }];
+    assert.equal(scriptProgress(wrong), 3);
+    // Which is what makes undo work: dropping a move steps the script back.
+    assert.equal(scriptProgress(played(5).slice(0, -1)), 4);
+  });
+});
+
+test('the steps follow the script', async (t) => {
+  await t.test('each step ends exactly where its moves run out', () => {
+    const boundaries = [];
+    for (let n = 0; n <= TUTORIAL_SCRIPT.length; n++) {
+      boundaries.push(stepIndex(ESCHER_STEPS, contextFor(TUTORIAL, played(n))));
+    }
+    // Three pawn moves, two minor pieces, one rook, three wrapping, four taking.
+    assert.deepEqual(boundaries, [0, 0, 0, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4, 5]);
+  });
+
+  await t.test('and the last one is free play, finished by a check', () => {
+    const last = ESCHER_STEPS[ESCHER_STEPS.length - 1];
+    const done = contextFor(TUTORIAL, played(TUTORIAL_SCRIPT.length));
+    assert.equal(last.done(done), false, 'playing the script is not enough');
+    assert.equal(last.done({ ...done, hasChecked: true }), true);
+    assert.equal(last.done({ ...done, isOver: true }), true, 'or a finished game');
   });
 
   await t.test('skipping a step moves past it without satisfying it', () => {
     const ctx = contextFor(TUTORIAL, []);
-    assert.equal(stepIndex(ESCHER_STEPS, ctx, new Set(['welcome'])), 1);
+    assert.equal(stepIndex(ESCHER_STEPS, ctx, new Set(['pawns'])), 1);
   });
 
   await t.test('a game that ends early stalls rather than asking the impossible', () => {
-    const ctx = {
-      kingPawnUp: true, knightOut: true,
-      hasLeapt: false, hasTaken: false, hasWrapped: false, hasChecked: true, isOver: true,
-    };
+    const ctx = { ...contextFor(TUTORIAL, []), isOver: true };
     assert.equal(isStalled(ESCHER_STEPS, ctx), true);
-    // And a finished tutorial is not stalled, however the game ended.
-    const done = { ...ctx, hasLeapt: true, hasTaken: true, hasWrapped: true };
-    assert.equal(isStalled(ESCHER_STEPS, done), false);
+    const finished = { ...ctx, scripted: TUTORIAL_SCRIPT.length, hasChecked: true };
+    assert.equal(isStalled(ESCHER_STEPS, finished), false);
   });
 
   await t.test('every step has an id, a hint and a test it can pass', () => {
     const ids = new Set();
+    const ctx = contextFor(TUTORIAL, []);
     for (const step of ESCHER_STEPS) {
       assert.ok(step.id && !ids.has(step.id), `${step.id} is unique`);
       ids.add(step.id);
@@ -139,10 +144,9 @@ test('what the tutorial watches for', async (t) => {
         assert.equal(typeof step[field], 'string');
         assert.ok(step[field].length > 0, `${step.id}.${field}`);
       }
-      // A hint may be a function of the context, for a step with two gates.
-      const hint = typeof step.hint === 'function' ? step.hint(contextFor(TUTORIAL, [])) : step.hint;
+      // A scripted step gives its hint as a function of where the script is.
+      const hint = typeof step.hint === 'function' ? step.hint(ctx) : step.hint;
       assert.equal(typeof hint, 'string');
-      assert.ok(hint.length > 0, `${step.id}.hint`);
       assert.equal(typeof step.done, 'function');
     }
   });

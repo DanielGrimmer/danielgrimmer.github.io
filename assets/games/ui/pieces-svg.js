@@ -30,6 +30,11 @@ const BOX = 45;
  * set in CSS from the piece's side. A shape is a list so that a piece can be
  * several strokes of the same brush — a base bar under a body, say — without
  * needing a group per piece.
+ *
+ * An entry written `{ d, cut: true }` is filled with the *edge* colour instead:
+ * a hole punched through the piece rather than more of it. The bishop's cross
+ * is the only one, and it is what tells a bishop from a pawn at a glance now
+ * that both are a head over a collar.
  */
 const SHAPES = Object.freeze({
   /*
@@ -50,6 +55,7 @@ const SHAPES = Object.freeze({
   ],
   bishop: [
     'M22.5 6.5c.9 1.6 2.2 2.7 3.5 4 2.1 2.1 3.6 4.3 3.6 7.2 0 4.2-3.1 7.2-7.1 8.6-4-1.4-7.1-4.4-7.1-8.6 0-2.9 1.5-5.1 3.6-7.2 1.3-1.3 2.6-2.4 3.5-4z',
+    { d: 'M21.6 11.4h1.8v3.1h3.1v1.8h-3.1v3.1h-1.8v-3.1h-3.1v-1.8h3.1z', cut: true },
     'M14.5 28.5h16c-.4 4-1.8 6.6-3.3 8.5H17.8c-1.5-1.9-2.9-4.5-3.3-8.5z',
     'M9.5 37.5h26a2 2 0 0 1 2 2v1.5h-30V39.5a2 2 0 0 1 2-2z',
   ],
@@ -86,9 +92,10 @@ export function pieceSvg(type) {
   svg.setAttribute('viewBox', `0 0 ${BOX} ${BOX}`);
   svg.setAttribute('aria-hidden', 'true');
   svg.setAttribute('focusable', 'false');
-  for (const d of SHAPES[type] ?? []) {
+  for (const shape of SHAPES[type] ?? []) {
     const path = document.createElementNS(NS, 'path');
-    path.setAttribute('d', d);
+    path.setAttribute('d', typeof shape === 'string' ? shape : shape.d);
+    if (typeof shape !== 'string' && shape.cut) path.dataset.cut = 'true';
     svg.append(path);
   }
   return svg;
