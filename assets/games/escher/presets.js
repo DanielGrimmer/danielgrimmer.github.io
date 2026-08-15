@@ -45,8 +45,8 @@
  * through their lenses and never asks which one is the identity.
  */
 
-import { Lens, dualityBetween } from '../core/duality.js?v=4.11.0';
-import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.11.0';
+import { Lens, dualityBetween } from '../core/duality.js?v=4.12.0';
+import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.12.0';
 
 const { PAWN: P, KNIGHT: N, BISHOP: B, ROOK: R, QUEEN: Q, KING: K } = PIECE;
 
@@ -290,8 +290,33 @@ export const TUTORIAL = boardFor({
   mirror: true,
 });
 
+/**
+ * The eight-file practice board, for the second tutorial.
+ *
+ * Also duality-off, for the same reason: it is played by one person at one
+ * screen, both sides, and a lesson that is not true of both armies is not a
+ * lesson. What it has to teach is the two pieces that are not the ones learnt
+ * on the narrow board — the knight, which is a file wider here, and the queen,
+ * who does not exist there at all.
+ */
+export const TUTORIAL_WIDE = boardFor({
+  id: 'escher-tutorial-8x8',
+  label: 'Escher Chess (8×8 tutorial)',
+  width: 8,
+  height: 8,
+  dials: ESCHER_DIALS.wide,
+  mirror: true,
+});
+
 export const BOARDS = Object.freeze({
   [NARROW.id]: NARROW,
   [WIDE.id]: WIDE,
   [TUTORIAL.id]: TUTORIAL,
+  [TUTORIAL_WIDE.id]: TUTORIAL_WIDE,
+});
+
+/** Which practice board goes with which real one. */
+export const TUTORIAL_FOR = Object.freeze({
+  [NARROW.id]: TUTORIAL,
+  [WIDE.id]: TUTORIAL_WIDE,
 });

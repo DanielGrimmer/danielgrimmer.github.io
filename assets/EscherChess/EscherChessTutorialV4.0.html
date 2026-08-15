@@ -12,21 +12,21 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.11.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.12.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
       <header class="dg-masthead">
         <div>
-          <h1>Escher Chess</h1>
-          <div class="dg-sub">
+          <h1 id="title">Escher Chess</h1>
+          <div class="dg-sub" id="sub">
             A practice board. Learn the pieces here; the real game comes after.
           </div>
         </div>
         <a href="/escher-chess/">← Escher Chess</a>
       </header>
 
-      <p class="dg-intro">
+      <p class="dg-intro" id="intro">
         Play both sides yourself, or take turns with whoever is sitting next to
         you.
       </p>
@@ -40,7 +40,13 @@
         first move; a reader who wants the rules in one place opens it, and a
         reader who would rather be told them a step at a time never has to.
       -->
-      <details class="dg-rules">
+      <!--
+        One block per board, and the page hides the one it is not on. Prose
+        stays prose here rather than being assembled out of strings in the
+        module, which is where it would have to live to be swapped any other
+        way.
+      -->
+      <details class="dg-rules" data-board="escher-5x10" hidden>
         <summary>The rules, in one place</summary>
         <p class="dg-legend">
           Ordinary chess, on a board five files wide and ten ranks deep, with
@@ -52,6 +58,25 @@
           and rightmost files are neighbours. There is no queen on this board, no
           castling and no en passant; a pawn reaching the far rank promotes.
           Checkmate wins; a player with no legal move who is not in check draws.
+        </p>
+      </details>
+
+      <details class="dg-rules" data-board="escher-8x8" hidden>
+        <summary>The rules, in one place</summary>
+        <p class="dg-legend">
+          Ordinary chess, on a board eight files wide and eight ranks deep, with
+          four changes. <strong>All movement is jumpy</strong>: every piece goes
+          straight to its destination and nothing can be blocked, including a
+          pawn's opening double step. <strong>Everything is short range</strong>:
+          a rook or a queen reaches three squares along a rank or a file — which
+          on eight files leaves one square of its own rank out of reach, the one
+          directly opposite — and two along a diagonal.
+          <strong>The knight is wider here</strong>: two and two, or one and
+          three, rather than the two and one of the narrow board.
+          <strong>The board is a cylinder</strong>, so the leftmost and rightmost
+          files are neighbours. No castling and no en passant; a pawn reaching
+          the far rank promotes, to a queen if you like. Checkmate wins; a player
+          with no legal move who is not in check draws.
         </p>
       </details>
 
@@ -79,9 +104,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.11.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.12.0'; // keep in step with the ?v= tokens below
 
-      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.11.0';
+      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.12.0';
       import {
         initialGame,
         applyMove,
@@ -90,19 +115,43 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.11.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.11.0';
+      } from '../games/escher/game.js?v=4.12.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.12.0';
       import {
         contextFor,
         stepIndex,
         isStalled,
         STALLED_HINT,
-        ESCHER_STEPS,
-        ESCHER_OUTRO,
+        TUTORIALS,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.11.0';
+      } from '../games/escher/coach.js?v=4.12.0';
 
-      const board = TUTORIAL;
+      /*
+       * Which of the two practice boards this is.
+       *
+       * Named by the *real* board it prepares you for, so that the link out of
+       * the first game and the link on the index page both read
+       * `?board=escher-8x8` and mean the obvious thing. One page rather than
+       * two: everything below is the same either way, and the only board-shaped
+       * things — the script, the steps, the closing note and the rule summary —
+       * are picked out here and in the two `.dg-rules` blocks above.
+       */
+      const wanted = new URLSearchParams(location.search).get('board') ?? NARROW.id;
+      const tutorial = TUTORIALS[wanted] ?? TUTORIALS[NARROW.id];
+      const { board, script, steps, outro } = tutorial;
+      const isWide = board.width > 5;
+
+      for (const block of document.querySelectorAll('.dg-rules')) {
+        block.hidden = block.dataset.board !== (isWide ? 'escher-8x8' : 'escher-5x10');
+      }
+      if (isWide) {
+        document.getElementById('sub').textContent =
+          'The second practice board. Two pieces are not the ones you learnt.';
+        document.getElementById('intro').textContent =
+          'You have played the narrow game and seen how it ends. This is the ' +
+          'same board game on eight files — and, again, both sides are yours ' +
+          'to move.';
+      }
 
       // The move log is the state, exactly as a networked room will hold it.
       // Undo is then just dropping the last entry and replaying.
@@ -136,7 +185,7 @@
          * opponent's do not. The ranks stay: both players agree about those.
          */
         showFiles: false,
-        label: 'The practice board',
+        label: `The practice board — ${board.width}x${board.height}`,
       });
 
       const el = (id) => document.getElementById(id);
@@ -153,17 +202,17 @@
       }
 
       function drawCoach() {
-        const ctx = contextFor(board, moves, selected);
-        const index = stepIndex(ESCHER_STEPS, ctx, skipped);
-        const step = ESCHER_STEPS[index];
-        const done = index >= ESCHER_STEPS.length;
-        const stalled = isStalled(ESCHER_STEPS, ctx, skipped);
+        const ctx = contextFor(board, script, moves, selected);
+        const index = stepIndex(steps, ctx, skipped);
+        const step = steps[index];
+        const done = index >= steps.length;
+        const stalled = isStalled(steps, ctx, skipped);
 
         el('coachProgress').textContent = done
           ? 'Done'
-          : `Step ${index + 1} of ${ESCHER_STEPS.length}`;
-        el('coachTitle').textContent = done ? ESCHER_OUTRO.title : step.title;
-        el('coachBody').textContent = done ? ESCHER_OUTRO.body : step.body;
+          : `Step ${index + 1} of ${steps.length}`;
+        el('coachTitle').textContent = done ? outro.title : step.title;
+        el('coachBody').textContent = done ? outro.body : step.body;
         // A finished board cannot satisfy the step being asked for, so say so
         // rather than leaving the hint asking for the impossible.
         // A step with more than one thing to do gives its hint as a function,
@@ -172,8 +221,8 @@
         el('coachHint').textContent = done ? '' : stalled ? STALLED_HINT : hint;
         const cta = el('playReal');
         cta.hidden = !done;
-        cta.textContent = ESCHER_OUTRO.cta;
-        cta.href = ESCHER_OUTRO.href;
+        cta.textContent = outro.cta;
+        cta.href = outro.href;
         el('coachSkip').hidden = done;
         el('coach').dataset.done = String(done);
         el('coach').dataset.stalled = String(stalled);
@@ -191,7 +240,7 @@
        * saying "no restriction": the board is the player's from then on.
        */
       function onRails() {
-        const step = nextScripted(moves);
+        const step = nextScripted(script, moves);
         if (!step) return null;
         const from = toView(board, seat, step.from);
         const to = toView(board, seat, step.to);
@@ -247,8 +296,8 @@
       });
 
       el('coachSkip').addEventListener('click', () => {
-        const ctx = contextFor(board, moves, selected);
-        const step = ESCHER_STEPS[stepIndex(ESCHER_STEPS, ctx, skipped)];
+        const ctx = contextFor(board, script, moves, selected);
+        const step = steps[stepIndex(steps, ctx, skipped)];
         if (step) skipped.add(step.id);
         drawCoach();
       });

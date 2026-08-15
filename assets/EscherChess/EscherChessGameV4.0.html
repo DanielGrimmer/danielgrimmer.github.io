@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Escher Chess (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.11.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.12.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -94,9 +94,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.11.0';
+      const BUILD = '4.12.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.11.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.12.0';
       import {
         initialGame,
         replay,
@@ -104,7 +104,7 @@
         viewOf,
         fromView,
         STATUS,
-      } from '../games/escher/game.js?v=4.11.0';
+      } from '../games/escher/game.js?v=4.12.0';
       import {
         presenceOf,
         seatOf,
@@ -112,10 +112,11 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.11.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.11.0';
-      import { createReplayView } from '../games/ui/replay.js?v=4.11.0';
-      import { revealNote } from '../games/escher/coach.js?v=4.11.0';
+        OUTCOME,
+      } from '../games/core/seats.js?v=4.12.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.12.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.12.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.12.0';
       import {
         ESCHER_ROOM_NAMES,
         roomFromLocation,
@@ -124,14 +125,14 @@
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.11.0';
+      } from '../games/net/rooms.js?v=4.12.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.11.0';
+      } from '../games/net/room.js?v=4.12.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
@@ -307,8 +308,25 @@
         el('replayTitle').textContent = note.title;
         el('replayBody').textContent = note.body;
         el('replayAfter').textContent = note.after;
+        /*
+         * Where to go next, and it is not symmetric.
+         *
+         * Off the narrow board the answer is the eight-file *tutorial*, not the
+         * eight-file game: the knight is a different piece there and there is a
+         * queen, and meeting either for the first time across the table from
+         * somebody whose pieces you cannot read is no way to learn them. So
+         * that direction is a link out, and the two of you re-pair afterwards
+         * exactly as you did the first time.
+         *
+         * Off the wide board there is nothing left to teach, so it stays what
+         * it was: one press each, and you are both in a fresh narrow game in
+         * this same room.
+         */
         const next = board === NARROW ? WIDE : NARROW;
-        el('otherBoard').textContent = `Play again on the ${next.width}×${next.height} board →`;
+        el('otherBoard').textContent =
+          board === NARROW
+            ? 'Learn the 8×8 board →'
+            : `Play again on the ${next.width}×${next.height} board →`;
         el('otherBoard').hidden = seat === null;
         el('replayStatus').textContent = describeStatus();
         el('replayStatus').dataset.tone =
@@ -474,11 +492,18 @@
         history.replaceState(null, '', `?${query}`);
         if (seat !== null)
           rememberRoom(window.localStorage, name, LAST_ESCHER_KEY, ESCHER_ROOM_NAMES);
-        // Whether the game was already over when we arrived, before any of our
-        // own moves can have changed it.
+        /*
+         * Whether the game was already over when we arrived, and is not ours.
+         *
+         * `RESUMED` is the exception that matters: the seat was already held by
+         * this uid, so the finished game in the room is one we played, and a
+         * reload after our own last move should show us our own reveal rather
+         * than telling us it belongs to a stranger.
+         */
         inheritedGame =
           joined.seat !== null &&
           !joined.abandoned &&
+          joined.outcome !== OUTCOME.RESUMED &&
           replay(board, state.moves).outcome.status !== STATUS.PLAYING;
         drawRoom();
         draw();
@@ -573,16 +598,21 @@
       });
 
       /*
-       * The same board is fixed for the whole of a game, because a move means
-       * nothing without it. A reset empties the log, though, and at that moment
-       * there is nothing left for a change of board to invalidate — so this is
-       * the one place the size can change, and it changes for both players at
-       * once because it is recorded in the room.
+       * Going up a board means going through its tutorial first, so from the
+       * narrow game this is a link rather than a reset. Coming back down there
+       * is nothing to learn, and a reset is the better thing: the board is
+       * recorded in the room, so one press each and you are both in a fresh
+       * game of the other size without either of you leaving the page. That
+       * change of size is legal at exactly this moment and no other — the log
+       * has just been emptied, so there is nothing left for it to invalidate.
        */
       el('otherBoard').addEventListener('click', async () => {
-        const next = board === NARROW ? WIDE : NARROW;
+        if (board === NARROW) {
+          location.href = '/assets/EscherChess/EscherChessTutorialV4.0.html?board=escher-8x8';
+          return;
+        }
         try {
-          await escher.reset({ name: room, board: next.id });
+          await escher.reset({ name: room, board: NARROW.id });
         } catch (err) {
           el('replayStatus').textContent = `That did not take: ${explain(err)}`;
         }

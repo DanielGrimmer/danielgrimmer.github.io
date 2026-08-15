@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { NARROW, WIDE, TUTORIAL, SIDE } from '../assets/games/escher/presets.js';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE, SIDE } from '../assets/games/escher/presets.js';
 import { dualityBetween } from '../assets/games/core/duality.js';
 import { PIECE } from '../assets/games/escher/pieces.js';
 import {
@@ -215,53 +215,70 @@ test('the condition without which there is no game', async (t) => {
   });
 });
 
-test('the tutorial is ordinary chess', async (t) => {
-  /*
-   * "Duality off" is the mirror, not the identity: two people sitting opposite
-   * each other see the files in opposite orders with a perfectly normal chess
-   * set. Getting this wrong would make the tutorial the one board in the game
-   * where the two players genuinely disagree.
-   */
-  await t.test("Black's names are White's backwards", () => {
-    assert.deepEqual(
-      [...TUTORIAL.files[SIDE.BLACK]].reverse().join(''),
-      TUTORIAL.files[SIDE.WHITE].join('')
-    );
-  });
-
-  await t.test('the two armies mirror each other file for file', () => {
-    const game = initialGame(TUTORIAL);
-    for (let rank = 0; rank < 3; rank++) {
-      assert.equal(
-        rowSeenBy(TUTORIAL, game, SIDE.WHITE, rank),
-        rowSeenBy(TUTORIAL, game, SIDE.WHITE, TUTORIAL.height - 1 - rank),
-        `rank ${rank} against its opposite number`
+/*
+ * Both practice boards, held to the same standard. "Duality off" is the mirror,
+ * not the identity: two people sitting opposite each other see the files in
+ * opposite orders with a perfectly normal chess set. Getting this wrong would
+ * make a tutorial the one board in the game where the two players genuinely
+ * disagree — and there are two of them now, so it is worth asking twice.
+ */
+for (const [name, TUT] of [['5x10', TUTORIAL], ['8x8', TUTORIAL_WIDE]]) {
+  test(`the ${name} tutorial is ordinary chess`, async (t) => {
+    await t.test("Black's names are White's backwards", () => {
+      assert.deepEqual(
+        [...TUT.files[SIDE.BLACK]].reverse().join(''),
+        TUT.files[SIDE.WHITE].join('')
       );
-    }
-  });
+    });
 
-  await t.test('and every piece moves the same way for both players', () => {
-    for (const type of Object.keys(TUTORIAL.pieces)) {
-      const shape = (seat) =>
-        [
-          ...new Set(
-            canonicalMoves(TUTORIAL, type, seat).map(
-              // Ranks negate for Black, which is what facing the other way means
-              // and is true of ordinary chess too; files must not move at all.
-              (m) => `${Math.abs(m.step[0])},${((m.step[1] % 5) + 5) % 5}`
-            )
-          ),
-        ].sort();
-      assert.deepEqual(shape(SIDE.BLACK), shape(SIDE.WHITE), type);
-    }
-  });
+    await t.test('the two armies mirror each other file for file', () => {
+      const game = initialGame(TUT);
+      for (let rank = 0; rank < 3; rank++) {
+        assert.equal(
+          rowSeenBy(TUT, game, SIDE.WHITE, rank),
+          rowSeenBy(TUT, game, SIDE.WHITE, TUT.height - 1 - rank),
+          `rank ${rank} against its opposite number`
+        );
+      }
+    });
 
-  await t.test('so nothing is dual to anything else — every piece is itself', () => {
-    for (const [name, { selfDual }] of Object.entries(TUTORIAL.duality)) {
-      assert.equal(selfDual, true, `${name} should look the same to both players`);
-    }
+    await t.test('and every piece moves the same way for both players', () => {
+      for (const type of Object.keys(TUT.pieces)) {
+        const shape = (seat) =>
+          [
+            ...new Set(
+              canonicalMoves(TUT, type, seat).map(
+                // Ranks negate for Black, which is what facing the other way
+                // means and is true of ordinary chess too; files must not move.
+                (m) => `${Math.abs(m.step[0])},${((m.step[1] % TUT.width) + TUT.width) % TUT.width}`
+              )
+            ),
+          ].sort();
+        assert.deepEqual(shape(SIDE.BLACK), shape(SIDE.WHITE), type);
+      }
+    });
+
+    await t.test('so nothing is dual to anything else — every piece is itself', () => {
+      for (const [piece, { selfDual }] of Object.entries(TUT.duality)) {
+        assert.equal(selfDual, true, `${piece} should look the same to both players`);
+      }
+    });
+
+    // The practice board must be the real one with the trick taken out, or the
+    // player learns a position they will never sit down in front of.
+    await t.test('and it is the real board in every other respect', () => {
+      const real = TUT === TUTORIAL ? NARROW : WIDE;
+      assert.equal(TUT.width, real.width);
+      assert.equal(TUT.height, real.height);
+      assert.deepEqual(Object.keys(TUT.pieces).sort(), Object.keys(real.pieces).sort());
+      assert.equal(
+        rowSeenBy(TUT, initialGame(TUT), SIDE.WHITE, 0),
+        rowSeenBy(real, initialGame(real), SIDE.WHITE, 0),
+        'the same back rank as White reads it'
+      );
+    });
   });
-});
+}
 
 test('a square is a square, whoever is looking', async (t) => {
   await t.test('every canonical square round-trips through both seats', () => {

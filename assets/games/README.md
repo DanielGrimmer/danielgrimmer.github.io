@@ -17,7 +17,14 @@ Soccer Hockey has three pages: a tutorial, which teaches the interface with the
 duality switched off; the real game, which turns it on and ends in the reveal;
 and a sandbox, which opens every dial. Escher Chess has the first two and no
 sandbox: its rules are specific enough that designing pieces would be a
-different activity rather than a closer look at this one. Landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md`,
+different activity rather than a closer look at this one.
+
+Escher Chess is played in four sittings, in order — 5×10 tutorial, 5×10 game,
+8×8 tutorial, 8×8 game — and the order is load-bearing rather than advisory:
+the second tutorial is written for somebody who has seen the first reveal, and
+teaches only the two pieces the wider board changes. Both tutorials are the one
+page, picked apart by `?board=`; `escher/coach.js` holds a `TUTORIALS` table
+keyed by the *real* board each one prepares you for. Landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md`,
 grouped under `_pages/games.md`.
 
 ## Where things live

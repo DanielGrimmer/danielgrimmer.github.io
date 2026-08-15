@@ -13,8 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.11.0';
-import { PIECE } from './pieces.js?v=4.11.0';
+import { replayFrames, inCheck } from './game.js?v=4.12.0';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.12.0';
+import { PIECE } from './pieces.js?v=4.12.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -42,8 +43,7 @@ const isSquare = (a, b) => a.rank === b.rank && a.file === b.file;
  * every move the selected piece could legally make, because seeing the shape of
  * the pattern is most of what these steps are teaching.
  */
-export const TUTORIAL_SCRIPT = Object.freeze(
-  [
+const NARROW_SCRIPT = [
     // Step 1 — pawns, and how to work the board at all.
     ['pawns', 'select', at(2, 3), null,
       'Click the white pawn in front of the king. Note that its two possible moves are then marked.'],
@@ -94,20 +94,97 @@ export const TUTORIAL_SCRIPT = Object.freeze(
       'Advance the central black pawn two spaces, jumping over the knight.'],
     ['check', 'move', at(4, 1), at(7, 1),
       'Now move white’s left-most rook three spaces forward again, jumping over your own pawn on the way. The black king is in check.'],
-  ].map(([step, kind, from, to, note]) => Object.freeze({ step, kind, from, to, note }))
-);
+];
 
-/** Just the moves, in order — what the board actually plays through. */
-export const SCRIPT_MOVES = Object.freeze(TUTORIAL_SCRIPT.filter((b) => b.kind === 'move'));
+/**
+ * The eight-file tutorial, played after the first real game is over.
+ *
+ * Much shorter, because almost nothing is new: this reader has already learnt
+ * that everything is jumpy, that everything is short-ranged, and that the board
+ * is a cylinder. Two pieces are not the ones they learnt. The knight is a file
+ * wider here, and there is a queen, who does not exist on the narrow board at
+ * all — and with her comes the one fact about eight files that catches people
+ * out, which is that three squares each way no longer covers a rank.
+ */
+const WIDE_SCRIPT = [
+  // Step 1 — where you are.
+  ['board', 'select', at(2, 5), null,
+    'Click the white pawn in front of the king. Its two moves are marked, exactly as before: every pawn here stands on its own opening rank, so every one of them still has its double step.'],
+  ['board', 'move', at(2, 5), at(4, 5),
+    'Push it two.'],
+  ['board', 'move', at(7, 5), at(5, 5),
+    'And black’s pawn down to meet it.'],
 
-/** How many of the script's moves have been played, from the start, in order. */
-export function scriptProgress(moves) {
+  // Step 2 — the queen, and the blind square she and the rooks share.
+  ['queen', 'move', at(1, 4), at(3, 2),
+    'Bring the queen out two squares diagonally, to the left. She jumps her own pawn on the way, as everything on this board does.'],
+  ['queen', 'move', at(8, 7), at(6, 5),
+    'Black brings out a knight. Do not worry about what it did just yet.'],
+  ['queen', 'select', at(3, 2), null,
+    'Now click the queen. Everything she can reach is marked: three squares along the rank or the file, two along a diagonal. Look along her own rank, though. Six squares are marked and one is not — and there is nothing standing on it. Three each way on eight files leaves exactly one square out of reach: the one directly opposite. Your rooks have the same blind spot.'],
+  ['queen', 'move', at(3, 2), at(3, 7),
+    'Note also that three of her moves along that rank are on the far side of the seam. Take her three squares to the left, off the edge and back on the other side.'],
+
+  // Step 3 — the knight, which is the piece that has actually changed.
+  ['knight', 'move', at(8, 2), at(6, 4),
+    'Black develops the other knight.'],
+  ['knight', 'move', at(1, 2), at(3, 4),
+    'Now white’s left knight. On the narrow board it moved two and one; here it moves two and two, or one and three. Take it two forward and two to the right.'],
+  ['knight', 'move', at(7, 2), at(6, 2),
+    'Black advances a pawn.'],
+  ['knight', 'move', at(3, 4), at(5, 6),
+    'Two and two again, into the middle of the board.'],
+  ['knight', 'move', at(7, 8), at(6, 8),
+    'And another black pawn.'],
+  ['knight', 'select', at(5, 6), null,
+    'Click the knight. Standing in the open it shows the whole shape at once: eight squares in a ring, four of them two-and-two and four of them one-and-three. Two are across the seam — three files is very nearly half of eight, so this piece leaves the board and comes back almost every time it moves.'],
+  ['knight', 'move', at(5, 6), at(6, 3),
+    'Take it one forward and three to the left, over the seam. That is check: from there it attacks the square the black king is standing on, and a knight cannot be blocked. The board is yours.'],
+];
+
+const WIDE_STEPS = [
+  {
+    id: 'board',
+    title: 'The Same Game, a Wider Board',
+    body:
+      'Eight files, eight ranks, and the pieces set out as in ordinary chess — ' +
+      'one rank of pawns, and a queen. Everything you have just learnt still ' +
+      'holds: every piece is jumpy, every piece is short-ranged, and the left ' +
+      'and right edges are joined. Only two pieces are not the ones you played ' +
+      'with, and this is where you meet them.',
+  },
+  {
+    id: 'queen',
+    title: 'The Queen, and Her Blind Spot',
+    body:
+      'There is no queen on the narrow board, so she is new — but there is ' +
+      'nothing to learn about her that you do not know. She is a rook and a ' +
+      'bishop at once: three squares along a rank or a file, two along a ' +
+      'diagonal, all of it jumpy, all of it wrapping.',
+  },
+  {
+    id: 'knight',
+    title: 'The Knight Is Wider Here',
+    body:
+      'The knight is the one piece whose move genuinely changes with the size ' +
+      'of the board. On five files it went two and one. On eight it goes two ' +
+      'and two, or one and three. Why it should depend on the board at all is ' +
+      'worth wondering about; the game will answer it.',
+  },
+];
+
+/** Just the moves of a script, in order — what the board plays through. */
+export const scriptMoves = (script) => script.filter((b) => b.kind === 'move');
+
+/** How many of a script's moves have been played, from the start, in order. */
+export function scriptProgress(script, moves) {
+  const wanted = scriptMoves(script);
   let i = 0;
   while (
-    i < SCRIPT_MOVES.length &&
+    i < wanted.length &&
     i < moves.length &&
-    isSquare(moves[i].from, SCRIPT_MOVES[i].from) &&
-    isSquare(moves[i].to, SCRIPT_MOVES[i].to)
+    isSquare(moves[i].from, wanted[i].from) &&
+    isSquare(moves[i].to, wanted[i].to)
   ) {
     i += 1;
   }
@@ -115,7 +192,8 @@ export function scriptProgress(moves) {
 }
 
 /** The one move the board should offer, or null once the script is spent. */
-export const nextScripted = (moves) => SCRIPT_MOVES[scriptProgress(moves)] ?? null;
+export const nextScripted = (script, moves) =>
+  scriptMoves(script)[scriptProgress(script, moves)] ?? null;
 
 /**
  * Which beat is outstanding.
@@ -124,10 +202,10 @@ export const nextScripted = (moves) => SCRIPT_MOVES[scriptProgress(moves)] ?? nu
  * selection has to reach this far. Everything before it in the list is settled
  * by the move count alone.
  */
-export function beatIndex(moves, selected = null) {
-  const done = scriptProgress(moves);
+export function beatIndex(script, moves, selected = null) {
+  const done = scriptProgress(script, moves);
   let played = 0;
-  for (const [i, beat] of TUTORIAL_SCRIPT.entries()) {
+  for (const [i, beat] of script.entries()) {
     if (beat.kind === 'move') {
       if (played === done) return i;
       played += 1;
@@ -135,15 +213,16 @@ export function beatIndex(moves, selected = null) {
       return i;
     }
   }
-  return TUTORIAL_SCRIPT.length;
+  return script.length;
 }
 
-/** The instruction to show, or '' once the script is finished. */
-export const beatNote = (ctx) => TUTORIAL_SCRIPT[beatIndex(ctx.moves, ctx.selected)]?.note ?? '';
-
-/** How far through the script a step's own beats reach. */
-const throughStep = (id) =>
-  TUTORIAL_SCRIPT.length - [...TUTORIAL_SCRIPT].reverse().findIndex((b) => b.step === id);
+/**
+ * The instruction to show, or '' once the script is finished.
+ *
+ * Read off the context rather than taking a script of its own, because it is
+ * every step's `hint` and the page calls it with nothing but the context.
+ */
+export const beatNote = (ctx) => ctx.script[beatIndex(ctx.script, ctx.moves, ctx.selected)]?.note ?? '';
 
 /**
  * Reduce a game to the facts the steps care about. Each is cumulative — once
@@ -153,7 +232,7 @@ const throughStep = (id) =>
  * holding. It is here because a `select` beat is finished by picking a piece up
  * and nothing else, and the panel has to be able to say so.
  */
-export function contextFor(board, moves, selected = null) {
+export function contextFor(board, script, moves, selected = null) {
   const frames = replayFrames(board, moves);
 
   let hasChecked = false;
@@ -165,11 +244,12 @@ export function contextFor(board, moves, selected = null) {
 
   const last = frames[frames.length - 1];
   return {
+    script,
     moves,
     selected,
     moveCount: moves.length,
-    scripted: scriptProgress(moves),
-    beat: beatIndex(moves, selected),
+    scripted: scriptProgress(script, moves),
+    beat: beatIndex(script, moves, selected),
     hasChecked,
     isOver: last.outcome.status !== 'playing',
     outcome: last.outcome,
@@ -198,10 +278,36 @@ export const STALLED_HINT =
   'That game is over — press “Start again” and pick up where you left off.';
 
 /**
- * The tutorial, in the order the board teaches it. Four steps, then the board
- * is handed back.
+ * One practice board's worth of teaching: its script, its steps, its closing
+ * note, and the board the whole thing is written against.
+ *
+ * A step is finished when the script has run past the last beat belonging to
+ * it, which is why the steps are built from the script rather than beside it —
+ * inserting a beat cannot then leave a step ending in the wrong place.
  */
-export const ESCHER_STEPS = Object.freeze([
+function makeTutorial({ board, script, steps, outro }) {
+  const beats = Object.freeze(
+    script.map(([step, kind, from, to, note]) => Object.freeze({ step, kind, from, to, note }))
+  );
+  const through = (id) => beats.length - [...beats].reverse().findIndex((b) => b.step === id);
+  return Object.freeze({
+    board,
+    script: beats,
+    moves: Object.freeze(scriptMoves(beats)),
+    steps: Object.freeze(
+      steps.map(({ id, title, body }) =>
+        Object.freeze({ id, title, body, hint: beatNote, done: (ctx) => ctx.beat >= through(id) })
+      )
+    ),
+    outro,
+  });
+}
+
+/**
+ * The narrow tutorial, in the order the board teaches it. Four steps, then the
+ * board is handed back.
+ */
+const NARROW_STEPS = [
   {
     id: 'pawns',
     title: 'Pawns, and How to Move Them',
@@ -209,8 +315,6 @@ export const ESCHER_STEPS = Object.freeze([
       'Note that this chess board is five files wide and ten ranks deep. But ' +
       'it gets weirder than that. Follow the blue instructions below as you ' +
       'read along. Let’s get some pawns in position.',
-    hint: beatNote,
-    done: (ctx) => ctx.beat >= throughStep('pawns'),
   },
   {
     id: 'jumpy',
@@ -218,8 +322,6 @@ export const ESCHER_STEPS = Object.freeze([
     body:
       'In Escher Chess, every piece is jumpy (like a knight in classic chess) ' +
       'and short-ranged. Let’s now see this with knights, bishops, and rooks.',
-    hint: beatNote,
-    done: (ctx) => ctx.beat >= throughStep('jumpy'),
   },
   {
     id: 'wrap',
@@ -228,8 +330,6 @@ export const ESCHER_STEPS = Object.freeze([
       'Here is another twist. In Escher Chess, the left-most and right-most ' +
       'files are connected (like in Pac-Man). Let’s see how this works in ' +
       'practice.',
-    hint: beatNote,
-    done: (ctx) => ctx.beat >= throughStep('wrap'),
   },
   {
     id: 'check',
@@ -238,10 +338,8 @@ export const ESCHER_STEPS = Object.freeze([
       'As usual, the goal of Escher Chess is to check and ultimately ' +
       'check-mate the opponent’s King. Let’s play a bit more until a king ' +
       'gets checked.',
-    hint: beatNote,
-    done: (ctx) => ctx.beat >= TUTORIAL_SCRIPT.length,
   },
-]);
+];
 
 /**
  * Shown once every step is finished.
@@ -267,6 +365,56 @@ export const ESCHER_OUTRO = Object.freeze({
     'screen will make sure that you are paired up into the same game room.',
   href: '/assets/EscherChess/EscherChessGameV4.0.html',
   cta: 'Play the Real Game →',
+});
+
+/**
+ * The eight-file tutorial's closing note.
+ *
+ * Says less about not talking, because this reader has already done that once
+ * and found out why — and more about the fact that the trick is the same trick,
+ * so that they go in looking rather than waiting to be surprised.
+ */
+const WIDE_OUTRO = Object.freeze({
+  title: 'Now the Wider Game',
+  body:
+    'The board is yours from here on out; play on if you like.\n\n' +
+    'That is everything that changes. The same trick is waiting on this board ' +
+    'as on the last one: one of you will play with the pieces just described, ' +
+    'and will watch the other play with something else. You know what to do ' +
+    'this time — watch what their pieces actually do, rather than what you ' +
+    'expect them to.\n\n' +
+    'Separate screens, separate devices, and nothing said to each other but ' +
+    'your moves until the game is over. There are more pieces on this board ' +
+    'and more of them are strange, so it takes longer to see. That is the ' +
+    'point of playing it second.',
+  href: '/assets/EscherChess/EscherChessGameV4.0.html?board=escher-8x8',
+  cta: 'Play the 8×8 Game →',
+});
+
+/* ------------------------------------------------------- the two tutorials ---- */
+
+export const NARROW_TUTORIAL = makeTutorial({
+  board: TUTORIAL,
+  script: NARROW_SCRIPT,
+  steps: NARROW_STEPS,
+  outro: ESCHER_OUTRO,
+});
+
+export const WIDE_TUTORIAL = makeTutorial({
+  board: TUTORIAL_WIDE,
+  script: WIDE_SCRIPT,
+  steps: WIDE_STEPS,
+  outro: WIDE_OUTRO,
+});
+
+/**
+ * Keyed by the *real* board each one prepares you for, since that is what the
+ * page is asked for in its query string — `?board=escher-8x8` means "the
+ * tutorial for the eight-file game", not "the eight-file practice board".
+ */
+export const TUTORIALS = Object.freeze({
+  [NARROW.id]: NARROW_TUTORIAL,
+  [WIDE.id]: WIDE_TUTORIAL,
 });
 
 /* --------------------------------------------------------------- the reveal ---- */
