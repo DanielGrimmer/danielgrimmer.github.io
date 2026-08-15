@@ -54,6 +54,10 @@ its odd shape, so start there.
   works if opened directly, but nothing links to it.
 
   Shares the Firebase Firestore project with Soccer Hockey (same
-  firebaseConfig.js) but its own collections, escherRooms and escherSandboxes,
-  so the notes in CHECKLIST.md section E apply to both games.
+  firebaseConfig.js) but its own collection, escherRooms, so the notes in
+  CHECKLIST.md section E apply to both games.
+
+  No sandbox here, unlike Soccer Hockey: the rules are specific enough that
+  letting a player design pieces would be a different activity rather than a
+  closer look at this one.
 -->

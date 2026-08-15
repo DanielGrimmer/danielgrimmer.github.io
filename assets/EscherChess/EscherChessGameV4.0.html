@@ -71,10 +71,13 @@
             <p class="dg-coach-body" id="replayAfter"></p>
           </div>
         </div>
+        <!--
+          Where to go once the reveal has landed: the other board, in this same
+          room. Both players press their own copy of this button and both end up
+          in the same game, because the room is where the board is recorded.
+        -->
         <div class="dg-bar dg-bar-main">
-          <a class="dg-btn dg-btn-primary" id="toSandbox" href="EscherChessSandboxV4.0.html">
-            Let's Look under the Hood →
-          </a>
+          <button class="dg-btn dg-btn-primary" id="otherBoard" type="button"></button>
         </div>
       </section>
 
@@ -89,7 +92,7 @@
     <script type="module">
       const BUILD = '4.3.0';
 
-      import { BOARDS, NARROW, SIDE } from '../games/escher/presets.js?v=4.3.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.3.0';
       import {
         initialGame,
         replay,
@@ -303,11 +306,9 @@
         el('replayTitle').textContent = note.title;
         el('replayBody').textContent = note.body;
         el('replayAfter').textContent = note.after;
-        // Carry the room across, so both players land in the same sandbox
-        // simply by pressing the button in front of them.
-        const query = new URLSearchParams({ board: board.id });
-        if (room) query.set('room', room);
-        el('toSandbox').href = `EscherChessSandboxV4.0.html?${query}`;
+        const next = board === NARROW ? WIDE : NARROW;
+        el('otherBoard').textContent = `Play again on the ${next.width}×${next.height} board →`;
+        el('otherBoard').hidden = seat === null;
         el('replayStatus').textContent = describeStatus();
         el('replayStatus').dataset.tone =
           game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
@@ -519,6 +520,22 @@
 
       el('newGame').addEventListener('click', async () => {
         await escher.reset({ name: room });
+      });
+
+      /*
+       * The same board is fixed for the whole of a game, because a move means
+       * nothing without it. A reset empties the log, though, and at that moment
+       * there is nothing left for a change of board to invalidate — so this is
+       * the one place the size can change, and it changes for both players at
+       * once because it is recorded in the room.
+       */
+      el('otherBoard').addEventListener('click', async () => {
+        const next = board === NARROW ? WIDE : NARROW;
+        try {
+          await escher.reset({ name: room, board: next.id });
+        } catch (err) {
+          el('replayStatus').textContent = `That did not take: ${explain(err)}`;
+        }
       });
 
       el('leave').addEventListener('click', async () => {

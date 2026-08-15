@@ -347,19 +347,22 @@ service cloud.firestore {
         return id in ['escher-5x10', 'escher-8x8', 'escher-tutorial'];
       }
 
-      // Only seats and moves ever change. The board in particular is fixed at
-      // creation: changing it mid-game would invalidate every move in the log,
-      // since a move means nothing without the board it was played on.
       function shapeIsIntact() {
         return after().keys().hasOnly(['version', 'name', 'game', 'board', 'seats', 'moves'])
           && after().version == before().version
           && after().name == before().name
           && after().game == before().game
-          && after().board == before().board
+          && knownBoard(after().board)
           && after().seats.size() == 2
           && seatShapeOk(0) && seatShapeOk(1)
           && after().moves.size() <= 500;
       }
+
+      // A move means nothing without the board it was played on, so the board
+      // may change at exactly one moment: when the log is emptied and there is
+      // nothing left for it to invalidate. That is what lets one room host the
+      // five-file game and then the eight-file one.
+      function boardHeld() { return after().board == before().board; }
 
       function seatVacant(i) {
         return before().seats[i].uid == null
@@ -388,6 +391,7 @@ service cloud.firestore {
 
       function isSeatOperation() {
         return after().moves.size() == before().moves.size()
+          && boardHeld()
           && seatWriteOk(0) && seatWriteOk(1);
       }
 
@@ -395,9 +399,12 @@ service cloud.firestore {
       function isMoveAppend() {
         return after().moves.size() == before().moves.size() + 1
           && before().seats[before().moves.size() % 2].uid == request.auth.uid
+          && boardHeld()
           && seatsUnchanged();
       }
 
+      // Starting again, possibly on the other board. `shapeIsIntact` has
+      // already checked that the new one is a board this game knows about.
       function isReset() {
         return after().moves.size() == 0
           && before().moves.size() > 0
@@ -428,140 +435,6 @@ service cloud.firestore {
         && known()
         && shapeIsIntact()
         && (isSeatOperation() || isMoveAppend() || isReset());
-    }
-
-    // ---------------------------------------------------------------------
-    // The Escher Chess sandbox. Its dials are the *pieces* rather than the
-    // board's shape: the widths, the multiplier and the offset are locked, so
-    // that the knight-bishop duality and the file anagrams survive whatever is
-    // turned. What is left open is how far the rook reaches, how wide the
-    // knight goes, whether there is a queen, and how tall the board is.
-    //
-    // Loose in the same way the Soccer Hockey sandbox is loose: after the
-    // reveal there is nothing left to keep from either player, so whoever holds
-    // a seat may change anything. A passer-by still cannot.
-    // ---------------------------------------------------------------------
-
-    match /escherSandboxes/{roomId} {
-
-      function signedIn() {
-        return request.auth != null && request.auth.uid is string;
-      }
-
-      function known() {
-        return roomId in [
-          'RedPuck', 'BlueGoal', 'GreenField', 'GoldRink', 'SilverNet',
-          'BronzeStripes', 'PurpleSkates', 'OrangeWhistle', 'WhitePuck', 'BlackGoal',
-          'AmberField', 'CoralRink', 'IvoryNet', 'JadeStripes', 'OnyxSkates',
-          'PearlWhistle', 'RustPuck', 'SableGoal', 'TealField', 'UmberRink'
-        ];
-      }
-
-      function before() { return resource.data; }
-      function after() { return request.resource.data; }
-      function nowMs() { return request.time.toMillis(); }
-
-      function seatShapeOk(i) {
-        return after().seats[i].keys().hasOnly(['uid', 'claimedAt', 'lastSeen', 'lastActive']);
-      }
-
-      function plausibleBeat(i) {
-        return after().seats[i].lastSeen is int
-          && after().seats[i].lastSeen <= nowMs() + 600000;
-      }
-
-      // The bounds the page enforces, restated because the page is not what
-      // protects the database.
-      function dialsOk() {
-        return after().config.keys().hasOnly(
-            ['width', 'height', 'rookRange', 'bishopRange', 'knightWiden', 'queen', 'jumpyForward'])
-          && after().config.width in [5, 8]
-          && after().config.height is int
-          && after().config.height >= 6 && after().config.height <= 14
-          && after().config.rookRange is int
-          && after().config.rookRange >= 1 && after().config.rookRange <= 8
-          && after().config.bishopRange is int
-          && after().config.bishopRange >= 1 && after().config.bishopRange <= 8
-          && after().config.knightWiden is int
-          && after().config.knightWiden >= 0 && after().config.knightWiden <= 3
-          && after().config.queen is bool
-          && after().config.jumpyForward is bool;
-      }
-
-      function configHeld() {
-        return after().config.width == before().config.width
-          && after().config.height == before().config.height
-          && after().config.rookRange == before().config.rookRange
-          && after().config.bishopRange == before().config.bishopRange
-          && after().config.knightWiden == before().config.knightWiden
-          && after().config.queen == before().config.queen
-          && after().config.jumpyForward == before().config.jumpyForward;
-      }
-
-      function shapeIsIntact() {
-        return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'config', 'moves'])
-          && after().version == before().version
-          && after().name == before().name
-          && after().game == before().game
-          && after().seats.size() == 2
-          && seatShapeOk(0) && seatShapeOk(1)
-          && dialsOk()
-          && after().moves.size() <= 500;
-      }
-
-      function seatVacant(i) {
-        return before().seats[i].uid == null
-          || before().seats[i].lastSeen == null
-          || nowMs() > before().seats[i].lastSeen + 300000;
-      }
-
-      function seatMine(i) {
-        return before().seats[i].uid == request.auth.uid;
-      }
-
-      function seatWriteOk(i) {
-        return after().seats[i].uid == before().seats[i].uid
-          || (
-            after().seats[i].uid == request.auth.uid
-            && plausibleBeat(i)
-            && (seatVacant(i) || seatMine(i))
-          )
-          || (seatMine(i) && after().seats[i].uid == null);
-      }
-
-      function holdsASeat() {
-        return seatMine(0) || seatMine(1);
-      }
-
-      function isSeatOperation() {
-        return configHeld() && after().moves.size() == before().moves.size();
-      }
-
-      function freshSeat(i) {
-        return after().seats[i].uid == null
-          || (after().seats[i].uid == request.auth.uid && plausibleBeat(i));
-      }
-
-      function isFreshSandbox() {
-        return after().keys().hasOnly(['version', 'name', 'game', 'seats', 'config', 'moves'])
-          && after().name == roomId
-          && after().version == 1
-          && after().game == 'escher-sandbox'
-          && after().moves.size() == 0
-          && after().seats.size() == 2
-          && seatShapeOk(0) && seatShapeOk(1)
-          && freshSeat(0) && freshSeat(1)
-          && dialsOk();
-      }
-
-      allow read: if signedIn() && known();
-      allow create: if signedIn() && known() && isFreshSandbox();
-      allow delete: if false;
-      allow update: if signedIn()
-        && known()
-        && shapeIsIntact()
-        && seatWriteOk(0) && seatWriteOk(1)
-        && (holdsASeat() || isSeatOperation());
     }
 
     // =====================================================================

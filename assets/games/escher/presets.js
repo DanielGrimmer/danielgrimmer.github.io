@@ -77,9 +77,9 @@ const WIDE_ARMY = Object.freeze([
  * Everything about a width that is *not* free.
  *
  * The lens and the file names are locked together: change either and the two
- * players stop naming the same square the same way. So a board is chosen by its
- * width, and only its height and its pieces are dials. This is what lets the
- * sandbox open the rules right up without ever breaking the game.
+ * players stop naming the same square the same way. Kept in one table so that
+ * the three boards below are each three lines, and so that a fourth could not
+ * be added with a lens that did not match its names.
  */
 const FAMILIES = Object.freeze({
   5: Object.freeze({
@@ -102,24 +102,15 @@ const FAMILIES = Object.freeze({
   }),
 });
 
-export const WIDTHS = Object.freeze(Object.keys(FAMILIES).map(Number));
-
 /**
- * A board from its width, its height and its dials — the sandbox's whole job.
+ * A board from its width, its height and its dials.
  *
  * `lens` and `files` come from the family and are not negotiable; `mirror`
  * substitutes the plain reflection for the duality, which is what the tutorial
  * wants and what "duality off" means on a board with two players sitting
  * opposite each other.
  */
-/** Which piece types a width's army puts on the board. */
-export function armyNeeds(width) {
-  const family = FAMILIES[width];
-  if (!family) return [];
-  return Object.freeze([...new Set(family.army.flat().filter(Boolean))]);
-}
-
-export function boardFor({ id, label, width, height, dials, mirror = false }) {
+function boardFor({ id, label, width, height, dials, mirror = false }) {
   const family = FAMILIES[width];
   if (!family) throw new RangeError(`no Escher Chess board is ${width} files wide`);
   return makeBoard({

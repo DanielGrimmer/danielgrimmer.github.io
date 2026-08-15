@@ -28,10 +28,8 @@ import {
   ROOMS_COLLECTION,
   SANDBOX_COLLECTION,
   ESCHER_COLLECTION,
-  ESCHER_SANDBOX_COLLECTION,
   emptyRoomDoc,
   emptySandboxDoc,
-  blankSeats,
   isRoomName,
 } from './rooms.js?v=4.3.0';
 import {
@@ -449,40 +447,37 @@ export function watchSandbox(name, onChange, onError) {
  * appending under a length check is shared, and so are the Security Rules'
  * shape.
  */
+/**
+ * Start again, possibly on the other board.
+ *
+ * A move means nothing without the board it was played on, so the board is
+ * fixed for the whole of a game — but a reset empties the log, and at that
+ * moment there is nothing left for a change to invalidate. Which is what lets
+ * one room host the five-file game and then the eight-file one, rather than
+ * being stuck with whichever was played in it first. The Security Rule draws
+ * the line in the same place.
+ */
+async function resetEscherRoom({ name, board = null }) {
+  const { sdk: fb, db: d } = await ensureApp();
+  await fb.runTransaction(d, async (tx) => {
+    const ref = roomRef(name, ESCHER_COLLECTION);
+    const snap = await tx.get(ref);
+    if (!snap.exists()) return;
+    const room = snap.data();
+    if (!(room.moves ?? []).length) return; // the rule refuses a no-op reset
+    tx.update(ref, board && board !== room.board ? { moves: [], board } : { moves: [] });
+  });
+}
+
 export const escher = Object.freeze({
   choose: (opts) => chooseRoom({ ...opts, collection: ESCHER_COLLECTION }),
   join: (opts) => joinRoom({ ...opts, collection: ESCHER_COLLECTION }),
   beat: (opts) => heartbeat({ ...opts, collection: ESCHER_COLLECTION }),
   leave: (opts) => leaveRoom({ ...opts, collection: ESCHER_COLLECTION }),
   append: (opts) => appendMove({ ...opts, collection: ESCHER_COLLECTION }),
-  reset: (opts) => resetRoom({ ...opts, collection: ESCHER_COLLECTION }),
+  reset: (opts) => resetEscherRoom(opts),
   watch: (name, onChange, onError) => watchRoom(name, onChange, onError, ESCHER_COLLECTION),
 });
 
-export const escherSandbox = Object.freeze({
-  choose: (opts) => chooseRoom({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
-  join: ({ name, uid, now, config }) =>
-    joinRoom({
-      name,
-      uid,
-      now,
-      collection: ESCHER_SANDBOX_COLLECTION,
-      blank: { version: 1, name, game: 'escher-sandbox', seats: blankSeats(), config, moves: [] },
-    }),
-  beat: (opts) => heartbeat({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
-  leave: (opts) => leaveRoom({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
-  setConfig: (opts) => setSandboxConfig({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
-  append: (opts) => appendSandboxMove({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
-  reset: (opts) => resetSandbox({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
-  watch: (name, onChange, onError) =>
-    watchRoom(name, onChange, onError, ESCHER_SANDBOX_COLLECTION),
-});
 
-export {
-  HEARTBEAT_MS,
-  ACTIVE_HEARTBEAT_MS,
-  ROOM_NAMES,
-  SANDBOX_COLLECTION,
-  ESCHER_COLLECTION,
-  ESCHER_SANDBOX_COLLECTION,
-};
+export { HEARTBEAT_MS, ACTIVE_HEARTBEAT_MS, ROOM_NAMES, SANDBOX_COLLECTION, ESCHER_COLLECTION };

@@ -54,7 +54,7 @@ export const ROOMS_COLLECTION = 'dualityRooms';
 export const SANDBOX_COLLECTION = 'dualitySandboxes';
 
 /**
- * Escher Chess keeps its own collections, and shares the room *names*.
+ * Escher Chess keeps its own collection, and shares the room *names*.
  *
  * Sharing the names means "meet me in GreenField" works whichever game you are
  * playing, and the twenty-document ceiling that keeps this project inside a
@@ -64,7 +64,6 @@ export const SANDBOX_COLLECTION = 'dualitySandboxes';
  * them.
  */
 export const ESCHER_COLLECTION = 'escherRooms';
-export const ESCHER_SANDBOX_COLLECTION = 'escherSandboxes';
 
 export function isRoomName(name) {
   return typeof name === 'string' && ROOM_NAMES.includes(name);
@@ -89,7 +88,6 @@ export function roomFromLocation(search = '') {
 export const LAST_ROOM_KEY = 'dg.lastRoom';
 export const LAST_SANDBOX_KEY = 'dg.lastSandbox';
 export const LAST_ESCHER_KEY = 'dg.lastEscher';
-export const LAST_ESCHER_SANDBOX_KEY = 'dg.lastEscherSandbox';
 
 export function rememberRoom(storage, name, key = LAST_ROOM_KEY) {
   if (!isRoomName(name)) return;
