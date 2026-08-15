@@ -22,22 +22,17 @@ V4.0 is live, and the console side of it is done. What is left is hardening.
 Step 5 needs the page to request a token before enforcement is switched on, or
 it will block the game. See below.
 
-### 1. Check the visitor counters — done
+### 1. Check the visitor counters — no longer applicable
 
-The published rules say a counter may only be replaced by a number exactly one
-higher than the one already there. That rule can only work if the document
-already holds a `count` number. If one does not, the write is denied and the
-old tutorial page can no longer hand out Player 1 / Player 2 to *new* visitors.
+This step was about `sharedData` and `EscherChessGames`, the collections the
+V3.1 and V1.2 games used to hand out Player 1 / Player 2 from a site-wide
+counter. Both games are archived and their rules blocks are gone, so nothing
+can reach either collection.
 
-Console → Firestore Database → **Data** tab. Look at:
-
-- every document in `sharedData` named `visitors_<RoomName>`
-- every document in `EscherChessGames` whose name contains `visitors_`
-
-Each needs a field called `count` whose type is **number**. If one is missing
-or is a string, click the document, add or fix the field, and save. Anyone who
-has played before is unaffected either way — their side is already cached in
-their browser.
+**Delete `games`, `EscherChessGames` and `sharedData` in the console**, under
+Firestore Database → Data. Deleting a collection there means selecting it and
+choosing *Delete collection*; the rules already deny every path that is not
+matched, so leaving them would be harmless, only untidy.
 
 ### 2. Enable Anonymous Authentication — done
 
@@ -109,9 +104,9 @@ There is no personal data here and no login, so:
 | Risk | Severity | Addressed by |
 | --- | --- | --- |
 | Scripted writes exhausting the daily quota and taking the games offline | **High** | App Check — see below. Rules cannot rate-limit |
-| Unbounded document creation | **High** | Denied outright for the V3.1 collections; for the V4.0 ones, `create` is allowed only under one of twenty fixed names, so the count is bounded whatever anybody sends |
+| Unbounded document creation | **High** | `create` is allowed only under one of twenty fixed names, in three collections, so the count is bounded at sixty whatever anybody sends |
 | Junk or oversized fields inflating documents toward the 1 GB cap | Medium | shape and length checks |
-| A stranger overwriting a game in progress | Medium | Fixed for V4.0: seats are held against an anonymous uid, and only the seat on move may append. Still open for the V3.1 collections, which nothing links to |
+| A stranger overwriting a game in progress | Medium | Seats are held against an anonymous uid, and only the seat on move may append |
 | Reading someone else's game | Negligible | no private data exists |
 
 **App Check is the highest-value remaining step**, and it is free. It attests
@@ -135,10 +130,10 @@ identify a project; they do not grant access. The rules are the access control.
 Firebase console → Firestore Database → Rules → paste → **Publish**. Use the
 Rules Playground on that page to spot-check before publishing:
 
-- a write to `games/game_RedPuck` carrying an unexpected field → **denied**
-- a write to `sharedData/visitors_RedPuck` setting `count` to 999 → **denied**
 - an unauthenticated read of `dualityRooms/RedPuck` → **denied**
 - a write to `dualitySandboxes/NotARoom` → **denied**
+- a write to `escherRooms/RedPuck` changing `board` while moves stay → **denied**
+- a write to any path under `games/` or `sharedData/` → **denied**
 - a normal move on an existing game document → **allowed**
 
 If a legitimate write is refused after publishing, the shape check is the first
@@ -159,13 +154,17 @@ only thing in the repository that would have wanted a service-account key.
 
 | Collection | Written by | The guarantee |
 | --- | --- | --- |
-| `dualityRooms` | The real game | One move appended at a time, by the seat whose turn it is |
-| `dualitySandboxes` | The sandbox | Anything, by either seat — but only by a seat |
-| `games`, `EscherChessGames`, `sharedData` | V3.1 and Escher Chess | Shape and field caps only; nothing identifies the writer |
+| `dualityRooms` | Soccer Hockey | One move appended at a time, by the seat whose turn it is |
+| `dualitySandboxes` | The Soccer Hockey sandbox | Anything, by either seat — but only by a seat |
+| `escherRooms` | Escher Chess | The same as `dualityRooms`, plus: the board is fixed for the whole of a game, and may change only on a reset |
 
-The two V4.0 collections both require Anonymous Authentication and both restrict
-document ids to the twenty room names, so the number of documents this project
-can hold is fixed no matter what anybody sends.
+There is no Escher Chess sandbox: its rules are specific enough that letting a
+player design pieces would be a different activity rather than a closer look at
+this one.
+
+All three require Anonymous Authentication and all three restrict document ids
+to the twenty room names, so the number of documents this project can hold is
+fixed — sixty — no matter what anybody sends.
 
 They are separate because their contracts are opposites. In the game, the whole
 point is that neither player can meddle: the rule counts the move log and checks

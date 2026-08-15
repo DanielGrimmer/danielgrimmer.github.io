@@ -49,9 +49,9 @@ notes; that is when it lands. The 5×10 board is the easier of the two despite
 its odd shape, so start there.
 
 <!--
-  V4.0 pages are in assets/EscherChess/, built on the shared modules in
-  assets/games/ — see assets/games/README.md. V1.2 is still on disk and still
-  works if opened directly, but nothing links to it.
+  Both pages are V4.0, in assets/EscherChess/, built on the shared modules in
+  assets/games/ — see assets/games/README.md. The V1.2 pages they replaced are
+  gone from assets/, kept verbatim in _archive/escher-chess-v1.2/.
 
   Shares the Firebase Firestore project with Soccer Hockey (same
   firebaseConfig.js) but its own collection, escherRooms, so the notes in

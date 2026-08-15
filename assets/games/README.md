@@ -226,9 +226,10 @@ expressed as a move log at all. They can — no castling and no en passant means
 Rules came free, because the rule counts moves rather than understanding them.
 
 **Escher Chess** is now on the same footing: `escher/` holds its pieces, boards,
-engine, copy and dials; `ui/chessboard.js` draws it; and its three pages live in
-`assets/EscherChess/…V4.0.html`. V1.2 is still on disk and still works if opened
-directly, but nothing links to it.
+engine and copy; `ui/chessboard.js` draws it; and its two pages live in
+`assets/EscherChess/…V4.0.html`. V1.2 is archived verbatim in
+`_archive/escher-chess-v1.2/`, along with a note on what it got wrong and the
+three things from it that were worth keeping.
 
 What the second game actually cost, module by module, is the answer to the
 question the split was made for:
