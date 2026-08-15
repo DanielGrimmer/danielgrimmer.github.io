@@ -127,6 +127,48 @@ test('the boards match the rule booklets', async (t) => {
   });
 });
 
+/**
+ * The opening must be a game, not a formality.
+ *
+ * Both kings start on the file their opponent's queen starts on, seven ranks
+ * away and walled in by their own men — so a queen that covers four ranks
+ * reaches rank five and mates on move one, with no defence, because White moves
+ * first. That is what the published eight-file board did, and shortening the
+ * rook (and with it the queen) from four to three is the fix. This is the test
+ * that says why the dial is where it is.
+ */
+test('neither opening position is already lost', async (t) => {
+  const endsIt = (board, game, move) =>
+    applyMove(board, game, { ...move, promote: move.promote ?? null }).outcome.status !==
+    STATUS.PLAYING;
+
+  await t.test('no first move ends the game', () => {
+    for (const board of [NARROW, WIDE]) {
+      const game = initialGame(board);
+      const killers = legalMoves(board, game).filter((m) => endsIt(board, game, m));
+      assert.deepEqual(killers, [], `${board.id}: a first move that ends it`);
+    }
+  });
+
+  await t.test('and no first move forces one either', () => {
+    for (const board of [NARROW, WIDE]) {
+      const game = initialGame(board);
+      for (const opener of legalMoves(board, game)) {
+        const after = applyMove(board, game, { ...opener, promote: opener.promote ?? null });
+        // Black has a reply that leaves White without a finishing move.
+        const escape = legalMoves(board, after).some((reply) => {
+          const then = applyMove(board, after, { ...reply, promote: reply.promote ?? null });
+          return (
+            then.outcome.status === STATUS.PLAYING &&
+            !legalMoves(board, then).some((m) => endsIt(board, then, m))
+          );
+        });
+        assert.ok(escape, `${board.id}: ${JSON.stringify(opener)} forces a mate in two`);
+      }
+    }
+  });
+});
+
 test('the condition without which there is no game', async (t) => {
   /*
    * Both players must be able to say "D3" and mean one square. Everything else
@@ -262,8 +304,9 @@ test('pieces move as their owner expects', async (t) => {
   });
 
   await t.test('and a square is never offered twice, however the table names it', () => {
-    // The rook reaches four files each way on a board five files wide, so its
-    // table names every reachable square twice over.
+    // The rook reaches three files each way on a board five files wide, so
+    // "three right" and "two left" land on one square: the table names some
+    // reachable squares twice over.
     const game = initialGame(NARROW);
     for (const [key] of game.men) {
       const [rank, file] = key.split(',').map(Number);
@@ -363,20 +406,46 @@ test('playing a game', async (t) => {
     }
   });
 
-  await t.test('a game reaches an end, and the end is one of the three', () => {
-    let game = initialGame(WIDE);
-    let guard = 0;
-    while (game.outcome.status === STATUS.PLAYING && guard++ < 400) {
-      const moves = legalMoves(WIDE, game);
-      game = applyMove(WIDE, game, moves[guard % moves.length]);
+  /*
+   * Several seeded walks rather than one, because a single game is not
+   * guaranteed to finish: there is no repetition rule and no draw by lack of
+   * material, so two bare kings on a cylinder can circle each other for ever.
+   * That is a property of the rules, not a fault in them, and it is why this
+   * asks "every game that ended, ended coherently" rather than "this game
+   * ended". An earlier version played one walk and expected a result inside
+   * four hundred moves; it only ever passed because the eight-file board had a
+   * mate in one at the time.
+   */
+  await t.test('however a game ends, the end is one of the three, and it adds up', () => {
+    // xorshift32: reproducible, and Math.random would make a failure unrepeatable.
+    const rng = (s) => () => ((s ^= s << 13), (s ^= s >>> 17), (s ^= s << 5), (s >>> 0) / 2 ** 32);
+    const board = WIDE;
+    // Four seeds known to finish, between them both ways a game can end. Should
+    // the rules move again and these stop finishing, the count below fails and
+    // says so, rather than the test quietly checking nothing.
+    const seen = new Set();
+
+    for (const seed of [2, 4, 8, 9]) {
+      const next = rng(seed * 2654435761);
+      let game = initialGame(board);
+      for (let n = 0; n < 300 && game.outcome.status === STATUS.PLAYING; n++) {
+        const moves = legalMoves(board, game);
+        game = applyMove(board, game, moves[Math.floor(next() * moves.length)]);
+      }
+      if (game.outcome.status === STATUS.PLAYING) continue;
+      seen.add(game.outcome.status);
+
+      assert.equal(legalMoves(board, game).length, 0, 'an ended game has no moves left');
+      if (game.outcome.status === STATUS.CHECKMATE) {
+        assert.ok(inCheck(board, game, game.turn), 'checkmate means the side to move is in check');
+        assert.equal(game.outcome.winner, game.turn === SIDE.WHITE ? SIDE.BLACK : SIDE.WHITE);
+      } else {
+        assert.ok(!inCheck(board, game, game.turn), 'stalemate means it is not');
+        assert.equal(game.outcome.winner, null, 'a draw has no winner');
+      }
     }
-    assert.ok([STATUS.CHECKMATE, STATUS.STALEMATE].includes(game.outcome.status), game.outcome.status);
-    if (game.outcome.status === STATUS.CHECKMATE) {
-      assert.ok(inCheck(WIDE, game, game.turn), 'checkmate means the side to move is in check');
-      assert.equal(game.outcome.winner, game.turn === SIDE.WHITE ? SIDE.BLACK : SIDE.WHITE);
-    } else {
-      assert.ok(!inCheck(WIDE, game, game.turn), 'stalemate means it is not');
-    }
+
+    assert.deepEqual([...seen].sort(), [STATUS.CHECKMATE, STATUS.STALEMATE].sort());
   });
 });
 

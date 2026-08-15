@@ -13,8 +13,8 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.9.0';
-import { PIECE } from './pieces.js?v=4.9.0';
+import { replayFrames, inCheck } from './game.js?v=4.10.0';
+import { PIECE } from './pieces.js?v=4.10.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -49,8 +49,10 @@ export const TUTORIAL_SCRIPT = Object.freeze(
       'Click the white pawn in front of the king. Note that its two possible moves are then marked.'],
     ['pawns', 'move', at(2, 3), at(3, 3),
       'Move this central white pawn one space forward (from rank 2 to rank 3).'],
-    ['pawns', 'move', at(9, 1), at(7, 1),
-      'Now advance black’s left-most pawn two spaces (from rank 9 to rank 7).'],
+    // One space, not two. A rook that reaches three needs its own pawn on rank
+    // 8 rather than rank 7 if it is to jump the thing later on.
+    ['pawns', 'move', at(9, 1), at(8, 1),
+      'Now advance black’s left-most pawn one space (from rank 9 to rank 8).'],
     ['pawns', 'move', at(2, 5), at(4, 5),
       'Lastly, move white’s right-most pawn two spaces (from rank 2 to rank 4).'],
 
@@ -61,25 +63,37 @@ export const TUTORIAL_SCRIPT = Object.freeze(
       'Now click on white’s left bishop. As we shall see, it is jumpy and short-ranged (just like everything else).'],
     ['jumpy', 'move', at(2, 2), at(4, 4),
       'Notice that it can move between the two pawns on its left (as usual) but it can also jump over the pawn to its right. Moreover, note that bishops are short-ranged in Escher Chess: it can move at most two spaces diagonally. Now have this bishop jump over the central pawn.'],
-    ['jumpy', 'move', at(10, 1), at(6, 1),
-      'Lastly, have black’s left-most rook move four spaces forward (from rank 10 to rank 6), jumping over the pawn. It too is short-ranged in Escher Chess, moving at most four spaces in any direction.'],
+    ['jumpy', 'move', at(10, 1), at(7, 1),
+      'Lastly, have black’s left-most rook move three spaces forward (from rank 10 to rank 7), jumping over the pawn. It too is short-ranged in Escher Chess, moving at most three spaces in any direction.'],
 
     // Step 3 — the board has no left or right edge.
     ['wrap', 'move', at(4, 4), at(6, 1),
-      'Click on white’s bishop on rank 4. Its usual X-shaped pattern of available moves wraps around the board’s “seam”, allowing it to take the black rook on rank 6. Do so, noting that this bishop has just moved from a dark square to a light one.'],
+      'Click on white’s bishop on rank 4. Its usual X-shaped pattern of available moves wraps around the board’s “seam”. Take it across, onto the square directly in front of the black rook, noting that this bishop has just moved from a dark square to a light one.'],
     ['wrap', 'move', at(10, 5), at(10, 1),
       'Rooks too can move across the seam. Move black’s last rook one square sideways across it (from the right-most file to the left-most file).'],
     ['wrap', 'move', at(1, 2), at(2, 5),
       'Knights too, of course, can cross the seam. Move white’s left knight one space forward and two to the left, wrapping around the board.'],
 
     // Step 4 — captures, and a check to finish on.
-    ['check', 'move', at(10, 1), at(6, 1), 'Have black’s rook take the white bishop on rank 6.'],
+    ['check', 'move', at(7, 1), at(6, 1),
+      'Have black’s forward rook take the white bishop in front of it. Only that rook can: the other one is four ranks away, which is one rank further than a rook goes.'],
     ['check', 'move', at(4, 5), at(5, 5), 'Now advance white’s right-most pawn.'],
     ['check', 'move', at(10, 3), at(10, 2), 'Move black’s king one space to the left.'],
     ['check', 'move', at(5, 5), at(6, 1), 'White’s rank 5 pawn can now take the black rook.'],
     ['check', 'move', at(10, 2), at(9, 1), 'Move black’s king diagonally onto rank 9.'],
-    ['check', 'move', at(1, 1), at(5, 1),
-      'Move white’s left-most rook four spaces forward, putting the king in check.'],
+    /*
+     * Two rook moves rather than one. Three ranks is as far as a rook reaches,
+     * and rank 1 to the king on rank 9 is eight — so the rook has to walk, and
+     * Black gets a move in between. That move is a free one: nothing is
+     * threatened yet, which is worth saying, or the reader will hunt for the
+     * threat they are supposed to be answering.
+     */
+    ['check', 'move', at(1, 1), at(4, 1),
+      'Move white’s left-most rook three spaces forward. Three is as far as a rook goes, and from rank 4 it cannot yet reach the king.'],
+    ['check', 'move', at(9, 3), at(7, 3),
+      'Nothing is threatened yet, so black has a free move: advance the central black pawn two spaces.'],
+    ['check', 'move', at(4, 1), at(7, 1),
+      'Now move that same rook three spaces forward again, jumping over your own pawn on the way. The black king is in check.'],
   ].map(([step, kind, from, to, note]) => Object.freeze({ step, kind, from, to, note }))
 );
 

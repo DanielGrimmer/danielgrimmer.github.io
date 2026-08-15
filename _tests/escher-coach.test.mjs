@@ -69,8 +69,25 @@ test('the scripted opening', async (t) => {
       if (pieceAt(game, step.to.rank, step.to.file)) takes.push(i + 1);
       game = applyMove(TUTORIAL, game, asMove(step));
     });
-    // Bishop takes rook, rook takes bishop, pawn takes rook across the seam.
-    assert.deepEqual(takes, [7, 10, 13]);
+    // Rook takes bishop, pawn takes rook across the seam. The bishop's own
+    // wrapping move used to be a capture too; with a rook that reaches three
+    // the black rook stops a rank short, and the bishop lands in front of it.
+    assert.deepEqual(takes, [10, 13]);
+  });
+
+  /*
+   * The script's shape is load-bearing for the copy: step four ends on a check
+   * that takes the rook two moves to deliver, because three ranks is as far as
+   * a rook goes and the king is eight ranks away. Lengthen the rook again and
+   * these numbers move.
+   */
+  await t.test('the check takes two rook moves, with a black move between them', () => {
+    assert.equal(SCRIPT_MOVES.length, 17);
+    const last = SCRIPT_MOVES.slice(-3);
+    assert.deepEqual(last[0].from, { rank: 0, file: 0 }, 'white rook leaves rank 1');
+    assert.deepEqual(last[0].to, { rank: 3, file: 0 }, 'three ranks, no further');
+    assert.deepEqual(last[2].from, last[0].to, 'and the same rook goes on');
+    assert.deepEqual(last[2].to, { rank: 6, file: 0 }, 'three more');
   });
 
   await t.test('the wrapping moves really do cross the seam', () => {
@@ -167,9 +184,13 @@ test('the steps follow the script', async (t) => {
     for (let n = 0; n <= SCRIPT_MOVES.length; n++) {
       boundaries.push(stepIndex(ESCHER_STEPS, contextFor(TUTORIAL, played(n), null)));
     }
-    // Three pawn moves, three showing jumpiness, three across the seam, six to
-    // the check. The first step needs its select beat too, hence the leading 0.
-    assert.deepEqual(boundaries, [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4]);
+    // Three pawn moves, three showing jumpiness, three across the seam, eight
+    // to the check. The first step needs its select beat too, hence the
+    // leading 0.
+    assert.deepEqual(
+      boundaries,
+      [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4]
+    );
   });
 
   await t.test('and there are four of them', () => {

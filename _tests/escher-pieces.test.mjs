@@ -125,7 +125,9 @@ test('the rook is the piece that looks normal', async (t) => {
    * the minor pieces swap, and the rook reassures you that nothing else is
    * wrong — until you meet a pawn capture.
    */
-  await t.test('range four is self-dual on both boards', () => {
+  await t.test('the published range is self-dual on both boards', () => {
+    assert.equal(ESCHER_DIALS.narrow.rookRange, 3);
+    assert.equal(ESCHER_DIALS.wide.rookRange, 3);
     for (const [board, pieces] of [[NARROW, NARROW_PIECES], [WIDE, WIDE_PIECES]]) {
       assert.ok(
         same(throughLens(pieces[PIECE.ROOK], board), pieces[PIECE.ROOK], board.width),
@@ -134,19 +136,27 @@ test('the rook is the piece that looks normal', async (t) => {
     }
   });
 
-  await t.test('and reaches every file on both boards', () => {
-    for (const board of [NARROW, WIDE]) {
-      const files = new Set(
-        rookMoves({ range: 4 })
+  /*
+   * The cost of shortening the rook, stated so it cannot be forgotten: on eight
+   * files it no longer covers its own rank. The square it misses is the one
+   * directly opposite, four files away, which is its own fixed point under the
+   * duality — the reason the piece stays self-dual without it.
+   */
+  await t.test('it reaches every file on five, and all but the far one on eight', () => {
+    const sideways = (board) =>
+      new Set(
+        rookMoves({ range: ESCHER_DIALS.wide.rookRange })
           .filter(({ step }) => step[0] === 0)
           .map(({ step }) => ((step[1] % board.width) + board.width) % board.width)
       );
-      assert.equal(files.size, board.width - 1, `every file but its own on ${board.width}`);
-    }
+    assert.equal(sideways(NARROW).size, NARROW.width - 1, 'every file but its own on five');
+    assert.equal(sideways(WIDE).size, WIDE.width - 2, 'all but one on eight');
+    assert.equal(sideways(WIDE).has(WIDE.width / 2), false, 'and the one missed is the far one');
   });
 
-  await t.test('the shorter ranges the booklet proposed are not self-dual on eight', () => {
-    // This is the defect the V3 rules had: {+-1, +-2} maps to {+-2, +-3}.
+  await t.test('three is the floor: anything shorter is not self-dual on eight', () => {
+    // The defect the V3 rules would have had at two: {+-1, +-2} maps to
+    // {+-2, +-3}, because the orbit {1, 5} is not complete until three.
     for (const range of [1, 2]) {
       const rook = rookMoves({ range });
       assert.ok(!same(throughLens(rook, WIDE), rook, WIDE.width), `range ${range} on eight`);

@@ -21,9 +21,9 @@
  * as intended rather than a missing feature.
  */
 
-import { mod } from '../core/duality.js?v=4.9.0';
-import { PIECE } from './pieces.js?v=4.9.0';
-import { SIDE } from './presets.js?v=4.9.0';
+import { mod } from '../core/duality.js?v=4.10.0';
+import { PIECE } from './pieces.js?v=4.10.0';
+import { SIDE } from './presets.js?v=4.10.0';
 
 export const STATUS = Object.freeze({
   PLAYING: 'playing',
@@ -108,7 +108,7 @@ export function pseudoMoves(board, game, { rank, file }, { capturesOnly = false 
   if (!man) return [];
   const out = [];
   /*
-   * Two entries in a move table can name one square. The rook reaches four
+   * Two entries in a move table can name one square. The rook reaches three
    * files each way, but a board five files wide only has four other files, so
    * "three to the right" and "two to the left" are the same move. Without this
    * the square would be offered twice, and a promotion four times over.

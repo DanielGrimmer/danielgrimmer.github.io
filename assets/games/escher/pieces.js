@@ -24,7 +24,7 @@
  * violate it silently.
  */
 
-import { mod, signedRep } from '../core/duality.js?v=4.9.0';
+import { mod, signedRep } from '../core/duality.js?v=4.10.0';
 
 export const PIECE = Object.freeze({
   PAWN: 'pawn',
@@ -77,8 +77,13 @@ function spread(pairs) {
  * The sideways range is the one dial the duality actually constrains: it has to
  * be a union of orbits of multiplication by the duality number, or the rook is
  * not the same piece to both players. On five files that means 2 or more (and 2
- * is already every file); on eight it means 3 or more. Four is the published
- * choice — every file reachable on both boards.
+ * is already every file); on eight it means 3 or more, since the orbit
+ * {1, 5} is only complete once the range reaches three.
+ *
+ * Three is the published choice, and the forward range is what settles it: see
+ * ESCHER_DIALS at the foot of this file. On eight files it leaves a rook unable
+ * to reach the one square directly opposite it along its rank, which is a
+ * curiosity rather than a cost.
  *
  * The forward range is unconstrained, since ranks are never relabelled. It is
  * set equal to the sideways range so that one sentence describes the piece.
@@ -259,14 +264,32 @@ export function describeDuality(report) {
 /* ------------------------------------------------------- what is published ---- */
 
 /**
- * The settled dials. The rook is four in both games and jumpy in every
- * direction, so "all movement is jumpy, and long pieces reach four" covers the
+ * The settled dials. The rook is three in both games and jumpy in every
+ * direction, so "all movement is jumpy, and long pieces reach three" covers the
  * whole rule set — which matters more here than in most games, because every
  * clause you add to your own rules is a clause your opponent has to infer.
+ *
+ * ## Why three and not the published four
+ *
+ * Four is what the V3 booklet says, and on the eight-file board it is a mate in
+ * one. Both kings start on the file their opponent's *queen* starts on, seven
+ * ranks away and walled in by their own men on every side — so a queen that can
+ * cover four ranks reaches rank five, checks a king with nowhere to go and
+ * nothing able to answer, and the game is over before it starts. There is no
+ * defence, because White moves first: U1 to U4 and U1 to U5 both mate.
+ *
+ * Shortening the rook fixes it at the root. Four ranks is the distance that
+ * matters, and taking a rank off the rook is the smallest change that removes
+ * it; moving the king would break the figures in the booklets, and the armies
+ * are what the two file orders were chosen to make agree.
+ *
+ * The sideways range is not free — see `rookMoves` — and three is exactly the
+ * floor on eight files, so this is as short as the piece can be made without
+ * ceasing to be the same piece to both players.
  */
 export const ESCHER_DIALS = Object.freeze({
-  narrow: Object.freeze({ rookRange: 4, bishopRange: 2, knightWiden: 0, queen: false }),
-  wide: Object.freeze({ rookRange: 4, bishopRange: 2, knightWiden: 1, queen: true }),
+  narrow: Object.freeze({ rookRange: 3, bishopRange: 2, knightWiden: 0, queen: false }),
+  wide: Object.freeze({ rookRange: 3, bishopRange: 2, knightWiden: 1, queen: true }),
 });
 
 export const NARROW_PIECES = makePieces(ESCHER_DIALS.narrow);
