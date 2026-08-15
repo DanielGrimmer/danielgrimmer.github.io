@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.4.0';
-import { replayFrames } from '../core/game.js?v=4.4.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.4.1';
+import { replayFrames } from '../core/game.js?v=4.4.1';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -207,7 +207,7 @@ export function replayNote(config, seat) {
       `made, in the order it was made. ${divergence} What seems like a short ` +
       'move to the Soccer player, seems like a long move to the Hockey player ' +
       'and vice versa. In general, you will disagree about what column the ' +
-      "ball/puck stands in, as well as the shape of the trails of ✕'s.\n\n" +
+      "ball/puck stands in, as well as the shape of the trails of ✕'s. " +
       'Nonetheless, you both agree where the two goals are and who ultimately ' +
       'won the game. Weird!',
     /**

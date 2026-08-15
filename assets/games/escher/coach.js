@@ -13,10 +13,10 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { mod, signedRep } from '../core/duality.js?v=4.4.0';
-import { replayFrames, inCheck, squareKey } from './game.js?v=4.4.0';
-import { SIDE } from './presets.js?v=4.4.0';
-import { PIECE } from './pieces.js?v=4.4.0';
+import { mod, signedRep } from '../core/duality.js?v=4.4.1';
+import { replayFrames, inCheck, squareKey } from './game.js?v=4.4.1';
+import { SIDE } from './presets.js?v=4.4.1';
+import { PIECE } from './pieces.js?v=4.4.1';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
