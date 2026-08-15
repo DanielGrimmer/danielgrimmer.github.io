@@ -40,6 +40,8 @@ core/game.js      Game state, move log, replay, per-seat views, reframing
 core/seats.js     Seat claiming, heartbeats, who may move
 core/presets.js   The two published configurations
 core/sandbox.js   Editable configurations: validation, the move palette
+
+escher/pieces.js  Escher Chess: the piece move sets, and what each becomes
 ```
 
 Pure functions over plain data — no DOM, no network, no framework — so the same
@@ -105,7 +107,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 218 tests
+node --test _tests/*.test.mjs                      # 240 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
@@ -216,7 +218,32 @@ The obvious question to settle first is whether chess pieces can be expressed as
 a move log at all. If they can, the whole net/ layer and the Security Rules come
 free, because the rule counts moves rather than understanding them.
 
-**Escher Chess** is otherwise untouched, and still V1.2 on the old bundle.
+**Escher Chess** is under way. Phase 0 (the lens offset) and Phase 1 (the
+pieces) are in; the game state, the board renderer and the pages are not, so the
+live pages are still V1.2 on the old bundle.
+
+Its two relabellings are `3c + 2 (mod 5)` and `3c - 1 (mod 8)`, and the design
+turns on which pieces survive them:
+
+| | five wide | eight wide |
+| --- | --- | --- |
+| Knight | becomes a bishop | becomes a bishop, once widened a file |
+| Bishop | becomes a knight | becomes a knight |
+| Rook (range 4) | unchanged | unchanged |
+| Queen | — | becomes a rook-and-knight compound |
+| Pawn, King | nothing recognisable | nothing recognisable |
+
+That table is what sets the order in which a player works the game out, and it
+is worth protecting. Pawns *advance* self-dually, so nothing looks wrong for the
+first few moves. The minor pieces swap as soon as they develop. The rook looks
+normal, which is what makes the swap read as a curiosity rather than as chaos —
+weaken the rook below range 3 on the eight-wide board and it stops being
+self-dual, and the reassurance goes with it. Pawn *captures* are the first real
+shock, and explain the enemy's strange-looking pawn structure after the fact.
+The king is last, and is the endgame's puzzle.
+
+`dualityReport` computes that table from the dials, so changing a range says
+immediately what it costs.
 
 Still open on the Firebase side: App Check, and restricting the web API key to
 the site's own referrer. Both are in [`_firebase/`](../../_firebase/README.md).
