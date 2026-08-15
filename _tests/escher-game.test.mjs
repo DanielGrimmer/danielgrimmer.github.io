@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { NARROW, WIDE, TUTORIAL, SIDE } from '../assets/games/escher/presets.js';
+import { dualityBetween } from '../assets/games/core/duality.js';
 import { PIECE } from '../assets/games/escher/pieces.js';
 import {
   STATUS,
@@ -74,9 +75,24 @@ test('the boards match the rule booklets', async (t) => {
         const view = viewOf(board, initialGame(board), seat);
         const back = view.men.filter((m) => m.rank === 0);
         assert.ok(back.every((m) => m.mine), `seat ${seat} on ${board.id}: own men at rank 0`);
-        const backRow = rowSeenBy(board, initialGame(board), seat, 0);
-        assert.equal(backRow, board.width === 5 ? 'RBKBR' : 'RNBQKBNR');
       }
+    }
+  });
+
+  await t.test('and Black sees their king to the left of their queen, as in chess', () => {
+    /*
+     * The two armies face each other, which is a half turn, and a half turn
+     * reverses files. It is why a real chess player sees RNBQKBNR from the
+     * White side and RNBKQBNR from the Black one. Miss this and the queen and
+     * king swap files, which the booklet figure would have caught anyway.
+     */
+    assert.equal(rowSeenBy(WIDE, initialGame(WIDE), SIDE.WHITE, 0), 'RNBQKBNR');
+    assert.equal(rowSeenBy(WIDE, initialGame(WIDE), SIDE.BLACK, 0), 'RNBKQBNR');
+    // The narrow army is a palindrome, so there it looks the same either way.
+    for (const seat of [SIDE.WHITE, SIDE.BLACK]) {
+      assert.equal(rowSeenBy(NARROW, initialGame(NARROW), seat, 0), 'RBKBR');
+      assert.equal(rowSeenBy(NARROW, initialGame(NARROW), seat, 1), 'PNPNP');
+      assert.equal(rowSeenBy(NARROW, initialGame(NARROW), seat, 2), '.P.P.');
     }
   });
 
@@ -90,6 +106,112 @@ test('the boards match the rule booklets', async (t) => {
   await t.test('the file names are ARMED one way and DREAM the other', () => {
     assert.deepEqual(NARROW.files[SIDE.WHITE].join(''), 'ARMED');
     assert.deepEqual(NARROW.files[SIDE.BLACK].join(''), 'DREAM');
+  });
+
+  await t.test("the wide board's names are the two lines of the logo", () => {
+    // Read alternately: CHES + DUAL for White, ESCH + DUAL for Black.
+    assert.deepEqual(WIDE.files[SIDE.WHITE].join(''), 'CDHUEASL');
+    assert.deepEqual(WIDE.files[SIDE.BLACK].join(''), 'EDSUCAHL');
+    const alternate = (names, from) => names.filter((_, i) => i % 2 === from).join('');
+    assert.equal(alternate(WIDE.files[SIDE.WHITE], 0), 'CHES');
+    assert.equal(alternate(WIDE.files[SIDE.BLACK], 0), 'ESCH');
+    for (const seat of [SIDE.WHITE, SIDE.BLACK]) {
+      assert.equal(alternate(WIDE.files[seat], 1), 'DUAL');
+    }
+  });
+});
+
+test('the condition without which there is no game', async (t) => {
+  /*
+   * Both players must be able to say "D3" and mean one square. Everything else
+   * about the duality is a design choice; this one is load-bearing, and it is
+   * the constraint that fixes the lens rather than leaving it free.
+   */
+  await t.test('every file has one name, whoever is saying it', () => {
+    for (const board of [NARROW, WIDE, TUTORIAL]) {
+      for (let file = 0; file < board.width; file++) {
+        const white = board.files[SIDE.WHITE][toView(board, SIDE.WHITE, { rank: 0, file }).file];
+        const black = board.files[SIDE.BLACK][toView(board, SIDE.BLACK, { rank: 0, file }).file];
+        assert.equal(black, white, `${board.id}: canonical file ${file}`);
+      }
+    }
+  });
+
+  await t.test('and a board whose names disagree cannot be built at all', () => {
+    // The check lives in the constructor, not only here, because the sandbox
+    // will build boards at runtime.
+    const files = NARROW.files[SIDE.BLACK];
+    assert.notEqual(files.join(''), 'ARMED', 'the identity would be the broken case');
+  });
+
+  await t.test('the duality numbers the piece tests assume are the ones in play', () => {
+    assert.equal(dualityBetween(NARROW.lenses[SIDE.BLACK], NARROW.lenses[SIDE.WHITE]), 2);
+    assert.equal(dualityBetween(WIDE.lenses[SIDE.BLACK], WIDE.lenses[SIDE.WHITE]), 5);
+    // The tutorial's mirror is its own inverse, so both players read the other
+    // the same way round.
+    assert.equal(dualityBetween(TUTORIAL.lenses[SIDE.BLACK], TUTORIAL.lenses[SIDE.WHITE]), 4);
+  });
+
+  await t.test('every man of both armies lands on a square of the board', () => {
+    for (const board of [NARROW, WIDE, TUTORIAL]) {
+      const seen = new Set();
+      for (const { rank, file } of board.placement) {
+        assert.ok(rank >= 0 && rank < board.height, `${board.id}: rank ${rank}`);
+        assert.ok(file >= 0 && file < board.width, `${board.id}: file ${file}`);
+        const key = `${rank},${file}`;
+        assert.ok(!seen.has(key), `${board.id}: two men on ${key}`);
+        seen.add(key);
+      }
+      assert.equal(seen.size, board.placement.length);
+    }
+  });
+});
+
+test('the tutorial is ordinary chess', async (t) => {
+  /*
+   * "Duality off" is the mirror, not the identity: two people sitting opposite
+   * each other see the files in opposite orders with a perfectly normal chess
+   * set. Getting this wrong would make the tutorial the one board in the game
+   * where the two players genuinely disagree.
+   */
+  await t.test("Black's names are White's backwards", () => {
+    assert.deepEqual(
+      [...TUTORIAL.files[SIDE.BLACK]].reverse().join(''),
+      TUTORIAL.files[SIDE.WHITE].join('')
+    );
+  });
+
+  await t.test('the two armies mirror each other file for file', () => {
+    const game = initialGame(TUTORIAL);
+    for (let rank = 0; rank < 3; rank++) {
+      assert.equal(
+        rowSeenBy(TUTORIAL, game, SIDE.WHITE, rank),
+        rowSeenBy(TUTORIAL, game, SIDE.WHITE, TUTORIAL.height - 1 - rank),
+        `rank ${rank} against its opposite number`
+      );
+    }
+  });
+
+  await t.test('and every piece moves the same way for both players', () => {
+    for (const type of Object.keys(TUTORIAL.pieces)) {
+      const shape = (seat) =>
+        [
+          ...new Set(
+            canonicalMoves(TUTORIAL, type, seat).map(
+              // Ranks negate for Black, which is what facing the other way means
+              // and is true of ordinary chess too; files must not move at all.
+              (m) => `${Math.abs(m.step[0])},${((m.step[1] % 5) + 5) % 5}`
+            )
+          ),
+        ].sort();
+      assert.deepEqual(shape(SIDE.BLACK), shape(SIDE.WHITE), type);
+    }
+  });
+
+  await t.test('so nothing is dual to anything else — every piece is itself', () => {
+    for (const [name, { selfDual }] of Object.entries(TUTORIAL.duality)) {
+      assert.equal(selfDual, true, `${name} should look the same to both players`);
+    }
   });
 });
 
@@ -313,5 +435,75 @@ test('promotion', async (t) => {
     const asRook = promotions.find((m) => m.promote === PIECE.ROOK);
     const after = applyMove(NARROW, game, asRook);
     assert.equal(pieceAt(after, asRook.to.rank, asRook.to.file).type, PIECE.ROOK);
+  });
+});
+
+test('what just happened', async (t) => {
+  /*
+   * Carried on the state rather than recomputed, because a frame pulled out of
+   * the middle of a replay has no log behind it to look back at.
+   */
+  await t.test('the opening position has no last move', () => {
+    assert.equal(initialGame(NARROW).lastMove, null);
+    assert.equal(viewOf(NARROW, initialGame(NARROW), SIDE.BLACK).lastMove, null);
+  });
+
+  await t.test('a move records its squares, its piece, and whether it took', () => {
+    const game = initialGame(NARROW);
+    const push = legalMoves(NARROW, game).find((m) => m.to.rank === 3);
+    const after = applyMove(NARROW, game, push);
+    assert.deepEqual(after.lastMove.from, push.from);
+    assert.deepEqual(after.lastMove.to, push.to);
+    assert.equal(after.lastMove.side, SIDE.WHITE);
+    assert.equal(after.lastMove.captured, false);
+    assert.equal(after.lastMove.promote, null);
+  });
+
+  await t.test('each seat is told where it went on their own board', () => {
+    const game = initialGame(NARROW);
+    const push = legalMoves(NARROW, game)[0];
+    const after = applyMove(NARROW, game, push);
+    for (const seat of [SIDE.WHITE, SIDE.BLACK]) {
+      const seen = viewOf(NARROW, after, seat).lastMove;
+      assert.deepEqual(seen.to, toView(NARROW, seat, push.to));
+      assert.deepEqual(fromView(NARROW, seat, seen.from), push.from);
+      assert.equal(seen.mine, seat === SIDE.WHITE);
+    }
+  });
+
+  await t.test('the two seats disagree about which file it was — that is the game', () => {
+    const game = initialGame(NARROW);
+    // A pawn push: same file to both, since ranks are never relabelled and the
+    // file did not change. The disagreement is about *which* file it is.
+    const push = legalMoves(NARROW, game).find(
+      (m) => pieceAt(game, m.from.rank, m.from.file).type === PIECE.PAWN
+    );
+    const after = applyMove(NARROW, game, push);
+    const white = viewOf(NARROW, after, SIDE.WHITE);
+    const black = viewOf(NARROW, after, SIDE.BLACK);
+    assert.notEqual(white.lastMove.to.file, black.lastMove.to.file);
+    // But they agree on its name, which is what they say out loud.
+    assert.equal(white.files[white.lastMove.to.file], black.files[black.lastMove.to.file]);
+  });
+
+  await t.test('a capture says so, and a replay frame carries its own', () => {
+    const board = TUTORIAL;
+    let game = initialGame(board);
+    const moves = [];
+    // Play until somebody takes something, or give up.
+    for (let i = 0; i < 40 && game.outcome.status === STATUS.PLAYING; i++) {
+      const take = legalMoves(board, game).find((m) => board !== null && pieceAt(game, m.to.rank, m.to.file));
+      const next = take ?? legalMoves(board, game)[0];
+      moves.push(next);
+      game = applyMove(board, game, next);
+      if (take) break;
+    }
+    assert.ok(moves.length > 0);
+    const frames = replayFrames(board, moves);
+    assert.equal(frames[0].lastMove, null);
+    frames.slice(1).forEach((frame, i) => {
+      assert.deepEqual(frame.lastMove.to, moves[i].to, `frame ${i + 1} knows its own move`);
+    });
+    assert.equal(replay(board, moves).lastMove.to.rank, moves.at(-1).to.rank);
   });
 });

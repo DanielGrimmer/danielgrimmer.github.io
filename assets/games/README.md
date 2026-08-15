@@ -54,7 +54,8 @@ Around that sit the two impure layers, each with one job:
 ```
 net/rooms.js      The fixed room pool; share links
 net/room.js       Firestore: sign in, claim a seat, append a move, watch
-ui/board.js       The isometric board renderer
+ui/board.js       The isometric board renderer (Soccer Hockey)
+ui/chessboard.js  The flat board renderer (Escher Chess)
 ui/board.css      Page furniture, the palettes, the move-set grid
 ui/coach.js       Tutorial steps and the reveal's prose — all copy lives here
 ui/replay.js      The reveal: both seats' boards, stepping through one move log
@@ -109,7 +110,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 271 tests
+node --test _tests/*.test.mjs                      # 290 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
@@ -220,27 +221,54 @@ The obvious question to settle first is whether chess pieces can be expressed as
 a move log at all. If they can, the whole net/ layer and the Security Rules come
 free, because the rule counts moves rather than understanding them.
 
-**Escher Chess** is under way. Phase 0 (the lens offset) and Phase 1 (the
-pieces) are in; the game state, the board renderer and the pages are not, so the
-live pages are still V1.2 on the old bundle.
+**Escher Chess** is under way. Phase 0 (the lens offset), Phase 1 (the pieces),
+Phase 2 (the boards and the engine) and Phase 3 (the flat renderer) are in. The
+pages are not, so the live links are still V1.2 on the old bundle.
 
 ### What the two players share
 
-The *names*. White says "the pawn on D3 to D5" and Black finds the pawn on their
-own D file — that is the whole communication channel. What they do not share is
-which file is next to which: White's board reads ARMED left to right and Black's
-reads DREAM, so "one file across" is a step in a different order for each of
-them. Ranks are shared outright; Black simply draws them from the other end.
+The *names*, and nothing else. There is no shared board: each player has their
+own, and all that passes between them is a sentence. White says "the pawn on D3
+to D5" and Black finds the pawn on their own D file. What they do not share is
+which file is next to which — White's five files read ARMED left to right and
+Black's read DREAM — so "one file across" is a step to a different name for each
+of them, and that is the whole duality. Ranks are shared outright; Black simply
+draws them from the other end.
 
-Matching the names gives Black's file position as White's `2b + 4 (mod 5)`.
-Black also sits opposite, so their board is turned around, and composing the
-mirror with the relabelling gives `3b + 2` — which is the map the rule
-booklets' figures show. `presets.js` keeps the two apart: `lens` carries the
-composite, because that is what places a piece, and `flipsRanks` carries the
-half of the rotation a lens cannot express.
+So a square is a name and a number, and each board is one arrangement of those
+squares. Black's is White's turned around and relabelled. `presets.js` keeps the
+two halves apart: `lens` carries the composite, because that is what places a
+piece, and `flipsRanks` carries the half of the rotation a lens cannot express.
 
-Its two composite relabellings are `3b + 2 (mod 5)` and `3b - 1 (mod 8)`, and
-the design turns on which pieces survive them:
+**The lens is not free.** Two facts pin it down, and both are tested:
+
+1. *The names must agree.* `files[BLACK][lens.toView(f)] === files[WHITE][f]`
+   for every file, or the two players are naming different squares and there is
+   no game at all. `makeBoard` refuses to build a board that fails this, because
+   the sandbox will build boards at runtime.
+2. *The booklets' figures.* The V3 rules show each player their opponent's
+   opening position drawn on their own board — `BBRKR` on the narrow board and
+   `QNNKRBBR` on the wide one, as White sees them.
+
+Getting those two to agree is what the file names are chosen for, and the
+anagrams are the record of which permutation this is: ARMED / DREAM on the
+narrow board, and on the wide one the two lines of the logo, `CDHUEASL` and
+`EDSUCAHL`, which read alternately as CHES + DUAL and ESCH + DUAL.
+
+One trap, which cost a debugging session: **the armies face each other, and a
+half turn reverses files as well as ranks**. It is why a chess player sees
+`RNBQKBNR` from the White side and `RNBKQBNR` from the Black one, and why the
+army is written down once, as White reads it, and turned around for Black. Miss
+it and the queen and king swap files — which the booklet figure catches.
+
+Black's lens is `3f + 3 (mod 5)` and `5f + 4 (mod 8)`, so White reads Black's
+file steps as `x2` and `x5` respectively. Since every published move set is
+closed under negating its file step, `x2` and `x-2` land on the same squares —
+which is why the boards could carry the wrong one of a ± pair for a while
+without any piece test noticing. A hand-edited set from the sandbox need not be
+symmetric, and there the sign will matter.
+
+The design turns on which pieces survive the relabelling:
 
 | | five wide | eight wide |
 | --- | --- | --- |
@@ -269,7 +297,17 @@ You are never told how your opponent's pieces move, so `viewOf` hands a seat its
 they have to be, to know whether a king is in check — but they never reach the
 view, so they are not sitting in the page for anybody who opens a console.
 Check is a bare flag rather than a diagram: you are told you are in check and
-left to work out which piece is doing it.
+left to work out which piece is doing it. `ui/chessboard.js` keeps the same
+bargain — it outlines your own king and never the piece attacking it.
+
+`ui/chessboard.js` colours its squares by where they are *drawn* rather than by
+which square they are, so each player sees a proper chequerboard and their own
+bishop keeps to one colour. The price is that a square is light on your board
+and dark on your opponent's, which is a good thing to see side by side in the
+reveal. Its one subtlety is sizing: the board is `max-content` wide, so a
+`1fr` column would stretch around it and then report that stretched width as
+the space available. `fit()` collapses the board before measuring, and
+`.dg-chess-pair` uses `minmax(0, 1fr)`.
 
 Still open on the Firebase side: App Check, and restricting the web API key to
 the site's own referrer. Both are in [`_firebase/`](../../_firebase/README.md).

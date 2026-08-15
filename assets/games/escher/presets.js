@@ -3,24 +3,40 @@
  *
  * ## What the two players share, and what they do not
  *
- * They share the *names* of the files and the numbers of the ranks. That is the
- * communication channel: White says "the pawn on D3 to D5" and Black finds the
- * pawn on their own D file. What they do not share is which file is next to
- * which. White's board reads ARMED left to right, Black's reads DREAM, so
- * "one file across" is a step in a different order for each of them — and that,
- * rather than anything about the names, is the whole duality.
+ * There is no shared board. Each player has their own, and the only thing that
+ * passes between them is a sentence: "the pawn on D3 to D5". So what they share
+ * is the *names* of the files and the numbers of the ranks; what they do not
+ * share is which file sits next to which. White's five files read ARMED left to
+ * right and Black's read DREAM, so "one file across" is a step to a different
+ * name for each of them — and that, rather than anything about the names, is
+ * the whole duality.
  *
- * Matching the names up gives Black's file position b as White's `2b + 4 (mod
- * 5)`. Black also sits opposite, so their board is turned around: files mirror
- * and ranks run 13 down to 1 away from them. Composing the mirror with the
- * relabelling gives `3b + 2`, which is the map the rule booklets' figures show
- * — White's board with Black's men on it.
- *
- * Here the two are kept apart. `lens` carries the composite, because that is
- * what a renderer needs to place a piece; `flipsRanks` carries the half of the
- * rotation that lenses cannot express. Ranks are never relabelled, only drawn
+ * A square is therefore a name and a number, and each player's board is one
+ * arrangement of those squares. Black's arrangement is White's turned around
+ * and relabelled: ranks run from the far end, files come out in the other
+ * order. `lens` carries the composite of the two, because that is what a
+ * renderer needs to place a piece, and `flipsRanks` carries the half of the
+ * turn that a lens cannot express. Ranks are never *relabelled*, only drawn
  * from the other end, which is why every constraint the duality imposes falls
  * on files alone.
+ *
+ * ## Two things that pin the lens down
+ *
+ * The lens is not free. Two facts fix it, and both are worth checking against
+ * whenever it is touched:
+ *
+ * 1. **The names must agree.** `files[BLACK][lens.toView(f)]` has to equal
+ *    `files[WHITE][f]` for every file, or the two players are talking about
+ *    different squares and the game is not playable at all. There is a test.
+ * 2. **The booklets' figures.** The V3 rules show each player their opponent's
+ *    opening position drawn on their own board: `BBRKR` on the narrow board and
+ *    `QNNKRBBR` on the wide one, as White sees them. Also tested.
+ *
+ * Getting these two to agree is what the file labels are chosen for. White's
+ * eight files spell CHES + DUAL read alternately and Black's spell ESCH + DUAL
+ * — the two lines of the game's logo — and the narrow board's are ARMED and
+ * DREAM. The anagrams are not decoration: they are the record of which
+ * permutation this is.
  *
  * ## Canonical
  *
@@ -37,9 +53,14 @@ const { PAWN: P, KNIGHT: N, BISHOP: B, ROOK: R, QUEEN: Q, KING: K } = PIECE;
 export const SIDE = Object.freeze({ WHITE: 0, BLACK: 1 });
 
 /**
- * A side's own rows, nearest first, written in that side's own file order.
- * Both sides get the same list — one army, described once — and each is placed
- * through its own lens.
+ * An army: its rows nearest-rank-first, each row left to right **as White sees
+ * it**.
+ *
+ * One army serves both sides, because the two are the same men facing each
+ * other — which is a half turn, and a half turn reverses files as well as
+ * ranks. That reversal is why ordinary chess puts White's queen to the left of
+ * their king and Black's to the right of theirs, from each player's own seat,
+ * and it is applied here rather than written out twice.
  */
 const NARROW_ARMY = Object.freeze([
   [R, B, K, B, R],
@@ -58,7 +79,8 @@ const WIDE_ARMY = Object.freeze([
  * @param {number} spec.height
  * @param {number} spec.multiplier  of Black's lens: canonical file -> Black's
  * @param {number} spec.offset      of Black's lens
- * @param {string[][]} spec.army    a side's rows, nearest first, in its own order
+ * @param {string[][]} spec.army    rows nearest-first, as White reads them
+ * @param {string[][]} spec.files   each side's names, in that side's own order
  */
 function makeBoard({ id, label, width, height, multiplier, offset, army, dials, files }) {
   const lenses = Object.freeze([
@@ -70,27 +92,35 @@ function makeBoard({ id, label, width, height, multiplier, offset, army, dials, 
   const pieces = makePieces(dials);
 
   /*
-   * Where a side's men stand, in canonical terms. A row given as "nearest
-   * first" is that side's own rank 0, 1, 2 …, which for Black counts down from
-   * the far end — the same reversal their board draws.
+   * Where a side's men stand, in canonical terms.
+   *
+   * Both halves of the half turn are here. `height - 1 - ownRank` puts Black's
+   * near rank at the far end of the canonical board; `width - 1 - i` reads the
+   * army row backwards, because Black's leftmost column is the one White sees
+   * last. The lens then says which canonical file that column is.
    */
   const placement = [];
   for (const side of [SIDE.WHITE, SIDE.BLACK]) {
     const lens = lenses[side];
+    const turned = side === SIDE.BLACK;
     army.forEach((row, ownRank) => {
-      row.forEach((type, ownFile) => {
+      row.forEach((type, i) => {
         if (!type) return;
+        const column = turned ? width - 1 - i : i;
         placement.push(
           Object.freeze({
             type,
             side,
-            rank: side === SIDE.WHITE ? ownRank : height - 1 - ownRank,
-            file: lens.toCanonical(ownFile),
+            rank: turned ? height - 1 - ownRank : ownRank,
+            file: lens.toCanonical(column),
           })
         );
       });
     });
   }
+
+  const named = Object.freeze(files.map((f) => Object.freeze([...f])));
+  assertNamesAgree(named, lenses);
 
   return Object.freeze({
     id,
@@ -101,7 +131,7 @@ function makeBoard({ id, label, width, height, multiplier, offset, army, dials, 
     /** Black sits opposite: their board draws rank 0 at the far end. */
     flipsRanks: Object.freeze([false, true]),
     /** Each side's file names, in that side's own left-to-right order. */
-    files: Object.freeze(files.map((f) => Object.freeze([...f]))),
+    files: named,
     pieces,
     placement: Object.freeze(placement),
     /** The rank a side's pawns start on, in canonical terms; for `initialOnly`. */
@@ -109,15 +139,36 @@ function makeBoard({ id, label, width, height, multiplier, offset, army, dials, 
     /** Reaching the far end promotes. No queen to promote to on the narrow board. */
     promotesTo: Object.freeze(dials.queen ? [Q, R, B, N] : [R, B, N]),
     /*
-     * How one player reads the other's file steps — three on both published
-     * boards, and read off the lenses rather than written down, so that a
-     * sandbox turning the dials cannot leave this saying something false.
+     * How one player reads the other's file steps, read off the lenses rather
+     * than written down, so that a sandbox turning the dials cannot leave this
+     * saying something false.
      */
     duality: dualityReport(pieces, {
       width,
       duality: dualityBetween(lenses[SIDE.BLACK], lenses[SIDE.WHITE]),
     }),
   });
+}
+
+/**
+ * The condition without which there is no game: both players must be able to
+ * say "D3" and mean the same square.
+ *
+ * Checked at construction rather than in a test alone, because the sandbox will
+ * build boards at runtime and a board whose names disagree is not a variant, it
+ * is a broken game.
+ */
+function assertNamesAgree(files, lenses) {
+  const [white, black] = files;
+  for (let f = 0; f < white.length; f++) {
+    const seen = black[lenses[SIDE.BLACK].toView(f)];
+    if (seen !== white[f]) {
+      throw new RangeError(
+        `the two boards disagree about file ${f}: White calls it ${white[f]}, ` +
+          `Black calls the same square ${seen}`
+      );
+    }
+  }
 }
 
 /**
@@ -133,10 +184,8 @@ export const NARROW = makeBoard({
   label: 'Escher Chess (5×10)',
   width: 5,
   height: 10,
-  // Black's lens: canonical -> Black's own file order. The inverse of the
-  // `3b + 2` that the booklet figures show.
-  multiplier: 2,
-  offset: 1,
+  multiplier: 3,
+  offset: 3,
   army: NARROW_ARMY,
   dials: ESCHER_DIALS.narrow,
   files: [
@@ -145,41 +194,54 @@ export const NARROW = makeBoard({
   ],
 });
 
-/** Eight by eight, standard armies, and a queen. Here the knight wants widening. */
+/**
+ * Eight by eight, standard armies, and a queen. Here the knight wants widening.
+ *
+ * The file names are the game's logo read two ways: taking White's alternately
+ * gives CHES and DUAL, Black's gives ESCH and DUAL.
+ */
 export const WIDE = makeBoard({
   id: 'escher-8x8',
   label: 'Escher Chess (8×8)',
   width: 8,
   height: 8,
-  multiplier: 3,
-  offset: 3,
+  multiplier: 5,
+  offset: 4,
   army: WIDE_ARMY,
   dials: ESCHER_DIALS.wide,
   files: [
     ['C', 'D', 'H', 'U', 'E', 'A', 'S', 'L'],
-    ['C', 'D', 'H', 'U', 'E', 'A', 'S', 'L'],
+    ['E', 'D', 'S', 'U', 'C', 'A', 'H', 'L'],
   ],
 });
 
 /**
- * The tutorial: the same game with the duality switched off, so both boards
- * agree and nothing is strange. Whatever a player learns here about their own
- * pieces is true of their opponent's too — which is exactly what stops being
- * true next door.
+ * The tutorial: ordinary chess, on the narrow board.
+ *
+ * "Duality off" is not the identity lens. Two players sitting opposite each
+ * other still see the files in opposite orders — that is true of a normal chess
+ * set — so the tutorial's lens is the plain mirror, and Black's names are
+ * White's backwards. Every piece is then self-dual, both boards agree about
+ * everything, and whatever a player learns here about their own pieces is true
+ * of their opponent's too. Which is exactly what stops being true next door.
  */
 export const TUTORIAL = makeBoard({
   id: 'escher-tutorial',
   label: 'Escher Chess (tutorial)',
   width: 5,
   height: 10,
-  multiplier: 1,
-  offset: 0,
+  multiplier: 4, // width - 1: the mirror
+  offset: 4,
   army: NARROW_ARMY,
   dials: ESCHER_DIALS.narrow,
   files: [
     ['A', 'R', 'M', 'E', 'D'],
-    ['A', 'R', 'M', 'E', 'D'],
+    ['D', 'E', 'M', 'R', 'A'],
   ],
 });
 
-export const BOARDS = Object.freeze({ [NARROW.id]: NARROW, [WIDE.id]: WIDE, [TUTORIAL.id]: TUTORIAL });
+export const BOARDS = Object.freeze({
+  [NARROW.id]: NARROW,
+  [WIDE.id]: WIDE,
+  [TUTORIAL.id]: TUTORIAL,
+});

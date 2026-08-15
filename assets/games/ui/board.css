@@ -419,6 +419,225 @@ body.dg {
   font-size: 17px;
 }
 
+/* ----------------------------------------------------------- chessboard ---- */
+
+/*
+ * Escher Chess is flat. The squares keep V1.2's wood palette in both colour
+ * schemes: they are squares of a board, not page furniture, so they should not
+ * follow the reader's dark mode any more than a real board does. Only the
+ * labels and the promotion tray around them do.
+ *
+ * `--dg-square` and `--dg-gutter` are set by the renderer, in whole pixels.
+ */
+.dg-chess {
+  --dg-sq-light: #f0d9b5;
+  --dg-sq-dark: #b58863;
+  --dg-sq-move: rgba(255, 206, 0, 0.42);
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+  margin: 1rem auto;
+}
+
+/*
+ * Two boards side by side, for the reveal and the sandbox.
+ *
+ * `minmax(0, 1fr)` rather than `1fr`: a column defaults to `min-width: auto`,
+ * so a board wider than its share would stretch its own column — and the
+ * renderer measures that column to decide how wide to be. The two would then
+ * settle at different sizes depending on which drew first.
+ */
+.dg-chess-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .dg-chess-pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dg-chess-grid {
+  display: grid;
+  grid-template-columns: var(--dg-gutter, 20px) repeat(var(--dg-files), var(--dg-square, 40px));
+  grid-template-rows: repeat(var(--dg-ranks), var(--dg-square, 40px)) auto;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dg-chess-rank,
+.dg-chess-file {
+  display: grid;
+  place-items: center;
+  font-size: clamp(0.6rem, calc(var(--dg-square, 40px) * 0.3), 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--dg-text-muted);
+}
+
+.dg-chess-file {
+  height: 1.5em;
+}
+
+.dg-square {
+  position: relative;
+  width: var(--dg-square, 40px);
+  height: var(--dg-square, 40px);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  font: inherit;
+  background-color: var(--dg-sq-light);
+  cursor: default;
+}
+
+.dg-square[data-shade='dark'] {
+  background-color: var(--dg-sq-dark);
+}
+
+.dg-square:not(:disabled) {
+  cursor: pointer;
+}
+
+/*
+ * Where the last move went. Painted as a background *image* so the square's own
+ * colour still shows through — the light and dark squares have to stay
+ * distinguishable underneath it, or the trail reads as a third shade of board.
+ */
+.dg-square.is-from,
+.dg-square.is-to {
+  background-image: linear-gradient(var(--dg-sq-move), var(--dg-sq-move));
+}
+
+.dg-square.is-selected {
+  box-shadow: inset 0 0 0 3px var(--dg-accent);
+  z-index: 2;
+}
+
+/* A king in check, and never the piece attacking it. Working that out is the game. */
+.dg-square.is-check {
+  box-shadow: inset 0 0 0 3px #d64545;
+  z-index: 2;
+}
+
+.dg-square:focus-visible {
+  outline: 3px solid var(--dg-accent);
+  outline-offset: -3px;
+  z-index: 3;
+}
+
+/* Somewhere to go: a dot on an empty square, a ring round a piece to take. */
+.dg-square.is-target::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: rgba(20, 20, 20, 0.34);
+}
+
+.dg-square.is-target.is-take::before {
+  width: 88%;
+  height: 88%;
+  background: none;
+  border: 3px solid rgba(20, 20, 20, 0.38);
+}
+
+.dg-square.is-target:hover::before {
+  background: rgba(20, 20, 20, 0.5);
+}
+
+.dg-square.is-target.is-take:hover::before {
+  background: none;
+  border-color: rgba(20, 20, 20, 0.62);
+}
+
+/*
+ * One glyph shape per piece, filled two ways.
+ *
+ * The outline set (♔♕♖…) is drawn much lighter than the solid set by most
+ * fonts, so a board using both looks like two piece sets rather than two
+ * colours. The outline is what keeps a dark piece legible on a dark square.
+ */
+.dg-man {
+  font-size: calc(var(--dg-square, 40px) * 0.76);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.dg-man[data-side='0'] {
+  color: #fdfdfb;
+  text-shadow:
+    -1px -1px 0 #1b1b1b,
+    1px -1px 0 #1b1b1b,
+    -1px 1px 0 #1b1b1b,
+    1px 1px 0 #1b1b1b;
+}
+
+.dg-man[data-side='1'] {
+  color: #16181c;
+  text-shadow:
+    -1px -1px 0 rgba(255, 255, 255, 0.45),
+    1px -1px 0 rgba(255, 255, 255, 0.45),
+    -1px 1px 0 rgba(255, 255, 255, 0.45),
+    1px 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.dg-promo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.45rem;
+  background: var(--dg-surface);
+  border: 1px solid var(--dg-divider);
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+  z-index: 6;
+}
+
+.dg-promo-choice {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+  background: var(--dg-sq-light, #f0d9b5);
+  border: 1px solid var(--dg-divider);
+  border-radius: 6px;
+  color: #16181c;
+}
+
+.dg-promo-choice[data-side='0'] {
+  color: #fdfdfb;
+  text-shadow:
+    -1px -1px 0 #1b1b1b,
+    1px -1px 0 #1b1b1b,
+    -1px 1px 0 #1b1b1b,
+    1px 1px 0 #1b1b1b;
+}
+
+.dg-promo-choice:hover {
+  border-color: var(--dg-accent);
+}
+
 /* ---------------------------------------------------------------- coach ---- */
 
 /*

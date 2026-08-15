@@ -42,11 +42,26 @@ export function initialGame(board) {
   for (const { type, side, rank, file } of board.placement) {
     men.set(squareKey(rank, file), Object.freeze({ type, side }));
   }
-  return freezeGame({ men, turn: SIDE.WHITE, outcome: outcomeOf(board, men, SIDE.WHITE) });
+  return freezeGame({
+    men,
+    turn: SIDE.WHITE,
+    outcome: outcomeOf(board, men, SIDE.WHITE),
+    lastMove: null,
+  });
 }
 
-function freezeGame({ men, turn, outcome }) {
-  return Object.freeze({ men, turn, outcome: Object.freeze(outcome) });
+/**
+ * `lastMove` is carried along rather than recomputed because a frame from the
+ * middle of a replay has no log to look back at. It is not a secret: both
+ * players watched the move happen, and reading the enemy's moves is the game.
+ */
+function freezeGame({ men, turn, outcome, lastMove }) {
+  return Object.freeze({
+    men,
+    turn,
+    outcome: Object.freeze(outcome),
+    lastMove: lastMove ? Object.freeze({ ...lastMove }) : null,
+  });
 }
 
 export const pieceAt = (game, rank, file) => game.men.get(squareKey(rank, file)) ?? null;
@@ -218,9 +233,23 @@ export function applyMove(board, game, move) {
         `${squareKey(move.to.rank, move.to.file)}${move.promote ? ` = ${move.promote}` : ''}`
     );
   }
+  const captured = game.men.has(squareKey(move.to.rank, move.to.file));
+  const { type, side } = pieceAt(game, move.from.rank, move.from.file);
   const men = afterMove(board, game, move);
   const turn = other(game.turn);
-  return freezeGame({ men, turn, outcome: outcomeOf(board, men, turn) });
+  return freezeGame({
+    men,
+    turn,
+    outcome: outcomeOf(board, men, turn),
+    lastMove: {
+      from: Object.freeze({ ...move.from }),
+      to: Object.freeze({ ...move.to }),
+      promote: move.promote ?? null,
+      type,
+      side,
+      captured,
+    },
+  });
 }
 
 /** Fold a log into a game. How a room's state is reconstructed. */
@@ -286,6 +315,15 @@ export function viewOf(board, game, seat) {
       : [],
     check: inCheck(board, game, seat),
     isMyTurn: mine,
+    /** Where the board just changed, so a renderer can point at it. */
+    lastMove: game.lastMove
+      ? {
+          ...game.lastMove,
+          from: toView(board, seat, game.lastMove.from),
+          to: toView(board, seat, game.lastMove.to),
+          mine: game.lastMove.side === seat,
+        }
+      : null,
     outcome: game.outcome,
     turn: game.turn,
   };

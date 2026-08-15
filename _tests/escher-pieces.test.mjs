@@ -18,9 +18,14 @@ import {
   WIDE_PIECES,
 } from '../assets/games/escher/pieces.js';
 
-/** White reads Black's file steps x3 on both boards. */
-const NARROW = { width: 5, duality: 3 };
-const WIDE = { width: 8, duality: 3 };
+/**
+ * How White reads Black's file steps: the inverse of Black's lens multiplier
+ * (3 on the narrow board, 5 on the wide one). `escher-game.test.mjs` pins these
+ * two numbers against the boards themselves, so that changing a lens cannot
+ * quietly leave this file testing a duality nobody plays.
+ */
+const NARROW = { width: 5, duality: 2 };
+const WIDE = { width: 8, duality: 5 };
 
 const same = (a, b, width) => {
   const x = [...destinations(a, width)].sort();
@@ -183,12 +188,31 @@ test('what every piece becomes', async (t) => {
     );
   });
 
+  await t.test('the sign of the duality number does not matter to these pieces', () => {
+    /*
+     * Every published move set is closed under negating its file step, so
+     * reading it x2 and reading it x-2 land on the same squares. Which is why
+     * the boards could carry the wrong one of a +-pair for a while without any
+     * of these tests noticing — worth stating, since a hand-edited set from the
+     * sandbox need not be symmetric, and there the sign will matter.
+     */
+    for (const [board, pieces] of [[NARROW, NARROW_PIECES], [WIDE, WIDE_PIECES]]) {
+      const mirrored = { width: board.width, duality: board.width - board.duality };
+      for (const name of Object.keys(pieces)) {
+        assert.ok(
+          same(throughLens(pieces[name], board), throughLens(pieces[name], mirrored), board.width),
+          `${name} on ${board.width}`
+        );
+      }
+    }
+  });
+
   await t.test('reading it through twice gets you back where you started', () => {
     // On eight files 3 is its own inverse; on five it is not, so the round trip
-    // there is x3 then x2.
+    // there is x2 then x3.
     for (const [board, pieces, back] of [
-      [NARROW, NARROW_PIECES, 2],
-      [WIDE, WIDE_PIECES, 3],
+      [NARROW, NARROW_PIECES, 3],
+      [WIDE, WIDE_PIECES, 5],
     ]) {
       for (const name of Object.keys(pieces)) {
         const there = throughLens(pieces[name], board);
