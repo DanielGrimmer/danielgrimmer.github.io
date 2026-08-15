@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.4.1" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.5.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -58,9 +58,9 @@
         straight to its destination and nothing can be blocked, including a
         pawn's opening double step. <strong>Everything is short range</strong>:
         a rook reaches four squares along a rank or a file, a bishop two along a
-        diagonal. <strong>The board is a cylinder</strong>, so the A file and the
-        D file are neighbours. And <strong>the files are named A, R, M, E, D</strong>,
-        which is how you will announce your moves. There is no queen on this
+        diagonal. <strong>The board is a cylinder</strong>, so the leftmost and
+        rightmost files are neighbours. And <strong>every pawn may open with a
+        double step</strong>, from wherever it starts. There is no queen on this
         board, no castling and no en passant; a pawn reaching the far rank
         promotes. Checkmate wins; a player with no legal move who is not in check
         draws.
@@ -70,9 +70,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.4.1'; // keep in step with the ?v= tokens below
+      const BUILD = '4.5.0'; // keep in step with the ?v= tokens below
 
-      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.4.1';
+      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.5.0';
       import {
         initialGame,
         applyMove,
@@ -80,8 +80,8 @@
         viewOf,
         fromView,
         STATUS,
-      } from '../games/escher/game.js?v=4.4.1';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.4.1';
+      } from '../games/escher/game.js?v=4.5.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.5.0';
       import {
         contextFor,
         stepIndex,
@@ -89,7 +89,7 @@
         STALLED_HINT,
         ESCHER_STEPS,
         ESCHER_OUTRO,
-      } from '../games/escher/coach.js?v=4.4.1';
+      } from '../games/escher/coach.js?v=4.5.0';
 
       const board = TUTORIAL;
 
@@ -111,6 +111,13 @@
       const view = createChessboard(document.getElementById('board'), {
         width: board.width,
         height: board.height,
+        /*
+         * No file names here. That the two players read the files in different
+         * orders is the game's secret, and a player taught "the files read
+         * ARMED" walks into the real game already primed to notice that their
+         * opponent's do not. The ranks stay: both players agree about those.
+         */
+        showFiles: false,
         label: 'The practice board',
       });
 

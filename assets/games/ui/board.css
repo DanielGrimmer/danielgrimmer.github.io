@@ -482,6 +482,11 @@ body.dg {
   height: 1.5em;
 }
 
+/* The tutorial draws no file names, and should not reserve a row for them. */
+.dg-chess-file:empty {
+  height: 0;
+}
+
 .dg-square {
   position: relative;
   width: var(--dg-square, 40px);

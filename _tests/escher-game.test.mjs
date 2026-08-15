@@ -11,6 +11,7 @@ import {
   canonicalMoves,
   legalMoves,
   legalMovesFrom,
+  pseudoMoves,
   isLegalMove,
   applyMove,
   replay,
@@ -505,5 +506,77 @@ test('what just happened', async (t) => {
       assert.deepEqual(frame.lastMove.to, moves[i].to, `frame ${i + 1} knows its own move`);
     });
     assert.equal(replay(board, moves).lastMove.to.rank, moves.at(-1).to.rank);
+  });
+});
+
+test('every pawn opens with a double step, from wherever it starts', async (t) => {
+  /*
+   * The narrow army has pawns on two ranks. Asking "is this pawn on its side's
+   * pawn rank?" gave the double step to the front rank only, so the two pawns
+   * standing a rank further forward could open with one square — and any pawn
+   * that later wandered onto a starting rank got a fresh one. `moved` is
+   * carried on the man instead, which is both questions answered at once.
+   */
+  const forward = (board, from, to) => (from.rank < to.rank ? to.rank - from.rank : from.rank - to.rank);
+
+  await t.test('both of White’s pawn ranks can open with two', () => {
+    const game = initialGame(NARROW);
+    const pawns = NARROW.placement.filter((m) => m.type === PIECE.PAWN && m.side === SIDE.WHITE);
+    const ranks = [...new Set(pawns.map((p) => p.rank))].sort();
+    assert.deepEqual(ranks, [1, 2], 'the army really does stand on two ranks');
+
+    for (const rank of ranks) {
+      const from = pawns.find((p) => p.rank === rank);
+      const doubles = legalMovesFrom(NARROW, game, from).filter(
+        (to) => to.file === from.file && forward(NARROW, from, to) === 2
+      );
+      assert.equal(doubles.length, 1, `a pawn on rank ${rank} may step two`);
+    }
+  });
+
+  await t.test('and so can Black’s, in their own direction', () => {
+    const game = initialGame(NARROW);
+    for (const from of NARROW.placement.filter(
+      (m) => m.type === PIECE.PAWN && m.side === SIDE.BLACK
+    )) {
+      const doubles = pseudoMoves(NARROW, game, from).filter(
+        (to) => to.file === from.file && from.rank - to.rank === 2
+      );
+      assert.equal(doubles.length, 1, `a Black pawn on rank ${from.rank} may step two`);
+    }
+  });
+
+  await t.test('but only once', () => {
+    let game = initialGame(NARROW);
+    const from = NARROW.placement.find((m) => m.type === PIECE.PAWN && m.side === SIDE.WHITE);
+    const two = legalMovesFrom(NARROW, game, from).find(
+      (to) => to.file === from.file && to.rank === from.rank + 2
+    );
+    game = applyMove(NARROW, game, { from, to: two });
+    game = applyMove(NARROW, game, legalMoves(NARROW, game)[0]); // Black replies
+    const again = legalMovesFrom(NARROW, game, two).filter(
+      (to) => to.file === two.file && to.rank === two.rank + 2
+    );
+    assert.equal(again.length, 0, 'a pawn that has moved has no second double step');
+  });
+
+  await t.test('and not to a pawn that merely arrives on a starting square', () => {
+    /*
+     * A rank-1 pawn taking sideways can land on a rank-2 starting square. Under
+     * the old rank test that handed it a double step it had not earned.
+     */
+    const men = new Map([
+      ['1,0', { type: PIECE.PAWN, side: SIDE.WHITE, moved: false }],
+      ['2,1', { type: PIECE.PAWN, side: SIDE.BLACK, moved: true }],
+      ['0,0', { type: PIECE.KING, side: SIDE.WHITE, moved: false }],
+      ['9,4', { type: PIECE.KING, side: SIDE.BLACK, moved: false }],
+    ]);
+    let game = { men, turn: SIDE.WHITE, outcome: { status: STATUS.PLAYING, winner: null } };
+    const take = { from: { rank: 1, file: 0 }, to: { rank: 2, file: 1 } };
+    assert.ok(isLegalMove(NARROW, game, take), 'the capture is available');
+    game = applyMove(NARROW, game, take);
+    assert.equal(pieceAt(game, 2, 1).moved, true);
+    const doubles = pseudoMoves(NARROW, game, take.to).filter((to) => to.rank === 4);
+    assert.equal(doubles.length, 0, 'landing on a start square earns nothing');
   });
 });

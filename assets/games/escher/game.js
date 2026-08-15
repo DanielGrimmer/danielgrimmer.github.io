@@ -21,9 +21,9 @@
  * as intended rather than a missing feature.
  */
 
-import { mod } from '../core/duality.js?v=4.4.1';
-import { PIECE } from './pieces.js?v=4.4.1';
-import { SIDE } from './presets.js?v=4.4.1';
+import { mod } from '../core/duality.js?v=4.5.0';
+import { PIECE } from './pieces.js?v=4.5.0';
+import { SIDE } from './presets.js?v=4.5.0';
 
 export const STATUS = Object.freeze({
   PLAYING: 'playing',
@@ -40,7 +40,11 @@ const other = (side) => (side === SIDE.WHITE ? SIDE.BLACK : SIDE.WHITE);
 export function initialGame(board) {
   const men = new Map();
   for (const { type, side, rank, file } of board.placement) {
-    men.set(squareKey(rank, file), Object.freeze({ type, side }));
+    // `moved` is what `initialOnly` asks about. Carried on the man rather than
+    // inferred from where it stands, because this army has pawns on two ranks:
+    // a rank test would deny the second rank its double step, and would hand a
+    // fresh one to any pawn that later arrived on a starting square.
+    men.set(squareKey(rank, file), Object.freeze({ type, side, moved: false }));
   }
   return freezeGame({
     men,
@@ -102,7 +106,6 @@ function between(fromRank, toRank, file) {
 export function pseudoMoves(board, game, { rank, file }, { capturesOnly = false } = {}) {
   const man = pieceAt(game, rank, file);
   if (!man) return [];
-  const onPawnRank = rank === board.pawnRanks[man.side];
   const out = [];
   /*
    * Two entries in a move table can name one square. The rook reaches four
@@ -114,7 +117,7 @@ export function pseudoMoves(board, game, { rank, file }, { capturesOnly = false 
 
   for (const m of canonicalMoves(board, man.type, man.side)) {
     if (capturesOnly && m.forbidsCapture) continue;
-    if (m.initialOnly && !onPawnRank) continue;
+    if (m.initialOnly && man.moved) continue;
 
     const toRank = rank + m.step[0];
     const toFile = mod(file + m.step[1], board.width);
@@ -169,7 +172,7 @@ function afterMove(board, game, { from, to, promote }) {
     man.type === PIECE.PAWN && to.rank === lastRankFor(board, man.side) && promote
       ? { ...man, type: promote }
       : man;
-  men.set(squareKey(to.rank, to.file), Object.freeze(promoted));
+  men.set(squareKey(to.rank, to.file), Object.freeze({ ...promoted, moved: true }));
   return men;
 }
 

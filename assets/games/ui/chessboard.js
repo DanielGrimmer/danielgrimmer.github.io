@@ -43,20 +43,43 @@ const HEIGHT_SHARE = 0.72;
  * the solid set, so a board using both looks like two different piece sets. One
  * shape, two fills, and an outline for contrast reads better — and survives
  * dark mode, where a black-filled glyph on a dark square disappears.
+ *
+ * Every glyph carries U+FE0E, VARIATION SELECTOR-15, which asks for text
+ * presentation. Only the pawn actually needs it: U+265F is the one piece in the
+ * set with an emoji form, so several platforms hand it to the colour emoji
+ * font, which paints its own black pawn and ignores `color` entirely. White's
+ * pawns came out black while White's every other piece was white. The selector
+ * costs nothing on the five that were never at risk, and stops the next font
+ * update from doing the same to one of them.
  */
+const TEXT_PRESENTATION = '\uFE0E';
+
 const GLYPH = Object.freeze({
-  pawn: '♟',
-  knight: '♞',
-  bishop: '♝',
-  rook: '♜',
-  queen: '♛',
-  king: '♚',
+  pawn: `♟${TEXT_PRESENTATION}`,
+  knight: `♞${TEXT_PRESENTATION}`,
+  bishop: `♝${TEXT_PRESENTATION}`,
+  rook: `♜${TEXT_PRESENTATION}`,
+  queen: `♛${TEXT_PRESENTATION}`,
+  king: `♚${TEXT_PRESENTATION}`,
 });
 
 const SIDE_NAME = ['White', 'Black'];
 
 const keyOf = (sq) => `${sq.rank},${sq.file}`;
-const sameSquare = (a, b) => a && b && a.rank === b.rank && a.file === b.file;
+
+/**
+ * Same square? **Returns a real boolean**, and that is not a detail.
+ *
+ * Written as `a && b && a.rank === b.rank …` this yields `undefined` when
+ * either side is missing — and `classList.toggle(name, undefined)` is treated
+ * as *no second argument*, which means it flips the class instead of clearing
+ * it. With nothing selected and no move played yet, every square therefore
+ * turned its own highlight on at the first paint and flipped it again at every
+ * repaint. The board came up entirely lit and flickered on each click, and it
+ * only settled once a real last move existed to compare against.
+ */
+const sameSquare = (a, b) =>
+  Boolean(a && b && a.rank === b.rank && a.file === b.file);
 
 /**
  * @param {HTMLElement} container
@@ -64,9 +87,13 @@ const sameSquare = (a, b) => a && b && a.rank === b.rank && a.file === b.file;
  * @param {number} opts.width   files
  * @param {number} opts.height  ranks
  * @param {boolean} [opts.interactive]  false for a replay board
+ * @param {boolean} [opts.showFiles]    the tutorial hides them; see below
  * @param {string} [opts.label]         announced to screen readers
  */
-export function createChessboard(container, { width, height, interactive = true, label = '' }) {
+export function createChessboard(
+  container,
+  { width, height, interactive = true, showFiles = true, label = '' }
+) {
   const frame = document.createElement('div');
   frame.className = 'dg-chess';
   frame.dataset.interactive = String(interactive);
@@ -149,7 +176,8 @@ export function createChessboard(container, { width, height, interactive = true,
   /** "D3", in this seat's own names. Both seats use the same ones. */
   const labelOf = (key) => {
     const { rank, file } = squareFor(key);
-    return `${view.files[file]}${view.rankLabels[rank]}`;
+    const name = showFiles ? view.files[file] : `file ${file + 1}`;
+    return `${name}${showFiles ? '' : ', rank '}${view.rankLabels[rank]}`;
   };
 
   function clearSelection() {
@@ -319,8 +347,17 @@ export function createChessboard(container, { width, height, interactive = true,
       promo.hidden = true;
     }
 
+    /*
+     * The tutorial draws no file names at all.
+     *
+     * Not decoration: the game's secret is that the two players' files are in
+     * different orders, and a tutorial that taught one player "the files read
+     * ARMED" would have them walk into the real game already primed to notice
+     * that their opponent's do not. Working that out is the mystery. The rank
+     * numbers stay, since both players agree about those.
+     */
     next.files.forEach((name, file) => {
-      fileLabels[file].textContent = name;
+      fileLabels[file].textContent = showFiles ? name : '';
     });
     next.rankLabels.forEach((name, rank) => {
       rankLabels[rank].textContent = String(name);

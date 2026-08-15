@@ -13,10 +13,10 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { mod, signedRep } from '../core/duality.js?v=4.4.1';
-import { replayFrames, inCheck, squareKey } from './game.js?v=4.4.1';
-import { SIDE } from './presets.js?v=4.4.1';
-import { PIECE } from './pieces.js?v=4.4.1';
+import { mod, signedRep } from '../core/duality.js?v=4.5.0';
+import { replayFrames, inCheck, squareKey } from './game.js?v=4.5.0';
+import { SIDE } from './presets.js?v=4.5.0';
+import { PIECE } from './pieces.js?v=4.5.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -117,15 +117,14 @@ export const STALLED_HINT =
 export const ESCHER_STEPS = Object.freeze([
   {
     id: 'welcome',
-    title: 'A Narrow Board, and Odd Names',
+    title: 'A Narrower Board',
     body:
       'Chess, on a board five files wide and ten ranks deep. You are playing ' +
       'both sides here; White moves first.\n\n' +
-      'The files are not lettered A to E. They are named A, R, M, E, D, and ' +
-      'those names are how you will tell your friend what you did — “the pawn ' +
-      'on D3 to D5”. In the real game you will be sitting apart, and those five ' +
-      'letters are the entire channel between you, so it is worth getting used ' +
-      'to reading them now.',
+      'Five files and a ten-rank run change the game more than they sound like ' +
+      'they should. There is nowhere to hide a king sideways, and the two ' +
+      'armies start far enough apart that you get several moves to look at ' +
+      'yours before anything is at stake. Use them.',
     hint: 'Move any piece.',
     done: (ctx) => ctx.moveCount >= 1,
   },
@@ -146,9 +145,11 @@ export const ESCHER_STEPS = Object.freeze([
     title: 'And Nothing Reaches Far',
     body:
       'In exchange, everything is short range. A rook goes up to four squares ' +
-      'along a rank or a file; a bishop up to two along a diagonal. On this ' +
-      'board there is no queen, no castling and no en passant — a pawn reaching ' +
-      'the far rank still promotes.\n\n' +
+      'along a rank or a file; a bishop up to two along a diagonal. Every pawn ' +
+      'may still open with a double step, from wherever it starts — including ' +
+      'the two that begin a rank further forward. On this board there is no ' +
+      'queen, no castling and no en passant, and a pawn reaching the far rank ' +
+      'promotes.\n\n' +
       'A leaping piece that could also cross the whole board would end the game ' +
       'on about move three, so the two rules pay for each other.',
     hint: 'Play on a little, and take something.',
@@ -158,11 +159,12 @@ export const ESCHER_STEPS = Object.freeze([
     id: 'cylinder',
     title: "It's Pac-Man's World, and We're Just Living In It",
     body:
-      'The A file and the D file are neighbours. Walk a piece off one side of ' +
-      'the board and it arrives on the other, exactly as in Pac-Man.\n\n' +
+      'The leftmost and rightmost files are neighbours. Walk a piece off one ' +
+      'side of the board and it arrives on the other, exactly as in ' +
+      'Pac-Man.\n\n' +
       'This matters more than it sounds. Five files wide, a rook reaching four ' +
       'squares sideways can reach every other file on the board, from anywhere.',
-    hint: 'Move a piece across the seam between the A file and the D file.',
+    hint: 'Move a piece off one side of the board and back on the other.',
     done: (ctx) => ctx.hasWrapped,
   },
   {
@@ -195,14 +197,14 @@ export const ESCHER_OUTRO = Object.freeze({
     'move; you have to work it out from watching them, which is the game. So ' +
     'the two of you need separate screens, on separate devices, and you must ' +
     'not talk to each other about what you can see until the first game is ' +
-    'over. Announce your moves by file and rank — “knight on E2 to M4” — and ' +
-    'nothing else. The next screen will put you both in the same room.',
+    'over.\n\n' +
+    'One thing this board did not show you: in the real game the files are ' +
+    'lettered, and those letters are the entire channel between you. Announce ' +
+    'your moves by file and rank — “the knight on E2 to M4” — and nothing else. ' +
+    'The next screen will put you both in the same room.',
   href: '/assets/EscherChess/EscherChessGameV4.0.html',
   cta: 'Play the Real Game →',
 });
-
-/** The names each side reads, for the legend under the tutorial board. */
-export const FILE_NOTE = 'The files are named A, R, M, E, D, from left to right.';
 
 /* --------------------------------------------------------------- the reveal ---- */
 
