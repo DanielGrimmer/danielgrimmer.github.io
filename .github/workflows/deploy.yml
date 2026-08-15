@@ -1,3 +1,27 @@
+# This is what publishes the site. If you are here because GitHub emailed
+# about a failed run, read on.
+#
+# Two Pages workflows can run on the same push, and only one of them is this
+# file:
+#
+#   Deploy site                  <- here. Builds with the project's own
+#                                   Gemfile and uploads a Pages artifact.
+#   pages build and deployment   <- GitHub's built-in Jekyll builder. Not a
+#                                   file in this repository; it shows up as
+#                                   `dynamic/pages/pages-build-deployment`.
+#
+# The built-in one *always fails here and always will*. It builds with the
+# `github-pages` gem, whose plugin allowlist does not include al_folio_core,
+# jekyll-scholar or jekyll-imagemagick — so it cannot build this site, and its
+# failure means nothing about whether the site deployed. The evidence: on every
+# recent commit, "Deploy site" succeeded and "pages build and deployment"
+# failed, and the live site is current.
+#
+# To stop the noise: repository Settings -> Pages -> Build and deployment ->
+# Source -> **GitHub Actions**. Re-select it even if it already reads that; the
+# built-in workflow is triggered by a branch-based source, and a stale setting
+# is what leaves it running.
+
 name: Deploy site
 
 on:
