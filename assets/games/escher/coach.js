@@ -13,9 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.7.0';
-import { SIDE } from './presets.js?v=4.7.0';
-import { PIECE } from './pieces.js?v=4.7.0';
+import { replayFrames, inCheck } from './game.js?v=4.8.0';
+import { SIDE } from './presets.js?v=4.8.0';
+import { PIECE } from './pieces.js?v=4.8.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -30,53 +30,71 @@ const at = (rank, file) => Object.freeze({ rank: rank - 1, file: file - 1 });
 const isSquare = (a, b) => a.rank === b.rank && a.file === b.file;
 
 /**
- * The opening, move by move.
+ * The tutorial, beat by beat.
  *
- * The tutorial plays a fixed game, and offers exactly one legal move at a time
- * until it runs out. That is a stronger hand on the tiller than "move any
- * piece", and it has to be: each step's text points at something the previous
- * moves put on the board — a pawn for the bishop to leap, a rook for the bishop
- * to take, a piece parked beside the seam — and a player who wandered off would
- * be reading commentary about a position they no longer have.
+ * A beat is one instruction. Most ask for a move; a few ask only that a piece
+ * be *picked up*, so that the reader can be told what to look at before they
+ * commit to anything. That distinction is the whole reason this is a list of
+ * beats rather than a list of moves: "click the bishop and notice it can jump
+ * the pawn" has to land before "now jump it", and a move-only script cannot say
+ * the first half.
  *
- * `step` groups the moves under the step that teaches them. `note` is the hint
- * while that move is the one outstanding.
+ * While the script is running the board offers exactly one move — but it marks
+ * every move the selected piece could legally make, because seeing the shape of
+ * the pattern is most of what these steps are teaching.
  */
 export const TUTORIAL_SCRIPT = Object.freeze(
   [
     // Step 1 — pawns, and how to work the board at all.
-    ['pawns', at(2, 3), at(3, 3), 'Click the white pawn in front of the king, then the square ahead of it.'],
-    ['pawns', at(9, 1), at(7, 1), 'Now Black\u2019s left-hand pawn, two squares to rank 7 \u2014 any pawn may open with a double step, from wherever it starts.'],
-    ['pawns', at(2, 5), at(4, 5), 'White\u2019s right-hand pawn, two squares to rank 4.'],
+    ['pawns', 'select', at(2, 3), null,
+      'Click the white pawn in front of the king. Note that its two possible moves are then marked.'],
+    ['pawns', 'move', at(2, 3), at(3, 3),
+      'Move this central white pawn one space forward (from rank 2 to rank 3).'],
+    ['pawns', 'move', at(9, 1), at(7, 1),
+      'Now advance black’s left-most pawn two spaces (from rank 9 to rank 7).'],
+    ['pawns', 'move', at(2, 5), at(4, 5),
+      'Lastly, move white’s right-most pawn two spaces (from rank 2 to rank 4).'],
 
-    // Step 2 — the minor pieces, and the first surprise.
-    ['minor', at(10, 2), at(8, 3), 'Black\u2019s knight out to rank 8. It steps over its own men, as a knight always has.'],
-    ['minor', at(2, 2), at(4, 4), 'White\u2019s left bishop, two squares up the diagonal to rank 4 \u2014 straight over the pawn you just pushed.'],
+    // Step 2 — jumpy and short-ranged, shown on three different pieces.
+    ['jumpy', 'move', at(10, 2), at(8, 3),
+      'Move black’s left knight into the central file. So far, so normal.'],
+    ['jumpy', 'select', at(2, 2), null,
+      'Now click on white’s left bishop. Notice that it can move between the two pawns on its left (as usual) but it can also jump over the pawn to its right.'],
+    ['jumpy', 'move', at(2, 2), at(4, 4),
+      'Notice also that bishops are short-ranged in Escher Chess: it can move at most two spaces diagonally. Now have this bishop jump over the central pawn.'],
+    ['jumpy', 'move', at(10, 1), at(6, 1),
+      'Lastly, have black’s left-most rook move four spaces forward (from rank 10 to rank 6), jumping over the pawn. It too is short-ranged in Escher Chess, moving at most four spaces in any direction.'],
 
-    // Step 3 — the rook, which is the same lesson from the other direction.
-    ['rook', at(10, 1), at(6, 1), 'Black\u2019s left rook, four squares down to rank 6, over its own pawn on the way.'],
+    // Step 3 — the board has no left or right edge.
+    ['wrap', 'move', at(4, 4), at(6, 1),
+      'Click on white’s bishop on rank 4. Its usual X-shaped pattern of available moves wraps around the board’s “seam”, allowing it to take the black rook on rank 6. Do so, noting that this bishop has just moved from a dark square to a light one.'],
+    ['wrap', 'move', at(10, 5), at(10, 1),
+      'Rooks too can move across the seam. Move black’s last rook one square sideways across it (from the right-most file to the left-most file).'],
+    ['wrap', 'move', at(1, 2), at(2, 5),
+      'Knights too, of course, can cross the seam. Move white’s left knight one space forward and two to the left, wrapping around the board.'],
 
-    // Step 4 — the board has no left or right edge.
-    ['wrap', at(4, 4), at(6, 1), 'The bishop again, two more up the diagonal: off the right-hand edge and back on the left, taking the rook.'],
-    ['wrap', at(10, 5), at(10, 1), 'Black\u2019s other rook, one square sideways across the same seam.'],
-    ['wrap', at(1, 2), at(2, 5), 'And White\u2019s knight across it, to rank 2.'],
-
-    // Step 5 — taking, including across the seam.
-    ['captures', at(10, 1), at(6, 1), 'The rook four squares down again, taking the bishop.'],
-    ['captures', at(4, 5), at(5, 5), 'White\u2019s pawn one square, to rank 5.'],
-    ['captures', at(10, 3), at(10, 2), 'Black\u2019s king, one square sideways.'],
-    ['captures', at(5, 5), at(6, 1), 'And the pawn takes \u2014 diagonally, across the seam, onto the rook.'],
-  ].map(([step, from, to, note]) => Object.freeze({ step, from, to, note }))
+    // Step 4 — captures, and a check to finish on.
+    ['check', 'move', at(10, 1), at(6, 1), 'Have black’s rook take the white bishop on rank 6.'],
+    ['check', 'move', at(4, 5), at(5, 5), 'Now advance white’s right-most pawn.'],
+    ['check', 'move', at(10, 3), at(10, 2), 'Move black’s king one space to the left.'],
+    ['check', 'move', at(5, 5), at(6, 1), 'White’s rank 5 pawn can now take the black rook.'],
+    ['check', 'move', at(10, 2), at(9, 1), 'Move black’s king diagonally onto rank 9.'],
+    ['check', 'move', at(1, 1), at(5, 1),
+      'Move white’s left-most rook four spaces forward, putting the king in check.'],
+  ].map(([step, kind, from, to, note]) => Object.freeze({ step, kind, from, to, note }))
 );
 
-/** How much of the script has been played, from the beginning, in order. */
+/** Just the moves, in order — what the board actually plays through. */
+export const SCRIPT_MOVES = Object.freeze(TUTORIAL_SCRIPT.filter((b) => b.kind === 'move'));
+
+/** How many of the script's moves have been played, from the start, in order. */
 export function scriptProgress(moves) {
   let i = 0;
   while (
-    i < TUTORIAL_SCRIPT.length &&
+    i < SCRIPT_MOVES.length &&
     i < moves.length &&
-    isSquare(moves[i].from, TUTORIAL_SCRIPT[i].from) &&
-    isSquare(moves[i].to, TUTORIAL_SCRIPT[i].to)
+    isSquare(moves[i].from, SCRIPT_MOVES[i].from) &&
+    isSquare(moves[i].to, SCRIPT_MOVES[i].to)
   ) {
     i += 1;
   }
@@ -84,17 +102,45 @@ export function scriptProgress(moves) {
 }
 
 /** The one move the board should offer, or null once the script is spent. */
-export const nextScripted = (moves) => TUTORIAL_SCRIPT[scriptProgress(moves)] ?? null;
+export const nextScripted = (moves) => SCRIPT_MOVES[scriptProgress(moves)] ?? null;
 
-/** How many of the script's moves belong to a step, cumulatively. */
-const throughStep = (id) => TUTORIAL_SCRIPT.filter((m) => m.step === id).length +
-  TUTORIAL_SCRIPT.findIndex((m) => m.step === id);
+/**
+ * Which beat is outstanding.
+ *
+ * A `select` beat is satisfied by picking that piece up, which is why the
+ * selection has to reach this far. Everything before it in the list is settled
+ * by the move count alone.
+ */
+export function beatIndex(moves, selected = null) {
+  const done = scriptProgress(moves);
+  let played = 0;
+  for (const [i, beat] of TUTORIAL_SCRIPT.entries()) {
+    if (beat.kind === 'move') {
+      if (played === done) return i;
+      played += 1;
+    } else if (played === done && !(selected && isSquare(selected, beat.from))) {
+      return i;
+    }
+  }
+  return TUTORIAL_SCRIPT.length;
+}
+
+/** The instruction to show, or '' once the script is finished. */
+export const beatNote = (ctx) => TUTORIAL_SCRIPT[beatIndex(ctx.moves, ctx.selected)]?.note ?? '';
+
+/** How far through the script a step's own beats reach. */
+const throughStep = (id) =>
+  TUTORIAL_SCRIPT.length - [...TUTORIAL_SCRIPT].reverse().findIndex((b) => b.step === id);
 
 /**
  * Reduce a game to the facts the steps care about. Each is cumulative — once
  * true it stays true — so the tutorial only ever moves forwards.
+ *
+ * `selected` is not a fact about the game at all; it is what the player is
+ * holding. It is here because a `select` beat is finished by picking a piece up
+ * and nothing else, and the panel has to be able to say so.
  */
-export function contextFor(board, moves) {
+export function contextFor(board, moves, selected = null) {
   const frames = replayFrames(board, moves);
 
   let hasChecked = false;
@@ -106,8 +152,11 @@ export function contextFor(board, moves) {
 
   const last = frames[frames.length - 1];
   return {
+    moves,
+    selected,
     moveCount: moves.length,
     scripted: scriptProgress(moves),
+    beat: beatIndex(moves, selected),
     hasChecked,
     isOver: last.outcome.status !== 'playing',
     outcome: last.outcome,
@@ -125,113 +174,59 @@ export function stepIndex(steps, ctx, skipped = new Set()) {
 
 /**
  * The game has finished but the tutorial has not. It cannot happen while the
- * script is running — the script does not end a game — but the last step is
- * free play, and a fool's mate there would otherwise leave the panel asking for
- * something a dead board can no longer provide.
+ * script is running, since the script does not end a game — but it is cheap
+ * insurance against a step that can no longer be satisfied.
  */
 export function isStalled(steps, ctx, skipped = new Set()) {
   return ctx.isOver && stepIndex(steps, ctx, skipped) < steps.length;
 }
 
 export const STALLED_HINT =
-  'That game is over \u2014 press \u201cStart again\u201d and pick up where you left off.';
-
-/** While the script runs, the hint is whatever the next move is. */
-const scriptHint = (ctx) => TUTORIAL_SCRIPT[ctx.scripted]?.note ?? '';
+  'That game is over — press “Start again” and pick up where you left off.';
 
 /**
- * The tutorial, in the order the board teaches it.
- *
- * The first five steps are the scripted opening; the sixth hands the board
- * back. Deliberately short — every clause a player has to hold in their head is
- * one more thing between them and the real game, and the real game is where the
- * point is.
+ * The tutorial, in the order the board teaches it. Four steps, then the board
+ * is handed back.
  */
 export const ESCHER_STEPS = Object.freeze([
   {
     id: 'pawns',
     title: 'Pawns, and How to Move Them',
     body:
-      'Chess, on a board five files wide and ten ranks deep. You are playing ' +
-      'both sides here; White moves first, and the back rank reads rook, ' +
-      'knight, king, knight, rook.\n\n' +
-      'Click a piece and it lights up along with everywhere it may go; click ' +
-      'one of those squares to move it. For the next few minutes only one move ' +
-      'will be offered at a time, so that the board ends up in a position ' +
-      'worth talking about. Pawns first: forward one, or two from where they ' +
-      'start, and diagonally when they take.',
-    hint: scriptHint,
-    done: (ctx) => ctx.scripted >= throughStep('pawns'),
+      'Note that this chess board is five files wide and ten ranks deep. But ' +
+      'it gets weirder than that. Follow the blue instructions below as you ' +
+      'read along. Let’s get some pawns in position.',
+    hint: beatNote,
+    done: (ctx) => ctx.beat >= throughStep('pawns'),
   },
   {
-    id: 'minor',
-    title: 'Everything Jumps',
+    id: 'jumpy',
+    title: 'Everything is Jumpy (and Short-Ranged)',
     body:
-      'A knight leaps in every version of chess, so its first move here looks ' +
-      'ordinary. Watch the bishop that follows it: in normal chess that bishop ' +
-      'is shut in behind its own pawn, and here it simply goes over.\n\n' +
-      'That is the first real rule, and it has no exceptions: every piece here ' +
-      'moves the way a knight moves \u2014 straight to its destination, never ' +
-      'minding what stands ' +
-      'between. Nothing on this board can be blocked.\n\n' +
-      'And notice how far the bishop went: two squares, and no further. ' +
-      'Everything here is short range, which is what stops a board where ' +
-      'nothing can be blocked from ending on move three.',
-    hint: scriptHint,
-    done: (ctx) => ctx.scripted >= throughStep('minor'),
-  },
-  {
-    id: 'rook',
-    title: 'And the Rook Is No Different',
-    body:
-      'Four squares along a rank or a file, straight over its own pawn. The ' +
-      'same two rules again: it jumps, and it stops.\n\n' +
-      'That is the whole of the piece list now. Rooks reach four, bishops ' +
-      'reach two, knights leap as they always did, pawns push one or two and ' +
-      'take diagonally, and the king goes one square in any direction. There ' +
-      'is no queen on this board, no castling, and no en passant.',
-    hint: scriptHint,
-    done: (ctx) => ctx.scripted >= throughStep('rook'),
+      'In Escher Chess, every piece is jumpy (like a knight in classic chess) ' +
+      'and short-ranged. Let’s now see this with knights, bishops, and rooks.',
+    hint: beatNote,
+    done: (ctx) => ctx.beat >= throughStep('jumpy'),
   },
   {
     id: 'wrap',
     title: "It's Pac-Man's World, and We're Just Living In It",
     body:
-      'The board has no left edge and no right edge. The two outside files are ' +
-      'neighbours, so a piece that walks off one side arrives on the other \u2014 ' +
-      'exactly as in Pac-Man. The next three moves all cross that seam.\n\n' +
-      'Watch the bishop especially. It changes the colour of the square it ' +
-      'stands on, which a bishop can never do in ordinary chess. Five is an odd ' +
-      'number, so the chequerboard does not quite meet itself coming round.\n\n' +
-      'This matters more than it sounds. Five files wide, a rook reaching four ' +
-      'squares sideways can reach every other file on the board, from anywhere.',
-    hint: scriptHint,
-    done: (ctx) => ctx.scripted >= throughStep('wrap'),
-  },
-  {
-    id: 'captures',
-    title: 'Taking',
-    body:
-      'Move onto an enemy piece and you take it; that is all there is to it. ' +
-      'The last of these is a pawn taking diagonally across the seam, which is ' +
-      'the kind of capture that will catch you out later if you have not seen ' +
-      'one before.',
-    hint: scriptHint,
-    done: (ctx) => ctx.scripted >= TUTORIAL_SCRIPT.length,
+      'Here is another twist. In Escher Chess, the left-most and right-most ' +
+      'files are connected (like in Pac-Man). Let’s see how this works in ' +
+      'practice.',
+    hint: beatNote,
+    done: (ctx) => ctx.beat >= throughStep('wrap'),
   },
   {
     id: 'check',
-    title: 'Now Play It Out',
+    title: 'Checking the King',
     body:
-      'The board is yours from here \u2014 both sides of it. Play on until one ' +
-      'of the kings is in check.\n\n' +
-      'The goal is the ordinary one: trap the enemy king. Checkmate wins; a ' +
-      'player with no legal move who is not in check draws. You will be told ' +
-      'when a king is in check, and you will not be told what is giving the ' +
-      'check \u2014 there is a reason for that, and it will become clear on the ' +
-      'next screen.',
-    hint: 'Play both sides on, and put one of the kings in check.',
-    done: (ctx) => ctx.hasChecked || ctx.isOver,
+      'As usual, the goal of Escher Chess is to check and ultimately ' +
+      'check-mate the opponent’s King. Let’s play a bit more until a king ' +
+      'gets checked.',
+    hint: beatNote,
+    done: (ctx) => ctx.beat >= TUTORIAL_SCRIPT.length,
   },
 ]);
 
@@ -245,19 +240,20 @@ export const ESCHER_STEPS = Object.freeze([
 export const ESCHER_OUTRO = Object.freeze({
   title: 'Now the Real Game Begins',
   body:
-    'That is the whole tutorial. Every rule you have just learnt is true of ' +
-    'your own pieces in the real game, on a board of exactly this size.\n\n' +
-    'It is not true of your friend\u2019s. You will not be told how their pieces ' +
-    'move; you have to work it out from watching them, which is the game. So ' +
-    'the two of you need separate screens, on separate devices, and you must ' +
-    'not talk to each other about what you can see until the first game is ' +
-    'over.\n\n' +
-    'One thing this board did not show you: in the real game the files are ' +
-    'lettered, and those letters are the entire channel between you. Announce ' +
-    'your moves by file and rank \u2014 \u201cthe knight on E2 to M4\u201d \u2014 and nothing ' +
-    'else. The next screen will put you both in the same room.',
+    'The board is yours from here on out; feel free to continue playing to ' +
+    'check mate if you like.\n\n' +
+    'That is the whole tutorial. In the real game, one of you will play with ' +
+    'the pieces just described, whereas you will see your opponent playing ' +
+    'with even stranger pieces. You will not be told how their pieces move; ' +
+    'you have to work it out from watching them. This confusion is part of the ' +
+    'game.\n\n' +
+    'The “trick” only works if the two players are looking at separate screens ' +
+    '(on separate devices) and do not talk to each other until the first game ' +
+    'is over. So if you and your friend have been working through this ' +
+    'tutorial together (on one device) you need to split up now. The next ' +
+    'screen will make sure that you are paired up into the same game room.',
   href: '/assets/EscherChess/EscherChessGameV4.0.html',
-  cta: 'Play the Real Game \u2192',
+  cta: 'Play the Real Game →',
 });
 
 /* --------------------------------------------------------------- the reveal ---- */

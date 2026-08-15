@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.7.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.8.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -28,7 +28,7 @@
 
       <p class="dg-intro">
         Play both sides yourself, or take turns with whoever is sitting next to
-        you. Nothing on this board is strange yet.
+        you.
       </p>
 
       <div class="dg-layout">
@@ -59,20 +59,18 @@
         pawn's opening double step. <strong>Everything is short range</strong>:
         a rook reaches four squares along a rank or a file, a bishop two along a
         diagonal. <strong>The board is a cylinder</strong>, so the leftmost and
-        rightmost files are neighbours. And <strong>every pawn may open with a
-        double step</strong>, from wherever it starts. There is no queen on this
-        board, no castling and no en passant; a pawn reaching the far rank
-        promotes. Checkmate wins; a player with no legal move who is not in check
-        draws.
+        rightmost files are neighbours. There is no queen on this board, no
+        castling and no en passant; a pawn reaching the far rank promotes.
+        Checkmate wins; a player with no legal move who is not in check draws.
       </p>
 
       <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
     </div>
 
     <script type="module">
-      const BUILD = '4.7.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.8.0'; // keep in step with the ?v= tokens below
 
-      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.7.0';
+      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.8.0';
       import {
         initialGame,
         applyMove,
@@ -81,8 +79,8 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.7.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.7.0';
+      } from '../games/escher/game.js?v=4.8.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.8.0';
       import {
         contextFor,
         stepIndex,
@@ -91,7 +89,7 @@
         ESCHER_STEPS,
         ESCHER_OUTRO,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.7.0';
+      } from '../games/escher/coach.js?v=4.8.0';
 
       const board = TUTORIAL;
 
@@ -99,6 +97,13 @@
       // Undo is then just dropping the last entry and replaying.
       let moves = [];
       let game = initialGame(board);
+      /*
+       * Which piece is picked up. The renderer owns the selection, but the
+       * coach needs it too: some of the tutorial's instructions are satisfied
+       * by clicking a piece and looking at what lights up, before any move is
+       * committed to.
+       */
+      let selected = null;
       const skipped = new Set();
 
       /*
@@ -137,7 +142,7 @@
       }
 
       function drawCoach() {
-        const ctx = contextFor(board, moves);
+        const ctx = contextFor(board, moves, selected);
         const index = stepIndex(ESCHER_STEPS, ctx, skipped);
         const step = ESCHER_STEPS[index];
         const done = index >= ESCHER_STEPS.length;
@@ -164,33 +169,35 @@
       }
 
       /**
-       * The board, with the opening on rails.
+       * While the script is running, one move may be played and no other.
        *
-       * While the script has moves left, exactly one of them is offered: the
-       * rest are filtered out of the view before the renderer ever sees them,
-       * so the only piece that lights up is the one the coach is talking
-       * about. Filtering here rather than in the engine keeps `legalMoves`
-       * meaning what it says. If the script and the board ever disagree the
-       * filter would leave nothing playable, so in that case it stands aside
-       * and hands back the full set rather than wedging the page.
+       * The rest stay *visible* — a selected piece marks everywhere it could
+       * legally go, because seeing the pattern is what the steps are teaching —
+       * they simply do not respond. Restricting here rather than in the engine
+       * keeps `legalMoves` meaning what it says.
+       *
+       * Returns null once the script is spent, which is the page's way of
+       * saying "no restriction": the board is the player's from then on.
        */
-      function onRails(full) {
+      function onRails() {
         const step = nextScripted(moves);
-        if (!step) return full;
+        if (!step) return null;
         const from = toView(board, seat, step.from);
         const to = toView(board, seat, step.to);
-        const only = full.myMoves.filter(
-          (m) =>
-            m.from.rank === from.rank &&
-            m.from.file === from.file &&
-            m.to.rank === to.rank &&
-            m.to.file === to.file
-        );
-        return only.length ? { ...full, myMoves: only } : full;
+        return (m) =>
+          m.from.rank === from.rank &&
+          m.from.file === from.file &&
+          m.to.rank === to.rank &&
+          m.to.file === to.file;
       }
 
       function draw() {
-        view.render(onRails(viewOf(board, game, seat, { hotSeat: true })), {
+        view.render(viewOf(board, game, seat, { hotSeat: true }), {
+          allow: onRails(),
+          onSelect(square) {
+            selected = square ? fromView(board, seat, square) : null;
+            drawCoach();
+          },
           onMove(move) {
             if (game.outcome.status !== STATUS.PLAYING) return;
             const played = {
@@ -199,6 +206,7 @@
               promote: move.promote,
             };
             moves = [...moves, played];
+            selected = null;
             game = applyMove(board, game, played);
             draw();
           },
@@ -214,6 +222,7 @@
       // skipping to the end leaves the panel finished and the button looks dead.
       el('reset').addEventListener('click', () => {
         moves = [];
+        selected = null;
         skipped.clear();
         game = initialGame(board);
         draw();
@@ -221,12 +230,13 @@
 
       el('undo').addEventListener('click', () => {
         moves = moves.slice(0, -1);
+        selected = null;
         game = replay(board, moves);
         draw();
       });
 
       el('coachSkip').addEventListener('click', () => {
-        const ctx = contextFor(board, moves);
+        const ctx = contextFor(board, moves, selected);
         const step = ESCHER_STEPS[stepIndex(ESCHER_STEPS, ctx, skipped)];
         if (step) skipped.add(step.id);
         drawCoach();

@@ -31,7 +31,7 @@
  * stand side by side in the reveal.
  */
 
-import { pieceSvg } from './pieces-svg.js?v=4.7.0';
+import { pieceSvg } from './pieces-svg.js?v=4.8.0';
 
 const MIN_SQUARE = 26;
 const MAX_SQUARE = 58;
@@ -138,6 +138,17 @@ export function createChessboard(
   container.replaceChildren(frame);
 
   let onMove = null;
+  let onSelect = null;
+  /**
+   * Which moves may actually be played, out of the ones that are legal.
+   *
+   * The tutorial runs a scripted opening and wants a piece's *whole* pattern of
+   * moves visible while only one of them can be taken — seeing the shape is the
+   * lesson, and it would be lost if the other squares simply went dark. So the
+   * legal set and the playable set are separate: everything legal is marked,
+   * only what this allows can be clicked.
+   */
+  let allowed = () => true;
   /** Which of my men is picked up. Purely a drawing concern, so it lives here. */
   let selected = null;
   let pending = null;
@@ -157,8 +168,15 @@ export function createChessboard(
     return `${name}${showFiles ? '' : ', rank '}${view.rankLabels[rank]}`;
   };
 
+  /** Move the selection, telling anybody who asked. */
+  function select(square) {
+    const changed = !sameSquare(selected, square) || (selected === null) !== (square === null);
+    selected = square;
+    if (changed) onSelect?.(square);
+  }
+
   function clearSelection() {
-    selected = null;
+    select(null);
     pending = null;
     promo.hidden = true;
     if (view) paint();
@@ -193,7 +211,9 @@ export function createChessboard(
     if (!view) return;
 
     if (selected) {
-      const options = myMovesFrom(selected).filter((m) => sameSquare(m.to, square));
+      const options = myMovesFrom(selected).filter(
+        (m) => sameSquare(m.to, square) && allowed(m)
+      );
       if (options.length > 1) {
         // A pawn reaching the far end; the same destination with several pieces
         // to become.
@@ -209,9 +229,15 @@ export function createChessboard(
     }
 
     const here = view.men.find((m) => sameSquare(m, square));
-    // Clicking your own man picks it up, or puts it down again.
-    if (here?.mine && myMovesFrom(square).length > 0 && !sameSquare(selected, square)) {
-      selected = square;
+    // Clicking your own man picks it up, or puts it down again. A man with no
+    // *allowed* move cannot be picked up at all, which is what keeps a scripted
+    // opening on its rails.
+    if (
+      here?.mine &&
+      myMovesFrom(square).some(allowed) &&
+      !sameSquare(selected, square)
+    ) {
+      select(square);
       pending = null;
       promo.hidden = true;
       paint();
@@ -231,8 +257,13 @@ export function createChessboard(
   /** Redraw from the current view and the current selection. */
   function paint() {
     const men = new Map(view.men.map((m) => [keyOf(m), m]));
-    const froms = new Set(view.myMoves.map((m) => keyOf(m.from)));
-    const targets = selected ? new Set(myMovesFrom(selected).map((m) => keyOf(m.to))) : new Set();
+    // Where a move may *start*: a man with at least one move this page allows.
+    const froms = new Set(view.myMoves.filter(allowed).map((m) => keyOf(m.from)));
+    const mine = selected ? myMovesFrom(selected) : [];
+    // Everything the selected piece can legally reach is marked...
+    const targets = new Set(mine.map((m) => keyOf(m.to)));
+    // ...but only these can be taken. Usually the same set.
+    const playable = new Set(mine.filter(allowed).map((m) => keyOf(m.to)));
     const king = view.check
       ? view.men.find((m) => m.mine && m.type === 'king')
       : null;
@@ -242,16 +273,19 @@ export function createChessboard(
       const here = squareFor(key);
       const canStart = interactive && view.isMyTurn && man?.mine && froms.has(key);
       const canLand = interactive && targets.has(key);
+      const mayLand = interactive && playable.has(key);
 
       cell.classList.toggle('is-selected', sameSquare(selected, here));
       cell.classList.toggle('is-target', canLand);
+      // Shown, but not this move. Marked the same; it simply does not respond.
+      cell.classList.toggle('is-locked', canLand && !mayLand);
       cell.classList.toggle('is-take', canLand && !!man);
       cell.classList.toggle('is-from', sameSquare(view.lastMove?.from, here));
       cell.classList.toggle('is-to', sameSquare(view.lastMove?.to, here));
       cell.classList.toggle('is-check', !!king && sameSquare(king, here));
       // A disabled square is not a tab stop, which is what makes arrowing round
       // a 5x10 board bearable: only the squares you can act on take focus.
-      cell.disabled = !(canStart || canLand) || pending !== null;
+      cell.disabled = !(canStart || mayLand) || pending !== null;
 
       const entry = squares.get(key);
       const wants = man ? man.type : null;
@@ -312,11 +346,15 @@ export function createChessboard(
    * @param {object} next   a view from `viewOf`
    * @param {object} [opts]
    * @param {(move: {from: object, to: object, promote: string|null}) => void} [opts.onMove]
+   * @param {(square: object|null) => void} [opts.onSelect]  a piece was picked up
+   * @param {(move: object) => boolean} [opts.allow]  which legal moves may be played
    */
-  function render(next, { onMove: handler = null } = {}) {
+  function render(next, { onMove: handler = null, onSelect: picked = null, allow = null } = {}) {
     const changed = view?.turn !== next.turn || view?.seat !== next.seat;
     view = next;
     onMove = handler;
+    onSelect = picked;
+    allowed = allow ?? (() => true);
     /*
      * A new position invalidates whatever was picked up under the old one. The
      * turn changing is the usual way that happens; a board reset, which can

@@ -560,6 +560,15 @@ body.dg {
   background: rgba(20, 20, 20, 0.5);
 }
 
+/*
+ * A move that is legal but not the one being taught. Marked exactly like the
+ * rest — seeing the whole pattern is the point — and simply inert, so the only
+ * difference a player can feel is that the cursor does not change.
+ */
+.dg-square.is-locked {
+  cursor: default;
+}
+
 .dg-square.is-target.is-take:hover::before {
   background: none;
   border-color: rgba(20, 20, 20, 0.62);
