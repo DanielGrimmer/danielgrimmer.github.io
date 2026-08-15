@@ -22,7 +22,7 @@
  * games differ by a collection name.
  */
 
-import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.10.0';
+import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.11.0';
 import {
   ROOM_NAMES,
   ESCHER_ROOM_NAMES,
@@ -31,19 +31,20 @@ import {
   ESCHER_COLLECTION,
   emptyRoomDoc,
   emptySandboxDoc,
+  escherRoomServes,
   isRoomName,
   namesFor,
-} from './rooms.js?v=4.10.0';
+} from './rooms.js?v=4.11.0';
 import {
   claimSeat,
   touchSeat,
   releaseSeat,
   normaliseSeats,
-  findOpenRoom,
+  pickRoom,
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.10.0';
+} from '../core/seats.js?v=4.11.0';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -260,7 +261,14 @@ async function readPool(collection = ROOMS_COLLECTION) {
  * 1. The one in the link. An invite always wins.
  * 2. The one this browser was last in, if its seat is still ours. That is a
  *    returning player, and sending them anywhere else loses their game.
- * 3. Whatever the pool suggests — see `findOpenRoom`.
+ * 3. Whatever the pool suggests — see `pickRoom`.
+ *
+ * `accept` narrows what counts as a room at steps 2 and 3, and is how Escher
+ * Chess keeps the button marked 8×8 from landing you on the five-file board:
+ * a room records which board it is playing, and one already committed to the
+ * other one is no use to this arrival. Step 1 is deliberately outside it — an
+ * invite is an invitation to *that game*, whatever board it turned out to be
+ * on, and the page says which.
  */
 export async function chooseRoom({
   preferred = null,
@@ -268,18 +276,21 @@ export async function chooseRoom({
   uid = null,
   now,
   collection = ROOMS_COLLECTION,
+  accept = () => true,
 }) {
   const names = namesFor(collection);
   if (isRoomName(preferred, names)) return preferred;
 
   if (uid && isRoomName(remembered, names)) {
     const mine = await peekRoom({ name: remembered, collection });
-    if (mine && seatOf(mine.seats, uid) !== null) return remembered;
+    // `exists` is what `accept` asks about, and peekRoom only returns a room
+    // that does.
+    if (mine && seatOf(mine.seats, uid) !== null && accept({ ...mine, exists: true })) {
+      return remembered;
+    }
   }
 
-  const pool = await readPool(collection);
-  const open = findOpenRoom(pool, now);
-  return open ? open.id : names[0];
+  return pickRoom(await readPool(collection), { now, names, accept });
 }
 
 /**
@@ -288,7 +299,18 @@ export async function chooseRoom({
  *
  * @returns {{seat: number|null, outcome: string, room: object}}
  */
-export async function joinRoom({ name, uid, now, collection = ROOMS_COLLECTION, blank = null }) {
+export async function joinRoom({
+  name,
+  uid,
+  now,
+  collection = ROOMS_COLLECTION,
+  blank = null,
+  /**
+   * The board to put the room on **if its stale game is being cleared anyway**.
+   * Escher Chess only; ignored by a game that has no boards to choose between.
+   */
+  board = null,
+}) {
   const { sdk: fb, db: d } = await ensureApp();
   const joined = await fb.runTransaction(d, async (tx) => {
     const ref = roomRef(name, collection);
@@ -327,8 +349,11 @@ export async function joinRoom({ name, uid, now, collection = ROOMS_COLLECTION, 
    */
   if (joined.abandoned && joined.seat !== null) {
     try {
-      await resetRoom({ name, collection });
-      return { ...joined, room: { ...joined.room, moves: [] } };
+      await resetRoom({ name, collection, board });
+      return {
+        ...joined,
+        room: { ...joined.room, moves: [], ...(board ? { board } : {}) },
+      };
     } catch {
       // Refused or offline: the stale log stays, and the page says so.
     }
@@ -410,15 +435,28 @@ export async function appendMove({
   });
 }
 
-/** Start a fresh game in the same room, keeping both seats. */
-export async function resetRoom({ name, collection = ROOMS_COLLECTION }) {
+/**
+ * Start a fresh game in the same room, keeping both seats.
+ *
+ * `board` is Escher Chess's, and is the one moment its board may change. A move
+ * means nothing without the board it was played on, so the board is fixed for
+ * the whole of a game — but a reset empties the log, and at that instant there
+ * is nothing left for a change to invalidate. Which is what lets one room host
+ * the five-file game and then the eight-file one, rather than being stuck with
+ * whichever was played in it first. The Security Rule draws the line in the
+ * same place.
+ */
+export async function resetRoom({ name, collection = ROOMS_COLLECTION, board = null }) {
   const { sdk: fb, db: d } = await ensureApp();
   await fb.runTransaction(d, async (tx) => {
     const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
     if (!snap.exists()) return;
-    if (!(snap.data().moves ?? []).length) return; // the rule refuses a no-op reset
-    tx.update(ref, { moves: [] });
+    const room = snap.data();
+    const clearing = (room.moves ?? []).length > 0;
+    const rebranding = Boolean(board) && board !== room.board;
+    if (!clearing && !rebranding) return; // the rule refuses a write that changes nothing
+    tx.update(ref, rebranding ? { moves: [], board } : { moves: [] });
   });
 }
 
@@ -521,35 +559,23 @@ export function watchSandbox(name, onChange, onError) {
  * appending under a length check is shared, and so are the Security Rules'
  * shape.
  */
-/**
- * Start again, possibly on the other board.
- *
- * A move means nothing without the board it was played on, so the board is
- * fixed for the whole of a game — but a reset empties the log, and at that
- * moment there is nothing left for a change to invalidate. Which is what lets
- * one room host the five-file game and then the eight-file one, rather than
- * being stuck with whichever was played in it first. The Security Rule draws
- * the line in the same place.
- */
-async function resetEscherRoom({ name, board = null }) {
-  const { sdk: fb, db: d } = await ensureApp();
-  await fb.runTransaction(d, async (tx) => {
-    const ref = roomRef(name, ESCHER_COLLECTION);
-    const snap = await tx.get(ref);
-    if (!snap.exists()) return;
-    const room = snap.data();
-    if (!(room.moves ?? []).length) return; // the rule refuses a no-op reset
-    tx.update(ref, board && board !== room.board ? { moves: [], board } : { moves: [] });
-  });
-}
-
 export const escher = Object.freeze({
-  choose: (opts) => chooseRoom({ ...opts, collection: ESCHER_COLLECTION }),
+  /**
+   * `board` names the board this arrival came for. It decides which rooms are
+   * candidates, and it is what the room is set to if the room turns out to be
+   * one this arrival is entitled to repurpose.
+   */
+  choose: ({ board = null, ...opts }) =>
+    chooseRoom({
+      ...opts,
+      collection: ESCHER_COLLECTION,
+      accept: board ? (room) => escherRoomServes(room, board) : undefined,
+    }),
   join: (opts) => joinRoom({ ...opts, collection: ESCHER_COLLECTION }),
   beat: (opts) => heartbeat({ ...opts, collection: ESCHER_COLLECTION }),
   leave: (opts) => leaveRoom({ ...opts, collection: ESCHER_COLLECTION }),
   append: (opts) => appendMove({ ...opts, collection: ESCHER_COLLECTION }),
-  reset: (opts) => resetEscherRoom(opts),
+  reset: (opts) => resetRoom({ ...opts, collection: ESCHER_COLLECTION }),
   watch: (name, onChange, onError) => watchRoom(name, onChange, onError, ESCHER_COLLECTION),
 });
 

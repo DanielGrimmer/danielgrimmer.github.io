@@ -19,6 +19,8 @@ import {
   recallRoom,
   emptyRoomDoc,
   emptySandboxDoc,
+  emptyEscherRoomDoc,
+  escherRoomServes,
 } from '../assets/games/net/rooms.js';
 
 /** Enough of the Storage interface to exercise the helpers. */
@@ -185,10 +187,54 @@ test('the documents a room starts life as', async (t) => {
     assert.ok(doc.seats.every((s) => s.uid === null));
   });
 
+  // Which board is recorded at creation, because a move means nothing without
+  // it — and because it is what the arriving player asked for.
+  await t.test('an Escher room is born knowing which board it is', () => {
+    const doc = emptyEscherRoomDoc('ParadoxPawn', 'escher-8x8');
+    assert.equal(doc.game, 'escher-chess');
+    assert.equal(doc.board, 'escher-8x8');
+    assert.deepEqual(doc.moves, []);
+    assert.equal(escherRoomServes({ ...doc, exists: true }, 'escher-8x8'), true);
+    assert.equal(escherRoomServes({ ...doc, exists: true }, 'escher-5x10'), false);
+  });
+
   await t.test('a sandbox carries its configuration, and no nested arrays', () => {
     const doc = emptySandboxDoc('RedPuck', { width: 11, height: 13, duality: 4, moveSet: [{ dr: 1, dc: 0 }] });
     assert.equal(doc.game, 'sandbox');
     assert.deepEqual(doc.moves, []);
     assert.ok(doc.config.moveSet.every((o) => !Array.isArray(o)));
+  });
+});
+
+/**
+ * Choosing a room used to ignore which board it was playing, so the button
+ * marked 8×8 dropped you wherever there was a free chair — and if that room had
+ * been created by somebody who came for the five-file game, that is what you
+ * got. This is the predicate that stops it.
+ */
+test('a room has to be playing the board you came for', async (t) => {
+  const WIDE = 'escher-8x8';
+  const NARROW = 'escher-5x10';
+  const room = (over) => ({ exists: true, board: NARROW, moves: [], ...over });
+
+  await t.test('a room that does not exist yet will be created on it', () => {
+    assert.equal(escherRoomServes({ exists: false }, WIDE), true);
+    assert.equal(escherRoomServes(undefined, WIDE), true);
+  });
+
+  await t.test('a room already on it serves', () => {
+    assert.equal(escherRoomServes(room({ board: WIDE }), WIDE), true);
+  });
+
+  // Its stale log is cleared as the newcomer sits down, and the board may
+  // change at that same moment, because there is nothing left to invalidate.
+  await t.test('and so does one holding a game, whichever board that was on', () => {
+    assert.equal(escherRoomServes(room({ moves: [{}, {}] }), WIDE), true);
+  });
+
+  await t.test('but a room on the other board with nothing in it does not', () => {
+    assert.equal(escherRoomServes(room(), WIDE), false);
+    // Which is only about the other board: on its own it is perfectly usable.
+    assert.equal(escherRoomServes(room(), NARROW), true);
   });
 });

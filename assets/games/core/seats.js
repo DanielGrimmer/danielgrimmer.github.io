@@ -251,6 +251,26 @@ export function findOpenRoom(rooms, now, ttl = SEAT_TTL_MS) {
 }
 
 /**
+ * Which room to walk into, given the whole pool and what this arrival needs.
+ *
+ * `accept` is how a game with more than one shape of board keeps the arrival's
+ * choice: an Escher Chess room records which board is being played, and one
+ * committed to the other board is not a room this arrival can use, however many
+ * free chairs it has. Without it, pressing the button marked 8×8 landed
+ * wherever there was a seat and the room's own board won.
+ *
+ * The fallback matters as much as the choice. Falling back to the first name in
+ * the pool would hand back exactly the room `accept` just refused, so it falls
+ * back to the first name `accept` allows, and only then to the first name at
+ * all — which is the "every room is busy" case the caller cannot avoid.
+ */
+export function pickRoom(pool, { now, names = [], accept = () => true, ttl = SEAT_TTL_MS } = {}) {
+  const usable = (Array.isArray(pool) ? pool : []).filter(accept);
+  const open = findOpenRoom(usable, now, ttl);
+  return open ? open.id : (usable[0]?.id ?? names[0] ?? null);
+}
+
+/**
  * Should this room's game be thrown away as this player sits down?
  *
  * Yes when nobody was left in it and the newcomer is not the one coming back.

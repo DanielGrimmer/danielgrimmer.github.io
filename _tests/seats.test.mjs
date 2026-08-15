@@ -20,6 +20,7 @@ import {
   releaseSeat,
   occupancy,
   findOpenRoom,
+  pickRoom,
   isAbandonedGame,
   lastActivity,
   mayMove,
@@ -354,5 +355,76 @@ test('a room that everybody walked out of', async (t) => {
   await t.test('a room nobody has ever used reports no activity', () => {
     assert.equal(lastActivity(emptySeats()), 0);
     assert.equal(lastActivity([held('a', T0), held('b', T0 + 50)]), T0 + 50);
+  });
+});
+
+/**
+ * Choosing a room, once the pool has been read.
+ *
+ * Split out of the transport so the decision can be tested without a network,
+ * because it had a real defect: it looked only at the chairs. Escher Chess
+ * rooms record which board is being played, and pressing the button marked 8×8
+ * would land you in whichever room had a free chair — often a five-file one.
+ */
+test('picking a room out of the pool', async (t) => {
+  const NOW = 1_000_000;
+  const seat = (uid, at = NOW) => ({ uid, claimedAt: at, lastSeen: at, lastActive: at });
+  const empty = () => [{ uid: null }, { uid: null }];
+  const NAMES = ['RelativityRoom', 'MobiusCheck', 'ImpossibleCastle'];
+  const WIDE = 'escher-8x8';
+  const NARROW = 'escher-5x10';
+  const serves = (board) => (room) =>
+    !room.exists || room.board === board || (room.moves ?? []).length > 0;
+
+  await t.test('with nothing to say about boards it is findOpenRoom', () => {
+    const pool = [
+      { id: 'RelativityRoom', exists: true, seats: [seat('a'), seat('b')], moves: [] },
+      { id: 'MobiusCheck', exists: false, seats: empty(), moves: [] },
+    ];
+    assert.equal(pickRoom(pool, { now: NOW, names: NAMES }), 'MobiusCheck');
+  });
+
+  // The reported bug, exactly: the only free room was a five-file one, and the
+  // player had pressed the button for the eight-file board.
+  await t.test('a free room on the other board is passed over', () => {
+    const pool = [
+      { id: 'RelativityRoom', exists: true, board: NARROW, seats: empty(), moves: [] },
+      { id: 'MobiusCheck', exists: false, seats: empty(), moves: [] },
+    ];
+    assert.equal(pickRoom(pool, { now: NOW, names: NAMES, accept: serves(WIDE) }), 'MobiusCheck');
+    // And is exactly the room to use when it is the board you came for.
+    assert.equal(pickRoom(pool, { now: NOW, names: NAMES, accept: serves(NARROW) }), 'RelativityRoom');
+  });
+
+  await t.test('and so is somebody waiting on the other board', () => {
+    const pool = [
+      { id: 'RelativityRoom', exists: true, board: NARROW, seats: [seat('a'), { uid: null }], moves: [] },
+      { id: 'MobiusCheck', exists: false, seats: empty(), moves: [] },
+    ];
+    assert.equal(pickRoom(pool, { now: NOW, names: NAMES, accept: serves(WIDE) }), 'MobiusCheck');
+  });
+
+  // Its stale log is cleared as the newcomer sits down, and the board can be
+  // changed at that same moment.
+  await t.test('but an abandoned game on the other board is fair game', () => {
+    const pool = [
+      { id: 'RelativityRoom', exists: true, board: NARROW, seats: empty(), moves: [{}, {}] },
+    ];
+    assert.equal(pickRoom(pool, { now: NOW, names: NAMES, accept: serves(WIDE) }), 'RelativityRoom');
+  });
+
+  await t.test('when nothing serves, the fallback is not a room just refused', () => {
+    const pool = [
+      { id: 'RelativityRoom', exists: true, board: NARROW, seats: [seat('a'), seat('b')], moves: [] },
+      { id: 'MobiusCheck', exists: true, board: WIDE, seats: [seat('a'), seat('b')], moves: [] },
+    ];
+    // Both are full, so there is no open room — but the one handed back is at
+    // least on the right board.
+    assert.equal(pickRoom(pool, { now: NOW, names: NAMES, accept: serves(WIDE) }), 'MobiusCheck');
+  });
+
+  await t.test('and an empty pool falls back to the first name there is', () => {
+    assert.equal(pickRoom([], { now: NOW, names: NAMES }), 'RelativityRoom');
+    assert.equal(pickRoom([], { now: NOW, names: [] }), null);
   });
 });

@@ -13,8 +13,8 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.10.0';
-import { PIECE } from './pieces.js?v=4.10.0';
+import { replayFrames, inCheck } from './game.js?v=4.11.0';
+import { PIECE } from './pieces.js?v=4.11.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -70,7 +70,7 @@ export const TUTORIAL_SCRIPT = Object.freeze(
     ['wrap', 'move', at(4, 4), at(6, 1),
       'Click on white’s bishop on rank 4. Its usual X-shaped pattern of available moves wraps around the board’s “seam”. Take it across, onto the square directly in front of the black rook, noting that this bishop has just moved from a dark square to a light one.'],
     ['wrap', 'move', at(10, 5), at(10, 1),
-      'Rooks too can move across the seam. Move black’s last rook one square sideways across it (from the right-most file to the left-most file).'],
+      'Rooks too can move across the seam. Move black’s rook on rank 10 one square sideways across it (from the right-most file to the left-most file).'],
     ['wrap', 'move', at(1, 2), at(2, 5),
       'Knights too, of course, can cross the seam. Move white’s left knight one space forward and two to the left, wrapping around the board.'],
 
@@ -84,16 +84,16 @@ export const TUTORIAL_SCRIPT = Object.freeze(
     /*
      * Two rook moves rather than one. Three ranks is as far as a rook reaches,
      * and rank 1 to the king on rank 9 is eight — so the rook has to walk, and
-     * Black gets a move in between. That move is a free one: nothing is
-     * threatened yet, which is worth saying, or the reader will hunt for the
-     * threat they are supposed to be answering.
+     * Black gets a move in between. That in-between move earns its place by
+     * showing a pawn's double step jumping something, which nothing else in the
+     * script does.
      */
     ['check', 'move', at(1, 1), at(4, 1),
-      'Move white’s left-most rook three spaces forward. Three is as far as a rook goes, and from rank 4 it cannot yet reach the king.'],
+      'Move white’s left-most rook three spaces forward.'],
     ['check', 'move', at(9, 3), at(7, 3),
-      'Nothing is threatened yet, so black has a free move: advance the central black pawn two spaces.'],
+      'Advance the central black pawn two spaces, jumping over the knight.'],
     ['check', 'move', at(4, 1), at(7, 1),
-      'Now move that same rook three spaces forward again, jumping over your own pawn on the way. The black king is in check.'],
+      'Now move white’s left-most rook three spaces forward again, jumping over your own pawn on the way. The black king is in check.'],
   ].map(([step, kind, from, to, note]) => Object.freeze({ step, kind, from, to, note }))
 );
 

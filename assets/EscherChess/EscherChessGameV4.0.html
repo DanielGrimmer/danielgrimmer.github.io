@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Escher Chess (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.10.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.11.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -94,9 +94,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.10.0';
+      const BUILD = '4.11.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.10.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.11.0';
       import {
         initialGame,
         replay,
@@ -104,7 +104,7 @@
         viewOf,
         fromView,
         STATUS,
-      } from '../games/escher/game.js?v=4.10.0';
+      } from '../games/escher/game.js?v=4.11.0';
       import {
         presenceOf,
         seatOf,
@@ -112,10 +112,10 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.10.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.10.0';
-      import { createReplayView } from '../games/ui/replay.js?v=4.10.0';
-      import { revealNote } from '../games/escher/coach.js?v=4.10.0';
+      } from '../games/core/seats.js?v=4.11.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.11.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.11.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.11.0';
       import {
         ESCHER_ROOM_NAMES,
         roomFromLocation,
@@ -124,14 +124,14 @@
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.10.0';
+      } from '../games/net/rooms.js?v=4.11.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.10.0';
+      } from '../games/net/room.js?v=4.11.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
@@ -402,6 +402,24 @@
             'stop talking to each other until the game is over.';
       }
 
+      /**
+       * Play on this board from now on.
+       *
+       * A different board is a different grid, so the view has to go; it is
+       * rebuilt on the next draw. Kept in one place because the board can
+       * change at three separate moments — arriving, repurposing an unplayed
+       * room, and hearing that the other player has started a game on the other
+       * size — and a missed rebuild draws the new game on the old grid.
+       */
+      function setBoard(next) {
+        if (next === board) return;
+        board = next;
+        if (boardView) {
+          boardView.destroy();
+          boardView = null;
+        }
+      }
+
       /* ------------------------------------------------------------ network */
 
       async function enterRoom(name) {
@@ -417,16 +435,38 @@
           uid,
           now: now(),
           blank: emptyEscherRoomDoc(name, wantedBoard.id),
+          // Only used if the room's stale game is being cleared on the way in;
+          // a game in progress keeps the board it is being played on.
+          board: wantedBoard.id,
         });
         seat = joined.seat;
-        // Whichever board the room was created with, not the one we asked for.
-        board = BOARDS[joined.room.board] ?? wantedBoard;
+        // Whichever board this room is playing, which is not always the one we
+        // asked for: an invite link is an invitation to that game.
+        setBoard(BOARDS[joined.room.board] ?? wantedBoard);
         state = { seats: normaliseSeats(joined.room.seats), moves: joined.room.moves ?? [] };
 
-        // A different board means a different grid, so the view is rebuilt.
+        // Rebuilt even at the same size: the view is labelled with this seat's
+        // own file names, and a new room can seat us on the other side.
         if (boardView) {
           boardView.destroy();
           boardView = null;
+        }
+
+        /*
+         * A room nobody has played in yet can still be put on the board we came
+         * for. Rooms outlive the games in them — anyone who opens this page and
+         * closes the tab leaves one behind, on whichever board they wanted —
+         * and without this the pool silently fills with rooms committed to a
+         * board nobody chose.
+         */
+        if (board !== wantedBoard && seat !== null && state.moves.length === 0) {
+          try {
+            await escher.reset({ name, board: wantedBoard.id });
+            setBoard(wantedBoard);
+          } catch {
+            // The rules refuse it until the escherRooms block is republished.
+            // Playing on the board the room already has is the graceful answer.
+          }
         }
 
         const query = new URLSearchParams({ room: name });
@@ -449,6 +489,10 @@
             state = next;
             // A seat can be lost while away; keep ours honest.
             seat = seatOf(next.seats, uid);
+            // And so can the board: the other player pressing "play again on
+            // the other board" changes it for both of us, and this is the only
+            // place we would hear about it.
+            setBoard(BOARDS[next.board] ?? board);
             drawRoom();
             draw();
           },
@@ -568,6 +612,10 @@
             remembered: recallRoom(window.localStorage, LAST_ESCHER_KEY, ESCHER_ROOM_NAMES),
             uid,
             now: now(),
+            // Which board this arrival came for. Without it, pressing the
+            // button marked 8×8 lands wherever there is a free chair, and the
+            // room's own board wins.
+            board: wantedBoard.id,
           });
           await enterRoom(name);
           startBeating();

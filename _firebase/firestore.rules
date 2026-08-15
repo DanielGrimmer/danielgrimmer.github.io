@@ -414,6 +414,27 @@ service cloud.firestore {
           && seatsUnchanged();
       }
 
+      // Putting a room that has never been played in onto the other board.
+      //
+      // A room is created with whichever board its first arrival asked for, and
+      // anybody who opens the page and shuts the tab leaves one behind with an
+      // empty log. Without this those rooms are pinned to that board for good —
+      // there is no game to reset, so no reset to change the board alongside —
+      // and since the pool is twenty, a run of them makes one of the two boards
+      // unreachable. That is not hypothetical: it is what sent somebody who
+      // pressed the 8x8 button to a five-file game.
+      //
+      // Nothing can be destroyed by it. The log is empty on both sides of the
+      // write, the seats do not move, and `shapeIsIntact` has already refused
+      // any board this game does not know. It does let somebody signed in who
+      // knew a room name change the size of a room they are not sitting in,
+      // which is a room with nothing in it.
+      function isRebrand() {
+        return after().moves.size() == 0
+          && before().moves.size() == 0
+          && seatsUnchanged();
+      }
+
       function freshSeat(i) {
         return after().seats[i].uid == null
           || (after().seats[i].uid == request.auth.uid && plausibleBeat(i));
@@ -437,7 +458,7 @@ service cloud.firestore {
       allow update: if signedIn()
         && known()
         && shapeIsIntact()
-        && (isSeatOperation() || isMoveAppend() || isReset());
+        && (isSeatOperation() || isMoveAppend() || isReset() || isRebrand());
     }
 
     // No other path is matched, so everything else is denied by default.

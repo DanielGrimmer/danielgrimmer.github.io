@@ -197,6 +197,35 @@ export function emptyEscherRoomDoc(name, board) {
 }
 
 /**
+ * Can this room be played on the board the arriving player came for?
+ *
+ * The board is recorded in the room, and it must be, because a move means
+ * nothing without it. But choosing a room used to ignore it entirely, so
+ * pressing the button marked 8×8 would drop you into whatever board the room
+ * happened to have been created with — which is what it did.
+ *
+ * Three ways a room can serve you:
+ *
+ * 1. It does not exist. Whoever gets there first creates it, on their board.
+ * 2. It is already on that board.
+ * 3. It holds a game, and the game is over as far as this arrival is concerned
+ *    — an empty room's stale log is cleared on the way in, and the board may
+ *    change at that same moment, because there is then nothing left for the
+ *    change to invalidate.
+ *
+ * The fourth case is a room that exists, is on the other board, and has never
+ * been played in: somebody opened the page and closed the tab. Nothing in the
+ * log to clear means no reset to ride along with, so that room is passed over
+ * here. The published rules also allow the board of an empty room to be set
+ * outright, which is what stops those accumulating.
+ */
+export function escherRoomServes(room, boardId) {
+  if (!room?.exists) return true;
+  if (room.board === boardId) return true;
+  return Array.isArray(room.moves) && room.moves.length > 0;
+}
+
+/**
  * A fresh sandbox. `config` is an encoded spec — plain numbers and a list of
  * `{dr, dc}` maps, because Firestore will not store a nested array.
  */
