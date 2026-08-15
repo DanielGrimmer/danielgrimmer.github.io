@@ -3,9 +3,19 @@
  *
  * Both panels below are the same move log. The left one is folded through one
  * seat's lens and the right one through the other's, frame by frame, in step.
- * Nothing is recomputed and nothing is faked — `replayFrames` is the same fold
- * that produced the game in the first place, and `viewOf` is the same function
- * each player's live board was drawn with.
+ * Nothing is recomputed and nothing is faked — the frames are the same fold
+ * that produced the game in the first place, and each board is drawn by the
+ * same renderer the live game used.
+ *
+ * ## What this module does and does not know
+ *
+ * It owns the transport: the two panels, the buttons, the scrubber, the arrow
+ * keys, and keeping both boards on the same frame. It knows nothing about what
+ * a frame contains. Both duality games want exactly this screen and have
+ * nothing else in common, so the caller hands over already-folded frames, a
+ * factory that mounts one seat's board, and a function that says what move you
+ * are looking at. Ball, trail and cube in one game; rook, check and chequerboard
+ * in the other; identical machinery either way.
  *
  * Showing both at once rather than offering a switch is deliberate. A switch
  * asks the viewer to remember what they just saw; two boards side by side ask
@@ -19,9 +29,6 @@
  * accurate and it flattened the thing into a spot-the-difference puzzle. The
  * note above the boards says what to look for once, and then stops talking.
  */
-
-import { replayFrames, viewOf } from '../core/game.js?v=4.2.3';
-import { createBoardView } from './board.js?v=4.2.3';
 
 /** How long each move is held when the replay is playing itself. */
 const AUTOPLAY_MS = 1100;
@@ -53,10 +60,19 @@ function element(tag, className, text) {
 /**
  * @param {HTMLElement} container must already be visible: the boards measure
  *   themselves as they are built, and a hidden parent measures as zero.
- * @param {{config: object, moves: object[], seatOrder: number[], labels: string[]}} spec
+ * @param {object} spec
+ * @param {object[]} spec.moves         the log, for counting only
+ * @param {object[]} spec.frames        one per move plus the opening position
+ * @param {number[]} spec.seatOrder     which seat each panel shows, left first
+ * @param {string[]} spec.labels        a heading per panel, in the same order
+ * @param {(mount: HTMLElement, seat: number) => {render: Function, destroy: Function}}
+ *   spec.createSeatView  mounts one seat's board; `render` is handed a frame
+ * @param {(index: number) => string} spec.describe  the caption under the controls
  */
-export function createReplayView(container, { config, moves, seatOrder, labels }) {
-  const frames = replayFrames(config, moves);
+export function createReplayView(
+  container,
+  { moves, frames, seatOrder, labels, createSeatView, describe }
+) {
   const total = frameCount(moves);
 
   const boards = element('div', 'dg-replay-boards');
@@ -104,28 +120,16 @@ export function createReplayView(container, { config, moves, seatOrder, labels }
   controls.append(first, back, play, forward, last, scrub, count);
   container.replaceChildren(boards, controls);
 
-  for (const side of sides) {
-    side.view = createBoardView(side.mount, {
-      board: config.board,
-      theme: config.seats[side.seat].theme,
-      interactive: false,
-    });
-  }
+  for (const side of sides) side.view = createSeatView(side.mount, side.seat);
 
   let index = 0;
   let timer = null;
 
   function paint() {
     const frame = frames[index];
-    for (const side of sides) side.view.render(viewOf(config, frame, side.seat));
+    for (const side of sides) side.view.render(frame);
 
-    const mover = moverAt(frames, index);
-    count.textContent =
-      index === 0
-        ? `Before the first move — ${moves.length} moves to come`
-        : `Move ${index} of ${moves.length} — played by ${config.seats[mover].name}, ` +
-          `the ${config.seats[mover].sport ?? 'other'} player`;
-
+    count.textContent = describe(index);
     scrub.value = String(index);
     first.disabled = index === 0;
     back.disabled = index === 0;

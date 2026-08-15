@@ -21,9 +21,9 @@
  * as intended rather than a missing feature.
  */
 
-import { mod } from '../core/duality.js?v=4.2.3';
-import { PIECE } from './pieces.js?v=4.2.3';
-import { SIDE } from './presets.js?v=4.2.3';
+import { mod } from '../core/duality.js?v=4.3.0';
+import { PIECE } from './pieces.js?v=4.3.0';
+import { SIDE } from './presets.js?v=4.3.0';
 
 export const STATUS = Object.freeze({
   PLAYING: 'playing',
@@ -290,14 +290,29 @@ export function fromView(board, seat, { rank, file }) {
  * working that out is the game. `check` is a bare flag for the same reason —
  * you are told you are in check, not which piece is doing it.
  */
-export function viewOf(board, game, seat) {
+export function viewOf(board, game, seat, { hotSeat = false } = {}) {
+  /*
+   * `hotSeat` is for the tutorial, where one person plays both sides at one
+   * screen: the board stays in this seat's frame and the moves offered are
+   * whoever's turn it is. It must never be set by a networked page, and it is
+   * safe where it is used because the tutorial board has the duality switched
+   * off — both players' boards agree, so there is nothing there to give away.
+   */
+  const live = game.outcome.status === STATUS.PLAYING;
+  const mover = hotSeat ? game.turn : seat;
+  const mine = live && game.turn === mover;
+
+  /*
+   * `mine` on a man means "yours to pick up", which at a shared screen is the
+   * side on move rather than the side whose board this is. Everywhere else the
+   * two are the same thing.
+   */
   const men = [];
   for (const [key, man] of game.men) {
     const [rank, file] = key.split(',').map(Number);
-    men.push({ ...man, ...toView(board, seat, { rank, file }), mine: man.side === seat });
+    men.push({ ...man, ...toView(board, seat, { rank, file }), mine: man.side === mover });
   }
 
-  const mine = game.turn === seat && game.outcome.status === STATUS.PLAYING;
   return {
     seat,
     men,
@@ -307,13 +322,13 @@ export function viewOf(board, game, seat) {
       board.flipsRanks[seat] ? board.height - i : i + 1
     ),
     myMoves: mine
-      ? legalMoves(board, game, seat).map((m) => ({
+      ? legalMoves(board, game, mover).map((m) => ({
           from: toView(board, seat, m.from),
           to: toView(board, seat, m.to),
           promote: m.promote ?? null,
         }))
       : [],
-    check: inCheck(board, game, seat),
+    check: inCheck(board, game, hotSeat ? game.turn : seat),
     isMyTurn: mine,
     /** Where the board just changed, so a renderer can point at it. */
     lastMove: game.lastMove

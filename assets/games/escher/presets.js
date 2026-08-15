@@ -45,8 +45,8 @@
  * through their lenses and never asks which one is the identity.
  */
 
-import { Lens, dualityBetween } from '../core/duality.js?v=4.2.3';
-import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.2.3';
+import { Lens, dualityBetween } from '../core/duality.js?v=4.3.0';
+import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.3.0';
 
 const { PAWN: P, KNIGHT: N, BISHOP: B, ROOK: R, QUEEN: Q, KING: K } = PIECE;
 
@@ -72,6 +72,70 @@ const WIDE_ARMY = Object.freeze([
   [R, N, B, Q, K, B, N, R],
   [P, P, P, P, P, P, P, P],
 ]);
+
+/**
+ * Everything about a width that is *not* free.
+ *
+ * The lens and the file names are locked together: change either and the two
+ * players stop naming the same square the same way. So a board is chosen by its
+ * width, and only its height and its pieces are dials. This is what lets the
+ * sandbox open the rules right up without ever breaking the game.
+ */
+const FAMILIES = Object.freeze({
+  5: Object.freeze({
+    multiplier: 3,
+    offset: 3,
+    army: NARROW_ARMY,
+    files: Object.freeze([
+      Object.freeze(['A', 'R', 'M', 'E', 'D']),
+      Object.freeze(['D', 'R', 'E', 'A', 'M']),
+    ]),
+  }),
+  8: Object.freeze({
+    multiplier: 5,
+    offset: 4,
+    army: WIDE_ARMY,
+    files: Object.freeze([
+      Object.freeze(['C', 'D', 'H', 'U', 'E', 'A', 'S', 'L']),
+      Object.freeze(['E', 'D', 'S', 'U', 'C', 'A', 'H', 'L']),
+    ]),
+  }),
+});
+
+export const WIDTHS = Object.freeze(Object.keys(FAMILIES).map(Number));
+
+/**
+ * A board from its width, its height and its dials — the sandbox's whole job.
+ *
+ * `lens` and `files` come from the family and are not negotiable; `mirror`
+ * substitutes the plain reflection for the duality, which is what the tutorial
+ * wants and what "duality off" means on a board with two players sitting
+ * opposite each other.
+ */
+/** Which piece types a width's army puts on the board. */
+export function armyNeeds(width) {
+  const family = FAMILIES[width];
+  if (!family) return [];
+  return Object.freeze([...new Set(family.army.flat().filter(Boolean))]);
+}
+
+export function boardFor({ id, label, width, height, dials, mirror = false }) {
+  const family = FAMILIES[width];
+  if (!family) throw new RangeError(`no Escher Chess board is ${width} files wide`);
+  return makeBoard({
+    id,
+    label,
+    width,
+    height,
+    multiplier: mirror ? width - 1 : family.multiplier,
+    offset: mirror ? width - 1 : family.offset,
+    army: family.army,
+    dials,
+    files: mirror
+      ? [family.files[0], [...family.files[0]].reverse()]
+      : family.files,
+  });
+}
 
 /**
  * @param {object} spec
@@ -121,6 +185,7 @@ function makeBoard({ id, label, width, height, multiplier, offset, army, dials, 
 
   const named = Object.freeze(files.map((f) => Object.freeze([...f])));
   assertNamesAgree(named, lenses);
+  assertEveryManCanMove(placement, pieces);
 
   return Object.freeze({
     id,
@@ -148,6 +213,22 @@ function makeBoard({ id, label, width, height, multiplier, offset, army, dials, 
       duality: dualityBetween(lenses[SIDE.BLACK], lenses[SIDE.WHITE]),
     }),
   });
+}
+
+/**
+ * Every man on the board must have a move set.
+ *
+ * Not hypothetical: the sandbox's queen dial is separate from the army, and
+ * switching to the eight-file board while it was off put queens on the board
+ * with no way to move them. Undefined then propagated as far as check
+ * detection before anything complained, which is a long way from the cause.
+ */
+function assertEveryManCanMove(placement, pieces) {
+  for (const { type } of placement) {
+    if (!pieces[type]) {
+      throw new RangeError(`a ${type} is on the board but has no moves in this rule set`);
+    }
+  }
 }
 
 /**
@@ -179,19 +260,12 @@ function assertNamesAgree(files, lenses) {
  * Thirteen ranks was the published height and playtested long — several moves
  * before either side could touch the other.
  */
-export const NARROW = makeBoard({
+export const NARROW = boardFor({
   id: 'escher-5x10',
   label: 'Escher Chess (5×10)',
   width: 5,
   height: 10,
-  multiplier: 3,
-  offset: 3,
-  army: NARROW_ARMY,
   dials: ESCHER_DIALS.narrow,
-  files: [
-    ['A', 'R', 'M', 'E', 'D'],
-    ['D', 'R', 'E', 'A', 'M'],
-  ],
 });
 
 /**
@@ -200,19 +274,12 @@ export const NARROW = makeBoard({
  * The file names are the game's logo read two ways: taking White's alternately
  * gives CHES and DUAL, Black's gives ESCH and DUAL.
  */
-export const WIDE = makeBoard({
+export const WIDE = boardFor({
   id: 'escher-8x8',
   label: 'Escher Chess (8×8)',
   width: 8,
   height: 8,
-  multiplier: 5,
-  offset: 4,
-  army: WIDE_ARMY,
   dials: ESCHER_DIALS.wide,
-  files: [
-    ['C', 'D', 'H', 'U', 'E', 'A', 'S', 'L'],
-    ['E', 'D', 'S', 'U', 'C', 'A', 'H', 'L'],
-  ],
 });
 
 /**
@@ -225,19 +292,13 @@ export const WIDE = makeBoard({
  * everything, and whatever a player learns here about their own pieces is true
  * of their opponent's too. Which is exactly what stops being true next door.
  */
-export const TUTORIAL = makeBoard({
+export const TUTORIAL = boardFor({
   id: 'escher-tutorial',
   label: 'Escher Chess (tutorial)',
   width: 5,
   height: 10,
-  multiplier: 4, // width - 1: the mirror
-  offset: 4,
-  army: NARROW_ARMY,
   dials: ESCHER_DIALS.narrow,
-  files: [
-    ['A', 'R', 'M', 'E', 'D'],
-    ['D', 'E', 'M', 'R', 'A'],
-  ],
+  mirror: true,
 });
 
 export const BOARDS = Object.freeze({

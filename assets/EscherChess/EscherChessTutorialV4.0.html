@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Escher Chess tutorial (V4.0)</title>
+    <!--
+      The ?v= tokens are cache busters. GitHub Pages serves assets with a
+      ten-minute max-age, so an edited module keeps loading from cache while the
+      page itself is refetched — which looks exactly like the change not having
+      shipped. Bump these together whenever a game module changes; the build
+      stamp at the foot of the page reports which set is actually running.
+    -->
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.3.0" />
+  </head>
+  <body class="dg">
+    <div class="dg-wrap">
+      <header class="dg-masthead">
+        <div>
+          <h1>Escher Chess</h1>
+          <div class="dg-sub">
+            A practice board. Learn the pieces here; the real game comes after.
+          </div>
+        </div>
+        <a href="/escher-chess/">← Escher Chess</a>
+      </header>
+
+      <p class="dg-intro">
+        Play both sides yourself, or take turns with whoever is sitting next to
+        you. Nothing on this board is strange yet.
+      </p>
+
+      <div class="dg-layout">
+        <div class="dg-coach" id="coach" aria-live="polite">
+          <div class="dg-coach-progress" id="coachProgress"></div>
+          <h2 class="dg-coach-title" id="coachTitle"></h2>
+          <p class="dg-coach-body" id="coachBody"></p>
+          <p class="dg-coach-hint" id="coachHint"></p>
+          <a class="dg-btn dg-btn-primary" id="playReal" href="/escher-chess/" hidden></a>
+          <button class="dg-link" id="coachSkip" type="button">Skip this bit</button>
+        </div>
+
+        <div class="dg-play">
+          <div class="dg-status" id="status">White to move.</div>
+          <div id="board"></div>
+          <div class="dg-bar">
+            <button class="dg-btn" id="undo" type="button">Take that back</button>
+            <button class="dg-btn" id="reset" type="button">Start again</button>
+          </div>
+        </div>
+      </div>
+
+      <h2>The rules, in one place</h2>
+      <p class="dg-legend">
+        Ordinary chess, on a board five files wide and ten ranks deep, with four
+        changes. <strong>All movement is jumpy</strong>: every piece goes
+        straight to its destination and nothing can be blocked, including a
+        pawn's opening double step. <strong>Everything is short range</strong>:
+        a rook reaches four squares along a rank or a file, a bishop two along a
+        diagonal. <strong>The board is a cylinder</strong>, so the A file and the
+        D file are neighbours. And <strong>the files are named A, R, M, E, D</strong>,
+        which is how you will announce your moves. There is no queen on this
+        board, no castling and no en passant; a pawn reaching the far rank
+        promotes. Checkmate wins; a player with no legal move who is not in check
+        draws.
+      </p>
+
+      <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
+    </div>
+
+    <script type="module">
+      const BUILD = '4.3.0'; // keep in step with the ?v= tokens below
+
+      import { TUTORIAL, SIDE } from '../games/escher/presets.js?v=4.3.0';
+      import {
+        initialGame,
+        applyMove,
+        replay,
+        viewOf,
+        fromView,
+        STATUS,
+      } from '../games/escher/game.js?v=4.3.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.3.0';
+      import {
+        contextFor,
+        stepIndex,
+        isStalled,
+        STALLED_HINT,
+        ESCHER_STEPS,
+        ESCHER_OUTRO,
+      } from '../games/escher/coach.js?v=4.3.0';
+
+      const board = TUTORIAL;
+
+      // The move log is the state, exactly as a networked room will hold it.
+      // Undo is then just dropping the last entry and replaying.
+      let moves = [];
+      let game = initialGame(board);
+      const skipped = new Set();
+
+      /*
+       * One board, always drawn from White's side.
+       *
+       * The tutorial board has the duality switched off, so the two seats' views
+       * differ by nothing but the half turn — exactly as with a real chess set,
+       * where the board does not spin round between moves. `hotSeat` therefore
+       * offers whoever is on move their own moves without moving the board.
+       */
+      const seat = SIDE.WHITE;
+      const view = createChessboard(document.getElementById('board'), {
+        width: board.width,
+        height: board.height,
+        label: 'The practice board',
+      });
+
+      const el = (id) => document.getElementById(id);
+      const statusEl = el('status');
+
+      const SIDE_NAME = ['White', 'Black'];
+
+      function statusText() {
+        const { status, winner } = game.outcome;
+        if (status === STATUS.CHECKMATE) return `Checkmate — ${SIDE_NAME[winner]} wins.`;
+        if (status === STATUS.STALEMATE) return 'Stalemate. Nobody can move, and it is a draw.';
+        const check = viewOf(board, game, seat, { hotSeat: true }).check;
+        return `${SIDE_NAME[game.turn]} to move.${check ? ' You are in check.' : ''}`;
+      }
+
+      function drawCoach() {
+        const ctx = contextFor(board, moves);
+        const index = stepIndex(ESCHER_STEPS, ctx, skipped);
+        const step = ESCHER_STEPS[index];
+        const done = index >= ESCHER_STEPS.length;
+        const stalled = isStalled(ESCHER_STEPS, ctx, skipped);
+
+        el('coachProgress').textContent = done
+          ? 'Done'
+          : `Step ${index + 1} of ${ESCHER_STEPS.length}`;
+        el('coachTitle').textContent = done ? ESCHER_OUTRO.title : step.title;
+        el('coachBody').textContent = done ? ESCHER_OUTRO.body : step.body;
+        // A finished board cannot satisfy the step being asked for, so say so
+        // rather than leaving the hint asking for the impossible.
+        el('coachHint').textContent = done ? '' : stalled ? STALLED_HINT : step.hint;
+        const cta = el('playReal');
+        cta.hidden = !done;
+        cta.textContent = ESCHER_OUTRO.cta;
+        cta.href = ESCHER_OUTRO.href;
+        el('coachSkip').hidden = done;
+        el('coach').dataset.done = String(done);
+        el('coach').dataset.stalled = String(stalled);
+      }
+
+      function draw() {
+        view.render(viewOf(board, game, seat, { hotSeat: true }), {
+          onMove(move) {
+            if (game.outcome.status !== STATUS.PLAYING) return;
+            const played = {
+              from: fromView(board, seat, move.from),
+              to: fromView(board, seat, move.to),
+              promote: move.promote,
+            };
+            moves = [...moves, played];
+            game = applyMove(board, game, played);
+            draw();
+          },
+        });
+
+        statusEl.textContent = statusText();
+        statusEl.dataset.tone = game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
+        el('undo').disabled = moves.length === 0;
+        drawCoach();
+      }
+
+      // Start again resets the tutorial too, not just the board — otherwise
+      // skipping to the end leaves the panel finished and the button looks dead.
+      el('reset').addEventListener('click', () => {
+        moves = [];
+        skipped.clear();
+        game = initialGame(board);
+        draw();
+      });
+
+      el('undo').addEventListener('click', () => {
+        moves = moves.slice(0, -1);
+        game = replay(board, moves);
+        draw();
+      });
+
+      el('coachSkip').addEventListener('click', () => {
+        const ctx = contextFor(board, moves);
+        const step = ESCHER_STEPS[stepIndex(ESCHER_STEPS, ctx, skipped)];
+        if (step) skipped.add(step.id);
+        drawCoach();
+      });
+
+      // Reports which set of modules the browser actually ran, so a stale cache
+      // is visible rather than looking like a change that never shipped.
+      el('buildStamp').textContent = BUILD;
+
+      draw();
+    </script>
+  </body>
+</html>

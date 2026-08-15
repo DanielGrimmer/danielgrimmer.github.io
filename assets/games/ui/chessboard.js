@@ -166,7 +166,9 @@ export function createChessboard(container, { width, height, interactive = true,
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'dg-promo-choice';
-        btn.dataset.side = String(view.seat);
+        // Coloured as the pawn that is arriving, not as the seat: at a shared
+        // screen those differ on every other move.
+        btn.dataset.side = String(view.men.find((m) => sameSquare(m, from))?.side ?? view.seat);
         btn.textContent = GLYPH[type];
         btn.title = type;
         btn.setAttribute('aria-label', `promote to ${type}`);

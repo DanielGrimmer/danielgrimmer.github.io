@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Sandbox — Escher Chess (V4.0)</title>
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.3.0" />
+  </head>
+  <body class="dg">
+    <div class="dg-wrap dg-wide">
+      <header class="dg-masthead">
+        <div>
+          <h1>The Sandbox</h1>
+          <div class="dg-sub" id="sub">Connecting…</div>
+        </div>
+        <a href="/escher-chess/">← Escher Chess</a>
+      </header>
+
+      <div class="dg-replay-intro">
+        <div class="dg-status" id="status">Connecting…</div>
+        <div class="dg-coach dg-coach-band">
+          <div class="dg-coach-progress" id="roomLabel">Connecting</div>
+          <h2 class="dg-coach-title">Let's Look under the Hood</h2>
+          <p class="dg-coach-body" id="note"></p>
+          <div class="dg-room-tools" id="roomTools" hidden>
+            <button class="dg-btn dg-btn-primary" id="copyLink" type="button">
+              Copy the invite link
+            </button>
+            <label class="dg-join">
+              Or join a room by name:
+              <span class="dg-join-row">
+                <input id="roomInput" list="roomList" placeholder="GreenField" autocomplete="off" />
+                <button class="dg-btn" id="joinRoom" type="button">Join</button>
+              </span>
+            </label>
+            <datalist id="roomList"></datalist>
+          </div>
+          <div class="dg-presence" id="presence"></div>
+        </div>
+      </div>
+
+      <div class="dg-dials">
+        <label>
+          Files
+          <select id="width">
+            <option value="5">5 — ARMED / DREAM</option>
+            <option value="8">8 — CDHUEASL / EDSUCAHL</option>
+          </select>
+        </label>
+        <label>Ranks <input type="number" id="height" min="6" max="14" step="1" /></label>
+        <label>Rook reach <input type="number" id="rookRange" min="1" max="8" step="1" /></label>
+        <label>Bishop reach <input type="number" id="bishopRange" min="1" max="8" step="1" /></label>
+        <label>Knight widened by <input type="number" id="knightWiden" min="0" max="3" step="1" /></label>
+        <label class="dg-dial-check">
+          <input type="checkbox" id="queen" />
+          Queens<span id="queenNote" hidden> (this army has one)</span>
+        </label>
+        <label class="dg-dial-check">
+          <input type="checkbox" id="jumpyForward" />
+          Forward moves jump too
+        </label>
+        <button class="dg-btn" id="resetBoard" type="button">Put the pieces back</button>
+        <button class="dg-btn" id="restore" type="button">Restore the published game settings</button>
+      </div>
+      <p class="dg-dial-note" id="verdict"></p>
+
+      <div class="dg-chess-pair">
+        <div class="dg-replay-side">
+          <div class="dg-replay-head dg-replay-label" id="label0">White</div>
+          <div id="board0"></div>
+        </div>
+        <div class="dg-replay-side">
+          <div class="dg-replay-head dg-replay-label" id="label1">Black</div>
+          <div id="board1"></div>
+        </div>
+      </div>
+
+      <div class="dg-replay-intro">
+        <h2 class="dg-coach-title">What each piece becomes</h2>
+        <ul class="dg-duality" id="table"></ul>
+        <p class="dg-coach-body" id="tail"></p>
+      </div>
+
+      <div class="dg-bar dg-bar-main">
+        <a class="dg-btn" href="EscherChessGameV4.0.html">Back to the game</a>
+      </div>
+
+      <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
+    </div>
+
+    <script type="module">
+      const BUILD = '4.3.0';
+
+      import { SIDE } from '../games/escher/presets.js?v=4.3.0';
+      import {
+        initialGame,
+        replay,
+        viewOf,
+        fromView,
+        STATUS,
+      } from '../games/escher/game.js?v=4.3.0';
+      import {
+        normaliseDials,
+        turn,
+        boardFromDials,
+        describeBoard,
+        verdictFor,
+        encodeDials,
+        decodeDials,
+        DEFAULT_DIALS,
+        PUBLISHED,
+        queenIsCompulsory,
+      } from '../games/escher/sandbox.js?v=4.3.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.3.0';
+      import { presenceOf, seatOf, normaliseSeats, PRESENCE } from '../games/core/seats.js?v=4.3.0';
+      import {
+        ROOM_NAMES,
+        roomFromLocation,
+        shareLink,
+        rememberRoom,
+        recallRoom,
+        LAST_ESCHER_SANDBOX_KEY,
+      } from '../games/net/rooms.js?v=4.3.0';
+      import {
+        signIn,
+        escherSandbox,
+        explain,
+        HEARTBEAT_MS,
+      } from '../games/net/room.js?v=4.3.0';
+
+      const el = (id) => document.getElementById(id);
+      const SIDE_NAME = ['White', 'Black'];
+      const now = () => Date.now();
+
+      const NOTE =
+        'Here is the machinery, with both boards on the table at once. Almost ' +
+        'nothing about the duality itself is adjustable, and that is the point: ' +
+        'the two widths, and the way each one shuffles the files, are locked ' +
+        'together, because they are exactly what makes the knight and the ' +
+        'bishop trade places and what makes the file names come out as words. ' +
+        'Move any one of them and there is no game left.\n\n' +
+        'What is open is the pieces. Every dial below changes which of them ' +
+        'survive the crossing, and the list underneath says so at once. Shorten ' +
+        'the rook on the eight-file board and watch it stop being its own dual ' +
+        '— that was a real defect in the printed rules, and it is one click ' +
+        'away. Un-widen the knight and the whole trick collapses.';
+
+      const wantedBoard = new URLSearchParams(location.search).get('board');
+
+      let uid = null;
+      let room = null;
+      let seat = null;
+      let alone = false; // no network: carry on locally rather than showing a dead page
+      let dials = normaliseDials(PUBLISHED[wantedBoard] ?? DEFAULT_DIALS);
+      let board = boardFromDials(dials);
+      let state = { seats: normaliseSeats([]), moves: [] };
+      let game = initialGame(board);
+      let views = [null, null];
+      let builtFor = null; // the board shape the two views were built for
+      let unwatch = null;
+      let interacted = false;
+
+      /** Settled: either we are in a room, or we know there is no network. */
+      const connected = () => alone || room !== null;
+      const mayEdit = () => connected() && (alone || seat !== null);
+
+      /* ---------------------------------------------------------- rendering */
+
+      function drawDials() {
+        for (const id of ['height', 'rookRange', 'bishopRange', 'knightWiden']) {
+          // Skip a box somebody is typing into: rewriting it under them moves
+          // the caret to the end on every keystroke.
+          if (document.activeElement !== el(id)) el(id).value = String(dials[id]);
+        }
+        if (document.activeElement !== el('width')) el('width').value = String(dials.width);
+        el('queen').checked = dials.queen;
+        el('jumpyForward').checked = dials.jumpyForward;
+        for (const id of ['width', 'height', 'rookRange', 'bishopRange', 'knightWiden', 'queen', 'jumpyForward', 'resetBoard', 'restore']) {
+          el(id).disabled = !mayEdit();
+        }
+        // The eight-file army has a queen in it, so there the dial is not a
+        // choice. Shown ticked and disabled rather than quietly ignored.
+        if (queenIsCompulsory(dials.width)) el('queen').disabled = true;
+        el('queenNote').hidden = !queenIsCompulsory(dials.width);
+        el('verdict').textContent = verdictFor(board);
+      }
+
+      function drawTable() {
+        const rows = describeBoard(board);
+        el('table').replaceChildren(
+          ...rows.map((row) => {
+            const li = document.createElement('li');
+            li.className = 'dg-duality-row';
+            li.dataset.kind = row.selfDual ? 'same' : row.dualTo ? 'swap' : 'alien';
+            const name = document.createElement('strong');
+            name.textContent = row.piece;
+            li.append(name, document.createTextNode(` — ${row.text}`));
+            return li;
+          })
+        );
+        const swaps = rows.filter((r) => r.dualTo && !r.selfDual).length;
+        el('tail').textContent =
+          `${swaps} of the ${rows.length} pieces trade places with another; ` +
+          `${rows.filter((r) => r.selfDual).length} look the same to both of you. ` +
+          'Both boards above show the same position — the one on the right is what ' +
+          'your opponent would be looking at.';
+      }
+
+      function drawBoards() {
+        const shape = `${board.width}x${board.height}`;
+        if (shape !== builtFor) {
+          for (const view of views) view?.destroy();
+          views = [SIDE.WHITE, SIDE.BLACK].map((s) =>
+            createChessboard(el(`board${s}`), {
+              width: board.width,
+              height: board.height,
+              label: `${SIDE_NAME[s]}'s board`,
+            })
+          );
+          builtFor = shape;
+        }
+
+        for (const s of [SIDE.WHITE, SIDE.BLACK]) {
+          el(`label${s}`).textContent = `${SIDE_NAME[s]} — ${board.files[s].join(' ')}`;
+          /*
+           * `hotSeat` on both boards: with everything on the table there is
+           * nothing left to keep from anybody, and either player may push the
+           * pieces about from either side. That is what makes this a sandbox
+           * rather than a second game.
+           */
+          views[s].render(viewOf(board, game, s, { hotSeat: true }), {
+            onMove: mayEdit()
+              ? (move) =>
+                  play({
+                    from: fromView(board, s, move.from),
+                    to: fromView(board, s, move.to),
+                    promote: move.promote ?? null,
+                  })
+              : null,
+          });
+        }
+      }
+
+      function statusText() {
+        // Before sign-in settles, nobody is watching and nobody is playing —
+        // saying "both seats are taken" would be a guess, and a wrong one.
+        if (!connected()) return 'Connecting…';
+        if (game.outcome.status === STATUS.CHECKMATE) {
+          return `Checkmate — ${SIDE_NAME[game.outcome.winner]} wins. Put the pieces back to carry on.`;
+        }
+        if (game.outcome.status === STATUS.STALEMATE) {
+          return 'Stalemate. Put the pieces back to carry on.';
+        }
+        if (!mayEdit()) return 'Both seats are taken — you are watching.';
+        return `${SIDE_NAME[game.turn]} to move. Either of you can move either side.`;
+      }
+
+      function drawPresence() {
+        if (alone || seat === null) {
+          el('presence').textContent = '';
+          return;
+        }
+        const them = state.seats[seat === 0 ? 1 : 0];
+        el('presence').textContent =
+          {
+            [PRESENCE.EMPTY]: 'Nobody else is here yet.',
+            [PRESENCE.ACTIVE]: 'Your friend is here, and moving about.',
+            [PRESENCE.IDLE]: 'Your friend is here but has been still for a while.',
+            [PRESENCE.GONE]: 'Your friend has stopped responding.',
+          }[presenceOf(them, now())] ?? '';
+      }
+
+      function draw() {
+        drawDials();
+        drawBoards();
+        drawTable();
+        drawPresence();
+        el('status').textContent = statusText();
+        el('sub').textContent = `${board.width} files × ${board.height} ranks`;
+        el('roomLabel').textContent = alone ? 'On your own' : (room ?? 'Connecting');
+      }
+
+      /* ------------------------------------------------------------ changes */
+
+      async function play(move) {
+        const before = state.moves;
+        try {
+          game = replay(board, [...before, move]);
+        } catch {
+          return; // not legal on this board; the click simply does nothing
+        }
+        state = { ...state, moves: [...before, move] };
+        draw();
+        if (alone || seat === null) return;
+        try {
+          await escherSandbox.append({
+            name: room,
+            uid,
+            move,
+            expectedLength: before.length,
+          });
+        } catch (err) {
+          el('status').textContent = `That did not take: ${explain(err)}`;
+        }
+      }
+
+      /**
+       * A new set of dials means a new board, and the old log is nonsense on it
+       * — a move naming a square that may not exist any more. So the pieces go
+       * back at the same time, which is also what `setConfig` does over the wire.
+       */
+      async function adjust(next) {
+        dials = normaliseDials(next);
+        board = boardFromDials(dials);
+        game = initialGame(board);
+        state = { ...state, moves: [] };
+        draw();
+        if (alone || seat === null) return;
+        try {
+          await escherSandbox.setConfig({ name: room, uid, config: encodeDials(dials) });
+        } catch (err) {
+          el('status').textContent = `That did not take: ${explain(err)}`;
+        }
+      }
+
+      async function putBack() {
+        game = initialGame(board);
+        state = { ...state, moves: [] };
+        draw();
+        if (alone || seat === null) return;
+        try {
+          await escherSandbox.reset({ name: room, uid });
+        } catch (err) {
+          el('status').textContent = `That did not take: ${explain(err)}`;
+        }
+      }
+
+      /** Take a snapshot from the network as the truth, whatever it says. */
+      function adopt(next) {
+        state = { seats: normaliseSeats(next.seats), moves: next.moves ?? [] };
+        seat = seatOf(state.seats, uid);
+        dials = decodeDials(next.config);
+        board = boardFromDials(dials);
+        /*
+         * A log that will not replay is not a crisis. Someone may have changed
+         * the dials in the instant between our reading them and this snapshot,
+         * so fall back to the position we can actually reconstruct.
+         */
+        try {
+          game = replay(board, state.moves);
+        } catch {
+          game = initialGame(board);
+          state = { ...state, moves: [] };
+        }
+        draw();
+      }
+
+      /* ------------------------------------------------------------ network */
+
+      async function enterRoom(name) {
+        if (unwatch) {
+          unwatch();
+          unwatch = null;
+        }
+        if (room && seat !== null) await escherSandbox.leave({ name: room, uid });
+
+        room = name;
+        const joined = await escherSandbox.join({
+          name,
+          uid,
+          now: now(),
+          config: encodeDials(dials),
+        });
+        seat = joined.seat;
+        adopt(joined.room);
+
+        // A sandbox everybody walked out of is holding somebody else's dials,
+        // which is more confusing here than in the game. Put them back.
+        if (joined.abandoned && joined.seat !== null) {
+          await adjust(PUBLISHED[wantedBoard] ?? DEFAULT_DIALS);
+        }
+
+        history.replaceState(null, '', `?room=${encodeURIComponent(name)}`);
+        if (seat !== null) rememberRoom(window.localStorage, name, LAST_ESCHER_SANDBOX_KEY);
+        el('roomTools').hidden = false;
+
+        unwatch = await escherSandbox.watch(name, adopt, (err) => {
+          el('status').textContent = `Lost contact with the room. ${explain(err)}`;
+        });
+      }
+
+      function startBeating() {
+        setInterval(async () => {
+          if (!room || seat === null) return;
+          try {
+            await escherSandbox.beat({ name: room, uid, now: now(), active: interacted });
+            interacted = false;
+          } catch {
+            // A missed beat is survivable; the seat holds for five minutes.
+          }
+        }, HEARTBEAT_MS);
+
+        for (const evt of ['pointermove', 'keydown', 'pointerdown']) {
+          window.addEventListener(
+            evt,
+            () => {
+              interacted = true;
+            },
+            { passive: true }
+          );
+        }
+        window.addEventListener('pagehide', () => {
+          if (room && seat !== null) escherSandbox.leave({ name: room, uid });
+        });
+      }
+
+      /* -------------------------------------------------------------- setup */
+
+      for (const id of ['height', 'rookRange', 'bishopRange', 'knightWiden']) {
+        el(id).addEventListener('change', () => {
+          adjust(turn(dials, id, el(id).value));
+          // Write the settled value back, in case it was clamped: leaving a
+          // refused number in the box makes the dial look broken.
+          el(id).value = String(normaliseDials(turn(dials, id, el(id).value))[id]);
+        });
+      }
+      el('width').addEventListener('change', () => adjust(turn(dials, 'width', el('width').value)));
+      for (const id of ['queen', 'jumpyForward']) {
+        el(id).addEventListener('change', () => adjust(turn(dials, id, el(id).checked)));
+      }
+      el('resetBoard').addEventListener('click', () => putBack());
+      el('restore').addEventListener('click', () =>
+        adjust(PUBLISHED[`escher-${dials.width}x${dials.width === 5 ? 10 : 8}`] ?? DEFAULT_DIALS)
+      );
+
+      el('copyLink').addEventListener('click', async () => {
+        const link = shareLink(location.origin, location.pathname, room);
+        try {
+          await navigator.clipboard.writeText(link);
+          el('copyLink').textContent = 'Link copied';
+          setTimeout(() => (el('copyLink').textContent = 'Copy the invite link'), 2000);
+        } catch {
+          window.prompt('Copy this link:', link);
+        }
+      });
+
+      el('joinRoom').addEventListener('click', async () => {
+        const wanted = el('roomInput').value.trim();
+        if (!ROOM_NAMES.includes(wanted)) {
+          el('status').textContent = `There is no room called “${wanted}”. Pick one from the list.`;
+          return;
+        }
+        await enterRoom(wanted);
+      });
+
+      el('roomList').append(
+        ...ROOM_NAMES.map((name) => {
+          const option = document.createElement('option');
+          option.value = name;
+          return option;
+        })
+      );
+      el('note').textContent = NOTE;
+      el('buildStamp').textContent = BUILD;
+      draw();
+
+      (async () => {
+        try {
+          uid = await signIn();
+          const wanted = roomFromLocation(location.search);
+          const name = await escherSandbox.choose({
+            preferred: wanted,
+            remembered: recallRoom(window.localStorage, LAST_ESCHER_SANDBOX_KEY),
+            uid,
+            now: now(),
+          });
+          await enterRoom(name);
+          startBeating();
+        } catch (err) {
+          // Carry on locally rather than showing an error over a dead page.
+          alone = true;
+          draw();
+          el('status').textContent =
+            `Working on your own — the room could not be reached. ${explain(err)}`;
+          console.error(err);
+        }
+      })();
+    </script>
+  </body>
+</html>

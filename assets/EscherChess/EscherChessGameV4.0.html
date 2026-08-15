@@ -4,17 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
-    <title>Soccer Hockey Duality Game (V4.0)</title>
+    <title>Escher Chess (V4.0)</title>
     <link rel="stylesheet" href="../games/ui/board.css?v=4.3.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
       <header class="dg-masthead">
         <div>
-          <h1 id="sportTitle">Soccer Hockey</h1>
-          <div class="dg-sub" id="sportSub">Connecting…</div>
+          <h1 id="sideTitle">Escher Chess</h1>
+          <div class="dg-sub" id="sideSub">Connecting…</div>
         </div>
-        <a href="/soccer-hockey/">← Soccer Hockey</a>
+        <a href="/escher-chess/">← Escher Chess</a>
       </header>
 
       <div class="dg-layout" id="playLayout">
@@ -24,7 +24,9 @@
           <p class="dg-coach-body" id="coachBody">Finding you a room…</p>
 
           <div class="dg-room-tools" id="roomTools" hidden>
-            <button class="dg-btn dg-btn-primary" id="copyLink" type="button">Copy the invite link</button>
+            <button class="dg-btn dg-btn-primary" id="copyLink" type="button">
+              Copy the invite link
+            </button>
             <label class="dg-join">
               Or join a room by name:
               <span class="dg-join-row">
@@ -40,6 +42,7 @@
           <div class="dg-status" id="status">Connecting…</div>
           <div class="dg-presence" id="presence"></div>
           <div id="board"></div>
+          <p class="dg-legend" id="fileNote"></p>
         </div>
       </div>
 
@@ -49,10 +52,6 @@
         the two replay boards want the whole width.
       -->
       <section id="replay" hidden>
-        <!--
-          The reading holds the site's measure and sits centred over the boards;
-          only the boards themselves take the extra width.
-        -->
         <div class="dg-replay-intro">
           <div class="dg-status" id="replayStatus"></div>
           <div class="dg-coach dg-coach-band" id="replayCoach">
@@ -72,12 +71,8 @@
             <p class="dg-coach-body" id="replayAfter"></p>
           </div>
         </div>
-        <!--
-          Where to go once the reveal has landed. The room name travels with the
-          link, so following it puts both players in the same sandbox.
-        -->
         <div class="dg-bar dg-bar-main">
-          <a class="dg-btn dg-btn-primary" id="toSandbox" href="SoccerHockeySandboxV4.0.html">
+          <a class="dg-btn dg-btn-primary" id="toSandbox" href="EscherChessSandboxV4.0.html">
             Let's Look under the Hood →
           </a>
         </div>
@@ -94,15 +89,15 @@
     <script type="module">
       const BUILD = '4.3.0';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.3.0';
+      import { BOARDS, NARROW, SIDE } from '../games/escher/presets.js?v=4.3.0';
       import {
         initialGame,
         replay,
         replayFrames,
         viewOf,
-        squareFromView,
+        fromView,
         STATUS,
-      } from '../games/core/game.js?v=4.3.0';
+      } from '../games/escher/game.js?v=4.3.0';
       import {
         presenceOf,
         seatOf,
@@ -111,38 +106,46 @@
         mayMove,
         PRESENCE,
       } from '../games/core/seats.js?v=4.3.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.3.0';
-      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.3.0';
-      import { replayNote } from '../games/ui/coach.js?v=4.3.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.3.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.3.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.3.0';
       import {
         ROOM_NAMES,
         roomFromLocation,
         shareLink,
         rememberRoom,
         recallRoom,
+        emptyEscherRoomDoc,
+        LAST_ESCHER_KEY,
       } from '../games/net/rooms.js?v=4.3.0';
       import {
         signIn,
-        chooseRoom,
-        joinRoom,
-        heartbeat,
-        leaveRoom,
-        appendMove,
-        resetRoom,
-        watchRoom,
+        escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
       } from '../games/net/room.js?v=4.3.0';
 
-      const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
+      const SIDE_NAME = ['White', 'Black'];
+
+      /*
+       * Which board this room is played on.
+       *
+       * The narrow one unless the link says otherwise; the booklets advise
+       * learning on it, and it is the one the tutorial teaches. A room that
+       * already exists keeps whatever board it was created with — changing it
+       * mid-game would invalidate every move in the log, and the Security Rules
+       * refuse it for the same reason.
+       */
+      const wantedBoard = BOARDS[new URLSearchParams(location.search).get('board')] ?? NARROW;
 
       let uid = null;
       let room = null; // the room's name
-      let seat = null; // 0, 1, or null for a spectator
+      let seat = null; // 0 (White), 1 (Black), or null for a spectator
+      let board = wantedBoard;
       let state = { seats: normaliseSeats([]), moves: [] };
-      let game = initialGame(config);
+      let game = initialGame(board);
       let boardView = null;
       let replayView = null;
       let replayKey = null; // what the replay on screen is currently showing
@@ -157,29 +160,22 @@
       let interacted = false; // has anyone touched this tab since the last beat
 
       const now = () => Date.now();
+      const other = (s) => (s === 0 ? 1 : 0);
 
       /* ---------------------------------------------------------- rendering */
 
-      function sportOf(index) {
-        return config.seats[index]?.sport ?? 'Spectating';
-      }
-
-      function cornerOf(index) {
-        return config.seats[index]?.goalCorner ?? '';
-      }
-
       function describeOpponent() {
         if (seat === null) return '';
-        const them = state.seats[seat === 0 ? 1 : 0];
+        const them = state.seats[other(seat)];
         switch (presenceOf(them, now())) {
           case PRESENCE.EMPTY:
             return 'Nobody else is here yet.';
           case PRESENCE.ACTIVE:
-            return 'Your opponent is here, and moving about.';
+            return 'Your friend is here, and moving about.';
           case PRESENCE.IDLE:
-            return 'Your opponent is here but has been still for a while.';
+            return 'Your friend is here but has been still for a while.';
           case PRESENCE.GONE:
-            return 'Your opponent has stopped responding. Their seat frees up after five minutes.';
+            return 'Your friend has stopped responding. Their seat frees up after five minutes.';
           default:
             return '';
         }
@@ -193,52 +189,59 @@
         // other player closes their tab, and the replay underneath would look
         // absurd above the words "waiting for a second player".
         const callThem = 'Call your friend, to talk through your respective experiences.';
-        if (game.outcome.status === STATUS.WON) {
+        if (game.outcome.status === STATUS.CHECKMATE) {
           return game.outcome.winner === seat
-            ? `You win! ${callThem}`
-            : `Your opponent wins. ${callThem}`;
+            ? `Checkmate — you win! ${callThem}`
+            : `Checkmate. Your friend wins. ${callThem}`;
         }
-        if (game.outcome.status === STATUS.TIE) return `Nobody can move — a draw. ${callThem}`;
+        if (game.outcome.status === STATUS.STALEMATE) {
+          return `Stalemate — nobody can move, and it is a draw. ${callThem}`;
+        }
         const full = occupancy(state.seats, now()).held === 2;
         if (!full) return 'Waiting for a second player to join this room.';
-        // Which way you are heading is the thing players lose track of: the
-        // sport you were handed says nothing about it, and it need not match
-        // the side you had in the tutorial. So it is repeated every turn.
-        return game.turn === seat
-          ? `Your move. You are heading for the goal at the ${cornerOf(seat)}.`
-          : `Your opponent's move. They are heading for the ${cornerOf(seat === 0 ? 1 : 0)}.`;
+
+        const check = viewOf(board, game, seat).check;
+        if (game.turn === seat) {
+          return check ? 'Your move — and you are in check.' : 'Your move.';
+        }
+        return "Your friend's move.";
       }
 
       function draw() {
-        game = replay(config, state.moves);
-        const lens = seat ?? 0;
+        game = replay(board, state.moves);
+        const lens = seat ?? SIDE.WHITE;
 
         if (!boardView) {
-          boardView = createBoardView(el('board'), {
-            board: config.board,
-            theme: config.seats[lens].theme,
+          boardView = createChessboard(el('board'), {
+            width: board.width,
+            height: board.height,
+            label: `Your board — ${board.files[lens].join(' ')}`,
           });
         }
 
         // `mayMove` asks whether this uid holds *the seat on move* and is still
-        // beating, which is the same question the Security Rule asks. Restating
-        // it here as `game.turn === seat` was a second copy of a rule that has
-        // one home.
+        // beating, which is the same question the Security Rule asks.
         const full = occupancy(state.seats, now()).held === 2;
         const mayMoveNow =
           full &&
           game.outcome.status === STATUS.PLAYING &&
           mayMove(state.seats, { uid, turn: game.turn, now: now() });
 
-        boardView.render(viewOf(config, game, lens), {
-          onSquare: mayMoveNow
-            ? async (viewSquare) => {
-                const square = squareFromView(config, lens, viewSquare);
+        boardView.render(viewOf(board, game, lens), {
+          onMove: mayMoveNow
+            ? async (move) => {
+                const played = {
+                  from: fromView(board, lens, move.from),
+                  to: fromView(board, lens, move.to),
+                  // Never undefined: Firestore refuses it, and the log has to
+                  // read back the same way it went in.
+                  promote: move.promote ?? null,
+                };
                 try {
-                  await appendMove({
+                  await escher.append({
                     name: room,
                     uid,
-                    move: { row: square.row, col: square.col },
+                    move: played,
                     expectedLength: state.moves.length,
                   });
                 } catch (err) {
@@ -251,12 +254,15 @@
         });
 
         el('status').textContent = inheritedGame
-          ? 'This room still has somebody else\u2019s finished game in it. Press ' +
-            '\u201cNew game\u201d to clear the board and start your own.'
+          ? 'This room still has somebody else’s finished game in it. Press ' +
+            '“New game” to clear the board and start your own.'
           : describeStatus();
         el('status').dataset.tone =
-          !inheritedGame && game.outcome.status === STATUS.WON ? 'win' : '';
+          !inheritedGame && game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
         el('presence').textContent = describeOpponent();
+        el('fileNote').textContent =
+          `Your files are named ${board.files[lens].join(', ')}, left to right. ` +
+          'Announce your moves by file and rank, and nothing else.';
         el('newGame').hidden = seat === null || game.outcome.status === STATUS.PLAYING;
         el('leave').hidden = seat === null;
         drawReplay();
@@ -268,13 +274,11 @@
        *
        * Rebuilt only when what it is showing changes. Every heartbeat delivers a
        * fresh snapshot and calls draw(), so rebuilding unconditionally would
-       * throw the viewer back to the kick-off once a minute while they were
-       * still reading their way through it.
+       * throw the viewer back to the opening position once a minute while they
+       * were still reading their way through it.
        */
       function drawReplay() {
         if (state.moves.length === 0) inheritedGame = false;
-        // A finished game we walked in on is not a reveal; it is somebody
-        // else's board that nobody cleared. Say so and offer a fresh one.
         const over = game.outcome.status !== STATUS.PLAYING && !inheritedGame;
         const key = over ? `${room}:${seat}:${state.moves.length}` : null;
 
@@ -295,33 +299,34 @@
         }
         if (!over) return;
 
-        const note = replayNote(config, seat);
+        const note = revealNote(board, seat);
         el('replayTitle').textContent = note.title;
         el('replayBody').textContent = note.body;
         el('replayAfter').textContent = note.after;
         // Carry the room across, so both players land in the same sandbox
         // simply by pressing the button in front of them.
-        el('toSandbox').href = room
-          ? `SoccerHockeySandboxV4.0.html?room=${encodeURIComponent(room)}`
-          : 'SoccerHockeySandboxV4.0.html';
+        const query = new URLSearchParams({ board: board.id });
+        if (room) query.set('room', room);
+        el('toSandbox').href = `EscherChessSandboxV4.0.html?${query}`;
         el('replayStatus').textContent = describeStatus();
-        el('replayStatus').dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
+        el('replayStatus').dataset.tone =
+          game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
 
-        // Your own board first, so "on the left" in the note is true for both
-        // players even though they hold different seats.
-        const order = seat === null ? [0, 1] : [seat, seat === 0 ? 1 : 0];
-        const labels = order.map((s, i) =>
-          seat === null
-            ? `${config.seats[s].name} — ${sportOf(s)}`
-            : `${i === 0 ? 'Your board' : "Your opponent's board"} — ${sportOf(s)}`
-        );
+        // Your own board first, so "the left-hand one" in the note is true for
+        // both players even though they hold different seats.
+        const order = seat === null ? [SIDE.WHITE, SIDE.BLACK] : [seat, other(seat)];
+        const labels = order.map((s, i) => {
+          const files = board.files[s].join(' ');
+          if (seat === null) return `${SIDE_NAME[s]} — ${files}`;
+          return `${i === 0 ? 'Your board' : "Your friend's board"} — ${files}`;
+        });
 
         /*
          * `ui/replay.js` owns the transport and nothing else — it is shared with
-         * Escher Chess, which has no ball to draw. The fold, the renderer and
-         * the caption are Soccer Hockey's, and are handed over here.
+         * Soccer Hockey, which has no pieces to draw. The fold, the renderer and
+         * the caption are Escher Chess's, and are handed over here.
          */
-        const frames = replayFrames(config, state.moves);
+        const frames = replayFrames(board, state.moves);
 
         // Built after the section is unhidden: each board measures itself as it
         // is created, and a hidden parent measures as nothing at all.
@@ -331,24 +336,33 @@
           seatOrder: order,
           labels,
           createSeatView(mount, s) {
-            const view = createBoardView(mount, {
-              board: config.board,
-              theme: config.seats[s].theme,
+            const view = createChessboard(mount, {
+              width: board.width,
+              height: board.height,
               interactive: false,
+              label: `${SIDE_NAME[s]}'s board`,
             });
             return {
-              render: (frame) => view.render(viewOf(config, frame, s)),
+              render: (frame) => view.render(viewOf(board, frame, s)),
               destroy: () => view.destroy(),
             };
           },
           describe(index) {
             if (index === 0) {
-              return `Before the first move — ${state.moves.length} moves to come`;
+              return `The opening position — ${state.moves.length} moves to come`;
             }
-            const mover = moverAt(frames, index);
+            /*
+             * The two players name the same square differently only in the
+             * sense that its *place* differs; the name itself is shared, which
+             * is the point. So the caption uses the name, and the boards show
+             * the two places.
+             */
+            const move = frames[index].lastMove;
+            const from = board.files[SIDE.WHITE][move.from.file] + (move.from.rank + 1);
+            const to = board.files[SIDE.WHITE][move.to.file] + (move.to.rank + 1);
             return (
-              `Move ${index} of ${state.moves.length} — played by ` +
-              `${config.seats[mover].name}, the ${config.seats[mover].sport ?? 'other'} player`
+              `Move ${index} of ${state.moves.length} — ` +
+              `${SIDE_NAME[move.side]} played ${from} to ${to}`
             );
           },
         });
@@ -359,24 +373,27 @@
         el('roomTools').hidden = false;
 
         if (seat === null) {
-          el('sportTitle').textContent = 'Soccer Hockey';
-          el('sportSub').textContent = 'Both seats taken — you are watching.';
+          el('sideTitle').textContent = 'Escher Chess';
+          el('sideSub').textContent = 'Both seats taken — you are watching.';
           el('coachBody').textContent =
             'This room is full. Pick another room by name below, or ask your ' +
-            'opponent for their invite link.';
+            'friend for their invite link.';
           return;
         }
 
-        el('sportTitle').textContent = `${sportOf(seat)} — you are Player ${seat + 1}`;
-        el('sportSub').textContent = `Your goal is the gap at the ${cornerOf(seat)}.`;
+        el('sideTitle').textContent = `${SIDE_NAME[seat]} — ${board.width}×${board.height}`;
+        el('sideSub').textContent =
+          seat === SIDE.WHITE ? 'You move first.' : 'White moves first.';
 
         const full = occupancy(state.seats, now()).held === 2;
         el('coachBody').textContent = full
-          ? 'You are both here. Please stop talking to each other now. Once the ' +
-            'first game is over, you can call each other and compare notes.'
-          : 'You are the only one here. Send your opponent the invite link, or ' +
+          ? 'You are both here. From now until the game is over, the only thing ' +
+            'you may tell each other is which piece you moved, from where, to ' +
+            'where — by file and rank. Nothing about how your pieces move, and ' +
+            'nothing about what you can see.'
+          : 'You are the only one here. Send your friend the invite link, or ' +
             'tell them this room name so they can type it in. Once they arrive, ' +
-            'stop talking to each other until the game is over.';
+            'the only thing you may say to each other is your moves.';
       }
 
       /* ------------------------------------------------------------ network */
@@ -386,31 +403,40 @@
           unwatch();
           unwatch = null;
         }
-        if (room && seat !== null) await leaveRoom({ name: room, uid });
+        if (room && seat !== null) await escher.leave({ name: room, uid });
 
         room = name;
-        const joined = await joinRoom({ name, uid, now: now() });
+        const joined = await escher.join({
+          name,
+          uid,
+          now: now(),
+          blank: emptyEscherRoomDoc(name, wantedBoard.id),
+        });
         seat = joined.seat;
+        // Whichever board the room was created with, not the one we asked for.
+        board = BOARDS[joined.room.board] ?? wantedBoard;
         state = { seats: normaliseSeats(joined.room.seats), moves: joined.room.moves ?? [] };
 
-        // The lens decides the palette, so a change of seat needs a fresh board.
+        // A different board means a different grid, so the view is rebuilt.
         if (boardView) {
           boardView.destroy();
           boardView = null;
         }
 
-        history.replaceState(null, '', `?room=${encodeURIComponent(name)}`);
-        if (seat !== null) rememberRoom(window.localStorage, name);
+        const query = new URLSearchParams({ room: name });
+        if (board !== NARROW) query.set('board', board.id);
+        history.replaceState(null, '', `?${query}`);
+        if (seat !== null) rememberRoom(window.localStorage, name, LAST_ESCHER_KEY);
         // Whether the game was already over when we arrived, before any of our
         // own moves can have changed it.
         inheritedGame =
           joined.seat !== null &&
           !joined.abandoned &&
-          replay(config, state.moves).outcome.status !== STATUS.PLAYING;
+          replay(board, state.moves).outcome.status !== STATUS.PLAYING;
         drawRoom();
         draw();
 
-        unwatch = await watchRoom(
+        unwatch = await escher.watch(
           name,
           (next) => {
             state = next;
@@ -429,7 +455,7 @@
         const beat = async () => {
           if (!room || seat === null) return;
           try {
-            await heartbeat({ name: room, uid, now: now(), active: interacted });
+            await escher.beat({ name: room, uid, now: now(), active: interacted });
             interacted = false;
           } catch {
             // A missed beat is survivable; the seat holds for five minutes.
@@ -440,24 +466,32 @@
         let timer = null;
         const schedule = () => {
           clearTimeout(timer);
-          const mine = seat !== null && game.turn === seat && game.outcome.status === STATUS.PLAYING;
-          timer = setTimeout(async () => {
-            await beat();
-            schedule();
-          }, mine ? ACTIVE_HEARTBEAT_MS : HEARTBEAT_MS);
+          const mine =
+            seat !== null && game.turn === seat && game.outcome.status === STATUS.PLAYING;
+          timer = setTimeout(
+            async () => {
+              await beat();
+              schedule();
+            },
+            mine ? ACTIVE_HEARTBEAT_MS : HEARTBEAT_MS
+          );
         };
         schedule();
 
         for (const evt of ['pointermove', 'keydown', 'pointerdown']) {
-          window.addEventListener(evt, () => {
-            interacted = true;
-          }, { passive: true });
+          window.addEventListener(
+            evt,
+            () => {
+              interacted = true;
+            },
+            { passive: true }
+          );
         }
 
         // Best effort: a closed tab frees its seat at once rather than in five
         // minutes. It does not always fire, which is why the timeout exists.
         window.addEventListener('pagehide', () => {
-          if (room && seat !== null) leaveRoom({ name: room, uid });
+          if (room && seat !== null) escher.leave({ name: room, uid });
         });
       }
 
@@ -484,12 +518,12 @@
       });
 
       el('newGame').addEventListener('click', async () => {
-        await resetRoom({ name: room });
+        await escher.reset({ name: room });
       });
 
       el('leave').addEventListener('click', async () => {
-        await leaveRoom({ name: room, uid });
-        location.href = '/soccer-hockey/';
+        await escher.leave({ name: room, uid });
+        location.href = '/escher-chess/';
       });
 
       el('roomList').append(
@@ -506,9 +540,9 @@
         try {
           uid = await signIn();
           const wanted = roomFromLocation(location.search);
-          const name = await chooseRoom({
+          const name = await escher.choose({
             preferred: wanted,
-            remembered: recallRoom(window.localStorage),
+            remembered: recallRoom(window.localStorage, LAST_ESCHER_KEY),
             uid,
             now: now(),
           });

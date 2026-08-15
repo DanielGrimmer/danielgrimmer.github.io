@@ -976,6 +976,53 @@ body.dg {
   margin-top: 0.35rem;
 }
 
+/*
+ * The Escher sandbox's read-out: what each piece becomes once it crosses. The
+ * three kinds are coloured because the *shape* of the list is the answer — a
+ * good setting is mostly "same" with one swapped pair, and you can see that
+ * without reading a word of it.
+ */
+.dg-duality {
+  list-style: none;
+  margin: 1rem auto 0;
+  padding: 0;
+  max-width: 40rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.dg-duality-row {
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  border-left: 4px solid var(--dg-divider);
+  background: var(--dg-surface);
+  font-size: 0.95rem;
+}
+
+.dg-duality-row[data-kind='swap'] {
+  border-left-color: var(--dg-accent);
+}
+
+.dg-duality-row[data-kind='same'] {
+  border-left-color: #4f9d69;
+}
+
+.dg-duality-row[data-kind='alien'] {
+  border-left-color: #b0762c;
+}
+
+.dg-dial-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.dg-dial-check input {
+  width: auto;
+  margin: 0;
+}
+
 /* ---------------------------------------------------------------- misc ---- */
 
 .dg-legend {

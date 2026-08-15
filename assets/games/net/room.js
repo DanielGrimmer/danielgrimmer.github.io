@@ -9,11 +9,17 @@
  *
  * A room document is:
  *
- *   { version, name, game, seats: [seat, seat], moves: [{row, col}, ...] }
+ *   { version, name, game, seats: [seat, seat], moves: [move, ...] }
  *
  * The move log *is* the game state. Whose turn it is falls out of its length,
  * which is what lets a Security Rule refuse a move from anybody but the seat on
  * move — a rule cannot replay a board, but it can count.
+ *
+ * What a move *is* never reaches this file. Soccer Hockey writes `{row, col}`
+ * and Escher Chess writes `{from, to, promote}`; both are checked by the engine
+ * before they are sent and neither is understood by the rules, which only ever
+ * count. So `appendMove` takes whatever map its caller hands it, and the two
+ * games differ by a collection name.
  */
 
 import { firebaseConfig } from '../../SoccerHockey/firebaseConfig.js';
@@ -21,10 +27,13 @@ import {
   ROOM_NAMES,
   ROOMS_COLLECTION,
   SANDBOX_COLLECTION,
+  ESCHER_COLLECTION,
+  ESCHER_SANDBOX_COLLECTION,
   emptyRoomDoc,
   emptySandboxDoc,
+  blankSeats,
   isRoomName,
-} from './rooms.js?v=4.2.3';
+} from './rooms.js?v=4.3.0';
 import {
   claimSeat,
   touchSeat,
@@ -34,7 +43,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.2.3';
+} from '../core/seats.js?v=4.3.0';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -303,10 +312,16 @@ export async function leaveRoom({ name, uid, collection = ROOMS_COLLECTION }) {
  * same index, and so a move computed against a stale board is rejected rather
  * than silently overwriting the other player's.
  */
-export async function appendMove({ name, uid, square, expectedLength }) {
+export async function appendMove({
+  name,
+  uid,
+  move,
+  expectedLength,
+  collection = ROOMS_COLLECTION,
+}) {
   const { sdk: fb, db: d } = await ensureApp();
   await fb.runTransaction(d, async (tx) => {
-    const ref = roomRef(name);
+    const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
     if (!snap.exists()) throw new Error('room has gone');
     const room = snap.data();
@@ -319,7 +334,7 @@ export async function appendMove({ name, uid, square, expectedLength }) {
       throw new Error('not your turn');
     }
 
-    tx.update(ref, { moves: [...moves, { row: square.row, col: square.col }] });
+    tx.update(ref, { moves: [...moves, move] });
   });
 }
 
@@ -377,10 +392,10 @@ export async function joinSandbox({ name, uid, now, config }) {
  * Write a new configuration. The move log goes with it: a board of a different
  * size has different squares, so the old moves would be nonsense on it.
  */
-export async function setSandboxConfig({ name, uid, config }) {
+export async function setSandboxConfig({ name, uid, config, collection = SANDBOX_COLLECTION }) {
   const { sdk: fb, db: d } = await ensureApp();
   await fb.runTransaction(d, async (tx) => {
-    const ref = roomRef(name, SANDBOX_COLLECTION);
+    const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
     if (!snap.exists()) throw new Error('sandbox has gone');
     if (seatOf(snap.data().seats, uid) === null) throw new Error('you are watching, not playing');
@@ -389,25 +404,31 @@ export async function setSandboxConfig({ name, uid, config }) {
 }
 
 /** Push the ball. Either player, any time — see above. */
-export async function appendSandboxMove({ name, uid, square, expectedLength }) {
+export async function appendSandboxMove({
+  name,
+  uid,
+  move,
+  expectedLength,
+  collection = SANDBOX_COLLECTION,
+}) {
   const { sdk: fb, db: d } = await ensureApp();
   await fb.runTransaction(d, async (tx) => {
-    const ref = roomRef(name, SANDBOX_COLLECTION);
+    const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
     if (!snap.exists()) throw new Error('sandbox has gone');
     const room = snap.data();
     const moves = Array.isArray(room.moves) ? room.moves : [];
     if (seatOf(room.seats, uid) === null) throw new Error('you are watching, not playing');
     if (moves.length !== expectedLength) throw new Error('the board moved under you');
-    tx.update(ref, { moves: [...moves, { row: square.row, col: square.col }] });
+    tx.update(ref, { moves: [...moves, move] });
   });
 }
 
-/** Put the ball back in the middle, keeping the configuration. */
-export async function resetSandbox({ name, uid }) {
+/** Put the board back to its opening position, keeping the configuration. */
+export async function resetSandbox({ name, uid, collection = SANDBOX_COLLECTION }) {
   const { sdk: fb, db: d } = await ensureApp();
   await fb.runTransaction(d, async (tx) => {
-    const ref = roomRef(name, SANDBOX_COLLECTION);
+    const ref = roomRef(name, collection);
     const snap = await tx.get(ref);
     if (!snap.exists()) return;
     if (seatOf(snap.data().seats, uid) === null) throw new Error('you are watching, not playing');
@@ -419,4 +440,49 @@ export function watchSandbox(name, onChange, onError) {
   return watchRoom(name, onChange, onError, SANDBOX_COLLECTION);
 }
 
-export { HEARTBEAT_MS, ACTIVE_HEARTBEAT_MS, ROOM_NAMES, SANDBOX_COLLECTION };
+/* ----------------------------------------------------------- Escher Chess ---- */
+
+/*
+ * Escher Chess in four lines, because the transport genuinely is the same. Its
+ * rooms differ from Soccer Hockey's by a collection name and by carrying which
+ * board is being played; everything about seats, heartbeats, abandonment and
+ * appending under a length check is shared, and so are the Security Rules'
+ * shape.
+ */
+export const escher = Object.freeze({
+  choose: (opts) => chooseRoom({ ...opts, collection: ESCHER_COLLECTION }),
+  join: (opts) => joinRoom({ ...opts, collection: ESCHER_COLLECTION }),
+  beat: (opts) => heartbeat({ ...opts, collection: ESCHER_COLLECTION }),
+  leave: (opts) => leaveRoom({ ...opts, collection: ESCHER_COLLECTION }),
+  append: (opts) => appendMove({ ...opts, collection: ESCHER_COLLECTION }),
+  reset: (opts) => resetRoom({ ...opts, collection: ESCHER_COLLECTION }),
+  watch: (name, onChange, onError) => watchRoom(name, onChange, onError, ESCHER_COLLECTION),
+});
+
+export const escherSandbox = Object.freeze({
+  choose: (opts) => chooseRoom({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
+  join: ({ name, uid, now, config }) =>
+    joinRoom({
+      name,
+      uid,
+      now,
+      collection: ESCHER_SANDBOX_COLLECTION,
+      blank: { version: 1, name, game: 'escher-sandbox', seats: blankSeats(), config, moves: [] },
+    }),
+  beat: (opts) => heartbeat({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
+  leave: (opts) => leaveRoom({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
+  setConfig: (opts) => setSandboxConfig({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
+  append: (opts) => appendSandboxMove({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
+  reset: (opts) => resetSandbox({ ...opts, collection: ESCHER_SANDBOX_COLLECTION }),
+  watch: (name, onChange, onError) =>
+    watchRoom(name, onChange, onError, ESCHER_SANDBOX_COLLECTION),
+});
+
+export {
+  HEARTBEAT_MS,
+  ACTIVE_HEARTBEAT_MS,
+  ROOM_NAMES,
+  SANDBOX_COLLECTION,
+  ESCHER_COLLECTION,
+  ESCHER_SANDBOX_COLLECTION,
+};

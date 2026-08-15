@@ -106,9 +106,10 @@ game as your opponent. You are also not playing a different one.
   <div class="dg-card">
     <h3><a href="{{ '/escher-chess/' | relative_url }}">Escher Chess</a></h3>
     <p>
-      A chess variant on a 5×13 or 8×8 board. You and your opponent see different
+      A chess variant on a 5×10 or 8×8 board. You and your opponent see different
       boards, and there are two apparently contradictory ways of reading the game
-      that turn out to be perfectly consistent with one another.
+      that turn out to be perfectly consistent with one another. You are not told
+      how your opponent's pieces move; working it out is the game.
     </p>
     <a class="dg-play" href="{{ '/escher-chess/' | relative_url }}">How to play →</a>
   </div>

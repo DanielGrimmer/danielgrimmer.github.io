@@ -11,7 +11,7 @@ This is the single entry point for everything about the games. The site's own
 | Game | Live pages | State |
 | --- | --- | --- |
 | Soccer Hockey | `assets/SoccerHockey/…V4.0.html` | **V4.0, rebuilt on this engine and live** |
-| Escher Chess | `assets/EscherChess/…V1.2.html` | V1.2, untouched so far |
+| Escher Chess | `assets/EscherChess/…V4.0.html` | tutorial, game, sandbox |
 
 Soccer Hockey has three pages: a tutorial, which teaches the interface with the
 duality switched off; the real game, which turns it on and ends in the reveal;
@@ -44,6 +44,8 @@ core/sandbox.js   Editable configurations: validation, the move palette
 escher/pieces.js  Escher Chess: the piece move sets, and what each becomes
 escher/presets.js The two published boards: lenses, armies, file names
 escher/game.js    Escher Chess state: legal moves, check, mate, the log
+escher/coach.js   Escher Chess: the tutorial steps and the reveal's prose
+escher/sandbox.js Escher Chess: the dials, and what turning one costs
 ```
 
 Pure functions over plain data — no DOM, no network, no framework — so the same
@@ -58,7 +60,7 @@ ui/board.js       The isometric board renderer (Soccer Hockey)
 ui/chessboard.js  The flat board renderer (Escher Chess)
 ui/board.css      Page furniture, the palettes, the move-set grid
 ui/coach.js       Tutorial steps and the reveal's prose — all copy lives here
-ui/replay.js      The reveal: both seats' boards, stepping through one move log
+ui/replay.js      The reveal's transport: two panels in step. Game-agnostic
 ui/palette.js     The move-set editor, drawn once per lens
 ```
 
@@ -110,7 +112,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 290 tests
+node --test _tests/*.test.mjs                      # 322 tests
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
@@ -217,13 +219,37 @@ cube renderer in `ui/board.js` — though that last one is worth reading closely
 rather than rewriting, since the projection and the scaling are fiddly and
 already work on a phone.
 
-The obvious question to settle first is whether chess pieces can be expressed as
-a move log at all. If they can, the whole net/ layer and the Security Rules come
-free, because the rule counts moves rather than understanding them.
+The question that had to be settled first was whether chess pieces can be
+expressed as a move log at all. They can — no castling and no en passant means
+`{from, to, promote}` is the whole story — so the net/ layer and the Security
+Rules came free, because the rule counts moves rather than understanding them.
 
-**Escher Chess** is under way. Phase 0 (the lens offset), Phase 1 (the pieces),
-Phase 2 (the boards and the engine) and Phase 3 (the flat renderer) are in. The
-pages are not, so the live links are still V1.2 on the old bundle.
+**Escher Chess** is now on the same footing: `escher/` holds its pieces, boards,
+engine, copy and dials; `ui/chessboard.js` draws it; and its three pages live in
+`assets/EscherChess/…V4.0.html`. V1.2 is still on disk and still works if opened
+directly, but nothing links to it.
+
+What the second game actually cost, module by module, is the answer to the
+question the split was made for:
+
+| | reused | changed | new |
+| --- | --- | --- | --- |
+| `core/duality.js` | ✓ | a lens may be given an offset | |
+| `core/seats.js` | ✓ | | |
+| `net/rooms.js`, `net/room.js` | ✓ | a move is any map; a collection is a parameter | |
+| `ui/replay.js` | ✓ | the fold and the renderer are now the caller's | |
+| `ui/board.css` | ✓ | one section for the flat board | |
+| the game itself | | | `escher/*`, `ui/chessboard.js` |
+
+`ui/replay.js` was the interesting one. It used to import Soccer Hockey's
+`replayFrames`, `viewOf` and `createBoardView` directly; it now takes frames, a
+per-seat board factory and a caption function, and owns only the transport —
+the two panels, the buttons, the scrubber, the arrow keys, and keeping both
+boards on the same frame. That is genuinely all it should ever have owned.
+
+Escher's rooms are `escherRooms` and `escherSandboxes`, with their own blocks in
+`_firebase/firestore.rules`. **Those blocks need publishing before the pages will
+work**; the collections do not exist until the rules allow them to.
 
 ### What the two players share
 
@@ -308,6 +334,21 @@ reveal. Its one subtlety is sizing: the board is `max-content` wide, so a
 `1fr` column would stretch around it and then report that stretched width as
 the space available. `fit()` collapses the board before measuring, and
 `.dg-chess-pair` uses `minmax(0, 1fr)`.
+
+### The sandbox, and what it does not open
+
+Soccer Hockey's sandbox opens the board: width, height, duality number, which
+relative moves exist. Escher Chess's opens almost none of that, because it
+cannot. The two widths, their multipliers and their offsets are locked together
+— they are what makes the knight and the bishop trade places and what makes the
+file names come out as words — so `presets.js` exposes `boardFor({width, height,
+dials})` and keeps the lens and the names to itself.
+
+What is left open is the pieces, which turns out to be the better half anyway.
+Every dial changes which of them survive the crossing, `dualityReport` says so
+immediately, and `verdictFor` puts it in a sentence. The printed rules' own
+defect — a rook of range 2 on eight files, which is not a union of orbits and so
+is not self-dual — is one click away, and there is a test that it still is.
 
 Still open on the Firebase side: App Check, and restricting the web API key to
 the site's own referrer. Both are in [`_firebase/`](../../_firebase/README.md).

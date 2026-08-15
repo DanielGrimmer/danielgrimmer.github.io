@@ -53,6 +53,19 @@ export const ROOMS_COLLECTION = 'dualityRooms';
  */
 export const SANDBOX_COLLECTION = 'dualitySandboxes';
 
+/**
+ * Escher Chess keeps its own collections, and shares the room *names*.
+ *
+ * Sharing the names means "meet me in GreenField" works whichever game you are
+ * playing, and the twenty-document ceiling that keeps this project inside a
+ * free plan holds per collection. Sharing the *documents* would mean a chess
+ * log landing in a room a Soccer Hockey game is being played in, which no rule
+ * could sort out afterwards, since a rule counts moves rather than reading
+ * them.
+ */
+export const ESCHER_COLLECTION = 'escherRooms';
+export const ESCHER_SANDBOX_COLLECTION = 'escherSandboxes';
+
 export function isRoomName(name) {
   return typeof name === 'string' && ROOM_NAMES.includes(name);
 }
@@ -75,6 +88,8 @@ export function roomFromLocation(search = '') {
  */
 export const LAST_ROOM_KEY = 'dg.lastRoom';
 export const LAST_SANDBOX_KEY = 'dg.lastSandbox';
+export const LAST_ESCHER_KEY = 'dg.lastEscher';
+export const LAST_ESCHER_SANDBOX_KEY = 'dg.lastEscherSandbox';
 
 export function rememberRoom(storage, name, key = LAST_ROOM_KEY) {
   if (!isRoomName(name)) return;
@@ -99,7 +114,8 @@ export function shareLink(origin, pathname, room) {
   return `${origin}${pathname}?room=${encodeURIComponent(room)}`;
 }
 
-function emptySeats() {
+/** Two unclaimed chairs. Shared by every kind of room this project has. */
+export function blankSeats() {
   return [
     { uid: null, claimedAt: null, lastSeen: null, lastActive: null },
     { uid: null, claimedAt: null, lastSeen: null, lastActive: null },
@@ -112,7 +128,25 @@ export function emptyRoomDoc(name) {
     version: 1,
     name,
     game: 'soccer-hockey',
-    seats: emptySeats(),
+    seats: blankSeats(),
+    moves: [],
+  };
+}
+
+/**
+ * An unplayed Escher Chess room.
+ *
+ * `board` names which of the published boards is being played, and is fixed at
+ * creation: the two players must agree about it before either can read the
+ * log, and a room that changed size mid-game would invalidate every move in it.
+ */
+export function emptyEscherRoomDoc(name, board) {
+  return {
+    version: 1,
+    name,
+    game: 'escher-chess',
+    board,
+    seats: blankSeats(),
     moves: [],
   };
 }
@@ -126,7 +160,7 @@ export function emptySandboxDoc(name, config) {
     version: 1,
     name,
     game: 'sandbox',
-    seats: emptySeats(),
+    seats: blankSeats(),
     config,
     moves: [],
   };
