@@ -31,6 +31,8 @@ body.dg,
   --dg-desk: #e7e1d5;
   --dg-panel: #eae4d7;
   --dg-card: #faf8f3;
+  /* A card that is deliberately not inviting: the locked door. */
+  --dg-card-off: #f0ece1;
   --dg-ink: #191817;
   --dg-body: #282520;
   --dg-body-2: #3d3931;
@@ -43,6 +45,8 @@ body.dg,
   --dg-green: #14452f;
   --dg-red: #a13a2a;
   --dg-lit: #f7efd0;
+  --dg-link: #8a5a34;
+  --dg-link-hover: #6b4526;
 
   --dg-serif: Spectral, Georgia, 'Times New Roman', serif;
   --dg-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
@@ -68,6 +72,7 @@ body.dg,
     --dg-desk: #0b0e12;
     --dg-panel: #161b22;
     --dg-card: #171d25;
+    --dg-card-off: #12161c;
     --dg-ink: #e8e6e1;
     --dg-body: #dcd9d3;
     --dg-body-2: #c3c0b9;
@@ -80,15 +85,24 @@ body.dg,
     --dg-green: #7fc79a;
     --dg-red: #e0836f;
     --dg-lit: #ffe9a8;
+    --dg-link: #e0b070;
+    --dg-link-hover: #f0c690;
   }
 }
 
+/*
+ * Both selectors need the prefix. As shipped the second was a bare `.dg-scope`,
+ * which handed the floodlit palette to every scoped page in every colour
+ * scheme — the landing page came up in night colours inside a white one. The
+ * media query above has it right; this is the same list, qualified.
+ */
 :root[data-dg-theme='dark'] body.dg,
-.dg-scope {
+:root[data-dg-theme='dark'] .dg-scope {
   --dg-paper: #12171e;
   --dg-desk: #0b0e12;
   --dg-panel: #161b22;
   --dg-card: #171d25;
+  --dg-card-off: #12161c;
   --dg-ink: #e8e6e1;
   --dg-body: #dcd9d3;
   --dg-body-2: #c3c0b9;
@@ -101,6 +115,8 @@ body.dg,
   --dg-green: #7fc79a;
   --dg-red: #e0836f;
   --dg-lit: #ffe9a8;
+  --dg-link: #e0b070;
+  --dg-link-hover: #f0c690;
 }
 
 /* The sheet the page is printed on. Replaces .dg-wrap's bare max-width. */
@@ -111,16 +127,25 @@ body.dg,
   border: 1px solid var(--dg-rule-2);
 }
 
-a {
-  color: #8a5a34;
+/*
+ * Links, in two ways that both had to change.
+ *
+ * Scoped: as shipped this was a bare `a`, which is harmless on a standalone
+ * page but not on the Jekyll one, where it would repaint the site's own navbar
+ * and footer. `.dg` is on the body of the standalone pages and on the wrapper
+ * of the scoped one, so one prefix covers both.
+ *
+ * Tokenised: the dark colour was reachable only through the media query, so a
+ * reader on a light machine who turns the *site* dark kept brown links on a
+ * night-coloured page. As a token it follows the palette that is actually in
+ * force, by either route.
+ */
+.dg a {
+  color: var(--dg-link);
 }
 
-a:hover {
-  color: #6b4526;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-dg-theme='light']) a { color: #e0b070; }
+.dg a:hover {
+  color: var(--dg-link-hover);
 }
 
 /* ------------------------------------------------------------- chrome ---- */
@@ -161,6 +186,15 @@ a:hover {
 .dg-label-gold { color: var(--dg-gold); }
 .dg-label-red { color: var(--dg-red); }
 
+/*
+ * A label that is also a link is still a label — the landing page's "after
+ * game 1" is one. Restated at anchor specificity, because a bare class loses
+ * to `.dg a` above and the label would come out link-coloured.
+ */
+a.dg-label { color: var(--dg-muted); }
+a.dg-label-gold { color: var(--dg-gold); }
+a.dg-label-red { color: var(--dg-red); }
+
 .dg-page {
   padding: 2rem 2.75rem 2.75rem;
 }
@@ -191,7 +225,7 @@ a:hover {
   font-size: 1.25rem;
   font-style: italic;
   line-height: 1.5;
-  color: #4a463f;
+  color: var(--dg-body-2);
   margin: 1rem 0 0;
   max-width: 40ch;
 }
@@ -266,7 +300,7 @@ a:hover {
 }
 
 .dg-door[data-locked='true'] {
-  background: #f0ece1;
+  background: var(--dg-card-off);
   border: 1px dashed var(--dg-rule-2);
 }
 
@@ -292,6 +326,28 @@ a:hover {
   color: var(--dg-muted);
 }
 
+/*
+ * The doors beside the "you will need" panel.
+ *
+ * Added rather than shipped: the design draws this grid inline and pages.css
+ * arrived without a class for it. Not folded into `.dg-outro`, which is the
+ * same 1fr/300px shape but carries a top rule and margins that belong to the
+ * end of the reveal rather than the middle of a landing page.
+ */
+.dg-choices {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2.75rem;
+  align-items: start;
+  padding: 0.375rem 2.75rem 3.25rem;
+}
+
+@media (max-width: 820px) {
+  .dg-choices {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* An aside that is a list of requirements, not decoration. */
 .dg-aside {
   background: var(--dg-panel);
@@ -313,7 +369,46 @@ a:hover {
   padding-top: 1rem;
   font-size: 0.85rem;
   line-height: 1.65;
-  color: #4a463f;
+  color: var(--dg-body-2);
+}
+
+.dg-aside-foot a {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+/*
+ * One cube on the hero board, painted as the other sport.
+ *
+ * board.css gives every cube its three face colours through `--dg-face-*`,
+ * which a cube may set for itself — `.dg-cell.is-wall` and the mown stripe both
+ * work that way. So a half-turf, half-ice board is three declarations here
+ * rather than a second code path in the renderer. The values are the rink's,
+ * copied from board.css because a `[data-theme]` block cannot be reached from
+ * inside a board whose theme is soccer.
+ */
+.dg-hero-board .dg-cell[data-surface='hockey'] {
+  --dg-face-top: #e4f0f8;
+  --dg-face-left: #b3d3e4;
+  --dg-face-right: #a4c8dc;
+}
+
+.dg-hero-board .dg-cell[data-surface='hockey'][data-shade='b'] {
+  --dg-face-top: #dbebf5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dg-theme='light']) .dg-hero-board .dg-cell[data-surface='hockey'] {
+    --dg-face-top: #d9edf8;
+    --dg-face-left: #5f8ba3;
+    --dg-face-right: #527c95;
+  }
+  :root:not([data-dg-theme='light'])
+    .dg-hero-board
+    .dg-cell[data-surface='hockey'][data-shade='b'] {
+    --dg-face-top: #cee5f2;
+  }
 }
 
 /* ---------------------------------------------------------- buttons ---- */
@@ -354,9 +449,22 @@ a:hover {
   opacity: 0.9;
 }
 
+/*
+ * A button that is a link. `.dg a` beats a bare `.dg-btn` on specificity, so
+ * without these the landing page's two green buttons came out with link-brown
+ * lettering on the green — legible in the light scheme by luck, and orange on
+ * pale green in the dark one. Same colours, restated where they win.
+ */
+a.dg-btn { color: var(--dg-green); }
+
+a.dg-btn-primary,
+a.dg-btn-primary:hover {
+  color: var(--dg-paper);
+}
+
 .dg-btn-quiet {
   border-color: var(--dg-rule-2);
-  color: #4a463f;
+  color: var(--dg-body-2);
 }
 
 .dg-btn-quiet:hover:not(:disabled) {
