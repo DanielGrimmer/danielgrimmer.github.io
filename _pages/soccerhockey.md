@@ -21,17 +21,17 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.18.0" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.18.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.19.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.19.0" />
 
 <div class="dg dg-scope">
   <div class="dg-wrap">
     <div class="dg-hero">
       <p>
-        This game is played with a friend, and there is a mystery at its heart:
-        two flatly contradictory ways of seeing one game, both of them right,
-        and perfectly coherent with each other. You are meant to solve it
-        together, afterwards.
+        There is a mystery at the heart of this game: there are two flatly
+        contradictory ways of seeing this game which are nonetheless perfectly
+        coherent with each other. You and a friend are meant to solve this
+        mystery together, after playing through the game.
       </p>
       <!-- Half turf, half ice, seam down the middle. Drawn by the script below. -->
       <div class="dg-hero-board" id="heroBoard"></div>
@@ -42,9 +42,10 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
         <div class="dg-firewall">
           <div class="dg-label dg-label-red">The firewall</div>
           <p>
-            Separate devices. No peeking at each other's screen. No talking —
-            mute the call. For one game, each of you attends only to your own
-            board. Break the firewall and there is nothing left to reveal.
+            You and your friend must play on separate devices. No peeking at
+            each other's screen. No talking — mute the call. For the first game,
+            each of you should attend only to your own board. Breaking the
+            firewall spoils the mystery.
           </p>
         </div>
 
@@ -54,7 +55,8 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
             <span>
               <span class="dg-door-title">Learn the controls on the practice court</span>
               <span class="dg-door-note">
-                Basketball, duality switched off. Fine side by side, on one device.
+                Basketball, duality switched off. Fine to play alone or side by
+                side, on one device.
               </span>
             </span>
             <a class="dg-btn dg-btn-primary" href="{{ '/assets/SoccerHockey/SoccerHockeyTutorialV4.0.html' | relative_url }}">Tutorial</a>
@@ -64,7 +66,7 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
             <span>
               <span class="dg-door-title">Split up, and play the real game</span>
               <span class="dg-door-note">
-                One of you gets soccer, the other hockey. You are paired into a
+                Soccer or Hockey, duality turned on. You will be paired into a
                 room automatically.
               </span>
             </span>
@@ -82,18 +84,13 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
             <span>
               <span class="dg-door-title">Look under the hood, together</span>
               <span class="dg-door-note">
-                The sandbox opens every dial. Worth nothing until the first game
-                is over.
+                The sandbox opens every dial. Don't touch this until the first
+                game is over.
               </span>
             </span>
             <a class="dg-label" href="{{ '/assets/SoccerHockey/SoccerHockeySandboxV4.0.html' | relative_url }}">after game 1</a>
           </li>
         </ol>
-
-        <p class="dg-door-note" style="margin-top: 1.375rem">
-          Open this page on both devices. Once you are in the same room the two
-          boards keep themselves in step; there is nothing to set up.
-        </p>
       </div>
 
       <aside class="dg-aside">
@@ -104,12 +101,6 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
           <li>about twenty minutes</li>
           <li>a way to talk <em>afterwards</em></li>
         </ul>
-        <div class="dg-aside-foot">
-          Behind it: the AdS/CFT correspondence, T-duality in String Theory, and
-          the question of whether space and time are aspects of
-          things-in-themselves or a framework we bring to the world.
-          <a href="{{ '/publications/' | relative_url }}">Read the philosophy →</a>
-        </div>
       </aside>
     </div>
   </div>
@@ -119,7 +110,13 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
   /*
    * The hero board: half soccer pitch, half hockey rink, with the seam running
    * down the middle of the picture. It is the page's claim in one image, and it
-   * is never played — no click handler, no trail, no star of legal moves.
+   * is never played — no click handler and no trail.
+   *
+   * Everything else about it is a real position, drawn by the real renderer:
+   * the ball at mid-field, the star of squares it may move to lit around it,
+   * and an approach dot on every square a goal can be reached from. The star is
+   * the part that earns its place, because it is the one shape on the page that
+   * crosses the seam.
    *
    * The split is by *screen* position rather than by grid, because the board is
    * drawn isometrically: a column is a diagonal on screen, so colouring by
@@ -127,12 +124,12 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
    * along a screen-vertical line, which is the line we want.
    *
    * Per-cube rather than per-board, which the renderer already allows: it sets
-   * `data-theme` on the surface, and three rules in pages.css let a cube
-   * override the three face colours from a `data-surface` of its own. No fork.
+   * `data-theme` on the surface, and one rule in pages.css lets a cube restate
+   * the rink's surface colours from a `data-surface` of its own. No fork.
    */
-  import { SOCCER_HOCKEY } from '{{ "/assets/games/core/presets.js" | relative_url }}?v=4.18.0';
-  import { initialGame, viewOf } from '{{ "/assets/games/core/game.js" | relative_url }}?v=4.18.0';
-  import { createBoardView } from '{{ "/assets/games/ui/board.js" | relative_url }}?v=4.18.0';
+  import { SOCCER_HOCKEY } from '{{ "/assets/games/core/presets.js" | relative_url }}?v=4.19.0';
+  import { initialGame, viewOf, squareFromView } from '{{ "/assets/games/core/game.js" | relative_url }}?v=4.19.0';
+  import { createBoardView } from '{{ "/assets/games/ui/board.js" | relative_url }}?v=4.19.0';
 
   /*
    * Follow the site's own light/dark toggle rather than the operating system.
@@ -160,37 +157,44 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
   const config = SOCCER_HOCKEY;
   const { width, height } = config.board;
 
-  const view = viewOf(config, initialGame(config), 0);
+  /*
+   * Mid-field, one file to the turf side of the goal's own file — the ball's
+   * real starting square stands on the seam, and the ball belongs on the grass.
+   * Named in view coordinates, since that is where the picture is composed, and
+   * put back through the lens so the star and the dots come out of the ordinary
+   * rules rather than being drawn by hand.
+   */
+  const stand = squareFromView(config, 0, {
+    row: Math.floor(height / 2),
+    col: Math.floor(width / 2) - 1,
+  });
+  const view = viewOf(config, { ...initialGame(config), ...stand }, 0);
+
   const board = createBoardView(document.getElementById('heroBoard'), {
     board: config.board,
     theme: 'soccer',
     interactive: false,
   });
-
-  board.render(
-    {
-      ...view,
-      // Off the centre line, so the ball stands on the turf half.
-      ball: { row: Math.floor(height / 2), col: Math.floor(width / 2) - 1 },
-      legalMoves: [],
-      blockedMoves: [],
-      visited: [],
-    },
-    { showApproaches: false }
-  );
+  board.render(view);
 
   /*
    * Which side of the seam each cube falls on. `seam` is chosen so the divide
    * runs through the middle of the drawing rather than through the middle of
-   * the grid; cubes sitting exactly on it alternate, anchored so that the
-   * lowest one — the one nearest the reader — is turf.
+   * the grid.
+   *
+   * Cubes landing exactly on it alternate. They have to: the seam cubes sit one
+   * directly above another on screen, so there is no third direction for the
+   * line to lean and a hard choice either way would bulge the pitch or the rink
+   * out by a full cube. Anchored at the bottom, so the cube nearest the reader
+   * is turf, which is the half the ball is standing on.
    */
   const seam = Math.round((width - height) / 2);
+  const lowestSeamRow = Math.min(height - 1, width - 1 - seam);
   for (const cell of document.querySelectorAll('#heroBoard .dg-cell')) {
     const row = Number(cell.dataset.row);
     const col = Number(cell.dataset.col);
     const side = col - row - seam;
-    const ice = side > 0 || (side === 0 && (width - 1 - col + (height - 1 - row)) % 2 === 1);
+    const ice = side > 0 || (side === 0 && (lowestSeamRow - row) % 2 === 1);
     if (ice) cell.dataset.surface = 'hockey';
   }
 </script>

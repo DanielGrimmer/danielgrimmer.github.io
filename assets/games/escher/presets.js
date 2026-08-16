@@ -45,8 +45,8 @@
  * through their lenses and never asks which one is the identity.
  */
 
-import { Lens, dualityBetween } from '../core/duality.js?v=4.18.0';
-import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.18.0';
+import { Lens, dualityBetween } from '../core/duality.js?v=4.19.0';
+import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.19.0';
 
 const { PAWN: P, KNIGHT: N, BISHOP: B, ROOK: R, QUEEN: Q, KING: K } = PIECE;
 

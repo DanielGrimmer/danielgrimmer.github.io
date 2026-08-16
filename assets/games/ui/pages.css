@@ -7,8 +7,8 @@
  *
  * Load it AFTER board.css so the palette below wins:
  *
- *   <link rel="stylesheet" href="../games/ui/board.css?v=4.18.0" />
- *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.18.0" />
+ *   <link rel="stylesheet" href="../games/ui/board.css?v=4.19.0" />
+ *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.19.0" />
  *
  * The pages need three families. Add to each page's <head>:
  *
@@ -379,36 +379,64 @@ a.dg-label-red { color: var(--dg-red); }
 }
 
 /*
- * One cube on the hero board, painted as the other sport.
+ * The approach dot's colour, restated where the site cannot reach it.
  *
- * board.css gives every cube its three face colours through `--dg-face-*`,
- * which a cube may set for itself — `.dg-cell.is-wall` and the mown stripe both
- * work that way. So a half-turf, half-ice board is three declarations here
- * rather than a second code path in the renderer. The values are the rink's,
- * copied from board.css because a `[data-theme]` block cannot be reached from
- * inside a board whose theme is soccer.
+ * board.css puts `color: var(--dg-dot)` on `.dg-face` and lets the glyph
+ * inherit it, which is right on a page that is only this stylesheet. Inside the
+ * theme it is not: al-folio carries a `p, h1, …, div, li, span, strong` rule,
+ * and an element selector matching the glyph directly beats a colour it would
+ * otherwise have inherited, however specific the rule that set it. Every dot on
+ * the hero board came out black — correct on the ice by accident, wrong on the
+ * turf, and the same shade on both sides of a picture whose whole point is that
+ * the two sides are different.
+ *
+ * Two classes, so `.dg-cell.is-visited .dg-glyph` still owns the ✕.
  */
-.dg-hero-board .dg-cell[data-surface='hockey'] {
-  --dg-face-top: #e4f0f8;
-  --dg-face-left: #b3d3e4;
-  --dg-face-right: #a4c8dc;
+.dg .dg-glyph {
+  color: var(--dg-dot);
 }
 
-.dg-hero-board .dg-cell[data-surface='hockey'][data-shade='b'] {
-  --dg-face-top: #dbebf5;
+/*
+ * One cube on the hero board, painted as the other sport.
+ *
+ * The values are the rink's, copied from board.css because a
+ * `.dg-board[data-theme='hockey']` block cannot be reached from inside a board
+ * whose theme is soccer. What is copied is the *surface* vocabulary — the two
+ * mown shades, the two side faces, the colour of an approach dot — and not the
+ * `--dg-face-*` a cube ends up painting with.
+ *
+ * That is the whole trick, and it is a cascade point rather than a taste one.
+ * board.css has `.dg-cell` turn the surface colours into face colours at one
+ * class of specificity, and then lets `.is-wall` and `.is-legal` overrule the
+ * result at two. Set the face colours here and this rule outranks both: the
+ * wall along the rink's goal row comes out ice-blue instead of black, and the
+ * arms of the star that cross the seam lose their gold. Set the surface
+ * colours instead and every state class still wins, exactly as it does on a
+ * board that is only ever one sport.
+ */
+.dg-hero-board .dg-cell[data-surface='hockey'] {
+  --dg-top-a: #e4f0f8;
+  --dg-top-b: #dbebf5;
+  --dg-side-l: #b3d3e4;
+  --dg-side-r: #a4c8dc;
+  /* Gold vanishes on ice; an approach is read off the black of a puck. */
+  --dg-dot: #14181c;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-dg-theme='light']) .dg-hero-board .dg-cell[data-surface='hockey'] {
-    --dg-face-top: #d9edf8;
-    --dg-face-left: #5f8ba3;
-    --dg-face-right: #527c95;
+    --dg-top-a: #d9edf8;
+    --dg-top-b: #cee5f2;
+    --dg-side-l: #5f8ba3;
+    --dg-side-r: #527c95;
   }
-  :root:not([data-dg-theme='light'])
-    .dg-hero-board
-    .dg-cell[data-surface='hockey'][data-shade='b'] {
-    --dg-face-top: #cee5f2;
-  }
+}
+
+:root[data-dg-theme='dark'] .dg-hero-board .dg-cell[data-surface='hockey'] {
+  --dg-top-a: #d9edf8;
+  --dg-top-b: #cee5f2;
+  --dg-side-l: #5f8ba3;
+  --dg-side-r: #527c95;
 }
 
 /* ---------------------------------------------------------- buttons ---- */
