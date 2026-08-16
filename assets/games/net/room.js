@@ -22,7 +22,7 @@
  * games differ by a collection name.
  */
 
-import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.26.0';
+import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.27.0';
 import {
   ROOM_NAMES,
   ESCHER_ROOM_NAMES,
@@ -34,7 +34,7 @@ import {
   escherRoomServes,
   isRoomName,
   namesFor,
-} from './rooms.js?v=4.26.0';
+} from './rooms.js?v=4.27.0';
 import {
   claimSeat,
   touchSeat,
@@ -44,7 +44,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.26.0';
+} from '../core/seats.js?v=4.27.0';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -523,6 +523,16 @@ export async function appendSandboxMove({
   expectedLength,
   collection = SANDBOX_COLLECTION,
 }) {
+  /*
+   * Checked here rather than left to Firestore, which would refuse `undefined`
+   * anyway — but with "Unsupported field value: undefined (found in document
+   * …)", naming the document instead of the mistake. The one caller that ever
+   * got this wrong passed the move under the wrong key, and that is a bug to
+   * hear about by name.
+   */
+  if (!move || !Number.isInteger(move.row) || !Number.isInteger(move.col)) {
+    throw new TypeError(`a sandbox move needs {row, col}, got ${JSON.stringify(move)}`);
+  }
   const { sdk: fb, db: d } = await ensureApp();
   await fb.runTransaction(d, async (tx) => {
     const ref = roomRef(name, collection);

@@ -102,6 +102,34 @@ test('the next room along', async (t) => {
   });
 });
 
+test('REGRESSION: a sandbox move is checked before it is sent', async (t) => {
+  /*
+   * The live bug: the sandbox page passed the move under the key `square`, so
+   * `move` arrived undefined and Firestore refused the write with
+   * "Unsupported field value: undefined (found in document …)" — naming the
+   * document instead of the mistake. The guard throws before any network is
+   * touched, which is also what makes it testable here.
+   */
+  const { appendSandboxMove } = await import('../assets/games/net/room.js');
+
+  await t.test('undefined is named for what it is', async () => {
+    await assert.rejects(
+      appendSandboxMove({ name: 'GreenField', uid: 'me', square: { row: 1, col: 2 }, expectedLength: 0 }),
+      /needs \{row, col\}, got undefined/
+    );
+  });
+
+  await t.test('and so is a malformed square', async () => {
+    for (const move of [null, {}, { row: 1 }, { row: '1', col: 2 }, { row: 1.5, col: 2 }]) {
+      await assert.rejects(
+        appendSandboxMove({ name: 'GreenField', uid: 'me', move, expectedLength: 0 }),
+        TypeError,
+        `move=${JSON.stringify(move)} should be refused`
+      );
+    }
+  });
+});
+
 test('Escher Chess has its own pool', async (t) => {
   await t.test('twenty speakable names of its own', () => {
     assert.equal(ESCHER_ROOM_NAMES.length, 20);

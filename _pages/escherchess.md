@@ -9,32 +9,73 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
 
 <!--
   The same structure as the Soccer Hockey landing page, with this game's own
-  prose: the claim, the firewall, the doors in their required order, and the
-  aside. No hero board — the half-turf half-ice picture is Soccer Hockey's
-  claim in one image, and this game's claim (two file orders on one board) has
-  no one-image version that does not give the trick away.
+  prose: the wordmark, the claim beside the chess-set illusion, the firewall,
+  the doors in their required order, and the aside.
 
   The theme prints `display_title` and `description` as the heading and the
-  line under it, so the page itself starts with the claim.
+  line under it, so the page itself starts with the wordmark.
 -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.26.0" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.26.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.27.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.27.0" />
 
 <div class="dg dg-scope">
   <div class="dg-wrap">
-    <div class="dg-choices" style="padding-top: 2.5rem">
-      <div>
-        <p>
-          A chess variant for two players, played first on a 5×10 board and then
-          on an 8×8 one. You and your opponent look at different boards, and
-          there are two seemingly contradictory ways of seeing the game that
-          turn out to be perfectly coherent with each other.
-        </p>
+    <!--
+      The wordmark, rebuilt as text rather than shipped as a picture: five
+      columns reading ESCHR over CHESS, with DUAL ghosted into the gaps. As SVG
+      it stays sharp at any size and takes its two colours from the palette, so
+      it holds up in both schemes — a raster of black-on-white would glare in
+      the dark one.
+    -->
+    <div style="padding: 2.75rem 2.75rem 0; display: flex; justify-content: center">
+      <svg
+        viewBox="0 0 1040 260"
+        role="img"
+        aria-label="Escher Chess — dual"
+        style="width: min(34rem, 100%); height: auto; display: block"
+        font-family="var(--dg-sans)"
+        font-weight="500"
+        font-size="84"
+        text-anchor="middle"
+      >
+        <title>Escher Chess</title>
+        <g fill="var(--dg-ink)">
+          <text x="40" y="78">E</text><text x="278" y="78">S</text><text x="516" y="78">C</text><text x="754" y="78">H</text><text x="992" y="78">R</text>
+          <text x="40" y="238">C</text><text x="278" y="238">H</text><text x="516" y="238">E</text><text x="754" y="238">S</text><text x="992" y="238">S</text>
+        </g>
+        <g fill="var(--dg-rule-2)">
+          <text x="159" y="158">D</text><text x="397" y="158">U</text><text x="635" y="158">A</text><text x="873" y="158">L</text>
+        </g>
+      </svg>
+    </div>
 
+    <div class="dg-hero" id="ecHero" style="padding-top: 1.75rem">
+      <p>
+        A chess variant for two players, played first on a 5×10 board and then
+        on an 8×8 one. You and your opponent look at different boards, and
+        there are two seemingly contradictory ways of seeing the game that
+        turn out to be perfectly coherent with each other.
+      </p>
+      <!--
+        The chess-set illusion: one set drawn from two irreconcilable
+        viewpoints at once, which is this game's claim in one image. The file
+        is not in the repository yet — until it is committed at this path the
+        error handler folds the hero to a single column and nothing is missed.
+      -->
+      <img
+        src="{{ '/assets/EscherChess/img/escher-set.png' | relative_url }}"
+        alt="A chess set drawn from two contradictory viewpoints at once"
+        style="max-width: 100%; height: auto"
+        onerror="this.hidden = true; document.getElementById('ecHero').style.gridTemplateColumns = '1fr'"
+      />
+    </div>
+
+    <div class="dg-choices" style="padding-top: 0.375rem">
+      <div>
         <div class="dg-firewall">
           <div class="dg-label dg-label-red">The firewall</div>
           <p>

@@ -7,7 +7,7 @@
  * which is how it ended up with a stalemate guard the real game lacked.
  */
 
-import { makeConfig } from './game.js?v=4.26.0';
+import { makeConfig } from './game.js?v=4.27.0';
 
 /*
  * A seat's `theme` is a name, not a palette: the colours themselves live in
