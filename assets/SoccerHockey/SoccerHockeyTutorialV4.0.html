@@ -19,8 +19,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.24.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.24.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.25.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.25.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -107,9 +107,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.24.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.25.0'; // keep in step with the ?v= tokens below
 
-      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.24.0';
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.25.0';
       import {
         initialGame,
         applyMove,
@@ -117,8 +117,8 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.24.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.24.0';
+      } from '../games/core/game.js?v=4.25.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.25.0';
       import {
         contextFor,
         stepIndex,
@@ -126,7 +126,7 @@
         STALLED_HINT,
         BASKETBALL_STEPS,
         BASKETBALL_OUTRO,
-      } from '../games/ui/coach.js?v=4.24.0';
+      } from '../games/ui/coach.js?v=4.25.0';
 
       const config = BASKETBALL_TUTORIAL;
 

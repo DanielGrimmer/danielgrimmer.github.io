@@ -21,8 +21,8 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.24.0" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.24.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.25.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.25.0" />
 
 <div class="dg dg-scope">
   <div class="dg-wrap">
@@ -133,9 +133,9 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
    * `data-theme` on the surface, and one rule in pages.css lets a cube restate
    * the rink's surface colours from a `data-surface` of its own. No fork.
    */
-  import { SOCCER_HOCKEY } from '{{ "/assets/games/core/presets.js" | relative_url }}?v=4.24.0';
-  import { initialGame, viewOf, squareFromView } from '{{ "/assets/games/core/game.js" | relative_url }}?v=4.24.0';
-  import { createBoardView } from '{{ "/assets/games/ui/board.js" | relative_url }}?v=4.24.0';
+  import { SOCCER_HOCKEY } from '{{ "/assets/games/core/presets.js" | relative_url }}?v=4.25.0';
+  import { initialGame, viewOf, squareFromView } from '{{ "/assets/games/core/game.js" | relative_url }}?v=4.25.0';
+  import { createBoardView } from '{{ "/assets/games/ui/board.js" | relative_url }}?v=4.25.0';
 
   /*
    * Follow the site's own light/dark toggle rather than the operating system.

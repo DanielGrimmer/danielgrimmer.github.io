@@ -179,8 +179,28 @@ test('the one line under the dials', async (t) => {
     return describeSpec(r.spec, r.notes);
   };
 
-  await t.test('says nothing when there is nothing to say', () => {
-    assert.equal(line(DEFAULT_SPEC), '');
+  await t.test('shows the arithmetic when there is nothing to complain about', () => {
+    // The published dials: 4 × 3 = 12 ≡ 1 (mod 11). Printing the product is
+    // what makes the claim above the boards checkable rather than a promise.
+    assert.equal(
+      line(DEFAULT_SPEC),
+      '4 × 3 = 12 ≡ 1 (mod 11) — three across for Player 1 is one across for Player 2.'
+    );
+  });
+
+  await t.test('the arithmetic is right for every legal duality on a few widths', () => {
+    for (const width of [5, 9, 11, 13]) {
+      for (let duality = 2; duality < width - 1; duality++) {
+        const r = normaliseSpec({ ...DEFAULT_SPEC, width, duality, height: 13 });
+        // A refused duality is corrected, and then it is not this test's case.
+        if (r.spec.duality !== duality) continue;
+        const said = describeSpec(r.spec, []);
+        const [, a, b, product, modulus] = said.match(/^(\d+) × (\d+) = (\d+) ≡ 1 \(mod (\d+)\)/);
+        assert.equal(Number(a), duality);
+        assert.equal(Number(a) * Number(b), Number(product));
+        assert.equal(Number(product) % Number(modulus), 1, `${a} × ${b} is not 1 mod ${modulus}`);
+      }
+    }
   });
 
   await t.test('names each trivial choice for what it is', () => {

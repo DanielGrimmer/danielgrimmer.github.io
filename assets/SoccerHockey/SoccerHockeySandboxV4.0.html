@@ -5,77 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Sandbox — Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.24.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.25.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.25.0" />
   </head>
   <body class="dg">
-    <div class="dg-wrap dg-wide">
-      <header class="dg-masthead">
-        <div>
-          <h1>The Sandbox</h1>
-          <div class="dg-sub" id="sub">Connecting…</div>
-        </div>
+    <div class="dg-wrap">
+      <div class="dg-chrome">
         <a href="/soccer-hockey/">← Soccer Hockey</a>
-      </header>
+        <span class="dg-label" id="chromeState">Connecting…</span>
+      </div>
 
-      <div class="dg-replay-intro">
-        <div class="dg-status" id="status">Connecting…</div>
-        <div class="dg-coach dg-coach-band">
-          <div class="dg-coach-progress" id="roomLabel">Connecting</div>
-          <h2 class="dg-coach-title">Let's Look under the Hood</h2>
-          <p class="dg-coach-body" id="note"></p>
-          <div class="dg-room-tools" id="roomTools" hidden>
-            <button class="dg-btn dg-btn-primary" id="copyLink" type="button">Copy the invite link</button>
-            <label class="dg-join">
-              Or join a room by name:
-              <span class="dg-join-row">
-                <input id="roomInput" list="roomList" placeholder="GreenField" autocomplete="off" />
-                <button class="dg-btn" id="joinRoom" type="button">Join</button>
-              </span>
+      <div class="dg-page">
+        <header class="dg-head">
+          <div>
+            <h1>Under the hood</h1>
+            <div class="dg-head-sub">
+              Both accounts of the same game, side by side, with every dial exposed.
+            </div>
+          </div>
+          <!-- The firewall is over. This is the one page that says so. -->
+          <div class="dg-label dg-label-gold">talking allowed now</div>
+        </header>
+
+        <div class="dg-sandbox-intro">
+          <div>
+            <p id="note"></p>
+            <!--
+              Three things that are true of the boards below, the first of them
+              read off the dials rather than fixed: this is the one page where
+              the numbers change under the sentence describing them.
+            -->
+            <ul class="dg-claims">
+              <li id="claimAcross"></li>
+              <li>A row is a row for both of you — that is why you can agree who won.</li>
+              <li>Set the duality to a factor of the width and the whole thing collapses.</li>
+            </ul>
+            <div class="dg-status" id="status">Connecting…</div>
+            <div class="dg-presence" id="presence"></div>
+          </div>
+
+          <div class="dg-dials">
+            <div class="dg-label">The dials</div>
+            <label>Width <input type="number" id="width" min="3" max="19" step="1" /></label>
+            <label>Height <input type="number" id="height" min="3" max="21" step="1" /></label>
+            <label>
+              Duality number
+              <input type="number" id="duality" data-dial="duality" min="1" step="1" />
             </label>
+            <p class="dg-dial-note" id="dialNote"></p>
+            <div class="dg-bar">
+              <button class="dg-btn" id="resetBall" type="button">Ball back to mid-field</button>
+              <button class="dg-btn" id="restore" type="button">Restore published settings</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dg-replay-boards">
+          <div class="dg-replay-side">
+            <div class="dg-replay-head">
+              <span class="dg-replay-label">Soccer field</span>
+              <span class="dg-label">Player 1 · Soccer</span>
+            </div>
+            <div class="dg-pitch"><div id="board0"></div></div>
+            <!-- The wrap centres the grid and lets a nineteen-wide one scroll inside itself. -->
+            <div class="dg-palette-wrap">
+              <div class="dg-palette-title">the moves, switchable</div>
+              <div id="palette0"></div>
+            </div>
+          </div>
+          <div class="dg-replay-side">
+            <div class="dg-replay-head">
+              <span class="dg-replay-label">Hockey rink</span>
+              <span class="dg-label">Player 2 · Hockey</span>
+            </div>
+            <div class="dg-pitch"><div id="board1"></div></div>
+            <!-- The wrap centres the grid and lets a nineteen-wide one scroll inside itself. -->
+            <div class="dg-palette-wrap">
+              <div class="dg-palette-title">the moves, switchable</div>
+              <div id="palette1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dg-legend-row">
+          <span><span class="dg-swatch"></span> a move that is switched on</span>
+          <span><span class="dg-mark" data-kind="ball"></span> where the ball stands</span>
+          <span id="sameMoves"></span>
+        </div>
+
+        <!--
+          The design gives this page no room panel, and it is right that the
+          dials should be the loudest thing here. But two people still have to
+          end up in the same sandbox, and only one of the two routes in carries
+          the room with it — the button at the foot of the reveal. Somebody
+          arriving from the front page a day later needs the name and the link,
+          so they keep a quiet line of their own down here.
+        -->
+        <div class="dg-room-foot" id="roomTools">
+          <span id="roomFoot"></span>
+          <span class="dg-foot-actions">
+            <span class="dg-field">
+              <input id="roomInput" list="roomList" placeholder="GreenField" autocomplete="off" />
+              <button class="dg-btn" id="joinRoom" type="button">Join</button>
+            </span>
             <datalist id="roomList"></datalist>
-          </div>
-          <div class="dg-presence" id="presence"></div>
+            <button class="dg-btn js-copy-link" type="button">Copy the invite link</button>
+            <a class="dg-btn" href="SoccerHockeyGameV4.0.html">Back to the real game</a>
+            <button class="dg-link" id="leave" type="button" hidden>Leave this room</button>
+          </span>
         </div>
       </div>
 
-      <div class="dg-dials">
-        <label>Width <input type="number" id="width" min="3" max="19" step="1" /></label>
-        <label>Height <input type="number" id="height" min="3" max="21" step="1" /></label>
-        <label>Duality number <input type="number" id="duality" min="1" step="1" /></label>
-        <button class="dg-btn" id="resetBall" type="button">Put the ball back at mid-field</button>
-        <button class="dg-btn" id="restore" type="button">Restore the published game settings</button>
-      </div>
-      <p class="dg-dial-note" id="dialNote"></p>
-
-      <div class="dg-replay-boards">
-        <div class="dg-replay-side">
-          <div class="dg-replay-head dg-replay-label">Soccer Field — Player 1</div>
-          <div id="board0"></div>
-          <div class="dg-palette-wrap">
-            <div class="dg-palette-title">Toggle-able Soccer Moves</div>
-            <div id="palette0"></div>
-          </div>
-        </div>
-        <div class="dg-replay-side">
-          <div class="dg-replay-head dg-replay-label">Hockey Rink — Player 2</div>
-          <div id="board1"></div>
-          <div class="dg-palette-wrap">
-            <div class="dg-palette-title">Toggle-able Hockey Moves</div>
-            <div id="palette1"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="dg-bar dg-bar-main">
-        <a class="dg-btn" href="SoccerHockeyGameV4.0.html">Back to the real game</a>
-        <button class="dg-btn" id="leave" type="button" hidden>Leave this room</button>
-      </div>
-
-      <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
+      <p class="dg-build">Build <span id="buildStamp">—</span></p>
     </div>
 
     <script type="module">
-      const BUILD = '4.24.0';
+      const BUILD = '4.25.0';
 
       import {
         initialGame,
@@ -84,7 +136,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.24.0';
+      } from '../games/core/game.js?v=4.25.0';
       import {
         DEFAULT_SPEC,
         normaliseSpec,
@@ -95,10 +147,12 @@
         encodeSpec,
         decodeSpec,
         describeSpec,
-      } from '../games/core/sandbox.js?v=4.24.0';
-      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.24.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.24.0';
-      import { createPaletteView } from '../games/ui/palette.js?v=4.24.0';
+        acrossFor,
+        inWords,
+      } from '../games/core/sandbox.js?v=4.25.0';
+      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.25.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.25.0';
+      import { createPaletteView } from '../games/ui/palette.js?v=4.25.0';
       import {
         ROOM_NAMES,
         roomFromLocation,
@@ -106,7 +160,7 @@
         rememberRoom,
         recallRoom,
         LAST_SANDBOX_KEY,
-      } from '../games/net/rooms.js?v=4.24.0';
+      } from '../games/net/rooms.js?v=4.25.0';
       import {
         signIn,
         chooseRoom,
@@ -120,7 +174,7 @@
         explain,
         HEARTBEAT_MS,
         SANDBOX_COLLECTION,
-      } from '../games/net/room.js?v=4.24.0';
+      } from '../games/net/room.js?v=4.25.0';
 
       const el = (id) => document.getElementById(id);
       const now = () => Date.now();
@@ -155,17 +209,13 @@
       ];
 
       const NOTE =
-        "Here is a sandbox where you can play around with the game's free " +
-        'parameters to see for yourself how the magic happens. All of the dials ' +
-        "below are shared (and sync'd) and either of you can move the ball at " +
-        "any time. Try changing the board's width, its height, and its " +
-        '"duality number" (which must not share any prime factor with the ' +
-        'width).\n\n' +
-        'The two grids under the boards allow you to adjust the allowed move ' +
-        'sets for both players in unison. Switch one move on and off to see ' +
-        'what this changes about the other board. Then try this again with a ' +
-        'different duality number. See if you can figure out what is going on ' +
-        'behind the scenes.';
+        'Every dial is shared, and either of you may push the ball. Change the ' +
+        'width, the height, or the duality number — which has to share no factor ' +
+        'with the width, or the two views stop being views of one game. Then ' +
+        'switch a single move on in one palette and watch a different move light ' +
+        'up in the other: that is the duality, with the game taken away from it. ' +
+        'Then try it again with a different duality number, and see if you can ' +
+        'work out what is going on behind the scenes.';
 
       /* ------------------------------------------------------------ drawing */
 
@@ -237,14 +287,29 @@
         el('status').textContent = describeStatus();
         el('status').dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
         el('presence').textContent = describePresence();
-        el('roomLabel').textContent = alone ? 'Working alone' : room ? `Room ${room}` : 'Connecting';
-        el('sub').textContent = alone
-          ? 'On your own — nothing here is shared.'
+
+        el('chromeState').textContent = alone
+          ? 'Working alone · nothing shared'
+          : room
+            ? `Room ${room} · ${seat === null ? 'watching' : 'shared dials'}`
+            : 'Connecting…';
+        el('roomFoot').textContent = alone
+          ? 'Nothing here is shared — this copy is yours alone.'
           : seat === null
-            ? 'Watching.'
-            : `You are ${config.seats[seat].name}, and so is the left-hand board.`;
+            ? 'Both seats here are taken. Join another room by name.'
+            : `Room ${room} · you are ${config.seats[seat].name}, and so is the left-hand board`;
         el('leave').hidden = seat === null;
-        el('roomTools').hidden = alone;
+        el('roomTools').hidden = false;
+
+        /*
+         * The first claim is read off the dials rather than fixed: this is the
+         * page where they change, and a sentence naming a number the box beside
+         * it no longer holds would be the one thing here you cannot check.
+         */
+        el('claimAcross').innerHTML =
+          `One across for Player 1 is <strong>${inWords(acrossFor(spec))} across</strong> for Player 2.`;
+        el('sameMoves').textContent =
+          `both palettes hold the same ${inWords(config.moveSet.length)} moves — read differently`;
 
         // Only write the boxes when they are not being typed in, so a value
         // does not jump under the cursor mid-edit.
@@ -292,10 +357,14 @@
         }
         try {
           await setSandboxConfig({ name: room, uid, config: encodeSpec(next) });
+          draw();
         } catch (err) {
+          // Redraw first: `draw` writes the status line from the game, so
+          // setting the message before it meant the one thing the reader needed
+          // to see was overwritten in the same tick by the ordinary sentence.
+          draw();
           el('status').textContent = `That did not take: ${explain(err)}`;
         }
-        draw();
       }
 
       async function move(square) {
@@ -361,16 +430,18 @@
         push({ ...DEFAULT_SPEC, moveSet: derivedMoveSet(DEFAULT_SPEC) });
       });
 
-      el('copyLink').addEventListener('click', async () => {
-        const link = shareLink(location.origin, location.pathname, room);
-        try {
-          await navigator.clipboard.writeText(link);
-          el('copyLink').textContent = 'Link copied';
-          setTimeout(() => (el('copyLink').textContent = 'Copy the invite link'), 2000);
-        } catch {
-          window.prompt('Copy this link:', link);
-        }
-      });
+      for (const button of document.querySelectorAll('.js-copy-link')) {
+        button.addEventListener('click', async () => {
+          const link = shareLink(location.origin, location.pathname, room);
+          try {
+            await navigator.clipboard.writeText(link);
+            button.textContent = 'Link copied';
+            setTimeout(() => (button.textContent = 'Copy the invite link'), 2000);
+          } catch {
+            window.prompt('Copy this link:', link);
+          }
+        });
+      }
 
       el('joinRoom').addEventListener('click', async () => {
         const wanted = el('roomInput').value.trim();
@@ -437,7 +508,6 @@
 
         history.replaceState(null, '', `?room=${encodeURIComponent(name)}`);
         if (seat !== null) rememberRoom(window.localStorage, name, LAST_SANDBOX_KEY);
-        el('roomTools').hidden = false;
 
         unwatch = await watchSandbox(
           name,

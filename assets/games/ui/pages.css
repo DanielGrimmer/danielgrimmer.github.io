@@ -7,8 +7,8 @@
  *
  * Load it AFTER board.css so the palette below wins:
  *
- *   <link rel="stylesheet" href="../games/ui/board.css?v=4.24.0" />
- *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.24.0" />
+ *   <link rel="stylesheet" href="../games/ui/board.css?v=4.25.0" />
+ *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.25.0" />
  *
  * The pages need three families. Add to each page's <head>:
  *
@@ -220,7 +220,9 @@ a.dg-label-red { color: var(--dg-red); }
  */
 .dg-hero > *,
 .dg-choices > *,
-.dg-layout > * {
+.dg-layout > *,
+.dg-sandbox-intro > *,
+.dg-replay-boards > * {
   min-width: 0;
 }
 
@@ -816,6 +818,11 @@ a.dg-btn-primary:hover {
  * with one of its three marks missing.
  */
 .dg-mark[data-kind='spent'] { color: var(--dg-muted); }
+
+/* The sandbox's legend names the palette's centre cell, so it shows the sprite. */
+.dg-mark[data-kind='ball'] {
+  background: url('../img/ball-soccer.png') center / contain no-repeat;
+}
 .dg-mark[data-kind='dot'] { color: var(--dg-gold-ink); }
 
 /* The rules, folded shut, above the board — not buried under it. */
@@ -1148,10 +1155,18 @@ a.dg-btn-primary:hover {
   padding: 0.3rem 0.5rem;
 }
 
-/* The dial the whole trick turns on. */
+/*
+ * The dial the whole trick turns on.
+ *
+ * Its background is the lit gold of a legal square, which stays pale in both
+ * colour schemes — so its ink has to stay dark in both too. Following
+ * `--dg-ink` put a near-white number on pale gold and the one dial that
+ * matters became the one you could not read.
+ */
 .dg-dials input[data-dial='duality'] {
   border-color: var(--dg-gold);
   background: var(--dg-lit);
+  color: #191817;
 }
 
 .dg-dial-note {
