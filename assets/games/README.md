@@ -80,6 +80,7 @@ ui/board.css      Page furniture, the palettes, the move-set grid
 ui/coach.js       Tutorial steps and the reveal's prose — all copy lives here
 ui/replay.js      The reveal's transport: two panels in step. Game-agnostic
 ui/palette.js     The move-set editor, drawn once per lens
+img/              Ball, puck, goal and hoop sprites for the isometric board
 ```
 
 Pages, in the order a pair of players meets them: the tutorial (no network,

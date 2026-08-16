@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Sandbox — Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.16.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.17.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap dg-wide">
@@ -75,7 +75,7 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.16.0';
+      const BUILD = '4.17.0';
 
       import {
         initialGame,
@@ -84,7 +84,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.16.0';
+      } from '../games/core/game.js?v=4.17.0';
       import {
         DEFAULT_SPEC,
         normaliseSpec,
@@ -95,10 +95,10 @@
         encodeSpec,
         decodeSpec,
         describeSpec,
-      } from '../games/core/sandbox.js?v=4.16.0';
-      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.16.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.16.0';
-      import { createPaletteView } from '../games/ui/palette.js?v=4.16.0';
+      } from '../games/core/sandbox.js?v=4.17.0';
+      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.17.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.17.0';
+      import { createPaletteView } from '../games/ui/palette.js?v=4.17.0';
       import {
         ROOM_NAMES,
         roomFromLocation,
@@ -106,7 +106,7 @@
         rememberRoom,
         recallRoom,
         LAST_SANDBOX_KEY,
-      } from '../games/net/rooms.js?v=4.16.0';
+      } from '../games/net/rooms.js?v=4.17.0';
       import {
         signIn,
         chooseRoom,
@@ -120,7 +120,7 @@
         explain,
         HEARTBEAT_MS,
         SANDBOX_COLLECTION,
-      } from '../games/net/room.js?v=4.16.0';
+      } from '../games/net/room.js?v=4.17.0';
 
       const el = (id) => document.getElementById(id);
       const now = () => Date.now();

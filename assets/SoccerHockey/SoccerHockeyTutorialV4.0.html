@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.16.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.17.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -77,9 +77,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.16.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.17.0'; // keep in step with the ?v= tokens below
 
-      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.16.0';
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.17.0';
       import {
         initialGame,
         applyMove,
@@ -87,8 +87,8 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.16.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.16.0';
+      } from '../games/core/game.js?v=4.17.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.17.0';
       import {
         contextFor,
         stepIndex,
@@ -96,7 +96,7 @@
         STALLED_HINT,
         BASKETBALL_STEPS,
         BASKETBALL_OUTRO,
-      } from '../games/ui/coach.js?v=4.16.0';
+      } from '../games/ui/coach.js?v=4.17.0';
 
       const config = BASKETBALL_TUTORIAL;
 

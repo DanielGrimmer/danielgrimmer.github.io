@@ -251,30 +251,45 @@ body.dg {
   transform: translateY(-15px);
 }
 
+/*
+ * Three faces of one cube, in the surface's own colours.
+ *
+ * `box-sizing: border-box` so the 2px border a lit square carries does not make
+ * it a bigger cube than its neighbours, and the seal below — a hairline shadow
+ * in the face's own colour — closes the sub-pixel seams the skew transforms
+ * leave between the three faces. Without it the background shows through the
+ * joins as a lit thread down every cube.
+ */
 .dg-face {
   position: absolute;
+  box-sizing: border-box;
   width: var(--dg-tile);
   height: var(--dg-tile);
-  border: 1px solid rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--dg-face-edge);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 20px;
-  color: #000;
-  /* The board is squashed 0.8 x 0.4; undo it on the glyphs so they stay round. */
+  color: var(--dg-dot);
 }
 
 .dg-face.dg-top {
   transform: rotate(45deg);
+  background: var(--dg-face-top);
+  box-shadow: var(--dg-legal-glow), 0 0 0 1.2px var(--dg-face-top);
 }
 
 .dg-face.dg-left {
   transform: scaleY(1.733) translateY(25.2px) translateX(-14.8px) rotate(60deg) scaleY(0.577) rotate(-45deg);
+  background: var(--dg-face-left);
+  box-shadow: 0 0 0 1.2px var(--dg-face-left);
 }
 
 .dg-face.dg-right {
   transform: scaleY(1.733) translateY(25.2px) translateX(14.8px) rotate(-60deg) scaleY(0.577) rotate(45deg);
+  background: var(--dg-face-right);
+  box-shadow: 0 0 0 1.2px var(--dg-face-right);
 }
 
 .dg-glyph {
@@ -284,138 +299,196 @@ body.dg {
   line-height: 1;
 }
 
-/* Palettes, lifted from V3.1 ------------------------------------------------ */
-
-.dg-board[data-theme='basketball'] .dg-top {
-  background: #dfbb85;
-}
-.dg-board[data-theme='basketball'] .dg-left {
-  background: #981717;
-}
-.dg-board[data-theme='basketball'] .dg-right {
-  background: #f9c852;
-}
-
-.dg-board[data-theme='soccer'] .dg-top {
-  background: #98e070;
-}
-.dg-board[data-theme='soccer'] .dg-left {
-  background: #8b4513;
-}
-.dg-board[data-theme='soccer'] .dg-right {
-  background: #a0522d;
-}
-
-.dg-board[data-theme='hockey'] .dg-top {
-  background: #e0f4ff;
-}
-.dg-board[data-theme='hockey'] .dg-left {
-  background: #c0e8ff;
-}
-.dg-board[data-theme='hockey'] .dg-right {
-  background: #a0dcff;
-}
-
-/* Wall beside a goal mouth. */
-.dg-cell.is-wall .dg-face {
-  background: #000 !important;
-  border-color: #000;
-  color: #000;
-}
-
-/* A square you may move to. Only the top face lights, as in V3.1. */
-.dg-cell.is-legal .dg-top {
-  background: #ffffcc !important;
-  border: 2px solid #ffd700;
-}
-
-/*
- * An arm of the star that the trail has already closed. It keeps the full
- * highlight, so the star stays a single readable shape once it is half eaten
- * away or bent around the seam — which is the shape the tutorial asks the
- * player to memorise. What separates it from a playable arm is the gold border
- * above, and the ✕ sitting on it.
- */
-.dg-cell.is-blocked .dg-top {
-  background: #ffffcc !important;
-}
-
-/*
- * The ball is drawn, not typed. A glyph rides its font's baseline, which left
- * it sitting low in the square and depending on whichever font loaded. This is
- * a box centred on the face by geometry, so it lands in the middle every time.
+/* Surfaces ----------------------------------------------------------------- *
  *
- * It carries the same counter-transform as the glyphs, undoing the board's
- * 0.8 x 0.4 squash so the ball reads as round rather than as an ellipse.
+ * Chalk & Turf. Every surface is two shades of the same colour laid in mown
+ * stripes, dark earth under the pitch and pale ice under the rink, and one gold
+ * for everything the player is being told about. Values are the shared board
+ * vocabulary; each theme only says what its own surface is made of.
+ *
+ * The sprites live in assets/games/img/ and are named, not versioned: this
+ * stylesheet is cache-busted by its own `?v=` token but the images it points at
+ * are not, so a redrawn ball under the same filename will keep loading from a
+ * browser's cache for as long as it feels like. Redraw one, rename it.
  */
-.dg-ball {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  /* Above every cube, so nothing can slice it; placed by the renderer. */
-  z-index: 9999;
-  border-radius: 50%;
-  /*
-   * Undo the board's 0.8 x 0.4 squash so the ball reads as round. It sits on
-   * the surface rather than inside a rotated face, so unlike the glyphs it
-   * needs no counter-rotation. 1.25 x 0.8 and 2.5 x 0.4 both come to 1, so an
-   * 18px box renders as an 18px ball.
-   */
-  transform: scaleX(1.25) scaleY(2.5);
-  background: radial-gradient(
-    circle at 34% 30%,
-    var(--dg-ball-hi) 0%,
-    var(--dg-ball-mid) 48%,
-    var(--dg-ball-lo) 100%
-  );
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.5),
-    0 1px 3px rgba(0, 0, 0, 0.35);
+
+.dg-board {
+  --dg-tile-edge: rgba(25, 24, 23, 0.3);
+  --dg-wall: #232019;
+  --dg-legal-bg: #f7efd0;
+  --dg-legal-edge: #c8963e;
+  /* Lit only under floodlights, and then only on the star — see .is-legal. */
+  --dg-lit-glow: 0 0 0 0 transparent;
+  --dg-legal-glow: 0 0 0 0 transparent;
+  --dg-x: rgba(25, 24, 23, 0.45);
 }
 
-.dg-board[data-theme='basketball'] {
-  --dg-ball-hi: #f8a95a;
-  --dg-ball-mid: #e8802a;
-  --dg-ball-lo: #a9530f;
-}
-
-/*
- * A football is recognised by its panels, not by being white — a plain white
- * sphere reads as a golf ball, and one dark spot reads as an eye. So: the
- * centre pentagon, and the ring of five around it that a real ball shows from
- * this angle. Five gradients is more than it sounds like, but at 18px the
- * pattern is the whole signal.
- */
 .dg-board[data-theme='soccer'] {
-  --dg-ball-hi: #ffffff;
-  --dg-ball-mid: #f4f4f4;
-  --dg-ball-lo: #8d949b;
-}
-
-.dg-board[data-theme='soccer'] .dg-ball {
-  background:
-    radial-gradient(circle at 50% 50%, #1c1f24 0 18%, transparent 19%),
-    radial-gradient(circle at 50% 4%, #1c1f24 0 13%, transparent 14%),
-    radial-gradient(circle at 93% 35%, #1c1f24 0 13%, transparent 14%),
-    radial-gradient(circle at 74% 94%, #1c1f24 0 13%, transparent 14%),
-    radial-gradient(circle at 26% 94%, #1c1f24 0 13%, transparent 14%),
-    radial-gradient(circle at 7% 35%, #1c1f24 0 13%, transparent 14%),
-    radial-gradient(
-      circle at 34% 30%,
-      var(--dg-ball-hi) 0%,
-      var(--dg-ball-mid) 48%,
-      var(--dg-ball-lo) 100%
-    );
+  --dg-top-a: #7fb765;
+  --dg-top-b: #77ac5c;
+  --dg-side-l: #6b4a2f;
+  --dg-side-r: #7d5636;
+  --dg-dot: #a97d2c;
+  --dg-ball-art: url('../img/ball-soccer.png');
+  --dg-goal-far: url('../img/goal-far.png');
+  --dg-goal-near: url('../img/goal-near.png');
 }
 
 .dg-board[data-theme='hockey'] {
-  --dg-ball-hi: #4a4f57;
-  --dg-ball-mid: #23262b;
-  --dg-ball-lo: #0c0d10;
+  --dg-top-a: #e4f0f8;
+  --dg-top-b: #dbebf5;
+  --dg-side-l: #b3d3e4;
+  --dg-side-r: #a4c8dc;
+  /* Gold vanishes on ice; the approach dots are read off the black of a puck. */
+  --dg-dot: #14181c;
+  --dg-ball-art: url('../img/ball-puck.png');
+  --dg-goal-far: url('../img/goal-far.png');
+  --dg-goal-near: url('../img/goal-near.png');
+}
+
+.dg-board[data-theme='basketball'] {
+  --dg-top-a: #dfbb85;
+  --dg-top-b: #dfbb85;
+  --dg-side-l: #981717;
+  --dg-side-r: #f9c852;
+  --dg-dot: #a97d2c;
+  --dg-ball-art: url('../img/ball-basketball.png');
+  /* A court has a hoop, not a cage. */
+  --dg-goal-far: url('../img/hoop-far.png');
+  --dg-goal-near: url('../img/hoop-near.png');
+}
+
+/* Floodlit: the same board, lit rather than daylit. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dg-theme='light']) .dg-board {
+    --dg-tile-edge: rgba(0, 0, 0, 0.42);
+    --dg-wall: #05070a;
+    --dg-legal-bg: #ffe9a8;
+    --dg-legal-edge: #f5c451;
+    --dg-lit-glow: 0 0 12px rgba(245, 196, 81, 0.7);
+    --dg-x: rgba(0, 0, 0, 0.55);
+  }
+  :root:not([data-dg-theme='light']) .dg-board[data-theme='soccer'] {
+    --dg-top-a: #356f42;
+    --dg-top-b: #2c6138;
+    --dg-side-l: #16281c;
+    --dg-side-r: #1e3625;
+  }
+  :root:not([data-dg-theme='light']) .dg-board[data-theme='hockey'] {
+    --dg-top-a: #d9edf8;
+    --dg-top-b: #cee5f2;
+    --dg-side-l: #5f8ba3;
+    --dg-side-r: #527c95;
+  }
+}
+
+[data-dg-theme='dark'] .dg-board {
+  --dg-tile-edge: rgba(0, 0, 0, 0.42);
+  --dg-wall: #05070a;
+  --dg-legal-bg: #ffe9a8;
+  --dg-legal-edge: #f5c451;
+  --dg-lit-glow: 0 0 12px rgba(245, 196, 81, 0.7);
+  --dg-x: rgba(0, 0, 0, 0.55);
+}
+
+[data-dg-theme='dark'] .dg-board[data-theme='soccer'] {
+  --dg-top-a: #356f42;
+  --dg-top-b: #2c6138;
+  --dg-side-l: #16281c;
+  --dg-side-r: #1e3625;
+}
+
+[data-dg-theme='dark'] .dg-board[data-theme='hockey'] {
+  --dg-top-a: #d9edf8;
+  --dg-top-b: #cee5f2;
+  --dg-side-l: #5f8ba3;
+  --dg-side-r: #527c95;
+}
+
+/*
+ * A cube picks its three colours here and the faces above just paint them, so
+ * the seal always matches whatever the face ended up being.
+ */
+.dg-cell {
+  --dg-face-top: var(--dg-top-a);
+  --dg-face-left: var(--dg-side-l);
+  --dg-face-right: var(--dg-side-r);
+  --dg-face-edge: var(--dg-tile-edge);
+}
+
+/* Mown stripes: the checker runs along row + col, set by the renderer. */
+.dg-cell[data-shade='b'] {
+  --dg-face-top: var(--dg-top-b);
+}
+
+/* Wall beside a goal mouth. */
+.dg-cell.is-wall {
+  --dg-face-top: var(--dg-wall);
+  --dg-face-left: var(--dg-wall);
+  --dg-face-right: var(--dg-wall);
+  --dg-face-edge: var(--dg-wall);
+}
+
+/*
+ * A square you may move to, and an arm of the star the trail has already
+ * closed. Lit identically on purpose: the star is one shape, and what marks an
+ * arm as spent is the ✕ sitting on it, not a duller square.
+ */
+.dg-cell.is-legal,
+.dg-cell.is-blocked {
+  --dg-face-top: var(--dg-legal-bg);
+  --dg-face-edge: var(--dg-legal-edge);
+  --dg-legal-glow: var(--dg-lit-glow);
+}
+
+.dg-cell.is-legal .dg-top,
+.dg-cell.is-blocked .dg-top {
+  border-width: 2px;
+}
+
+
+/*
+ * The ball, the puck and the basketball are drawn sprites rather than stacked
+ * gradients: a puck is a squat cylinder lying flat and a basketball has seams,
+ * neither of which a radial gradient can say. No shadow and no ring — a dark
+ * halo around an 18px sprite reads as dirt on the pitch.
+ *
+ * The counter-transform undoes the board's 0.8 x 0.4 squash: 1.25 x 0.8 and
+ * 2.5 x 0.4 both come to 1, so the sprite renders at the size the renderer set.
+ */
+.dg-ball {
+  position: absolute;
+  /* Above every cube, so nothing can slice it; placed by the renderer. */
+  z-index: 9999;
+  background: var(--dg-ball-art) center / 100% 100% no-repeat;
+  transform: scaleX(1.25) scaleY(2.5);
+}
+
+/*
+ * Goal furniture standing in each mouth: a four-sided cage on turf and ice, a
+ * backboard and rim on the court. Sized to one tile side, and counter-squashed
+ * like the ball. The renderer gives each one the depth of the tile it stands
+ * on, so a cube in front of it still paints over it.
+ */
+.dg-goal {
+  position: absolute;
+  width: 88px;
+  height: 88px;
+  background: center / 100% 100% no-repeat;
+  transform: scaleX(1.25) scaleY(2.5);
+  pointer-events: none;
+}
+
+.dg-goal-far {
+  background-image: var(--dg-goal-far);
+}
+
+.dg-goal-near {
+  background-image: var(--dg-goal-near);
 }
 
 .dg-cell.is-visited .dg-glyph {
-  color: rgba(0, 0, 0, 0.72);
+  color: var(--dg-x);
   font-size: 17px;
 }
 

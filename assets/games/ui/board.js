@@ -16,9 +16,18 @@ const TILE = 40;
 const HALF_DIAGONAL = TILE / 1.41; // how far one step moves a cube on screen
 const SQUASH_X = 0.8;
 const SQUASH_Y = 0.4;
-const BALL_SIZE = 18;
-/** Board units; the 0.4 squash turns this into roughly five pixels on screen. */
-const BALL_LIFT = 12;
+/*
+ * Each sprite's size on screen, and how far it stands off its tile. A puck
+ * lies flat on the ice, so it is barely lifted at all; a ball sits up on the
+ * turf. Board units — the 0.4 vertical squash flattens the lift on screen.
+ */
+const BALLS = {
+  soccer: { width: 18, height: 18, lift: 12 },
+  hockey: { width: 22, height: 15, lift: 4 },
+  basketball: { width: 18, height: 18, lift: 12 },
+};
+/** The goal sprite is one tile side wide, drawn in an 88px box (see board.css). */
+const GOAL_BOX = 88;
 
 /** Where a square sits, before the board-wide squash. */
 function isoPosition(row, col, height) {
@@ -49,6 +58,7 @@ export function createBoardView(container, { board, theme, interactive = true })
   surface.className = 'dg-board';
   surface.dataset.theme = theme;
 
+  const ball = BALLS[theme] ?? BALLS.soccer;
   const layout = layoutSize(board.width, board.height);
   surface.style.width = `${layout.width}px`;
   surface.style.height = `${layout.height}px`;
@@ -70,7 +80,20 @@ export function createBoardView(container, { board, theme, interactive = true })
    */
   const ballEl = document.createElement('div');
   ballEl.className = 'dg-ball';
+  ballEl.style.width = `${ball.width}px`;
+  ballEl.style.height = `${ball.height}px`;
   ballEl.hidden = true;
+
+  /*
+   * A cage or a hoop standing in each goal mouth. Which column that is depends
+   * on the seat's view, so they are parked off-board until the first render.
+   */
+  const goalFar = document.createElement('div');
+  goalFar.className = 'dg-goal dg-goal-far';
+  goalFar.hidden = true;
+  const goalNear = document.createElement('div');
+  goalNear.className = 'dg-goal dg-goal-near';
+  goalNear.hidden = true;
 
   for (let row = 0; row < board.height; row++) {
     for (let col = 0; col < board.width; col++) {
@@ -86,6 +109,9 @@ export function createBoardView(container, { board, theme, interactive = true })
       cell.style.zIndex = String(row + col);
       cell.dataset.row = String(row);
       cell.dataset.col = String(col);
+      // Mown stripes. The checker runs along row + col so it stays a stripe
+      // under the isometric projection rather than a chequerboard.
+      cell.dataset.shade = (row + col) % 2 === 0 ? 'a' : 'b';
 
       const top_ = document.createElement('div');
       top_.className = 'dg-face dg-top';
@@ -104,7 +130,7 @@ export function createBoardView(container, { board, theme, interactive = true })
     }
   }
 
-  surface.append(ballEl);
+  surface.append(goalFar, goalNear, ballEl);
 
   let onSquare = null;
   if (interactive) {
@@ -147,7 +173,7 @@ export function createBoardView(container, { board, theme, interactive = true })
     const blocked = new Set((view.blockedMoves ?? []).map(keyOf));
     const visited = new Set(view.visited.map(keyOf));
     const approaches = showApproaches ? new Set(view.goalApproaches.map(keyOf)) : new Set();
-    const ball = keyOf(view.ball);
+    const ballKey = keyOf(view.ball);
 
     for (const [key, { cell, glyph }] of cells) {
       const [row, col] = key.split(',').map(Number);
@@ -167,7 +193,7 @@ export function createBoardView(container, { board, theme, interactive = true })
       // different kinds of thing rather than as three sizes of the same circle.
       // The ball itself is the drawn element, not a glyph.
       let text = '';
-      if (!isWall && key !== ball) {
+      if (!isWall && key !== ballKey) {
         if (visited.has(key)) text = '✕';
         else if (approaches.has(key)) text = '•';
       }
@@ -175,12 +201,25 @@ export function createBoardView(container, { board, theme, interactive = true })
     }
 
     // Park the ball on its tile: centre of the cube's top, lifted a little so
-    // it reads as standing on the court rather than painted onto it. BALL_LIFT
+    // it reads as standing on the court rather than painted onto it. The lift
     // is in board units, which the 0.4 vertical squash then flattens.
     const here = isoPosition(view.ball.row, view.ball.col, board.height);
     ballEl.hidden = false;
-    ballEl.style.left = `${here.left + TILE / 2 - BALL_SIZE / 2}px`;
-    ballEl.style.top = `${here.top + TILE / 2 - BALL_SIZE / 2 - BALL_LIFT}px`;
+    ballEl.style.left = `${here.left + TILE / 2 - ball.width / 2}px`;
+    ballEl.style.top = `${here.top + TILE / 2 - ball.height / 2 - ball.lift}px`;
+
+    // The furniture stands on the goal mouth of each end row, at the depth of
+    // the tile it stands on, so cubes in front of it still paint over it.
+    for (const [el, row] of [
+      [goalFar, 0],
+      [goalNear, board.height - 1],
+    ]) {
+      const at = isoPosition(row, view.goalCol, board.height);
+      el.hidden = false;
+      el.style.left = `${at.left + TILE / 2 - GOAL_BOX / 2}px`;
+      el.style.top = `${at.top + TILE / 2 - GOAL_BOX / 2}px`;
+      el.style.zIndex = String(row + view.goalCol);
+    }
 
     fit();
   }
