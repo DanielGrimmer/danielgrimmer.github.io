@@ -412,8 +412,9 @@ test('the reveal describes the board it is actually on', async (t) => {
   await t.test('the eight-file board gets its queen named too', () => {
     assert.deepEqual(pieceRevelations(WIDE), pieceRevelations(NARROW));
     assert.deepEqual(strangePieces(WIDE), ['pawn', 'king', 'queen']);
-    assert.match(revealNote(WIDE, SIDE.WHITE).body, /pawns, kings and queens were very strange/);
-    assert.match(revealNote(NARROW, SIDE.WHITE).body, /pawns and kings were very strange/);
+    // The strangeness moved from the body's second paragraph to the ledger.
+    assert.match(revealNote(WIDE, SIDE.WHITE).disagree.at(-1), /pawns, kings and queens/);
+    assert.match(revealNote(NARROW, SIDE.WHITE).disagree.at(-1), /pawns and kings/);
   });
 
   await t.test('and the tutorial board, where nothing swaps, produces no swaps', () => {
@@ -426,8 +427,12 @@ test('the reveal describes the board it is actually on', async (t) => {
     for (const seat of [SIDE.WHITE, SIDE.BLACK]) {
       const note = revealNote(NARROW, seat);
       assert.match(note.title, /Both Playing with the Normal Pieces/);
+      assert.match(note.subtitle, /both thought your opponent had the strange pieces/);
       assert.match(note.body, /The left-hand one is the board you were looking at/);
-      assert.match(note.body, /their knights moved like bishops; their bishops like knights/);
+      assert.match(note.disagree[0], /their knights moved — like your bishops/);
+      assert.match(note.disagree[1], /their bishops moved — like your knights/);
+      // The rooks are the one piece both players read the same way.
+      assert.ok(note.agree.some((line) => /rooks/.test(line)));
     }
   });
 
@@ -449,9 +454,12 @@ test('the reveal describes the board it is actually on', async (t) => {
     for (const board of [NARROW, WIDE]) {
       for (const seat of [SIDE.WHITE, SIDE.BLACK, null]) {
         const note = revealNote(board, seat);
-        for (const field of ['title', 'body', 'after']) {
+        for (const field of ['title', 'subtitle', 'body', 'after']) {
           assert.equal(typeof note[field], 'string');
           assert.ok(note[field].trim().length > 0, `${board.id}/${seat}/${field}`);
+        }
+        for (const field of ['agree', 'disagree']) {
+          assert.ok(Array.isArray(note[field]) && note[field].length > 0, `${board.id}/${seat}/${field}`);
         }
       }
     }

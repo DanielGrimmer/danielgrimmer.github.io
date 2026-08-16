@@ -21,6 +21,8 @@ import {
   toView,
   fromView,
   viewOf,
+  ACTION,
+  boardMoves,
 } from '../assets/games/escher/game.js';
 
 /** Chess letters: knight is N, because king already has the K. */
@@ -714,5 +716,79 @@ test('every pawn opens with a double step, from wherever it starts', async (t) =
     assert.equal(pieceAt(game, 2, 1).moved, true);
     const doubles = pseudoMoves(NARROW, game, take.to).filter((to) => to.rank === 4);
     assert.equal(doubles.length, 0, 'landing on a start square earns nothing');
+  });
+});
+
+/*
+ * Ending a game without playing it out. Forfeits and draws ride the move log —
+ * the one thing the published Security Rules let a player write — so they are
+ * entries the fold has to understand, appended on the actor's own turn.
+ */
+test('ending early', async (t) => {
+  const board = NARROW;
+
+  await t.test('a forfeit hands the win to the other side', () => {
+    const g = replay(board, [{ action: ACTION.FORFEIT }]);
+    assert.equal(g.outcome.status, STATUS.RESIGNED);
+    assert.equal(g.outcome.winner, SIDE.BLACK, 'White forfeited on move one');
+    assert.equal(legalMoves(board, g).length, 0, 'an ended game offers no moves');
+  });
+
+  await t.test('and the fold attributes it to the seat on move', () => {
+    // One White move, then Black forfeits: White wins.
+    const opening = legalMoves(board, initialGame(board))[0];
+    const g = replay(board, [opening, { action: ACTION.FORFEIT }]);
+    assert.equal(g.outcome.status, STATUS.RESIGNED);
+    assert.equal(g.outcome.winner, SIDE.WHITE);
+  });
+
+  await t.test('a draw offer costs the turn and waits on the table', () => {
+    const g = replay(board, [{ action: ACTION.DRAW_OFFER }]);
+    assert.equal(g.outcome.status, STATUS.PLAYING);
+    assert.equal(g.turn, SIDE.BLACK, 'offering passed the move');
+    assert.equal(g.drawOffer, SIDE.WHITE);
+  });
+
+  await t.test('accepting it ends the game with no winner', () => {
+    const g = replay(board, [{ action: ACTION.DRAW_OFFER }, { action: ACTION.DRAW_ACCEPT }]);
+    assert.equal(g.outcome.status, STATUS.DRAWN);
+    assert.equal(g.outcome.winner, null);
+  });
+
+  await t.test('playing on declines it', () => {
+    const offered = replay(board, [{ action: ACTION.DRAW_OFFER }]);
+    const reply = legalMoves(board, offered)[0];
+    const g = replay(board, [{ action: ACTION.DRAW_OFFER }, reply]);
+    assert.equal(g.outcome.status, STATUS.PLAYING);
+    assert.equal(g.drawOffer, null, 'a move made is an offer declined');
+    assert.equal(g.turn, SIDE.WHITE);
+  });
+
+  await t.test('accepting a draw nobody offered is refused', () => {
+    assert.throws(() => replay(board, [{ action: ACTION.DRAW_ACCEPT }]), /no draw offer/);
+    // And an offer already declined by a move is off the table.
+    const offered = replay(board, [{ action: ACTION.DRAW_OFFER }]);
+    const reply = legalMoves(board, offered)[0];
+    assert.throws(
+      () => replay(board, [{ action: ACTION.DRAW_OFFER }, reply, { action: ACTION.DRAW_ACCEPT }]),
+      /no draw offer/
+    );
+  });
+
+  await t.test('nothing can be appended to a finished game', () => {
+    assert.throws(
+      () => replay(board, [{ action: ACTION.FORFEIT }, { action: ACTION.DRAW_OFFER }]),
+      /the game is over/
+    );
+  });
+
+  await t.test('an unknown action is named rather than swallowed', () => {
+    assert.throws(() => replay(board, [{ action: 'rage-quit' }]), /unknown action "rage-quit"/);
+  });
+
+  await t.test('boardMoves strips the actions, for the replay viewer', () => {
+    const opening = legalMoves(board, initialGame(board))[0];
+    const log = [{ action: ACTION.DRAW_OFFER }, opening, { action: ACTION.FORFEIT }];
+    assert.deepEqual(boardMoves(log), [opening]);
   });
 });

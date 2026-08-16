@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.28.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.28.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.29.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.29.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -96,6 +96,23 @@
             </div>
 
             <!--
+              The gate between the last move and the reveal. The game is over,
+              but the reveal only lands if the players talk *first*: the friend
+              saying "what strange pieces? YOU had the strange pieces" out loud
+              is the punchline, and the screen should not beat them to it.
+            -->
+            <div class="dg-gate" id="gate" hidden>
+              <div class="dg-label dg-label-gold">Before you go on</div>
+              <p>
+                <span id="gateOutcome"></span> Call your friend, to talk through
+                your respective experiences. Ask them: What was it like playing
+                with those strange pieces? Once they answer click this button to
+                continue.
+              </p>
+              <button class="dg-btn dg-btn-primary" id="gateGo" type="button">Continue →</button>
+            </div>
+
+            <!--
               No legend under the board naming the files. They are written along
               the top and bottom edges of the board itself, which is where a
               player looks for them.
@@ -157,6 +174,14 @@
             <div class="dg-room-foot">
               <span id="roomFoot"></span>
               <span class="dg-foot-actions">
+                <!--
+                  Ending early. Both ride the move log — the one thing the
+                  rules let a player write — so both are moves you make on
+                  your own turn, exactly as over a real board.
+                -->
+                <button class="dg-btn dg-btn-primary" id="acceptDraw" type="button" hidden>Accept the draw</button>
+                <button class="dg-btn" id="requestDraw" type="button" hidden>Request draw</button>
+                <button class="dg-btn" id="forfeit" type="button" hidden>Forfeit</button>
                 <button class="dg-btn" id="newGame" type="button" hidden>New game</button>
                 <button class="dg-btn js-copy-link" type="button">Copy the invite link</button>
                 <button class="dg-link" id="leave" type="button">Leave this room</button>
@@ -177,12 +202,24 @@
           <div class="dg-reveal-head">
             <div class="dg-label dg-label-gold">The reveal</div>
             <h1 id="replayTitle"></h1>
-            <p class="dg-reveal-body">
-              <span id="replayStatus"></span> <span id="replayBody"></span>
-            </p>
+            <!-- No outcome sentence here: the gate said it, and the friend has
+                 just said the rest out loud. The subtitle lands on both. -->
+            <div class="dg-head-sub" id="replaySubtitle"></div>
+            <p class="dg-reveal-body" id="replayBody"></p>
           </div>
 
           <div id="replayStage"></div>
+
+          <div class="dg-ledger">
+            <div class="dg-ledger-col" data-side="agree">
+              <h3>You both agreed about</h3>
+              <ul id="agreeList"></ul>
+            </div>
+            <div class="dg-ledger-col" data-side="disagree">
+              <h3>You disagreed about</h3>
+              <ul id="disagreeList"></ul>
+            </div>
+          </div>
 
           <div class="dg-outro">
             <p id="replayAfter"></p>
@@ -203,17 +240,19 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.28.0';
+      const BUILD = '4.29.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.28.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.29.0';
       import {
         initialGame,
         replay,
         replayFrames,
+        boardMoves,
         viewOf,
         fromView,
         STATUS,
-      } from '../games/escher/game.js?v=4.28.0';
+        ACTION,
+      } from '../games/escher/game.js?v=4.29.0';
       import {
         presenceOf,
         seatOf,
@@ -222,10 +261,10 @@
         mayMove,
         PRESENCE,
         OUTCOME,
-      } from '../games/core/seats.js?v=4.28.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.28.0';
-      import { createReplayView } from '../games/ui/replay.js?v=4.28.0';
-      import { revealNote } from '../games/escher/coach.js?v=4.28.0';
+      } from '../games/core/seats.js?v=4.29.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.29.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.29.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.29.0';
       import {
         ESCHER_ROOM_NAMES,
         ESCHER_BOARD_ROOMS,
@@ -237,14 +276,14 @@
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.28.0';
+      } from '../games/net/rooms.js?v=4.29.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.28.0';
+      } from '../games/net/room.js?v=4.29.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
@@ -284,6 +323,13 @@
        * way the log can return to empty.
        */
       let inheritedGame = false;
+      /*
+       * Whether this player has been through the gate: called their friend,
+       * heard "what strange pieces? YOU had the strange pieces", and pressed
+       * on. Local on purpose — each player goes through on their own device,
+       * at their own pace.
+       */
+      let revealUnlocked = false;
       let unwatch = null;
       let interacted = false; // has anyone touched this tab since the last beat
 
@@ -354,25 +400,40 @@
         boardView?.fit?.();
       }
 
+      /**
+       * How this game ended, from this seat's chair. Also the first sentence
+       * of the gate, which is why it stands alone.
+       */
+      function outcomeSentence() {
+        const { status, winner } = game.outcome;
+        if (status === STATUS.CHECKMATE) {
+          return winner === seat ? 'Checkmate — you win!' : 'Checkmate. Your friend wins.';
+        }
+        if (status === STATUS.STALEMATE) return 'Stalemate — nobody can move, and it is a draw.';
+        if (status === STATUS.RESIGNED) {
+          return winner === seat ? 'Your friend forfeited — you win!' : 'You forfeited. Your friend wins.';
+        }
+        if (status === STATUS.DRAWN) return 'You agreed to a draw.';
+        return '';
+      }
+
       function describeStatus() {
         if (seat === null) {
           return 'Both seats in this room are taken — you are watching. Join another room to play.';
         }
-        // The result comes first: a finished game stays finished even after the
-        // other player closes their tab, and the replay underneath would look
-        // absurd above the words "waiting for a second player".
-        const callThem = 'Call your friend, to talk through your respective experiences.';
-        if (game.outcome.status === STATUS.CHECKMATE) {
-          return game.outcome.winner === seat
-            ? `Checkmate — you win! ${callThem}`
-            : `Checkmate. Your friend wins. ${callThem}`;
-        }
-        if (game.outcome.status === STATUS.STALEMATE) {
-          return `Stalemate — nobody can move, and it is a draw. ${callThem}`;
-        }
+        // The result comes first: a finished game stays finished even after
+        // the other player closes their tab. The call-your-friend part lives
+        // in the gate now, not here.
+        if (game.outcome.status !== STATUS.PLAYING) return outcomeSentence();
         const full = occupancy(state.seats, now()).held === 2;
         if (!full) return 'Waiting for a second player to join this room.';
 
+        if (game.drawOffer !== null && game.drawOffer !== seat && game.turn === seat) {
+          return 'Your friend offers a draw — accept it below, or play on.';
+        }
+        if (game.drawOffer === seat) {
+          return 'Draw offered. If your friend plays on, the offer lapses.';
+        }
         const check = viewOf(board, game, seat).check;
         if (game.turn === seat) {
           return check ? 'Your move — and you are in check.' : 'Your move.';
@@ -432,14 +493,29 @@
           : describeStatus();
         el('status').dataset.tone =
           !inheritedGame && game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
+        // Board moves only: a forfeit or a draw in the log is not a move made.
+        const played = boardMoves(state.moves).length;
         el('statusMove').textContent =
           game.outcome.status === STATUS.PLAYING
-            ? `move ${state.moves.length + 1}`
-            : `${state.moves.length} move${state.moves.length === 1 ? '' : 's'}`;
+            ? `move ${played + 1}`
+            : `${played} move${played === 1 ? '' : 's'}`;
         el('presenceText').textContent = describeOpponent();
         el('presenceDot').dataset.state = dotState();
         el('newGame').hidden = seat === null || game.outcome.status === STATUS.PLAYING;
         el('leave').hidden = seat === null;
+
+        /*
+         * Ending early. The same gate as a board move — your seat, your turn,
+         * a live opponent — because each of these is an append to the log and
+         * the rules will hold it to exactly that.
+         */
+        const playing = game.outcome.status === STATUS.PLAYING;
+        const offered = game.drawOffer !== null && game.drawOffer !== seat;
+        el('acceptDraw').hidden = !(playing && mayMoveNow && offered);
+        el('requestDraw').hidden = !(playing && mayMoveNow && !offered);
+        el('forfeit').hidden = !(playing && mayMoveNow);
+        if (el('forfeit').hidden) resetForfeitArm();
+
         drawReplay();
       }
 
@@ -453,30 +529,52 @@
        * were still reading their way through it.
        */
       function drawReplay() {
-        if (state.moves.length === 0) inheritedGame = false;
+        if (state.moves.length === 0) {
+          inheritedGame = false;
+          // A fresh game re-arms the gate for the next reveal.
+          revealUnlocked = false;
+        }
         const over = game.outcome.status !== STATUS.PLAYING && !inheritedGame;
-        const key = over ? `${room}:${seat}:${state.moves.length}` : null;
+        /*
+         * The gate: the game is over, but the reveal waits until this player
+         * has called their friend and pressed on. Spectators skip it — they
+         * have nobody to call. Until then the final position stays on screen
+         * with the gate under the status line.
+         */
+        const gated = over && !revealUnlocked && seat !== null;
+        el('gate').hidden = !gated;
+        if (gated) el('gateOutcome').textContent = outcomeSentence();
 
-        el('playLayout').hidden = over;
-        el('boardHolder').hidden = over;
-        el('replay').hidden = !over;
+        const shown = over && !gated;
+        const key = shown ? `${room}:${seat}:${state.moves.length}` : null;
+
+        el('playLayout').hidden = shown;
+        el('boardHolder').hidden = shown;
+        el('replay').hidden = !shown;
         if (over) el('chromeState').textContent = `Room ${room} · game over`;
 
-        if (key === replayKey) {
-          if (over) el('replayStatus').textContent = describeStatus();
-          return;
-        }
+        if (key === replayKey) return;
         replayKey = key;
 
         if (replayView) {
           replayView.destroy();
           replayView = null;
         }
-        if (!over) return;
+        if (!shown) return;
 
         const note = revealNote(board, seat);
         el('replayTitle').textContent = note.title;
+        el('replaySubtitle').textContent = note.subtitle;
         el('replayBody').textContent = note.body;
+        for (const [id, items] of [['agreeList', note.agree], ['disagreeList', note.disagree]]) {
+          el(id).replaceChildren(
+            ...items.map((text) => {
+              const li = document.createElement('li');
+              li.textContent = text;
+              return li;
+            })
+          );
+        }
         el('replayAfter').textContent = note.after;
         /*
          * Where to go next, and it is not symmetric.
@@ -498,9 +596,6 @@
             ? 'Learn the 8×8 board →'
             : `Play again on the ${next.width}×${next.height} board →`;
         el('otherBoard').hidden = seat === null;
-        el('replayStatus').textContent = describeStatus();
-        el('replayStatus').dataset.tone =
-          game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
 
         // Your own board first, so "the left-hand one" in the note is true for
         // both players even though they hold different seats.
@@ -516,12 +611,18 @@
          * Soccer Hockey, which has no pieces to draw. The fold, the renderer and
          * the caption are Escher Chess's, and are handed over here.
          */
-        const frames = replayFrames(board, state.moves);
+        /*
+         * Board moves only: a forfeit or a draw offer in the log changes no
+         * position, and a frame that repeats the one before it reads as the
+         * scrubber sticking.
+         */
+        const played = boardMoves(state.moves);
+        const frames = replayFrames(board, played);
 
         // Built after the section is unhidden: each board measures itself as it
         // is created, and a hidden parent measures as nothing at all.
         replayView = createReplayView(el('replayStage'), {
-          moves: state.moves,
+          moves: played,
           frames,
           seatOrder: order,
           labels,
@@ -538,11 +639,11 @@
             };
           },
           // Short enough for the controls row, beside the scrubber.
-          describe: (index) => `move ${index} / ${state.moves.length}`,
+          describe: (index) => `move ${index} / ${played.length}`,
           // And the part that will not fit there, underneath.
           caption(index) {
             if (index === 0) {
-              return `The opening position — ${state.moves.length} moves to come`;
+              return `The opening position — ${played.length} moves to come`;
             }
             /*
              * The two players name the same square differently only in the
@@ -787,6 +888,50 @@
         await enterRoom(wanted);
       });
 
+      /** Append a non-move to the log: the same transaction as a board move. */
+      async function sendAction(action) {
+        try {
+          await escher.append({
+            name: room,
+            uid,
+            move: { action },
+            expectedLength: state.moves.length,
+          });
+        } catch (err) {
+          el('statusText').textContent = `That did not take: ${explain(err)}`;
+        }
+      }
+
+      /*
+       * Forfeiting a whole game should not be one stray click. The first click
+       * arms the button; only a second, now reading "sure?", sends it. Any
+       * redraw that hides the button disarms it.
+       */
+      let forfeitArmed = false;
+      function resetForfeitArm() {
+        forfeitArmed = false;
+        el('forfeit').textContent = 'Forfeit';
+      }
+
+      el('forfeit').addEventListener('click', async () => {
+        if (!forfeitArmed) {
+          forfeitArmed = true;
+          el('forfeit').textContent = 'Forfeit — sure?';
+          return;
+        }
+        resetForfeitArm();
+        await sendAction(ACTION.FORFEIT);
+      });
+
+      el('requestDraw').addEventListener('click', () => sendAction(ACTION.DRAW_OFFER));
+      el('acceptDraw').addEventListener('click', () => sendAction(ACTION.DRAW_ACCEPT));
+
+      // Through the gate: this player has called their friend and heard it.
+      el('gateGo').addEventListener('click', () => {
+        revealUnlocked = true;
+        drawReplay();
+      });
+
       el('newGame').addEventListener('click', async () => {
         await escher.reset({ name: room });
       });
@@ -815,7 +960,7 @@
           const twin = narrow[Math.max(0, wide.indexOf(room))] ?? narrow[0];
           await enterRoom(twin, { prefer: seat });
         } catch (err) {
-          el('replayStatus').textContent = `That did not take: ${explain(err)}`;
+          el('replayBody').textContent = `That did not take: ${explain(err)}`;
         } finally {
           button.disabled = false;
         }

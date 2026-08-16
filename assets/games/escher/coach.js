@@ -13,9 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.28.0';
-import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.28.0';
-import { PIECE } from './pieces.js?v=4.28.0';
+import { replayFrames, inCheck } from './game.js?v=4.29.0';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.29.0';
+import { PIECE } from './pieces.js?v=4.29.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -489,21 +489,31 @@ export function revealNote(board, seat) {
         'actually made, in the order it was made. But your friend saw ' +
         'something completely different.';
 
-  const theirs = whatTheirPiecesWere(board);
-  const both =
-    seat === null
-      ? 'Each of them thought they were playing with the normal pieces whereas ' +
-        `their opponent had very strange pieces: ${theirs} Both of them thought ` +
-        'this! Nonetheless, they agreed about when every piece was captured and ' +
-        'whenever the king was in check. Weird!'
-      : 'You both thought you were playing with the normal pieces whereas your ' +
-        `opponent had very strange pieces: ${theirs} You both thought this! ` +
-        'Nonetheless, you both agree when every piece was captured and whenever ' +
-        'the king was in check. Weird!';
+  /*
+   * The old second paragraph, as two lists — what survived the translation and
+   * what did not — generated from the duality table exactly as the prose was,
+   * so the eight-file board's queen names herself here too.
+   */
+  const swaps = Object.entries(board.duality)
+    .filter(([, d]) => !d.selfDual && d.dualTo)
+    .map(([name, { dualTo }]) => `how their ${plural(name)} moved — like your ${plural(dualTo)}`);
+  const odd = strangePieces(board).map((n) => `${n}s`);
+  const held = unchangedPieces(board).map((n) => `${n}s`);
 
   return {
     title: 'You Were Both Playing with the Normal Pieces!',
-    body: `${opening}\n\n${both}`,
+    subtitle: 'and you both thought your opponent had the strange pieces.',
+    body: opening,
+    agree: Object.freeze([
+      'when every piece was captured',
+      'whenever a king was in check',
+      ...(held.length ? [`how the ${list(held)} moved`] : []),
+      'who won',
+    ]),
+    disagree: Object.freeze([
+      ...swaps,
+      ...(odd.length ? [`what their ${list(odd)} were doing at all`] : []),
+    ]),
     after:
       'This is a duality in the sense the word carries in physics: two ' +
       'descriptions of one system, neither of them the true one, related by a ' +

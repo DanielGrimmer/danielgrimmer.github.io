@@ -22,7 +22,7 @@
  * games differ by a collection name.
  */
 
-import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.28.0';
+import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.29.0';
 import {
   ROOM_NAMES,
   ESCHER_ROOM_NAMES,
@@ -35,7 +35,7 @@ import {
   escherNamesFor,
   isRoomName,
   namesFor,
-} from './rooms.js?v=4.28.0';
+} from './rooms.js?v=4.29.0';
 import {
   claimSeat,
   touchSeat,
@@ -45,7 +45,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.28.0';
+} from '../core/seats.js?v=4.29.0';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;

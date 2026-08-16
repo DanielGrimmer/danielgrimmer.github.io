@@ -21,14 +21,32 @@
  * as intended rather than a missing feature.
  */
 
-import { mod } from '../core/duality.js?v=4.28.0';
-import { PIECE } from './pieces.js?v=4.28.0';
-import { SIDE } from './presets.js?v=4.28.0';
+import { mod } from '../core/duality.js?v=4.29.0';
+import { PIECE } from './pieces.js?v=4.29.0';
+import { SIDE } from './presets.js?v=4.29.0';
 
 export const STATUS = Object.freeze({
   PLAYING: 'playing',
   CHECKMATE: 'checkmate',
   STALEMATE: 'stalemate',
+  RESIGNED: 'resigned',
+  DRAWN: 'drawn',
+});
+
+/*
+ * The three things a player can put in the log besides a move.
+ *
+ * They live in the log because the log is the only thing the published
+ * Security Rules let a player change: `isMoveAppend` checks that the log grew
+ * by one and that the appender holds the seat on move, and nothing about what
+ * the entry says. So ending a game early is an append like any other — which
+ * also means it happens on your own turn, exactly as it does over a real
+ * board.
+ */
+export const ACTION = Object.freeze({
+  FORFEIT: 'forfeit',
+  DRAW_OFFER: 'draw-offer',
+  DRAW_ACCEPT: 'draw-accept',
 });
 
 export const squareKey = (rank, file) => `${rank},${file}`;
@@ -51,6 +69,7 @@ export function initialGame(board) {
     turn: SIDE.WHITE,
     outcome: outcomeOf(board, men, SIDE.WHITE),
     lastMove: null,
+    drawOffer: null,
   });
 }
 
@@ -59,12 +78,14 @@ export function initialGame(board) {
  * middle of a replay has no log to look back at. It is not a secret: both
  * players watched the move happen, and reading the enemy's moves is the game.
  */
-function freezeGame({ men, turn, outcome, lastMove }) {
+function freezeGame({ men, turn, outcome, lastMove, drawOffer = null }) {
   return Object.freeze({
     men,
     turn,
     outcome: Object.freeze(outcome),
     lastMove: lastMove ? Object.freeze({ ...lastMove }) : null,
+    /** The side whose draw offer is on the table, or null. A move declines it. */
+    drawOffer,
   });
 }
 
@@ -230,6 +251,7 @@ export function applyMove(board, game, move) {
   if (game.outcome.status !== STATUS.PLAYING) {
     throw new Error(`the game is over (${game.outcome.status})`);
   }
+  if (move?.action) return applyAction(board, game, move);
   if (!isLegalMove(board, game, move)) {
     throw new Error(
       `illegal move ${squareKey(move.from.rank, move.from.file)} -> ` +
@@ -240,6 +262,7 @@ export function applyMove(board, game, move) {
   const { type, side } = pieceAt(game, move.from.rank, move.from.file);
   const men = afterMove(board, game, move);
   const turn = other(game.turn);
+  // A move made is a draw offer declined: freezeGame defaults drawOffer null.
   return freezeGame({
     men,
     turn,
@@ -253,6 +276,52 @@ export function applyMove(board, game, move) {
       captured,
     },
   });
+}
+
+/**
+ * Apply a log entry that is not a move: a forfeit, or half of a draw.
+ *
+ * The actor is always `game.turn` — the Security Rules already guarantee the
+ * entry was appended by the seat on move, and the fold recomputes the same
+ * attribution from the log alone.
+ */
+function applyAction(board, game, { action }) {
+  switch (action) {
+    case ACTION.FORFEIT:
+      return freezeGame({
+        men: game.men,
+        turn: game.turn,
+        outcome: { status: STATUS.RESIGNED, winner: other(game.turn) },
+        lastMove: game.lastMove,
+      });
+    case ACTION.DRAW_OFFER:
+      // Offering costs your turn: the opponent answers by accepting, or by
+      // simply playing on, which is a decline.
+      return freezeGame({
+        men: game.men,
+        turn: other(game.turn),
+        outcome: game.outcome,
+        lastMove: game.lastMove,
+        drawOffer: game.turn,
+      });
+    case ACTION.DRAW_ACCEPT:
+      if (game.drawOffer !== other(game.turn)) {
+        throw new Error('there is no draw offer to accept');
+      }
+      return freezeGame({
+        men: game.men,
+        turn: game.turn,
+        outcome: { status: STATUS.DRAWN, winner: null },
+        lastMove: game.lastMove,
+      });
+    default:
+      throw new Error(`unknown action "${action}" in the log`);
+  }
+}
+
+/** Only the entries that move a piece — what a replay viewer steps through. */
+export function boardMoves(moves) {
+  return moves.filter((m) => !m?.action);
 }
 
 /** Fold a log into a game. How a room's state is reconstructed. */

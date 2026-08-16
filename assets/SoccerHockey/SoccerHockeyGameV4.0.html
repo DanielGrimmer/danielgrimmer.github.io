@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.28.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.28.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.29.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.29.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -179,9 +179,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.28.0';
+      const BUILD = '4.29.0';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.28.0';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.29.0';
       import {
         initialGame,
         replay,
@@ -189,7 +189,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.28.0';
+      } from '../games/core/game.js?v=4.29.0';
       import {
         presenceOf,
         seatOf,
@@ -197,10 +197,10 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.28.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.28.0';
-      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.28.0';
-      import { replayNote } from '../games/ui/coach.js?v=4.28.0';
+      } from '../games/core/seats.js?v=4.29.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.29.0';
+      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.29.0';
+      import { replayNote } from '../games/ui/coach.js?v=4.29.0';
       import {
         ROOM_NAMES,
         nextRoomName,
@@ -208,7 +208,7 @@
         shareLink,
         rememberRoom,
         recallRoom,
-      } from '../games/net/rooms.js?v=4.28.0';
+      } from '../games/net/rooms.js?v=4.29.0';
       import {
         signIn,
         chooseRoom,
@@ -221,7 +221,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.28.0';
+      } from '../games/net/room.js?v=4.29.0';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
