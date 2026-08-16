@@ -22,7 +22,7 @@
  * games differ by a collection name.
  */
 
-import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.23.0';
+import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.24.0';
 import {
   ROOM_NAMES,
   ESCHER_ROOM_NAMES,
@@ -34,7 +34,7 @@ import {
   escherRoomServes,
   isRoomName,
   namesFor,
-} from './rooms.js?v=4.23.0';
+} from './rooms.js?v=4.24.0';
 import {
   claimSeat,
   touchSeat,
@@ -44,7 +44,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.23.0';
+} from '../core/seats.js?v=4.24.0';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -310,6 +310,8 @@ export async function joinRoom({
    * Escher Chess only; ignored by a game that has no boards to choose between.
    */
   board = null,
+  /** Which chair to ask for. See `claimSeat`: a preference, not a demand. */
+  prefer = null,
 }) {
   const { sdk: fb, db: d } = await ensureApp();
   const joined = await fb.runTransaction(d, async (tx) => {
@@ -317,7 +319,7 @@ export async function joinRoom({
     const snap = await tx.get(ref);
     const room = snap.exists() ? snap.data() : (blank ?? emptyRoomDoc(name));
 
-    const result = claimSeat(room.seats, { uid, now });
+    const result = claimSeat(room.seats, { uid, now, prefer });
     const next = { ...room, seats: result.seats.map((s) => ({ ...s })) };
 
     if (!snap.exists()) tx.set(ref, next);

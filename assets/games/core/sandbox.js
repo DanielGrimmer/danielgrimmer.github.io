@@ -17,9 +17,9 @@
  * must not take the page down for both of them.
  */
 
-import { mod, areCoprime, validMultipliers } from './duality.js?v=4.23.0';
-import { dualMoveSet } from './rules.js?v=4.23.0';
-import { makeConfig } from './game.js?v=4.23.0';
+import { mod, areCoprime, validMultipliers } from './duality.js?v=4.24.0';
+import { dualMoveSet } from './rules.js?v=4.24.0';
+import { makeConfig } from './game.js?v=4.24.0';
 
 /**
  * Wider and taller than this and two boards no longer fit side by side at a

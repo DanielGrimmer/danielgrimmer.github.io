@@ -116,6 +116,20 @@ export function isRoomName(name, names = ROOM_NAMES) {
   return typeof name === 'string' && names.includes(name);
 }
 
+/**
+ * The room after this one, wrapping round at the end of the pool.
+ *
+ * Deterministic on purpose: it is how two players who have just finished a game
+ * agree on where to play the next one without saying a word to each other. Both
+ * of them press the same button, both compute the same answer from the room
+ * they are already in, and both arrive. An unknown name starts the pool over,
+ * so a hand-edited URL cannot strand anybody.
+ */
+export function nextRoomName(name, names = ROOM_NAMES) {
+  const here = names.indexOf(name);
+  return names[(here + 1) % names.length];
+}
+
 /** The room asked for in the URL, if it is one we recognise. */
 export function roomFromLocation(search = '', names = ROOM_NAMES) {
   const asked = new URLSearchParams(search).get('room');

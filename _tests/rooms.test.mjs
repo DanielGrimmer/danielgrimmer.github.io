@@ -14,6 +14,7 @@ import {
   isRoomName,
   namesFor,
   roomFromLocation,
+  nextRoomName,
   shareLink,
   rememberRoom,
   recallRoom,
@@ -60,6 +61,44 @@ test('the pool', async (t) => {
   await t.test('a share link round-trips through roomFromLocation', () => {
     const link = shareLink('https://example.com', '/game.html', 'JadeStripes');
     assert.equal(roomFromLocation(new URL(link).search), 'JadeStripes');
+  });
+});
+
+test('the next room along', async (t) => {
+  await t.test('is the next name in the pool, and wraps', () => {
+    for (let i = 0; i < ROOM_NAMES.length; i++) {
+      const expected = ROOM_NAMES[(i + 1) % ROOM_NAMES.length];
+      assert.equal(nextRoomName(ROOM_NAMES[i]), expected);
+    }
+    assert.equal(nextRoomName(ROOM_NAMES.at(-1)), ROOM_NAMES[0], 'the last wraps to the first');
+  });
+
+  await t.test('is the same answer for both players, which is the point', () => {
+    // Neither of them may speak; both press the same button and must arrive in
+    // the same room. Nothing about it may depend on who is asking or when.
+    const here = 'GreenField';
+    assert.equal(nextRoomName(here), nextRoomName(here));
+  });
+
+  await t.test('walks the whole pool without repeating before it wraps', () => {
+    const seen = new Set();
+    let at = ROOM_NAMES[0];
+    for (let i = 0; i < ROOM_NAMES.length; i++) {
+      seen.add(at);
+      at = nextRoomName(at);
+    }
+    assert.equal(seen.size, ROOM_NAMES.length);
+    assert.equal(at, ROOM_NAMES[0]);
+  });
+
+  await t.test('an unknown name starts the pool over rather than stranding anybody', () => {
+    assert.equal(nextRoomName('NotARoom'), ROOM_NAMES[0]);
+    assert.equal(nextRoomName(''), ROOM_NAMES[0]);
+    assert.equal(nextRoomName(undefined), ROOM_NAMES[0]);
+  });
+
+  await t.test('respects a pool it is handed', () => {
+    assert.equal(nextRoomName(ESCHER_ROOM_NAMES[0], ESCHER_ROOM_NAMES), ESCHER_ROOM_NAMES[1]);
   });
 });
 

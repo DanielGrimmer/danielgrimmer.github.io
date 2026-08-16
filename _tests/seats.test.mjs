@@ -93,6 +93,31 @@ test('claiming', async (t) => {
     assert.deepEqual(third.seats, seats, 'a spectator must not disturb the seating');
   });
 
+  await t.test('a preferred seat is taken when it is free', () => {
+    // How the two players swap sports: each walks into the next room asking for
+    // the opposite of the chair they just left.
+    const first = claimSeat(emptySeats(), { uid: 'alice', now: T0, prefer: 1 });
+    assert.equal(first.seat, 1);
+    assert.equal(first.outcome, OUTCOME.CLAIMED);
+
+    const second = claimSeat(first.seats, { uid: 'bob', now: T0, prefer: 0 });
+    assert.equal(second.seat, 0, 'opposite preferences cannot collide');
+  });
+
+  await t.test('a preference yields to whoever is already sitting there', () => {
+    const held = claimSeat(emptySeats(), { uid: 'alice', now: T0 }).seats;
+    const asked = claimSeat(held, { uid: 'bob', now: T0, prefer: 0 });
+    assert.equal(asked.seat, 1, 'a preference is not a demand');
+    assert.equal(asked.outcome, OUTCOME.CLAIMED);
+  });
+
+  await t.test('a nonsense preference is ignored rather than throwing', () => {
+    for (const prefer of [-1, 2, 1.5, 'left', null, undefined, NaN]) {
+      const res = claimSeat(emptySeats(), { uid: 'alice', now: T0, prefer });
+      assert.equal(res.seat, 0, `prefer=${String(prefer)} should fall back to the first free seat`);
+    }
+  });
+
   await t.test('rejoining returns your own seat rather than taking another', () => {
     let seats = claimSeat(emptySeats(), { uid: 'alice', now: T0 }).seats;
     const again = claimSeat(seats, { uid: 'alice', now: T0 + 5000 });

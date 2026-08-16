@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.23.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.23.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.24.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.24.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -155,8 +155,9 @@
               <h3>You both agree about</h3>
               <ul id="agreeList"></ul>
             </div>
+            <!-- Typically: a move straight up a file is one both of you read the same way. -->
             <div class="dg-ledger-col" data-side="disagree">
-              <h3>You disagree about</h3>
+              <h3>You (typically) disagree about</h3>
               <ul id="disagreeList"></ul>
             </div>
           </div>
@@ -168,8 +169,7 @@
               <a class="dg-btn dg-btn-primary" id="toSandbox" href="SoccerHockeySandboxV4.0.html">
                 Let's look under the hood →
               </a>
-              <button class="dg-btn" id="newGameOver" type="button">Play again</button>
-              <a class="dg-btn" href="/publications/">Read the philosophy →</a>
+              <button class="dg-btn" id="newGameOver" type="button">Play again, sports swapped</button>
             </div>
           </div>
         </section>
@@ -179,9 +179,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.23.0';
+      const BUILD = '4.24.0';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.23.0';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.24.0';
       import {
         initialGame,
         replay,
@@ -189,7 +189,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.23.0';
+      } from '../games/core/game.js?v=4.24.0';
       import {
         presenceOf,
         seatOf,
@@ -197,17 +197,18 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.23.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.23.0';
-      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.23.0';
-      import { replayNote } from '../games/ui/coach.js?v=4.23.0';
+      } from '../games/core/seats.js?v=4.24.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.24.0';
+      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.24.0';
+      import { replayNote } from '../games/ui/coach.js?v=4.24.0';
       import {
         ROOM_NAMES,
+        nextRoomName,
         roomFromLocation,
         shareLink,
         rememberRoom,
         recallRoom,
-      } from '../games/net/rooms.js?v=4.23.0';
+      } from '../games/net/rooms.js?v=4.24.0';
       import {
         signIn,
         chooseRoom,
@@ -220,7 +221,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.23.0';
+      } from '../games/net/room.js?v=4.24.0';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -569,7 +570,7 @@
 
       /* ------------------------------------------------------------ network */
 
-      async function enterRoom(name) {
+      async function enterRoom(name, { prefer = null } = {}) {
         if (unwatch) {
           unwatch();
           unwatch = null;
@@ -577,7 +578,7 @@
         if (room && seat !== null) await leaveRoom({ name: room, uid });
 
         room = name;
-        const joined = await joinRoom({ name, uid, now: now() });
+        const joined = await joinRoom({ name, uid, now: now(), prefer });
         seat = joined.seat;
         state = { seats: normaliseSeats(joined.room.seats), moves: joined.room.moves ?? [] };
 
@@ -677,13 +678,41 @@
         await enterRoom(wanted);
       });
 
-      // Offered in two places — under a board somebody else left finished, and
-      // at the foot of the reveal once you have read it.
-      for (const id of ['newGame', 'newGameOver']) {
-        el(id).addEventListener('click', async () => {
-          await resetRoom({ name: room });
-        });
-      }
+      // Under a board somebody else left finished: clear it and play here.
+      el('newGame').addEventListener('click', async () => {
+        await resetRoom({ name: room });
+      });
+
+      /*
+       * Play again, sports swapped — which means a different room, not this one.
+       *
+       * Your sport follows your seat, so swapping sports means swapping seats,
+       * and you cannot swap seats in a room you are both still sitting in. So
+       * both of you walk next door instead: the next room in the pool, which is
+       * the same room for both of you because it is computed from the one you
+       * are in; and each of you asks for the opposite of the chair you just
+       * left. You held different chairs, so you ask for different ones, and
+       * neither of you has to wait for the other. A fresh room also arrives
+       * with an empty log, so there is nothing to reset.
+       *
+       * Whoever presses first sits down first; the second finds one seat taken
+       * and the one they wanted free. If neither presses, nothing happens —
+       * this is not a vote.
+       */
+      el('newGameOver').addEventListener('click', async () => {
+        const button = el('newGameOver');
+        button.disabled = true;
+        try {
+          await enterRoom(nextRoomName(room, ROOM_NAMES), {
+            prefer: seat === null ? null : seat === 0 ? 1 : 0,
+          });
+        } catch (err) {
+          el('statusText').textContent = `Could not start a new game: ${explain(err)}`;
+          el('pairBody').textContent = `Could not start a new game: ${explain(err)}`;
+        } finally {
+          button.disabled = false;
+        }
+      });
 
       el('leave').addEventListener('click', async () => {
         await leaveRoom({ name: room, uid });

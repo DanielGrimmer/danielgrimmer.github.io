@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.23.0';
-import { replayFrames } from '../core/game.js?v=4.23.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.24.0';
+import { replayFrames } from '../core/game.js?v=4.24.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -213,7 +213,7 @@ export function replayNote(config, seat) {
     disagree: Object.freeze([
       'which column it stands in',
       "the shape of the trail of ✕'s",
-      'whether that pass went three across or four',
+      'whether a short or long pass was just made',
     ]),
     /**
      * Carried below the two boards rather than above them. The reveal only
@@ -221,17 +221,18 @@ export function replayNote(config, seat) {
      * perfectly well until after somebody has stepped through the replay.
      */
     after:
-      'Now call each other back. What is common to both accounts, such that you ' +
-      'could agree on anything at all — and what kind of transformation carries ' +
-      'one into the other? Dual descriptions of one structure are ordinary in ' +
-      'physics now: AdS/CFT, T-duality. Whether space and time belong to the ' +
-      'world or to the way we organise it is the question underneath.\n\n' +
-      'My own research asks what follows from the possibility of such dualities. ' +
-      'Could an alien society use completely different categories and intuitions ' +
-      'to make sense of the world? How did we come to have our basic ' +
-      'metaphysical concepts (quid facti), and what justifies our continued use ' +
-      'of them (quid juris)? That is: which of them are universal and objective, ' +
-      'and which are idiosyncratic and contingent — upon our particular ' +
-      'evolutionary history, for instance?',
+      'This raises some interesting questions: What is the common structure to ' +
+      'both accounts to form the basis of what you agree upon? What kind of ' +
+      'transformation carries one perspective onto the other? Dual descriptions ' +
+      'of one structure are ordinary in physics now: AdS/CFT, T-duality.\n\n' +
+      'My own philosophical research asks what follows from the possibility of ' +
+      'such dualities. Are space and time aspects of the world-in-itself, or ' +
+      'rather are they merely an organizational structure which we are bringing ' +
+      'to the table? Could an alien society use completely different categories ' +
+      'and intuitions to make sense of the world? How did we come to have our ' +
+      'basic metaphysical concepts (quid facti), and what justifies our ' +
+      'continued use of them (quid juris)? That is: which of them are universal ' +
+      'and objective, and which are idiosyncratic and contingent — upon our ' +
+      'particular evolutionary history, for instance?',
   };
 }

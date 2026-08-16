@@ -114,8 +114,14 @@ export function seatOf(seats, uid) {
  * someone else actively taking the seat does. Otherwise the first vacant seat
  * is taken. With both seats held by others you become a spectator, which is a
  * real outcome rather than the silent dead end v3.1 left you in.
+ *
+ * `prefer` asks for one seat in particular, and is how the two players swap
+ * sports: each walks into the next room asking for the opposite of the seat
+ * they just held, and since they held different seats they ask for different
+ * ones and cannot collide. It is a preference and not a demand — if a stranger
+ * is already sitting there, the ordinary rule applies and you take the other.
  */
-export function claimSeat(seats, { uid, now, ttl = SEAT_TTL_MS }) {
+export function claimSeat(seats, { uid, now, ttl = SEAT_TTL_MS, prefer = null }) {
   assertUid(uid);
   assertNow(now);
   const current = normaliseSeats(seats);
@@ -129,14 +135,17 @@ export function claimSeat(seats, { uid, now, ttl = SEAT_TTL_MS }) {
     };
   }
 
-  const free = current.findIndex((s) => isVacant(s, now, ttl));
-  if (free === -1) {
+  const wanted =
+    Number.isInteger(prefer) && prefer >= 0 && prefer < current.length && isVacant(current[prefer], now, ttl)
+      ? prefer
+      : current.findIndex((s) => isVacant(s, now, ttl));
+  if (wanted === -1) {
     return { seats: current, seat: null, outcome: OUTCOME.SPECTATOR };
   }
 
   return {
-    seats: writeSeat(current, free, { uid, claimedAt: now, lastSeen: now }),
-    seat: free,
+    seats: writeSeat(current, wanted, { uid, claimedAt: now, lastSeen: now }),
+    seat: wanted,
     outcome: OUTCOME.CLAIMED,
   };
 }

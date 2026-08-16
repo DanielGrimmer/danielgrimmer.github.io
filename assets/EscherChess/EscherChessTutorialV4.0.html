@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.23.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.24.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -134,9 +134,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.23.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.24.0'; // keep in step with the ?v= tokens below
 
-      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.23.0';
+      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.24.0';
       import {
         initialGame,
         applyMove,
@@ -145,8 +145,8 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.23.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.23.0';
+      } from '../games/escher/game.js?v=4.24.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.24.0';
       import {
         contextFor,
         stepIndex,
@@ -154,7 +154,7 @@
         STALLED_HINT,
         TUTORIALS,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.23.0';
+      } from '../games/escher/coach.js?v=4.24.0';
 
       /*
        * Which of the two practice boards this is.
