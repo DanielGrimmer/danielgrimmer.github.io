@@ -19,8 +19,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.27.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.27.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.28.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.28.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -156,9 +156,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.27.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.28.0'; // keep in step with the ?v= tokens below
 
-      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.27.0';
+      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.28.0';
       import {
         initialGame,
         applyMove,
@@ -167,8 +167,8 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.27.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.27.0';
+      } from '../games/escher/game.js?v=4.28.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.28.0';
       import {
         contextFor,
         stepIndex,
@@ -176,7 +176,7 @@
         STALLED_HINT,
         TUTORIALS,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.27.0';
+      } from '../games/escher/coach.js?v=4.28.0';
 
       /*
        * Which of the two practice boards this is.
@@ -246,6 +246,25 @@
 
       const el = (id) => document.getElementById(id);
 
+      /**
+       * Write coach text that may carry **bold** spans.
+       *
+       * The outro emphasises its one warning — you will not be told how your
+       * opponent's pieces move — and textContent would print the asterisks.
+       * Built from nodes rather than innerHTML, so nothing else in the string
+       * can ever be treated as markup.
+       */
+      function setCoachText(node, text) {
+        node.replaceChildren(
+          ...text.split(/\*\*(.+?)\*\*/gs).map((part, i) => {
+            if (i % 2 === 0) return document.createTextNode(part);
+            const strong = document.createElement('strong');
+            strong.textContent = part;
+            return strong;
+          })
+        );
+      }
+
       const SIDE_NAME = ['White', 'Black'];
 
       /**
@@ -290,7 +309,7 @@
           : `Step ${index + 1} of ${steps.length}`;
         drawTicks(index);
         el('coachTitle').textContent = done ? outro.title : step.title;
-        el('coachBody').textContent = done ? outro.body : step.body;
+        setCoachText(el('coachBody'), done ? outro.body : step.body);
         // A finished board cannot satisfy the step being asked for, so say so
         // rather than leaving the hint asking for the impossible.
         // A step with more than one thing to do gives its hint as a function,

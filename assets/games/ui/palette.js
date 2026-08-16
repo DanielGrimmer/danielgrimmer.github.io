@@ -18,7 +18,7 @@ import {
   cellForOffset,
   offsetThroughLens,
   offsetFromLens,
-} from '../core/sandbox.js?v=4.27.0';
+} from '../core/sandbox.js?v=4.28.0';
 
 export function createPaletteView(container, { theme }) {
   const root = document.createElement('div');

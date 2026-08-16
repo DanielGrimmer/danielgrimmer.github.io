@@ -7,8 +7,8 @@
  *
  * Load it AFTER board.css so the palette below wins:
  *
- *   <link rel="stylesheet" href="../games/ui/board.css?v=4.27.0" />
- *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.27.0" />
+ *   <link rel="stylesheet" href="../games/ui/board.css?v=4.28.0" />
+ *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.28.0" />
  *
  * The pages need three families. Add to each page's <head>:
  *

@@ -13,9 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.27.0';
-import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.27.0';
-import { PIECE } from './pieces.js?v=4.27.0';
+import { replayFrames, inCheck } from './game.js?v=4.28.0';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.28.0';
+import { PIECE } from './pieces.js?v=4.28.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -68,7 +68,7 @@ const NARROW_SCRIPT = [
 
     // Step 3 — the board has no left or right edge.
     ['wrap', 'move', at(4, 4), at(6, 1),
-      'Click on white’s bishop on rank 4. Its usual X-shaped pattern of available moves wraps around the board’s “seam”. Take it across, onto the square directly in front of the black rook, noting that this bishop has just moved from a dark square to a light one.'],
+      'Click on white’s bishop on rank 4. Its usual X-shaped pattern of available moves wraps around the board’s “seam”. Move it two spaces forward and right diagonally so that it wraps around the board and lands directly in front of the black rook. Noting that this bishop has just moved from a dark square to a light one.'],
     ['wrap', 'move', at(10, 5), at(10, 1),
       'Rooks too can move across the seam. Move black’s rook on rank 10 one square sideways across it (from the right-most file to the left-most file).'],
     ['wrap', 'move', at(1, 2), at(2, 5),
@@ -76,10 +76,10 @@ const NARROW_SCRIPT = [
 
     // Step 4 — captures, and a check to finish on.
     ['check', 'move', at(7, 1), at(6, 1),
-      'Have black’s forward rook take the white bishop in front of it. Only that rook can: the other one is four ranks away, which is one rank further than a rook goes.'],
+      'Even though black’s rook on rank 10 can jump over pieces, it cannot reach the white bishop on rank 6. Instead, have black’s more forward rook take the white bishop in front of it.'],
     ['check', 'move', at(4, 5), at(5, 5), 'Now advance white’s right-most pawn.'],
     ['check', 'move', at(10, 3), at(10, 2), 'Move black’s king one space to the left.'],
-    ['check', 'move', at(5, 5), at(6, 1), 'White’s rank 5 pawn can now take the black rook.'],
+    ['check', 'move', at(5, 5), at(6, 1), 'White’s rank 5 pawn can now take the black rook by crossing the seam.'],
     ['check', 'move', at(10, 2), at(9, 1), 'Move black’s king diagonally onto rank 9.'],
     /*
      * Two rook moves rather than one. Three ranks is as far as a rook reaches,
@@ -292,7 +292,7 @@ const NARROW_STEPS = [
     title: 'Pawns, and How to Move Them',
     body:
       'Note that this chess board is five files wide and ten ranks deep. But ' +
-      'it gets weirder than that. Follow the blue instructions below as you ' +
+      'it gets weirder than that. Follow the instructions below as you ' +
       'read along. Let’s get some pawns in position.',
   },
   {
@@ -334,9 +334,9 @@ export const ESCHER_OUTRO = Object.freeze({
     'check mate if you like.\n\n' +
     'That is the whole tutorial. In the real game, one of you will play with ' +
     'the pieces just described, whereas you will see your opponent playing ' +
-    'with even stranger pieces. You will not be told how their pieces move; ' +
-    'you have to work it out from watching them. This confusion is part of the ' +
-    'game.\n\n' +
+    'with even stranger pieces. **You will not be told in advance how your ' +
+    "opponent's pieces move;** you have to work it out from watching them. " +
+    'This confusion is part of the game.\n\n' +
     'The “trick” only works if the two players are looking at separate screens ' +
     '(on separate devices) and do not talk to each other until the first game ' +
     'is over. So if you and your friend have been working through this ' +
