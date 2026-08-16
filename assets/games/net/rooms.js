@@ -73,28 +73,61 @@ export const SANDBOX_COLLECTION = 'dualitySandboxes';
  */
 export const ESCHER_COLLECTION = 'escherRooms';
 
-export const ESCHER_ROOM_NAMES = Object.freeze([
-  'RelativityRoom',
-  'MobiusCheck',
-  'ImpossibleCastle',
-  'WaterfallWar',
-  'MysteriousMoves',
-  'ParadoxPawn',
-  'InfiniteKnight',
-  'MirroredGambit',
-  'TessellatedTactics',
-  'RecursiveRook',
-  'AscendingBishop',
-  'BelvedereBoard',
-  'PenroseStairs',
-  'MetamorphosisMate',
-  'DrosteDefence',
-  'SkyAndWater',
-  'CircleLimit',
-  'DayAndNight',
-  'ReptileRank',
-  'CurvedSpace',
-]);
+/*
+ * The Escher pool, halved by board.
+ *
+ * A room's name decides which board it plays, permanently. Selection used to
+ * lean on each room document saying which board it was on, and every route
+ * into a room had to remember to ask — the button marked 5×10 kept finding
+ * ways to land people on the eight-file board. A name cannot be stale, cannot
+ * be mid-game on the wrong board, and cannot need a Security Rules change to
+ * repartition, because the published rules only check membership of the full
+ * list, which is unchanged.
+ *
+ * InfiniteKnight is in the eight-file half on merit: the wider knight is that
+ * board's whole lesson.
+ */
+export const ESCHER_BOARD_ROOMS = Object.freeze({
+  'escher-5x10': Object.freeze([
+    'RelativityRoom',
+    'MobiusCheck',
+    'ImpossibleCastle',
+    'WaterfallWar',
+    'MysteriousMoves',
+    'ParadoxPawn',
+    'MirroredGambit',
+    'TessellatedTactics',
+    'RecursiveRook',
+    'DrosteDefence',
+  ]),
+  'escher-8x8': Object.freeze([
+    'InfiniteKnight',
+    'AscendingBishop',
+    'BelvedereBoard',
+    'PenroseStairs',
+    'MetamorphosisMate',
+    'SkyAndWater',
+    'CircleLimit',
+    'DayAndNight',
+    'ReptileRank',
+    'CurvedSpace',
+  ]),
+});
+
+export const ESCHER_ROOM_NAMES = Object.freeze(Object.values(ESCHER_BOARD_ROOMS).flat());
+
+/** The half of the pool that plays this board; the whole pool if the board is unknown. */
+export function escherNamesFor(boardId) {
+  return ESCHER_BOARD_ROOMS[boardId] ?? ESCHER_ROOM_NAMES;
+}
+
+/** Which board a room's name commits it to, or null for a name outside the pool. */
+export function escherBoardOf(name) {
+  for (const [boardId, names] of Object.entries(ESCHER_BOARD_ROOMS)) {
+    if (names.includes(name)) return boardId;
+  }
+  return null;
+}
 
 /**
  * Which pool a collection draws on.
@@ -236,7 +269,16 @@ export function emptyEscherRoomDoc(name, board) {
 export function escherRoomServes(room, boardId) {
   if (!room?.exists) return true;
   if (room.board === boardId) return true;
-  return Array.isArray(room.moves) && room.moves.length > 0;
+  /*
+   * Committed to the other board. Only an empty log can be rebranded as the
+   * newcomer sits down; a log with moves in it may be somebody's game in
+   * progress, and the seats — which this predicate cannot see — are the only
+   * way to tell. The pool always has another room, so passing this one over
+   * costs nothing. This test used to run the other way round, which is how
+   * the button marked 5×10 could land a player in the middle of somebody's
+   * eight-file game.
+   */
+  return (Array.isArray(room.moves) ? room.moves.length : 0) === 0;
 }
 
 /**

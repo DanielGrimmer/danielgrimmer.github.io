@@ -22,6 +22,9 @@ import {
   emptySandboxDoc,
   emptyEscherRoomDoc,
   escherRoomServes,
+  ESCHER_BOARD_ROOMS,
+  escherNamesFor,
+  escherBoardOf,
 } from '../assets/games/net/rooms.js';
 
 /** Enough of the Storage interface to exercise the helpers. */
@@ -202,7 +205,10 @@ test('the published rules carry the same pools', async (t) => {
   });
 
   await t.test('Escher Chess', () => {
-    assert.deepEqual(knownIn(ESCHER_COLLECTION), [...ESCHER_ROOM_NAMES]);
+    // As sets: the rules list membership, and halving the pool reordered the
+    // module's list without changing what is in it. The rules file did not
+    // move, so there is nothing to republish.
+    assert.deepEqual([...knownIn(ESCHER_COLLECTION)].sort(), [...ESCHER_ROOM_NAMES].sort());
   });
 });
 
@@ -262,7 +268,8 @@ test('the documents a room starts life as', async (t) => {
     assert.equal(doc.board, 'escher-8x8');
     assert.deepEqual(doc.moves, []);
     assert.equal(escherRoomServes({ ...doc, exists: true }, 'escher-8x8'), true);
-    assert.equal(escherRoomServes({ ...doc, exists: true }, 'escher-5x10'), false);
+    // Empty, so the other board may take it over and rebrand it on arrival.
+    assert.equal(escherRoomServes({ ...doc, exists: true }, 'escher-5x10'), true);
   });
 
   await t.test('a sandbox carries its configuration, and no nested arrays', () => {
@@ -293,15 +300,59 @@ test('a room has to be playing the board you came for', async (t) => {
     assert.equal(escherRoomServes(room({ board: WIDE }), WIDE), true);
   });
 
-  // Its stale log is cleared as the newcomer sits down, and the board may
-  // change at that same moment, because there is nothing left to invalidate.
-  await t.test('and so does one holding a game, whichever board that was on', () => {
-    assert.equal(escherRoomServes(room({ moves: [{}, {}] }), WIDE), true);
+  /*
+   * REGRESSION, inverted from what this test used to pin. A log with moves in
+   * it may be somebody's game in progress, and this predicate cannot see the
+   * seats to tell — accepting it is how the button marked 5×10 landed a
+   * player in the middle of an eight-file game. An *empty* room is the safe
+   * one to take: its board is changed as the newcomer sits down, in the write
+   * the published isRebrand rule allows.
+   */
+  await t.test('a room mid-game on the other board is passed over', () => {
+    assert.equal(escherRoomServes(room({ moves: [{}, {}] }), WIDE), false);
+    // On its own board a game in progress is fine — you might be resuming it.
+    assert.equal(escherRoomServes(room({ moves: [{}, {}] }), NARROW), true);
   });
 
-  await t.test('but a room on the other board with nothing in it does not', () => {
-    assert.equal(escherRoomServes(room(), WIDE), false);
-    // Which is only about the other board: on its own it is perfectly usable.
+  await t.test('and an empty room on the other board is rebrandable, so it serves', () => {
+    assert.equal(escherRoomServes(room(), WIDE), true);
     assert.equal(escherRoomServes(room(), NARROW), true);
+  });
+});
+
+/*
+ * The structural fix under the predicate: the pool is halved by board, so a
+ * room's *name* settles which board it plays before any document is read.
+ */
+test('the Escher pool is halved by board', async (t) => {
+  const narrow = ESCHER_BOARD_ROOMS['escher-5x10'];
+  const wide = ESCHER_BOARD_ROOMS['escher-8x8'];
+
+  await t.test('ten names each, disjoint, and together the whole pool', () => {
+    assert.equal(narrow.length, 10);
+    assert.equal(wide.length, 10);
+    assert.equal(new Set([...narrow, ...wide]).size, 20);
+    assert.deepEqual([...narrow, ...wide].sort(), [...ESCHER_ROOM_NAMES].sort());
+  });
+
+  await t.test('escherNamesFor hands out the half, or the whole pool for an unknown board', () => {
+    assert.deepEqual(escherNamesFor('escher-5x10'), narrow);
+    assert.deepEqual(escherNamesFor('escher-8x8'), wide);
+    assert.deepEqual(escherNamesFor('nonsense'), ESCHER_ROOM_NAMES);
+    assert.deepEqual(escherNamesFor(undefined), ESCHER_ROOM_NAMES);
+  });
+
+  await t.test('escherBoardOf inverts it, and refuses names outside the pool', () => {
+    for (const name of narrow) assert.equal(escherBoardOf(name), 'escher-5x10');
+    for (const name of wide) assert.equal(escherBoardOf(name), 'escher-8x8');
+    assert.equal(escherBoardOf('GreenField'), null);
+    assert.equal(escherBoardOf(undefined), null);
+  });
+
+  await t.test('the two rooms whose boards players have already seen keep them', () => {
+    // Both observed live before the pool was halved; the partition is chosen
+    // so that neither room changes its board under its current occupants.
+    assert.equal(escherBoardOf('RelativityRoom'), 'escher-5x10');
+    assert.equal(escherBoardOf('InfiniteKnight'), 'escher-8x8');
   });
 });

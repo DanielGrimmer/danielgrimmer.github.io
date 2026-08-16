@@ -852,6 +852,25 @@ a.dg-btn-primary:hover {
   max-width: 78ch;
 }
 
+/*
+ * A fold inside the fold: the hint ladder nests one <details> per piece inside
+ * the rules card, so each hint costs its own deliberate click.
+ */
+.dg-rules details {
+  margin: 0.625rem 0 0;
+}
+
+.dg-rules details > summary {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--dg-body-2);
+  cursor: pointer;
+}
+
+.dg-rules details > .dg-legend {
+  margin-top: 0.375rem;
+}
+
 /* ------------------------------------------------------------- room ---- */
 
 /*

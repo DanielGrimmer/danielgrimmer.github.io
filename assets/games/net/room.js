@@ -32,6 +32,7 @@ import {
   emptyRoomDoc,
   emptySandboxDoc,
   escherRoomServes,
+  escherNamesFor,
   isRoomName,
   namesFor,
 } from './rooms.js?v=4.28.0';
@@ -277,11 +278,20 @@ export async function chooseRoom({
   now,
   collection = ROOMS_COLLECTION,
   accept = () => true,
+  /**
+   * The candidate names, when they are narrower than the collection's whole
+   * pool — Escher Chess passes the half of its pool that plays the board this
+   * arrival came for. `preferred` is deliberately judged against the whole
+   * pool instead: an invite link is an invitation to that game, wherever it
+   * is.
+   */
+  names = null,
 }) {
-  const names = namesFor(collection);
-  if (isRoomName(preferred, names)) return preferred;
+  const all = namesFor(collection);
+  const pool = names ?? all;
+  if (isRoomName(preferred, all)) return preferred;
 
-  if (uid && isRoomName(remembered, names)) {
+  if (uid && isRoomName(remembered, pool)) {
     const mine = await peekRoom({ name: remembered, collection });
     // `exists` is what `accept` asks about, and peekRoom only returns a room
     // that does.
@@ -290,7 +300,16 @@ export async function chooseRoom({
     }
   }
 
-  return pickRoom(await readPool(collection), { now, names, accept });
+  /*
+   * The pool of documents is cut to the candidate names before anything looks
+   * at it. `pickRoom` treats its `names` argument only as the fallback for an
+   * empty pool, so without this cut a narrowed candidate list still scanned
+   * every document in the collection — and the eight-file button, finding all
+   * twenty rooms equally open on a quiet day, took the first one, which is in
+   * the five-file half.
+   */
+  const candidates = (await readPool(collection)).filter((r) => pool.includes(r.id));
+  return pickRoom(candidates, { now, names: pool, accept });
 }
 
 /**
@@ -581,6 +600,11 @@ export const escher = Object.freeze({
     chooseRoom({
       ...opts,
       collection: ESCHER_COLLECTION,
+      // The half of the pool whose names play this board, and — belt and
+      // braces — a check on what each document says it is playing, which can
+      // disagree with its name only in rooms created before the pool was
+      // halved.
+      names: board ? escherNamesFor(board) : null,
       accept: board ? (room) => escherRoomServes(room, board) : undefined,
     }),
   join: (opts) => joinRoom({ ...opts, collection: ESCHER_COLLECTION }),

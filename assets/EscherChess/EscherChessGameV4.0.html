@@ -35,18 +35,13 @@
               <h1 id="pairTitle">Finding you a room…</h1>
               <p id="pairBody">Connecting…</p>
 
-              <!--
-                Not quite Soccer Hockey's firewall: there, no talking at all;
-                here a move is announced by file and rank, and hearing your own
-                names for the squares come back wrong is part of the game.
-                The wording is the landing page's own.
-              -->
+              <!-- Word for word what Soccer Hockey's pairing screen says: the
+                   moves travel over the wire, so there is nothing to announce. -->
               <div class="dg-firewall">
                 <div class="dg-label dg-label-red">From here on</div>
                 <p>
-                  Say nothing to each other but your moves — by file and rank,
-                  and nothing else — and don't look at each other's screen. Play
-                  your own board to the end. Then call each other back.
+                  Stop talking. Mute the call, don't look at each other's screen,
+                  and play your own board to the end. Then call each other back.
                 </p>
               </div>
 
@@ -106,6 +101,58 @@
               player looks for them.
             -->
             <div id="liveSlot"></div>
+
+            <!--
+              A ladder of hints for the confused, every rung folded shut: the
+              outer fold costs one line under the board, and each piece costs a
+              second click, so nothing is spoiled by accident. Five-file board
+              only — the hints describe that board's duality, and the 8×8 has
+              its own strangeness.
+            -->
+            <details class="dg-rules" id="hints" hidden>
+              <summary>What is going on with my opponent’s pieces?!?</summary>
+              <p class="dg-legend">
+                Part of the fun of the game is to figure this out for yourself.
+                But if you need it, here are some hints about each piece:
+              </p>
+              <details>
+                <summary>Regarding Knights:</summary>
+                <p class="dg-legend">
+                  Their knights seem to move like bishops. Recall that in this
+                  game bishops are short ranged and jumpy.
+                </p>
+              </details>
+              <details>
+                <summary>Regarding Bishops:</summary>
+                <p class="dg-legend">Their bishops seem to move like knights.</p>
+              </details>
+              <details>
+                <summary>Regarding Rooks:</summary>
+                <p class="dg-legend">
+                  Their rooks are actually behaving completely normally (that is,
+                  for Escher Chess). Short-ranged and jumpy.
+                </p>
+              </details>
+              <details>
+                <summary>Regarding Pawns:</summary>
+                <p class="dg-legend">
+                  While their pawns are moving forward normally, they do not seem
+                  to capture normally. Concretely, they seem to be attacking
+                  forward and <strong>two spaces to either side</strong> instead
+                  of just one. That would also help explain their strange pawn
+                  structure...
+                </p>
+              </details>
+              <details>
+                <summary>Regarding King:</summary>
+                <p class="dg-legend">
+                  Their king moves forward and backwards normally, but whenever
+                  it moves sideways (or diagonally) its horizontal movement is
+                  doubled. This makes it quite a puzzle how to get a
+                  checkmate...
+                </p>
+              </details>
+            </details>
 
             <div class="dg-room-foot">
               <span id="roomFoot"></span>
@@ -181,6 +228,9 @@
       import { revealNote } from '../games/escher/coach.js?v=4.28.0';
       import {
         ESCHER_ROOM_NAMES,
+        ESCHER_BOARD_ROOMS,
+        escherNamesFor,
+        escherBoardOf,
         roomFromLocation,
         shareLink,
         rememberRoom,
@@ -209,6 +259,14 @@
        * refuse it for the same reason.
        */
       const wantedBoard = BOARDS[new URLSearchParams(location.search).get('board')] ?? NARROW;
+
+      /*
+       * The board a room's *name* commits it to. The pool is halved — ten
+       * names play 5×10 and ten play 8×8 — so the name settles the board
+       * before any document is read, and an invite link that crosses the
+       * halves simply lands you on that room's own board.
+       */
+      const homeBoard = (name) => BOARDS[escherBoardOf(name)] ?? wantedBoard;
 
       let uid = null;
       let room = null; // the room's name
@@ -509,6 +567,7 @@
         el('chromeState').textContent = room
           ? `Room ${room} · ${board.width}×${board.height} · ${wait ? 'pairing' : 'playing'}`
           : 'Finding you a room…';
+        refreshRoomList();
 
         if (wait) {
           drawPairing();
@@ -518,6 +577,7 @@
         el('sideTitle').textContent = SIDE_NAME[seat];
         el('sideSub').textContent =
           seat === SIDE.WHITE ? 'You move first.' : 'White moves first.';
+        el('hints').hidden = board !== NARROW;
         el('roomFoot').textContent =
           `Room ${room} · both of you here · nothing but your moves until it is over`;
       }
@@ -568,7 +628,7 @@
 
       /* ------------------------------------------------------------ network */
 
-      async function enterRoom(name) {
+      async function enterRoom(name, { prefer = null } = {}) {
         if (unwatch) {
           unwatch();
           unwatch = null;
@@ -576,19 +636,21 @@
         if (room && seat !== null) await escher.leave({ name: room, uid });
 
         room = name;
+        const home = homeBoard(name);
         const joined = await escher.join({
           name,
           uid,
           now: now(),
-          blank: emptyEscherRoomDoc(name, wantedBoard.id),
+          prefer,
+          blank: emptyEscherRoomDoc(name, home.id),
           // Only used if the room's stale game is being cleared on the way in;
           // a game in progress keeps the board it is being played on.
-          board: wantedBoard.id,
+          board: home.id,
         });
         seat = joined.seat;
-        // Whichever board this room is playing, which is not always the one we
-        // asked for: an invite link is an invitation to that game.
-        setBoard(BOARDS[joined.room.board] ?? wantedBoard);
+        // Whichever board this room is playing — usually its name's board, but
+        // a game in progress keeps whatever board it started on.
+        setBoard(BOARDS[joined.room.board] ?? home);
         state = { seats: normaliseSeats(joined.room.seats), moves: joined.room.moves ?? [] };
 
         // Rebuilt even at the same size: the view is labelled with this seat's
@@ -599,19 +661,18 @@
         }
 
         /*
-         * A room nobody has played in yet can still be put on the board we came
-         * for. Rooms outlive the games in them — anyone who opens this page and
-         * closes the tab leaves one behind, on whichever board they wanted —
-         * and without this the pool silently fills with rooms committed to a
-         * board nobody chose.
+         * A room nobody has played in yet is put back on its own name's board.
+         * The document can disagree with the name only in rooms created before
+         * the pool was halved; clearing that up whenever one is found empty is
+         * how the old pool heals.
          */
-        if (board !== wantedBoard && seat !== null && state.moves.length === 0) {
+        if (board !== home && seat !== null && state.moves.length === 0) {
           try {
-            await escher.reset({ name, board: wantedBoard.id });
-            setBoard(wantedBoard);
+            await escher.reset({ name, board: home.id });
+            setBoard(home);
           } catch {
-            // The rules refuse it until the escherRooms block is republished.
-            // Playing on the board the room already has is the graceful answer.
+            // Refused: playing on the board the room already has is the
+            // graceful answer.
           }
         }
 
@@ -732,22 +793,31 @@
 
       /*
        * Going up a board means going through its tutorial first, so from the
-       * narrow game this is a link rather than a reset. Coming back down there
-       * is nothing to learn, and a reset is the better thing: the board is
-       * recorded in the room, so one press each and you are both in a fresh
-       * game of the other size without either of you leaving the page. That
-       * change of size is legal at exactly this moment and no other — the log
-       * has just been emptied, so there is nothing left for it to invalidate.
+       * narrow game this is a link rather than a move. Coming back down there
+       * is nothing to learn — but with the pool halved by board, this room's
+       * name commits it to 8×8, so "play again on 5×10" means walking next
+       * door rather than rebranding this room. Both players compute the same
+       * destination — the narrow name standing at this room's position in its
+       * half — and each asks for the seat they already hold, so the same
+       * press on both screens reunites them, colours intact, with nothing to
+       * coordinate.
        */
       el('otherBoard').addEventListener('click', async () => {
         if (board === NARROW) {
           location.href = '/assets/EscherChess/EscherChessTutorialV4.0.html?board=escher-8x8';
           return;
         }
+        const button = el('otherBoard');
+        button.disabled = true;
         try {
-          await escher.reset({ name: room, board: NARROW.id });
+          const wide = ESCHER_BOARD_ROOMS[WIDE.id];
+          const narrow = ESCHER_BOARD_ROOMS[NARROW.id];
+          const twin = narrow[Math.max(0, wide.indexOf(room))] ?? narrow[0];
+          await enterRoom(twin, { prefer: seat });
         } catch (err) {
           el('replayStatus').textContent = `That did not take: ${explain(err)}`;
+        } finally {
+          button.disabled = false;
         }
       });
 
@@ -756,13 +826,23 @@
         location.href = '/escher-chess/';
       });
 
-      el('roomList').append(
-        ...ESCHER_ROOM_NAMES.map((name) => {
-          const option = document.createElement('option');
-          option.value = name;
-          return option;
-        })
-      );
+      /*
+       * Only the half of the pool that plays the board on screen: joining by
+       * name is "meet my friend on this board", and the other half is a
+       * different game. Refreshed rather than set once, because an invite
+       * link can carry the page across the halves.
+       */
+      function refreshRoomList() {
+        el('roomInput').placeholder = escherNamesFor(board.id)[0];
+        el('roomList').replaceChildren(
+          ...escherNamesFor(board.id).map((name) => {
+            const option = document.createElement('option');
+            option.value = name;
+            return option;
+          })
+        );
+      }
+      refreshRoomList();
 
       el('buildStamp').textContent = BUILD;
 
