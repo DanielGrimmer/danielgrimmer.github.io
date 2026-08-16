@@ -7,8 +7,8 @@
  *
  * Load it AFTER board.css so the palette below wins:
  *
- *   <link rel="stylesheet" href="../games/ui/board.css?v=4.22.0" />
- *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.22.0" />
+ *   <link rel="stylesheet" href="../games/ui/board.css?v=4.23.0" />
+ *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.23.0" />
  *
  * The pages need three families. Add to each page's <head>:
  *
@@ -989,6 +989,34 @@ a.dg-btn-primary:hover {
 }
 
 /*
+ * Whose move you are looking at, under the controls rather than in them. The
+ * counter beside the scrubber has to stay on one short line; this does not, and
+ * it is the thing that makes the two boards readable as one game.
+ */
+.dg-replay-note {
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  line-height: 1.6;
+  color: var(--dg-muted);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* The reveal's own masthead: label, title, and the one paragraph above the boards. */
+.dg-reveal-head {
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--dg-ink);
+}
+
+.dg .dg-reveal-head h1 {
+  margin: 0.25rem 0 0;
+}
+
+.dg-reveal-body {
+  margin: 0.75rem 0 0;
+}
+
+/*
  * The punchline, as two lists rather than two paragraphs: what survived the
  * translation and what did not. This is the page's whole argument.
  */
@@ -1037,6 +1065,16 @@ a.dg-btn-primary:hover {
   margin-top: 1.75rem;
   padding-top: 1.25rem;
   border-top: 1px solid var(--dg-rule);
+}
+
+/*
+ * Two paragraphs, written as one string with a blank line in it — the same
+ * convention the coach panel uses, so the copy lives in one place in coach.js
+ * rather than being split across markup.
+ */
+.dg-outro p {
+  white-space: pre-line;
+  margin: 0;
 }
 
 .dg-outro-actions {

@@ -64,22 +64,33 @@ function element(tag, className, text) {
  * @param {object[]} spec.moves         the log, for counting only
  * @param {object[]} spec.frames        one per move plus the opening position
  * @param {number[]} spec.seatOrder     which seat each panel shows, left first
- * @param {string[]} spec.labels        a heading per panel, in the same order
+ * @param {(string|{name: string, note: string})[]} spec.labels  a heading per
+ *   panel, in the same order. A pair is drawn as two: the board's name at one
+ *   end of the rule and what it is showing at the other.
  * @param {(mount: HTMLElement, seat: number) => {render: Function, destroy: Function}}
  *   spec.createSeatView  mounts one seat's board; `render` is handed a frame
- * @param {(index: number) => string} spec.describe  the caption under the controls
+ * @param {(index: number) => string} spec.describe  the counter in the controls
+ * @param {((index: number) => string)|undefined} spec.caption  an optional line
+ *   under the controls, for anything that will not fit on one short row
  */
 export function createReplayView(
   container,
-  { moves, frames, seatOrder, labels, createSeatView, describe }
+  { moves, frames, seatOrder, labels, createSeatView, describe, caption = null }
 ) {
   const total = frameCount(moves);
 
   const boards = element('div', 'dg-replay-boards');
   const sides = seatOrder.map((seat, i) => {
     const side = element('div', 'dg-replay-side');
-    const head = element('div', 'dg-replay-head', labels[i]);
-    head.classList.add('dg-replay-label');
+    const head = element('div', 'dg-replay-head');
+    if (typeof labels[i] === 'string') {
+      head.append(element('span', 'dg-replay-label', labels[i]));
+    } else {
+      head.append(
+        element('span', 'dg-replay-label', labels[i].name),
+        element('span', 'dg-label', labels[i].note)
+      );
+    }
 
     const mount = element('div', 'dg-replay-board');
 
@@ -91,7 +102,7 @@ export function createReplayView(
   const controls = element('div', 'dg-replay-controls');
   const first = element('button', 'dg-btn dg-step', '⏮');
   const back = element('button', 'dg-btn dg-step', '◀');
-  const play = element('button', 'dg-btn dg-btn-primary', 'Play');
+  const play = element('button', 'dg-btn dg-btn-primary', 'Play the game back');
   const forward = element('button', 'dg-btn dg-step', '▶');
   const last = element('button', 'dg-btn dg-step', '⏭');
   for (const [button, label] of [
@@ -118,7 +129,10 @@ export function createReplayView(
   const count = element('div', 'dg-replay-count');
 
   controls.append(first, back, play, forward, last, scrub, count);
-  container.replaceChildren(boards, controls);
+
+  // Whatever will not fit on the controls row: whose move you are looking at.
+  const note = caption ? element('div', 'dg-replay-note') : null;
+  container.replaceChildren(boards, controls, ...(note ? [note] : []));
 
   for (const side of sides) side.view = createSeatView(side.mount, side.seat);
 
@@ -130,6 +144,7 @@ export function createReplayView(
     for (const side of sides) side.view.render(frame);
 
     count.textContent = describe(index);
+    if (note) note.textContent = caption(index);
     scrub.value = String(index);
     first.disabled = index === 0;
     back.disabled = index === 0;
@@ -145,7 +160,7 @@ export function createReplayView(
   function stop() {
     clearInterval(timer);
     timer = null;
-    play.textContent = 'Play';
+    play.textContent = 'Play the game back';
   }
 
   function start() {

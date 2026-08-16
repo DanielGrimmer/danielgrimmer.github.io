@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.22.0';
-import { replayFrames } from '../core/game.js?v=4.22.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.23.0';
+import { replayFrames } from '../core/game.js?v=4.23.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -177,58 +177,61 @@ export function replayNote(config, seat) {
   const yours = config.seats[seat ?? 0].sport;
   const theirs = config.seats[seat === 1 ? 0 : 1].sport;
 
-  const opening =
+  /*
+   * Who thought they were playing what. Said in the second person to the two
+   * people it happened to, and in the third to anybody who wandered in.
+   */
+  const whoThought =
     seat === null
-      ? 'Both boards below show the game that has just finished, from two ' +
-        `radically different perspectives. ${config.seats[0].name} thought they ` +
-        `were playing ${config.seats[0].sport}, whereas ${config.seats[1].name} ` +
-        `thought they were playing ${config.seats[1].sport};`
-      : 'Both boards below show the game you just played, from two radically ' +
-        `different perspectives. Whereas you thought you were playing ${yours}, ` +
-        `your opponent thought you were playing ${theirs};`;
-
-  const divergence =
-    seat === null
-      ? 'But the two players saw completely different things. Almost nothing ' +
-        'about the one perspective agrees with the other.'
-      : 'But your friend saw something completely different. Almost nothing ' +
-        'about their perspective agrees with yours.';
+      ? `${config.seats[0].name} thought they were playing ${config.seats[0].sport}; ` +
+        `${config.seats[1].name} thought they were playing ${config.seats[1].sport}`
+      : `You thought you were playing ${yours}; your friend thought they were ` +
+        `playing ${theirs}`;
 
   return {
-    title: 'It Was Both Soccer and Hockey, At Once',
+    title: 'It was both Soccer and Hockey, at once',
+    /**
+     * Short, and above the boards. The comparison that used to live here is now
+     * the two lists below them, where it can be read at a glance against the
+     * thing it is about; everything this paragraph has to do is get the reader
+     * to the replay.
+     */
     body:
-      `${opening} And this is more than just an aesthetic difference (no mere ` +
-      'palette swap). Compare the pattern of available moves on each board, the ' +
-      'Soccer player can kick the ball three spaces to the right, whereas the ' +
-      'Hockey player can move it, not three, but four spaces.\n\n' +
-      'Now advance through the replay. Every move is exactly as it was actually ' +
-      `made, in the order it was made. ${divergence} What seems like a short ` +
-      'move to the Soccer player, seems like a long move to the Hockey player ' +
-      'and vice versa. In general, you will disagree about what column the ' +
-      "ball/puck stands in, as well as the shape of the trails of ✕'s. " +
-      'Nonetheless, you both agree where the two goals are and who ultimately ' +
-      'won the game. Weird!',
+      `Both boards below show the game ${seat === null ? 'that has just finished' : 'you just played'}. ` +
+      `${whoThought} — and this is no palette swap. Step the replay through and ` +
+      'watch the two accounts refuse to line up.',
+    /**
+     * The punchline as two lists rather than a paragraph: what survived the
+     * crossing and what did not. Every line is checkable against the two boards
+     * on screen, which is the only reason it is worth saying at all.
+     */
+    agree: Object.freeze([
+      'which row the ball stands in',
+      'where the two goals are',
+      'who won',
+    ]),
+    disagree: Object.freeze([
+      'which column it stands in',
+      "the shape of the trail of ✕'s",
+      'whether that pass went three across or four',
+    ]),
     /**
      * Carried below the two boards rather than above them. The reveal only
      * works if the boards are reached quickly; the questions they raise keep
      * perfectly well until after somebody has stepped through the replay.
      */
     after:
-      'What structural features of the game are common across the two ' +
-      'perspectives, allowing for this kind of consensus? What kind of ' +
-      "mathematical transformation relates the two players' different " +
-      'representations of this common structure? These kinds of dual ' +
-      'representations of one underlying structure are now-common on the front ' +
-      'lines of physics: the AdS-CFT correspondence, T-duality in String ' +
-      'Theory, etc.\n\n' +
-      'My research seeks to draw epistemic and metaphysical consequences from ' +
-      'the possibility of such dualities: Are space and time aspects of ' +
-      'things-in-themselves, or rather an organizational framework which we ' +
-      'apply to the world? Could an alien society use completely different ' +
-      'categories and intuitions to make sense of the world? How did we come to ' +
-      'have our basic metaphysical concepts (quid facti), and what justifies ' +
-      'our continued use of them (quid juris)? That is, which are ' +
-      'universal/objective, and which are idiosyncratic/contingent, e.g., upon ' +
-      'our particular evolutionary history?',
+      'Now call each other back. What is common to both accounts, such that you ' +
+      'could agree on anything at all — and what kind of transformation carries ' +
+      'one into the other? Dual descriptions of one structure are ordinary in ' +
+      'physics now: AdS/CFT, T-duality. Whether space and time belong to the ' +
+      'world or to the way we organise it is the question underneath.\n\n' +
+      'My own research asks what follows from the possibility of such dualities. ' +
+      'Could an alien society use completely different categories and intuitions ' +
+      'to make sense of the world? How did we come to have our basic ' +
+      'metaphysical concepts (quid facti), and what justifies our continued use ' +
+      'of them (quid juris)? That is: which of them are universal and objective, ' +
+      'and which are idiosyncratic and contingent — upon our particular ' +
+      'evolutionary history, for instance?',
   };
 }

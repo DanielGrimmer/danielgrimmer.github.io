@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.22.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.22.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.23.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.23.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -130,26 +130,47 @@
           Still in its pre-design markup — this screen is the next one to be
           rebuilt, and rebuilding it half-way would leave it worse than either.
         -->
+        <!--
+          The reveal, in place of the board once there is nothing left to play.
+
+          The order is the argument: the claim, then the evidence, then what to
+          make of it. The two lists between the boards and the philosophy are
+          the old comparison paragraph broken up — every line in them is
+          checkable against the two boards directly above, which is the only
+          reason any of it is worth saying.
+        -->
         <section id="replay" hidden>
-          <div class="dg-replay-intro">
-            <div class="dg-status" id="replayStatus"></div>
-            <div class="dg-coach dg-coach-band" id="replayCoach">
-              <div class="dg-coach-progress">The Big Reveal</div>
-              <h2 class="dg-coach-title" id="replayTitle"></h2>
-              <p class="dg-coach-body" id="replayBody"></p>
-            </div>
+          <div class="dg-reveal-head">
+            <div class="dg-label dg-label-gold">The reveal</div>
+            <h1 id="replayTitle"></h1>
+            <p class="dg-reveal-body">
+              <span id="replayStatus"></span> <span id="replayBody"></span>
+            </p>
           </div>
+
           <div id="replayStage"></div>
-          <div class="dg-replay-intro">
-            <div class="dg-coach dg-coach-band">
-              <p class="dg-coach-body" id="replayAfter"></p>
+
+          <div class="dg-ledger">
+            <div class="dg-ledger-col" data-side="agree">
+              <h3>You both agree about</h3>
+              <ul id="agreeList"></ul>
+            </div>
+            <div class="dg-ledger-col" data-side="disagree">
+              <h3>You disagree about</h3>
+              <ul id="disagreeList"></ul>
             </div>
           </div>
-          <div class="dg-bar dg-bar-main">
-            <a class="dg-btn dg-btn-primary" id="toSandbox" href="SoccerHockeySandboxV4.0.html">
-              Let's Look under the Hood →
-            </a>
-            <button class="dg-btn" id="newGameOver" type="button">New game</button>
+
+          <div class="dg-outro">
+            <p id="replayAfter"></p>
+            <div class="dg-outro-actions">
+              <!-- The room travels with the link, so both of you land in the same sandbox. -->
+              <a class="dg-btn dg-btn-primary" id="toSandbox" href="SoccerHockeySandboxV4.0.html">
+                Let's look under the hood →
+              </a>
+              <button class="dg-btn" id="newGameOver" type="button">Play again</button>
+              <a class="dg-btn" href="/publications/">Read the philosophy →</a>
+            </div>
           </div>
         </section>
       </div>
@@ -158,9 +179,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.22.0';
+      const BUILD = '4.23.0';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.22.0';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.23.0';
       import {
         initialGame,
         replay,
@@ -168,7 +189,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.22.0';
+      } from '../games/core/game.js?v=4.23.0';
       import {
         presenceOf,
         seatOf,
@@ -176,17 +197,17 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.22.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.22.0';
-      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.22.0';
-      import { replayNote } from '../games/ui/coach.js?v=4.22.0';
+      } from '../games/core/seats.js?v=4.23.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.23.0';
+      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.23.0';
+      import { replayNote } from '../games/ui/coach.js?v=4.23.0';
       import {
         ROOM_NAMES,
         roomFromLocation,
         shareLink,
         rememberRoom,
         recallRoom,
-      } from '../games/net/rooms.js?v=4.22.0';
+      } from '../games/net/rooms.js?v=4.23.0';
       import {
         signIn,
         chooseRoom,
@@ -199,7 +220,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.22.0';
+      } from '../games/net/room.js?v=4.23.0';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -406,8 +427,6 @@
         el('boardHolder').hidden = over;
         el('replay').hidden = !over;
         if (over) el('chromeState').textContent = `Room ${room} · game over`;
-        // Two boards at full size need more than the site's text measure.
-        document.querySelector('.dg-wrap').classList.toggle('dg-wide', over);
 
         if (key === replayKey) {
           if (over) el('replayStatus').textContent = describeStatus();
@@ -425,6 +444,16 @@
         el('replayTitle').textContent = note.title;
         el('replayBody').textContent = note.body;
         el('replayAfter').textContent = note.after;
+        // The two lists under the boards: what survived the crossing, and what did not.
+        for (const [id, items] of [['agreeList', note.agree], ['disagreeList', note.disagree]]) {
+          el(id).replaceChildren(
+            ...items.map((text) => {
+              const li = document.createElement('li');
+              li.textContent = text;
+              return li;
+            })
+          );
+        }
         // Carry the room across, so both players land in the same sandbox
         // simply by pressing the button in front of them.
         el('toSandbox').href = room
@@ -436,11 +465,10 @@
         // Your own board first, so "on the left" in the note is true for both
         // players even though they hold different seats.
         const order = seat === null ? [0, 1] : [seat, seat === 0 ? 1 : 0];
-        const labels = order.map((s, i) =>
-          seat === null
-            ? `${config.seats[s].name} — ${sportOf(s)}`
-            : `${i === 0 ? 'Your board' : "Your opponent's board"} — ${sportOf(s)}`
-        );
+        const labels = order.map((s, i) => ({
+          name: seat === null ? config.seats[s].name : i === 0 ? 'Your board' : 'Their board',
+          note: sportOf(s),
+        }));
 
         /*
          * `ui/replay.js` owns the transport and nothing else — it is shared with
@@ -467,14 +495,17 @@
               destroy: () => view.destroy(),
             };
           },
-          describe(index) {
+          // Short enough for the controls row, beside the scrubber.
+          describe: (index) => `move ${index} / ${state.moves.length}`,
+          // And the part that will not fit there, underneath.
+          caption(index) {
             if (index === 0) {
               return `Before the first move — ${state.moves.length} moves to come`;
             }
             const mover = moverAt(frames, index);
             return (
-              `Move ${index} of ${state.moves.length} — played by ` +
-              `${config.seats[mover].name}, the ${config.seats[mover].sport ?? 'other'} player`
+              `Played by ${config.seats[mover].name}, ` +
+              `the ${config.seats[mover].sport ?? 'other'} player`
             );
           },
         });
@@ -527,9 +558,8 @@
 
         el('pairTitle').textContent = `You are in room ${room ?? '…'}`;
         el('pairBody').textContent =
-          'Send your friend the link. The moment they arrive the board wakes up ' +
-          'and one of you goes first — you will not be told which sport the other ' +
-          'one is playing.';
+          "Send your friend the link, or have them type in this room's name. The " +
+          'moment they arrive the board will wake up and you two can begin playing.';
         el('youPresence').textContent = 'You · waiting';
         // The word for the ground, not the name of the sport: "your soccer field"
         // is a mouthful, and the seat already knows which sport it was handed.
