@@ -1,0 +1,947 @@
+/*
+ * Page furniture for the duality game pages — Chalk & Turf.
+ *
+ * board.css owns the board: surfaces, cube faces, sprites, goal furniture, and
+ * the floodlit dark mode. This file owns everything around it, and nothing in
+ * here touches a .dg-cell, .dg-face, .dg-ball or .dg-goal.
+ *
+ * Load it AFTER board.css so the palette below wins:
+ *
+ *   <link rel="stylesheet" href="../games/ui/board.css?v=4.18.0" />
+ *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.18.0" />
+ *
+ * The pages need three families. Add to each page's <head>:
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com" />
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ *   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+ *
+ * Like board.css this lives outside assets/css/, so purgecss never sees it.
+ *
+ * Two ways in. A standalone page puts the tokens on the body:
+ *   <body class="dg">
+ * The Jekyll landing page cannot own the body, so it scopes them to a wrapper:
+ *   <div class="dg dg-scope"> … </div>
+ * Everything below works the same either way.
+ */
+
+body.dg,
+.dg-scope {
+  --dg-paper: #f3efe6;
+  --dg-desk: #e7e1d5;
+  --dg-panel: #eae4d7;
+  --dg-card: #faf8f3;
+  --dg-ink: #191817;
+  --dg-body: #282520;
+  --dg-body-2: #3d3931;
+  --dg-muted: #6f6a60;
+  --dg-rule: #d8d2c6;
+  --dg-rule-2: #cfc8ba;
+  --dg-rule-3: #ddd6c7;
+  --dg-gold: #c8963e;
+  --dg-gold-ink: #a97d2c;
+  --dg-green: #14452f;
+  --dg-red: #a13a2a;
+  --dg-lit: #f7efd0;
+
+  --dg-serif: Spectral, Georgia, 'Times New Roman', serif;
+  --dg-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --dg-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  margin: 0;
+  padding: 0 0 3rem;
+  background: var(--dg-desk);
+  color: var(--dg-ink);
+  font-family: var(--dg-sans);
+  line-height: 1.6;
+}
+
+/*
+ * Floodlit, so a reader in dark mode does not get a lit board on chalk paper —
+ * board.css switches the surface on the same signal. To opt a page out of both,
+ * put data-dg-theme="light" on <html>.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dg-theme='light']) body.dg,
+  :root:not([data-dg-theme='light']) .dg-scope {
+    --dg-paper: #12171e;
+    --dg-desk: #0b0e12;
+    --dg-panel: #161b22;
+    --dg-card: #171d25;
+    --dg-ink: #e8e6e1;
+    --dg-body: #dcd9d3;
+    --dg-body-2: #c3c0b9;
+    --dg-muted: #9aa1a9;
+    --dg-rule: #2c343f;
+    --dg-rule-2: #232a34;
+    --dg-rule-3: #2c343f;
+    --dg-gold: #f5c451;
+    --dg-gold-ink: #f5c451;
+    --dg-green: #7fc79a;
+    --dg-red: #e0836f;
+    --dg-lit: #ffe9a8;
+  }
+}
+
+:root[data-dg-theme='dark'] body.dg,
+.dg-scope {
+  --dg-paper: #12171e;
+  --dg-desk: #0b0e12;
+  --dg-panel: #161b22;
+  --dg-card: #171d25;
+  --dg-ink: #e8e6e1;
+  --dg-body: #dcd9d3;
+  --dg-body-2: #c3c0b9;
+  --dg-muted: #9aa1a9;
+  --dg-rule: #2c343f;
+  --dg-rule-2: #232a34;
+  --dg-rule-3: #2c343f;
+  --dg-gold: #f5c451;
+  --dg-gold-ink: #f5c451;
+  --dg-green: #7fc79a;
+  --dg-red: #e0836f;
+  --dg-lit: #ffe9a8;
+}
+
+/* The sheet the page is printed on. Replaces .dg-wrap's bare max-width. */
+.dg-wrap {
+  max-width: 1060px;
+  margin: 0 auto;
+  background: var(--dg-paper);
+  border: 1px solid var(--dg-rule-2);
+}
+
+a {
+  color: #8a5a34;
+}
+
+a:hover {
+  color: #6b4526;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dg-theme='light']) a { color: #e0b070; }
+}
+
+/* ------------------------------------------------------------- chrome ---- */
+
+/*
+ * One strip, two jobs: the way home on the left, where you are on the right.
+ * These pages carry their own identity, so this is all that is left of the
+ * site's masthead — the h1 belongs to the page, not to a nav bar.
+ */
+.dg-chrome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 2.75rem;
+  background: var(--dg-panel);
+  border-bottom: 1px solid var(--dg-rule);
+}
+
+.dg-chrome a,
+.dg-label {
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dg-muted);
+  white-space: nowrap;
+}
+
+.dg-chrome a {
+  text-decoration: none;
+}
+
+.dg-chrome a:hover {
+  text-decoration: underline;
+}
+
+.dg-label-gold { color: var(--dg-gold); }
+.dg-label-red { color: var(--dg-red); }
+
+.dg-page {
+  padding: 2rem 2.75rem 2.75rem;
+}
+
+/* ---------------------------------------------------------- headings ---- */
+
+.dg h1,
+.dg h2 {
+  font-family: var(--dg-serif);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.dg h1 {
+  font-size: 2.375rem;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.dg-title-xl {
+  font-size: 3.25rem;
+  line-height: 1.04;
+  max-width: 18ch;
+}
+
+.dg-lede {
+  font-family: var(--dg-serif);
+  font-size: 1.25rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: #4a463f;
+  margin: 1rem 0 0;
+  max-width: 40ch;
+}
+
+.dg p {
+  max-width: 62ch;
+  color: var(--dg-body);
+}
+
+.dg-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 2px solid var(--dg-ink);
+}
+
+.dg-head-sub {
+  font-size: 0.875rem;
+  color: var(--dg-muted);
+  margin-top: 0.25rem;
+}
+
+/* ------------------------------------------------------------- hero ---- */
+
+/* Title left, the half-turf half-ice board right. No caption: it is the claim. */
+.dg-hero {
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 2.25rem;
+  align-items: center;
+  padding: 2.75rem 2.75rem 1.75rem;
+}
+
+.dg-hero-board {
+  background: radial-gradient(120% 90% at 50% 45%, rgba(20, 69, 47, 0.1) 0%, rgba(20, 69, 47, 0) 72%);
+}
+
+@media (max-width: 820px) {
+  .dg-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------- firewall and doors ---- */
+
+/* The one rule the game cannot survive being broken. */
+.dg-firewall {
+  border-left: 3px solid var(--dg-red);
+  padding: 2px 0 2px 1rem;
+  margin: 1.5rem 0;
+}
+
+.dg-doors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dg-door {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  background: var(--dg-card);
+  border: 1px solid var(--dg-rule-3);
+}
+
+.dg-door[data-locked='true'] {
+  background: #f0ece1;
+  border: 1px dashed var(--dg-rule-2);
+}
+
+.dg-door-n {
+  font-family: var(--dg-serif);
+  font-size: 1.875rem;
+  line-height: 1;
+  color: var(--dg-gold);
+}
+
+.dg-door[data-locked='true'] .dg-door-n {
+  color: #a89b83;
+}
+
+.dg-door-title {
+  font-family: var(--dg-serif);
+  font-size: 1.1875rem;
+  display: block;
+}
+
+.dg-door-note {
+  font-size: 0.85rem;
+  color: var(--dg-muted);
+}
+
+/* An aside that is a list of requirements, not decoration. */
+.dg-aside {
+  background: var(--dg-panel);
+  border: 1px solid var(--dg-rule-2);
+  padding: 1.25rem 1.375rem;
+}
+
+.dg-aside ul {
+  margin: 0.6rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--dg-body-2);
+}
+
+.dg-aside-foot {
+  border-top: 1px solid var(--dg-rule-2);
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #4a463f;
+}
+
+/* ---------------------------------------------------------- buttons ---- */
+
+.dg-btn {
+  font: inherit;
+  font-size: 0.875rem;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--dg-green);
+  border-radius: 0;
+  background: transparent;
+  color: var(--dg-green);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dg-btn:hover:not(:disabled) {
+  background: var(--dg-green);
+  color: var(--dg-paper);
+}
+
+.dg-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dg-btn-primary {
+  display: inline-block;
+  background: var(--dg-green);
+  color: var(--dg-paper);
+  text-decoration: none;
+}
+
+.dg-btn-primary:hover {
+  background: var(--dg-green);
+  color: var(--dg-paper);
+  opacity: 0.9;
+}
+
+.dg-btn-quiet {
+  border-color: var(--dg-rule-2);
+  color: #4a463f;
+}
+
+.dg-btn-quiet:hover:not(:disabled) {
+  background: var(--dg-rule-2);
+  color: var(--dg-ink);
+}
+
+.dg-btn-wide {
+  width: 100%;
+  text-align: center;
+}
+
+.dg-link {
+  font: inherit;
+  font-size: 0.8125rem;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--dg-muted);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.dg-link:hover {
+  color: var(--dg-ink);
+}
+
+.dg-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  justify-content: center;
+  margin-top: 1.125rem;
+}
+
+/* ------------------------------------------------------------ inputs ---- */
+
+.dg-field {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.375rem;
+}
+
+.dg-field input,
+.dg-dials input {
+  font: inherit;
+  font-size: 0.875rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--dg-rule-2);
+  background: var(--dg-card);
+  color: var(--dg-ink);
+  border-radius: 0;
+}
+
+.dg-field input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* --------------------------------------------------- coach and status ---- */
+
+/*
+ * The coach is a margin note, not a modal: a gold rule down its left edge, the
+ * board beside it, and play never blocked. Sticky only while it sits beside the
+ * board — stacked on a phone the positioned cubes would paint over it.
+ */
+.dg-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1.625rem;
+}
+
+@media (max-width: 820px) {
+  .dg-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dg-coach {
+  border: 0;
+  border-left: 2px solid var(--dg-gold);
+  border-radius: 0;
+  background: none;
+  padding: 0 0 0 1rem;
+  position: sticky;
+  top: 1rem;
+  z-index: 1;
+}
+
+@media (max-width: 820px) {
+  .dg-coach {
+    position: static;
+  }
+}
+
+.dg-coach-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dg-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Five ticks, one per step: done, here, still to come. */
+.dg-steps {
+  display: flex;
+  gap: 4px;
+}
+
+.dg-step-tick {
+  width: 16px;
+  height: 3px;
+  background: var(--dg-rule-3);
+}
+
+.dg-step-tick[data-state='done'] {
+  background: var(--dg-green);
+}
+
+.dg-step-tick[data-state='here'] {
+  background: var(--dg-gold);
+}
+
+.dg .dg-coach-title {
+  font-family: var(--dg-serif);
+  font-size: 1.4375rem;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0 0 0.625rem;
+}
+
+.dg-coach-body {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--dg-body-2);
+  margin: 0 0 0.75rem;
+  white-space: pre-line;
+}
+
+.dg-coach-hint {
+  font-family: var(--dg-serif);
+  font-style: italic;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--dg-green);
+  margin: 0 0 0.875rem;
+}
+
+.dg-coach[data-done='true'] {
+  border-left-color: var(--dg-green);
+}
+
+/* Whose move it is, and how far in. Not a status box; a line of type. */
+.dg-status {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 0 0.625rem;
+  border: 0;
+  border-bottom: 1px solid var(--dg-rule);
+  border-radius: 0;
+  background: none;
+  font-family: var(--dg-serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  min-height: 0;
+}
+
+.dg-status[data-tone='win'] {
+  color: var(--dg-green);
+}
+
+.dg-status-move {
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dg-muted);
+  white-space: nowrap;
+}
+
+/* Which way you are playing, said at both ends of the board. */
+.dg-goal-hint {
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dg-muted);
+  padding: 0 0.5rem;
+}
+
+.dg-goal-hint[data-end='yours'] {
+  text-align: right;
+  margin-top: 0.875rem;
+}
+
+.dg-pitch {
+  background: radial-gradient(120% 90% at 50% 45%, rgba(20, 69, 47, 0.1) 0%, rgba(20, 69, 47, 0) 70%);
+}
+
+.dg-court {
+  background: radial-gradient(120% 90% at 50% 45%, rgba(138, 90, 52, 0.1) 0%, rgba(138, 90, 52, 0) 70%);
+}
+
+/* The three marks, spelled out under the board. */
+.dg-legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.125rem;
+  justify-content: center;
+  margin-top: 1rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--dg-rule);
+  font-size: 0.78rem;
+  color: var(--dg-muted);
+}
+
+.dg-legend-row > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.dg-swatch {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background: var(--dg-lit);
+  border: 2px solid var(--dg-gold);
+}
+
+.dg-mark {
+  width: 14px;
+  height: 14px;
+  display: grid;
+  place-items: center;
+}
+
+.dg-mark[data-kind='spent'] { color: rgba(25, 24, 23, 0.55); }
+.dg-mark[data-kind='dot'] { color: var(--dg-gold-ink); }
+
+/* The rules, folded shut, above the board — not buried under it. */
+.dg-rules {
+  border: 1px solid var(--dg-rule-3);
+  border-radius: 0;
+  background: var(--dg-card);
+  padding: 0.75rem 1rem;
+  margin: 1.125rem 0 0;
+}
+
+.dg-rules > summary {
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dg-muted);
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.dg-rules > .dg-legend {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--dg-body-2);
+  margin: 0.625rem 0 0;
+  max-width: 78ch;
+}
+
+/* ------------------------------------------------------------- room ---- */
+
+/*
+ * Loud while you are waiting, quiet once you are playing. Waiting, it is a
+ * panel with the invite in it; playing, it is one line at the foot of the page,
+ * because the board is the thing now.
+ */
+.dg-room {
+  background: var(--dg-panel);
+  border: 1px solid var(--dg-rule-2);
+  padding: 1.375rem 1.5rem;
+}
+
+.dg-presence {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dg-muted);
+  min-height: 0;
+  margin: 0 0 0.5rem;
+}
+
+.dg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dg-green);
+  display: inline-block;
+}
+
+.dg-dot[data-state='waiting'] { background: var(--dg-gold); }
+.dg-dot[data-state='absent'] { background: none; border: 1px solid #a89b83; }
+
+.dg-room-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.375rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--dg-rule);
+  font-size: 0.8125rem;
+  color: var(--dg-muted);
+}
+
+/* A board that is not in play yet: dimmed, and said to be dimmed. */
+.dg-board-asleep {
+  opacity: 0.42;
+  filter: saturate(0.65);
+}
+
+/* ----------------------------------------------------------- reveal ---- */
+
+.dg-replay-boards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem;
+  margin-top: 1.625rem;
+}
+
+@media (max-width: 900px) {
+  .dg-replay-boards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dg-replay-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--dg-ink);
+  padding-bottom: 0.375rem;
+}
+
+.dg-replay-label {
+  font-family: var(--dg-serif);
+  font-size: 1.125rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dg-replay-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  margin-top: 1.125rem;
+}
+
+.dg-replay-scrub {
+  flex: 1 1 12rem;
+  max-width: 22rem;
+  accent-color: var(--dg-green);
+}
+
+.dg-replay-count {
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  color: var(--dg-muted);
+  white-space: nowrap;
+}
+
+/*
+ * The punchline, as two lists rather than two paragraphs: what survived the
+ * translation and what did not. This is the page's whole argument.
+ */
+.dg-ledger {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.75rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--dg-ink);
+}
+
+@media (max-width: 700px) {
+  .dg-ledger {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dg-ledger h3 {
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+
+.dg-ledger[data-side='agree'] h3,
+.dg-ledger-col[data-side='agree'] h3 { color: var(--dg-green); }
+
+.dg-ledger-col[data-side='disagree'] h3 { color: var(--dg-red); }
+
+.dg-ledger-col ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--dg-body-2);
+}
+
+.dg-outro {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--dg-rule);
+}
+
+.dg-outro-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+@media (max-width: 820px) {
+  .dg-outro {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------- sandbox ---- */
+
+.dg-sandbox-intro {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 820px) {
+  .dg-sandbox-intro {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Three claims about what the duality does. One accent: it is not a key. */
+.dg-claims {
+  list-style: none;
+  margin: 1.375rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  max-width: 52ch;
+}
+
+.dg-claims li {
+  padding: 0.625rem 0.875rem;
+  background: var(--dg-card);
+  border-left: 4px solid var(--dg-gold);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.dg-dials {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1.125rem 1.25rem;
+  background: var(--dg-panel);
+  border: 1px solid var(--dg-rule-2);
+  border-radius: 0;
+}
+
+.dg-dials label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.625rem;
+  font-size: 0.85rem;
+  color: var(--dg-body-2);
+}
+
+.dg-dials input {
+  width: 4.5rem;
+  padding: 0.3rem 0.5rem;
+}
+
+/* The dial the whole trick turns on. */
+.dg-dials input[data-dial='duality'] {
+  border-color: var(--dg-gold);
+  background: var(--dg-lit);
+}
+
+.dg-dial-note {
+  font-family: var(--dg-mono);
+  font-size: 0.7rem;
+  line-height: 1.6;
+  color: var(--dg-muted);
+  border-top: 1px solid var(--dg-rule-2);
+  padding-top: 0.625rem;
+  margin: 0;
+  text-align: left;
+  max-width: none;
+}
+
+.dg-palette-title,
+.dg-palette-note {
+  font-family: var(--dg-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dg-muted);
+  text-align: center;
+}
+
+.dg-palette-cell {
+  border: 1px solid var(--dg-rule-3);
+  border-radius: 0;
+  background: var(--dg-card);
+}
+
+.dg-palette-cell[data-on='true'] {
+  background: var(--dg-lit);
+  border-color: var(--dg-gold);
+}
+
+.dg-palette-cell[data-centre='true'] {
+  border-color: var(--dg-ink);
+  background: var(--dg-card) center / 16px 16px no-repeat;
+}
+
+/* The sprites the board already uses, so palette and board agree. */
+.dg-palette[data-theme='soccer'] .dg-palette-cell[data-centre='true'] {
+  background-image: url('../img/ball-soccer.png');
+}
+
+.dg-palette[data-theme='hockey'] .dg-palette-cell[data-centre='true'] {
+  background-image: url('../img/ball-puck.png');
+}
+
+.dg-palette[data-theme='basketball'] .dg-palette-cell[data-centre='true'] {
+  background-image: url('../img/ball-basketball.png');
+}
+
+/* ------------------------------------------------------------- misc ---- */
+
+.dg-build {
+  font-family: var(--dg-mono);
+  font-size: 0.66rem;
+  color: var(--dg-muted);
+  opacity: 0.8;
+  margin: 2rem 2.75rem 0;
+}
+
+.dg-seats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+}
+
+.dg-seat {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--dg-rule-2);
+  border-radius: 0;
+}
+
+.dg-seat[data-active='true'] {
+  border-color: var(--dg-gold);
+  font-weight: 500;
+}

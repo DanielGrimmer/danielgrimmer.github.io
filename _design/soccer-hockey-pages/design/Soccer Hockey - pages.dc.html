@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#e7e1d5; }
+    a { color:#8a5a34; } a:hover { color:#6b4526; }
+  </style>
+</helmet>
+
+<section style="padding:44px;display:flex;flex-direction:column;gap:30px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#191817">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:840px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6f6a60">Turn 6 — the sandbox</div>
+    <div style="font-family:Spectral,Georgia,serif;font-size:30px;font-weight:500">Under the hood, with both boards on one screen</div>
+    <div style="font-size:14px;line-height:1.6;color:#4a463f;max-width:74ch">The last page. Same chrome as <a href="#5b">5b</a>; the two boards sit side by side because here the point is to compare them, and the move palettes underneath are the duality with the game taken away.</div>
+  </div>
+
+  <div id="6a" style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">6a — the sandbox · after your first game</div>
+    <div data-screen-label="6a Sandbox" style="width:1060px;background:#f3efe6;border:1px solid #cfc8ba">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 44px;border-bottom:1px solid #d8d2c6;background:#eae4d7">
+        <a href="#4a" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap">← Soccer Hockey</a>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">Room GreenField · shared dials</span>
+      </div>
+
+      <div style="padding:32px 44px 44px">
+        <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-bottom:14px;border-bottom:2px solid #191817">
+          <div>
+            <h1 style="font-family:Spectral,Georgia,serif;font-size:38px;font-weight:500;margin:0">Under the hood</h1>
+            <div style="font-size:14px;color:#6f6a60;margin-top:4px">Both accounts of the same game, side by side, with every dial exposed.</div>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap;padding-bottom:6px">talking allowed now</div>
+        </header>
+
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:start;margin-top:24px">
+          <div>
+            <p style="font-size:15.5px;line-height:1.75;margin:0;color:#282520;max-width:60ch">Every dial is shared, and either of you may push the ball. Change the width, the height, or the duality number — which has to share no factor with the width, or the two views stop being views of one game. Then switch a single move on in one palette and watch a different move light up in the other: that is the duality, with the game taken away from it.</p>
+            <ul style="list-style:none;margin:22px 0 0;padding:0;display:grid;gap:8px;max-width:52ch">
+              <li style="padding:10px 14px;background:#faf8f3;border-left:4px solid #c8963e;font-size:14px;line-height:1.5">One across for you is <strong>four across</strong> for them.</li>
+              <li style="padding:10px 14px;background:#faf8f3;border-left:4px solid #c8963e;font-size:14px;line-height:1.5">A row is a row for both of you — that is why you can agree who won.</li>
+              <li style="padding:10px 14px;background:#faf8f3;border-left:4px solid #c8963e;font-size:14px;line-height:1.5">Set the duality to a factor of the width and the whole thing collapses.</li>
+            </ul>
+          </div>
+          <div style="background:#eae4d7;border:1px solid #cfc8ba;padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">The dials</div>
+            <label style="font-size:13.5px;color:#3d3931;display:flex;align-items:center;justify-content:space-between;gap:10px">Width
+              <input value="11" style="font:inherit;font-size:14px;width:4.5rem;padding:0.3rem 0.5rem;border:1px solid #cfc8ba;background:#faf8f3;color:#191817">
+            </label>
+            <label style="font-size:13.5px;color:#3d3931;display:flex;align-items:center;justify-content:space-between;gap:10px">Height
+              <input value="13" style="font:inherit;font-size:14px;width:4.5rem;padding:0.3rem 0.5rem;border:1px solid #cfc8ba;background:#faf8f3;color:#191817">
+            </label>
+            <label style="font-size:13.5px;color:#3d3931;display:flex;align-items:center;justify-content:space-between;gap:10px">Duality number
+              <input value="4" style="font:inherit;font-size:14px;width:4.5rem;padding:0.3rem 0.5rem;border:1px solid #c8963e;background:#f7efd0;color:#191817">
+            </label>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.6;color:#6f6a60;border-top:1px solid #cfc8ba;padding-top:10px">4 × 3 = 12 ≡ 1 (mod 11) — one player's three across is the other's four.</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <button type="button" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:#14452f;color:#f3efe6;cursor:pointer;white-space:nowrap;font-size:13px;padding:0.4rem 0.8rem">Ball back to mid-field</button>
+              <button type="button" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #cfc8ba;background:transparent;color:#4a463f;cursor:pointer;white-space:nowrap;font-size:13px;padding:0.4rem 0.8rem">Restore published settings</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:28px">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #191817;padding-bottom:6px">
+              <span style="font-family:Spectral,Georgia,serif;font-size:18px;white-space:nowrap">Soccer field</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">Player 1 · Soccer</span>
+            </div>
+            <dc-import name="DualityBoard" cells="{{ sandSoccer.cells }}" ball-cx="{{ sandSoccer.ballCx }}" ball-cy="{{ sandSoccer.ballCy }}" ball-src="{{ sandSoccer.ballSrc }}" spot-bg="{{ sandSoccer.spotBg }}" ball-w="{{ sandSoccer.ballW }}" ball-h="{{ sandSoccer.ballH }}" net-far-src="{{ sandSoccer.netFarSrc }}" net-near-src="{{ sandSoccer.netNearSrc }}" net-far-cx="{{ sandSoccer.netFarCx }}" net-far-cy="{{ sandSoccer.netFarCy }}" net-top-z="{{ sandSoccer.netTopZ }}" net-near-cx="{{ sandSoccer.netNearCx }}" net-near-cy="{{ sandSoccer.netNearCy }}" net-bot-z="{{ sandSoccer.netBotZ }}" surface-w="{{ sandSoccer.surfaceW }}" surface-h="{{ sandSoccer.surfaceH }}" frame-w="383" frame-h="232" board-transform="scaleX(0.576) scaleY(0.288)" hint-size="383px,232px"></dc-import>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#6f6a60;text-align:center;margin:6px 0 8px">the moves, switchable</div>
+            <div style="display:grid;grid-template-columns:repeat(11,22px);gap:2px;justify-content:center">
+              <sc-for list="{{ palette0.cells }}" as="p" hint-placeholder-count="0">
+                <span style="width:22px;height:22px;display:block;background:{{ p.bg }};border:{{ p.border }}"></span>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #191817;padding-bottom:6px">
+              <span style="font-family:Spectral,Georgia,serif;font-size:18px;white-space:nowrap">Hockey rink</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">Player 2 · Hockey</span>
+            </div>
+            <dc-import name="DualityBoard" cells="{{ sandHockey.cells }}" ball-cx="{{ sandHockey.ballCx }}" ball-cy="{{ sandHockey.ballCy }}" ball-src="{{ sandHockey.ballSrc }}" spot-bg="{{ sandHockey.spotBg }}" ball-w="{{ sandHockey.ballW }}" ball-h="{{ sandHockey.ballH }}" net-far-src="{{ sandHockey.netFarSrc }}" net-near-src="{{ sandHockey.netNearSrc }}" net-far-cx="{{ sandHockey.netFarCx }}" net-far-cy="{{ sandHockey.netFarCy }}" net-top-z="{{ sandHockey.netTopZ }}" net-near-cx="{{ sandHockey.netNearCx }}" net-near-cy="{{ sandHockey.netNearCy }}" net-bot-z="{{ sandHockey.netBotZ }}" surface-w="{{ sandHockey.surfaceW }}" surface-h="{{ sandHockey.surfaceH }}" frame-w="383" frame-h="232" board-transform="scaleX(0.576) scaleY(0.288)" hint-size="383px,232px"></dc-import>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#6f6a60;text-align:center;margin:6px 0 8px">the moves, switchable</div>
+            <div style="display:grid;grid-template-columns:repeat(11,22px);gap:2px;justify-content:center">
+              <sc-for list="{{ palette1.cells }}" as="p" hint-placeholder-count="0">
+                <span style="width:22px;height:22px;display:block;background:{{ p.bg }};border:{{ p.border }}"></span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:20px;padding-top:14px;border-top:1px solid #d8d2c6;font-size:12.5px;color:#6f6a60">
+          <span style="display:flex;align-items:center;gap:7px;white-space:nowrap"><span style="width:14px;height:14px;background:#f7efd0;border:2px solid #c8963e;display:inline-block"></span> a move that is switched on</span>
+          <span style="display:flex;align-items:center;gap:7px;white-space:nowrap"><span style="width:14px;height:14px;border:1px solid #191817;display:inline-block"></span> where the ball stands</span>
+          <span style="white-space:nowrap">both palettes hold the same twenty moves — read differently</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:44px;display:flex;flex-direction:column;gap:30px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#191817">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:840px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6f6a60">Turn 5 — the game page, in three states</div>
+    <div style="font-family:Spectral,Georgia,serif;font-size:30px;font-weight:500">Pairing, playing, and the reveal</div>
+    <div style="font-size:14px;line-height:1.6;color:#4a463f;max-width:74ch">One page, three states, same chrome as <a href="#4a">4a</a> and <a href="#4b">4b</a>. The room panel is loud while you are waiting and quiet once you are playing; the reveal keeps the replay but says the punchline in two columns instead of two paragraphs.</div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+
+    <div id="5a" style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">5a — waiting for your friend</div>
+      <div data-screen-label="5a Pairing" style="width:1060px;background:#f3efe6;border:1px solid #cfc8ba">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 44px;border-bottom:1px solid #d8d2c6;background:#eae4d7">
+          <a href="#4a" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap">← Soccer Hockey</a>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">Room GreenField · pairing</span>
+        </div>
+        <div style="padding:38px 44px 44px;display:grid;grid-template-columns:1fr 360px;gap:40px;align-items:start">
+          <div>
+            <h1 style="font-family:Spectral,Georgia,serif;font-size:40px;font-weight:500;margin:0;line-height:1.1">You are in room GreenField</h1>
+            <p style="font-size:16px;line-height:1.7;margin:16px 0 0;color:#282520;max-width:56ch">Send your friend the link. The moment they arrive the board wakes up and one of you goes first — you will not be told which sport the other one is playing.</p>
+            <div style="border-left:3px solid #a13a2a;padding:2px 0 2px 16px;margin:24px 0 0">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a13a2a;margin-bottom:6px">From here on</div>
+              <p style="font-size:15px;line-height:1.7;margin:0;max-width:52ch;color:#282520">Stop talking. Mute the call, don't look at each other's screen, and play your own board to the end. Then call each other back.</p>
+            </div>
+            <div style="opacity:0.42;margin-top:26px;filter:saturate(0.65)">
+              <dc-import name="DualityBoard" cells="{{ gameStart.cells }}" ball-cx="{{ gameStart.ballCx }}" ball-cy="{{ gameStart.ballCy }}" ball-src="{{ gameStart.ballSrc }}" spot-bg="{{ gameStart.spotBg }}" ball-w="{{ gameStart.ballW }}" ball-h="{{ gameStart.ballH }}" net-far-src="{{ gameStart.netFarSrc }}" net-near-src="{{ gameStart.netNearSrc }}" net-far-cx="{{ gameStart.netFarCx }}" net-far-cy="{{ gameStart.netFarCy }}" net-top-z="{{ gameStart.netTopZ }}" net-near-cx="{{ gameStart.netNearCx }}" net-near-cy="{{ gameStart.netNearCy }}" net-bot-z="{{ gameStart.netBotZ }}" surface-w="{{ gameStart.surfaceW }}" surface-h="{{ gameStart.surfaceH }}" frame-w="441" frame-h="266" board-transform="scaleX(0.664) scaleY(0.332)" hint-size="441px,266px"></dc-import>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;text-align:center;margin-top:-6px">your pitch, asleep until they arrive</div>
+          </div>
+          <aside style="background:#eae4d7;border:1px solid #cfc8ba;padding:22px 24px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="width:8px;height:8px;border-radius:50%;background:#c8963e;display:inline-block"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">You · waiting</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+              <span style="width:8px;height:8px;border-radius:50%;border:1px solid #a89b83;display:inline-block"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a89b83;white-space:nowrap">Your friend · not here yet</span>
+            </div>
+            <button type="button" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:#14452f;color:#f3efe6;cursor:pointer;white-space:nowrap;width:100%;margin-top:18px">Copy the invite link</button>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:#6f6a60;margin-top:16px">or join by name</div>
+            <span style="display:flex;gap:8px;margin-top:6px">
+              <input placeholder="GreenField" style="flex:1;min-width:0;font:inherit;font-size:14px;padding:0.45rem 0.6rem;border:1px solid #cfc8ba;background:#faf8f3;color:#191817">
+              <button type="button" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:transparent;color:#14452f;cursor:pointer;white-space:nowrap;font-size:13px;padding:0.45rem 0.9rem">Join</button>
+            </span>
+            <p style="font-size:13px;line-height:1.6;color:#6f6a60;margin:16px 0 0;border-top:1px solid #cfc8ba;padding-top:14px">Two devices, two screens. Side by side is fine for the tutorial; not for this.</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div id="5b" style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">5b — the live game</div>
+      <div data-screen-label="5b Live game" style="width:1060px;background:#f3efe6;border:1px solid #cfc8ba">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 44px;border-bottom:1px solid #d8d2c6;background:#eae4d7">
+          <a href="#4a" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap">← Soccer Hockey</a>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">Room GreenField · playing</span>
+        </div>
+        <div style="padding:30px 44px 40px">
+          <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-bottom:14px;border-bottom:2px solid #191817">
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">Your game</div>
+              <h1 style="font-family:Spectral,Georgia,serif;font-size:38px;font-weight:500;margin:2px 0 0">Soccer</h1>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#6f6a60;white-space:nowrap;padding-bottom:6px">
+              <span style="width:7px;height:7px;border-radius:50%;background:#14452f;display:inline-block"></span>
+              opponent here, moving about
+            </div>
+          </header>
+
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-top:20px;border-bottom:1px solid #d8d2c6;padding-bottom:10px">
+            <div style="font-family:Spectral,Georgia,serif;font-size:22px;font-weight:500">Your move — heading for the top right.</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">move 7</div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;margin-top:14px;padding-right:8px">your goal ↗</div>
+          <div style="background:radial-gradient(120% 90% at 50% 45%,rgba(20,69,47,0.10) 0%,rgba(20,69,47,0) 70%)">
+            <dc-import name="DualityBoard" cells="{{ gameLive.cells }}" ball-cx="{{ gameLive.ballCx }}" ball-cy="{{ gameLive.ballCy }}" ball-src="{{ gameLive.ballSrc }}" spot-bg="{{ gameLive.spotBg }}" ball-w="{{ gameLive.ballW }}" ball-h="{{ gameLive.ballH }}" net-far-src="{{ gameLive.netFarSrc }}" net-near-src="{{ gameLive.netNearSrc }}" net-far-cx="{{ gameLive.netFarCx }}" net-far-cy="{{ gameLive.netFarCy }}" net-top-z="{{ gameLive.netTopZ }}" net-near-cx="{{ gameLive.netNearCx }}" net-near-cy="{{ gameLive.netNearCy }}" net-bot-z="{{ gameLive.netBotZ }}" surface-w="{{ gameLive.surfaceW }}" surface-h="{{ gameLive.surfaceH }}" frame-w="531" frame-h="318" board-transform="scaleX(0.8) scaleY(0.4)" hint-size="531px,318px"></dc-import>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;padding-left:8px">↙ their goal</div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:16px;padding-top:14px;border-top:1px solid #d8d2c6;font-size:12.5px;color:#6f6a60">
+            <span style="display:flex;align-items:center;gap:7px;white-space:nowrap"><span style="width:14px;height:14px;background:#f7efd0;border:2px solid #c8963e;display:inline-block"></span> where you may kick</span>
+            <span style="display:flex;align-items:center;gap:7px;white-space:nowrap"><span style="width:14px;height:14px;display:grid;place-items:center;color:rgba(25,24,23,0.55)">✕</span> spent for good</span>
+            <span style="display:flex;align-items:center;gap:7px;white-space:nowrap"><span style="width:14px;height:14px;display:grid;place-items:center;color:#a97d2c">•</span> can score next turn</span>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:22px;padding-top:14px;border-top:1px solid #d8d2c6">
+            <span style="font-size:13px;color:#6f6a60">Room GreenField · both of you here · no talking until it is over</span>
+            <button type="button" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:transparent;color:#14452f;cursor:pointer;white-space:nowrap;font-size:13px;padding:0.4rem 0.9rem">Copy the invite link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="5c" style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">5c — the reveal</div>
+      <div data-screen-label="5c Reveal" style="width:1060px;background:#f3efe6;border:1px solid #cfc8ba">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 44px;border-bottom:1px solid #d8d2c6;background:#eae4d7">
+          <a href="#4a" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap">← Soccer Hockey</a>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">Room GreenField · game over</span>
+        </div>
+        <div style="padding:34px 44px 44px">
+          <div style="max-width:62ch">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#c8963e">The reveal</div>
+            <h1 style="font-family:Spectral,Georgia,serif;font-size:36px;font-weight:500;margin:6px 0 12px;line-height:1.15">It was both Soccer and Hockey, at once</h1>
+            <p style="font-size:15.5px;line-height:1.7;margin:0;color:#3d3931">{{ revealStatus }} Both boards below show the game you just played. You thought you were playing Soccer; your friend thought they were playing Hockey — and this is no palette swap. Step the replay through and watch the two accounts refuse to line up.</p>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:26px">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #191817;padding-bottom:6px">
+                <span style="font-family:Spectral,Georgia,serif;font-size:18px;white-space:nowrap">Your board</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">Soccer</span>
+              </div>
+              <dc-import name="DualityBoard" cells="{{ revealYou.cells }}" ball-cx="{{ revealYou.ballCx }}" ball-cy="{{ revealYou.ballCy }}" ball-src="{{ revealYou.ballSrc }}" spot-bg="{{ revealYou.spotBg }}" ball-w="{{ revealYou.ballW }}" ball-h="{{ revealYou.ballH }}" net-far-src="{{ revealYou.netFarSrc }}" net-near-src="{{ revealYou.netNearSrc }}" net-far-cx="{{ revealYou.netFarCx }}" net-far-cy="{{ revealYou.netFarCy }}" net-top-z="{{ revealYou.netTopZ }}" net-near-cx="{{ revealYou.netNearCx }}" net-near-cy="{{ revealYou.netNearCy }}" net-bot-z="{{ revealYou.netBotZ }}" surface-w="{{ revealYou.surfaceW }}" surface-h="{{ revealYou.surfaceH }}" frame-w="383" frame-h="232" board-transform="scaleX(0.576) scaleY(0.288)" hint-size="383px,232px"></dc-import>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #191817;padding-bottom:6px">
+                <span style="font-family:Spectral,Georgia,serif;font-size:18px;white-space:nowrap">Their board</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">Hockey</span>
+              </div>
+              <dc-import name="DualityBoard" cells="{{ revealThem.cells }}" ball-cx="{{ revealThem.ballCx }}" ball-cy="{{ revealThem.ballCy }}" ball-src="{{ revealThem.ballSrc }}" spot-bg="{{ revealThem.spotBg }}" ball-w="{{ revealThem.ballW }}" ball-h="{{ revealThem.ballH }}" net-far-src="{{ revealThem.netFarSrc }}" net-near-src="{{ revealThem.netNearSrc }}" net-far-cx="{{ revealThem.netFarCx }}" net-far-cy="{{ revealThem.netFarCy }}" net-top-z="{{ revealThem.netTopZ }}" net-near-cx="{{ revealThem.netNearCx }}" net-near-cy="{{ revealThem.netNearCy }}" net-bot-z="{{ revealThem.netBotZ }}" surface-w="{{ revealThem.surfaceW }}" surface-h="{{ revealThem.surfaceH }}" frame-w="383" frame-h="232" board-transform="scaleX(0.576) scaleY(0.288)" hint-size="383px,232px"></dc-import>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px">
+            <button type="button" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:transparent;color:#14452f;cursor:pointer;white-space:nowrap;font-size:13px;padding:0.4rem 0.7rem">◀</button>
+            <button type="button" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:#14452f;color:#f3efe6;cursor:pointer;white-space:nowrap;padding:0.45rem 1.4rem">Play the game back</button>
+            <button type="button" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:transparent;color:#14452f;cursor:pointer;white-space:nowrap;font-size:13px;padding:0.4rem 0.7rem">▶</button>
+            <input type="range" min="0" max="100" value="100" style="flex:1 1 12rem;max-width:22rem;accent-color:#14452f">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6f6a60;white-space:nowrap">move {{ moveCount }} / {{ moveCount }}</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px;padding-top:20px;border-top:2px solid #191817">
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#14452f;margin-bottom:8px">You both agree about</div>
+              <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.7;color:#3d3931">
+                <li>which row the ball stands in</li>
+                <li>where the two goals are</li>
+                <li>who won</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#a13a2a;margin-bottom:8px">You disagree about</div>
+              <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.7;color:#3d3931">
+                <li>which column it stands in</li>
+                <li>the shape of the trail of ✕'s</li>
+                <li>whether that pass went three across or four</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;margin-top:28px;padding-top:20px;border-top:1px solid #d8d2c6;align-items:start">
+            <p style="font-size:14.5px;line-height:1.75;margin:0;color:#3d3931;max-width:62ch">Now call each other back. What is common to both accounts, such that you could agree on anything at all — and what kind of transformation carries one into the other? Dual descriptions of one structure are ordinary in physics now: AdS/CFT, T-duality. Whether space and time belong to the world or to the way we organise it is the question underneath.</p>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <a href="#" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:#14452f;color:#f3efe6;cursor:pointer;white-space:nowrap;text-align:center;text-decoration:none;display:block">Open the sandbox →</a>
+              <a href="#" style="font:inherit;font-size:14px;padding:0.55rem 1.1rem;border:1px solid #14452f;background:transparent;color:#14452f;cursor:pointer;white-space:nowrap;text-align:center;text-decoration:none;display:block">Play again, sports swapped</a>
+              <a href="#" style="font-size:13.5px;text-align:center">Read the philosophy →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="padding:44px;display:flex;flex-direction:column;gap:30px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#191817">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:840px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6f6a60">Turn 4 — the two pages, resolved</div>
+    <div style="font-family:Spectral,Georgia,serif;font-size:30px;font-weight:500">The landing page and the practice court, in Chalk &amp; Turf</div>
+    <div style="font-size:14px;line-height:1.6;color:#4a463f;max-width:74ch">Carrying on from <a href="#2a-landing">2a</a>: same structure, now with the site's own type and palette rather than the theme's, the new board art in place, and the copy tightened. Only the masthead still points back to danielgrimmer.github.io.</div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+
+    <div id="4a" style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">4a — the landing page · /soccer-hockey/</div>
+      <div data-screen-label="4a Landing" style="width:1060px;background:#f3efe6;border:1px solid #cfc8ba">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 56px;border-bottom:1px solid #d8d2c6;background:#eae4d7">
+          <a href="#" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap">← danielgrimmer.github.io</a>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">Duality Games · one of two</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 330px;gap:36px;align-items:center;padding:44px 56px 30px">
+          <div>
+            <h1 style="font-family:Spectral,Georgia,serif;font-size:52px;font-weight:500;line-height:1.04;margin:0;max-width:18ch;letter-spacing:-0.015em">The Soccer-Hockey Duality Game</h1>
+            <p style="font-family:Spectral,Georgia,serif;font-size:20px;font-style:italic;line-height:1.5;color:#4a463f;margin:16px 0 0;max-width:40ch">Soccer and Hockey are very different games… or aren't they?</p>
+          </div>
+          <div>
+            <div style="background:radial-gradient(120% 90% at 50% 45%,rgba(20,69,47,0.10) 0%,rgba(20,69,47,0) 72%)">
+              <dc-import name="DualityBoard" cells="{{ hero.cells }}" ball-cx="{{ hero.ballCx }}" ball-cy="{{ hero.ballCy }}" ball-src="{{ hero.ballSrc }}" spot-bg="{{ hero.spotBg }}" ball-w="{{ hero.ballW }}" ball-h="{{ hero.ballH }}" net-far-src="{{ hero.netFarSrc }}" net-near-src="{{ hero.netNearSrc }}" net-far-cx="{{ hero.netFarCx }}" net-far-cy="{{ hero.netFarCy }}" net-top-z="{{ hero.netTopZ }}" net-near-cx="{{ hero.netNearCx }}" net-near-cy="{{ hero.netNearCy }}" net-bot-z="{{ hero.netBotZ }}" surface-w="{{ hero.surfaceW }}" surface-h="{{ hero.surfaceH }}" frame-w="330" frame-h="200" board-transform="scaleX(0.496) scaleY(0.248)" hint-size="330px,200px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:44px;padding:6px 56px 52px;align-items:start">
+          <div>
+            <p style="font-size:16px;line-height:1.75;margin:0;color:#282520;max-width:62ch">This game is played with a friend, and there is a mystery at its heart: two flatly contradictory ways of seeing one game, both of them right. You are meant to solve it together, afterwards.</p>
+
+            <div style="border-left:3px solid #a13a2a;padding:2px 0 2px 16px;margin:24px 0 28px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a13a2a;margin-bottom:6px">The firewall</div>
+              <p style="font-size:15.5px;line-height:1.7;margin:0;max-width:56ch;color:#282520">Separate devices. No peeking at each other's screen. No talking — mute the call. For one game, each of you attends only to your own board. Break the firewall and there is nothing left to reveal.</p>
+            </div>
+
+            <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px">
+              <li style="display:grid;grid-template-columns:44px 1fr auto;gap:16px;align-items:center;padding:16px 18px;background:#faf8f3;border:1px solid #ddd6c7">
+                <span style="font-family:Spectral,Georgia,serif;font-size:30px;color:#c8963e;line-height:1">1</span>
+                <span>
+                  <span style="font-family:Spectral,Georgia,serif;font-size:19px;display:block">Learn the controls on the practice court</span>
+                  <span style="font-size:13.5px;color:#6f6a60">Basketball, duality switched off. Fine side by side, on one device.</span>
+                </span>
+                <a href="#4b" style="font-size:14px;padding:0.5rem 1rem;border:1px solid #14452f;background:#14452f;color:#f3efe6;text-decoration:none;white-space:nowrap">Tutorial</a>
+              </li>
+              <li style="display:grid;grid-template-columns:44px 1fr auto;gap:16px;align-items:center;padding:16px 18px;background:#faf8f3;border:1px solid #ddd6c7">
+                <span style="font-family:Spectral,Georgia,serif;font-size:30px;color:#c8963e;line-height:1">2</span>
+                <span>
+                  <span style="font-family:Spectral,Georgia,serif;font-size:19px;display:block">Split up, and play the real game</span>
+                  <span style="font-size:13.5px;color:#6f6a60">One of you gets soccer, the other hockey. You are paired into a room automatically.</span>
+                </span>
+                <a href="#" style="font-size:14px;padding:0.5rem 1rem;border:1px solid #14452f;background:#14452f;color:#f3efe6;text-decoration:none;white-space:nowrap">Play</a>
+              </li>
+              <li style="display:grid;grid-template-columns:44px 1fr auto;gap:16px;align-items:center;padding:16px 18px;background:#f0ece1;border:1px dashed #cfc8ba">
+                <span style="font-family:Spectral,Georgia,serif;font-size:30px;color:#a89b83;line-height:1">3</span>
+                <span>
+                  <span style="font-family:Spectral,Georgia,serif;font-size:19px;display:block;color:#4a463f">Look under the hood, together</span>
+                  <span style="font-size:13.5px;color:#6f6a60">The sandbox opens every dial. Worth nothing until the first game is over.</span>
+                </span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">after game 1</span>
+              </li>
+            </ol>
+
+            <p style="font-size:13.5px;line-height:1.7;color:#6f6a60;margin:22px 0 0;max-width:62ch">Open this page on both devices. Once you are in the same room the two boards keep themselves in step; there is nothing to set up.</p>
+          </div>
+
+          <aside style="background:#eae4d7;border:1px solid #cfc8ba;padding:20px 22px;position:relative;top:2px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">You will need</div>
+            <ul style="margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.8;color:#3d3931">
+              <li>a friend</li>
+              <li>two devices, two screens</li>
+              <li>about twenty minutes</li>
+              <li>a way to talk <em>afterwards</em></li>
+            </ul>
+            <div style="border-top:1px solid #cfc8ba;margin-top:18px;padding-top:16px;font-size:13.5px;line-height:1.65;color:#4a463f">Behind it: the AdS/CFT correspondence, T-duality, and the question of which description tells us what the world is really like.</div>
+            <a href="#" style="display:inline-block;margin-top:12px;font-size:13.5px">Read the philosophy →</a>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div id="4b" style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60">4b — the Basketball tutorial</div>
+      <div data-screen-label="4b Tutorial" style="width:1060px;background:#f3efe6;border:1px solid #cfc8ba">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 44px;border-bottom:1px solid #d8d2c6;background:#eae4d7">
+          <a href="#4a" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap">← Soccer Hockey</a>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">Practice court · duality off</span>
+        </div>
+
+        <div style="padding:34px 44px 44px">
+          <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-bottom:16px;border-bottom:2px solid #191817">
+            <div>
+              <h1 style="font-family:Spectral,Georgia,serif;font-size:38px;font-weight:500;margin:0">Basketball</h1>
+              <div style="font-size:14px;color:#6f6a60;margin-top:4px">Learn the controls here. Play both sides yourself, or take turns with whoever is next to you.</div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;white-space:nowrap;padding-bottom:4px">no opponent needed</div>
+          </header>
+
+          <details style="margin-top:18px;border:1px solid #ddd6c7;background:#faf8f3;padding:12px 16px">
+            <summary style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6f6a60;cursor:pointer">The rules, in one place</summary>
+            <p style="font-size:14px;line-height:1.7;color:#3d3931;margin:10px 0 0;max-width:78ch">The ball is the orange one. Gold squares are where it may go. A ✕ marks a square already used, closed for the rest of the game. The dots in front of each goal are the only squares that can reach it next move. The board wraps left to right. Player 1 scores at the top right, Player 2 at the bottom left. Nowhere legal to go is a draw.</p>
+          </details>
+
+          <div style="display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:start;margin-top:26px">
+            <aside style="border-left:2px solid #c8963e;padding-left:16px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6f6a60">Step 3 of 5</span>
+                <span style="display:flex;gap:4px">
+                  <span style="width:16px;height:3px;background:#14452f;display:inline-block"></span>
+                  <span style="width:16px;height:3px;background:#14452f;display:inline-block"></span>
+                  <span style="width:16px;height:3px;background:#c8963e;display:inline-block"></span>
+                  <span style="width:16px;height:3px;background:#ddd6c7;display:inline-block"></span>
+                  <span style="width:16px;height:3px;background:#ddd6c7;display:inline-block"></span>
+                </span>
+              </div>
+              <h2 style="font-family:Spectral,Georgia,serif;font-size:23px;font-weight:500;line-height:1.25;margin:0 0 10px">It's Pac-Man's world, and we're just living in it</h2>
+              <p style="font-size:14.5px;line-height:1.7;margin:0 0 12px;color:#3d3931">The left-most and right-most columns are the same edge. Walk the ball sideways until the star crosses the seam, then step across it: the board is a cylinder, and what leaves one side arrives on the other.</p>
+              <p style="font-family:Spectral,Georgia,serif;font-style:italic;font-size:15px;line-height:1.6;margin:0 0 14px;color:#14452f">Take the ball off the left or right edge and see where it comes back.</p>
+              <button type="button" style="font:inherit;font-size:13px;background:none;border:0;padding:0;color:#6f6a60;text-decoration:underline;cursor:pointer">Skip this bit</button>
+            </aside>
+
+            <div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid #d8d2c6;padding-bottom:10px">
+                <div style="font-family:Spectral,Georgia,serif;font-size:20px;font-weight:500">Player 2 to move, heading for the bottom left.</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;white-space:nowrap">move 5</div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;margin-top:14px;padding-right:6px">your goal ↗</div>
+              <div style="background:radial-gradient(120% 90% at 50% 45%,rgba(138,90,52,0.10) 0%,rgba(138,90,52,0) 70%)">
+                <dc-import name="DualityBoard" cells="{{ tutBoard.cells }}" ball-cx="{{ tutBoard.ballCx }}" ball-cy="{{ tutBoard.ballCy }}" ball-src="{{ tutBoard.ballSrc }}" spot-bg="{{ tutBoard.spotBg }}" ball-w="{{ tutBoard.ballW }}" ball-h="{{ tutBoard.ballH }}" net-far-src="{{ tutBoard.netFarSrc }}" net-near-src="{{ tutBoard.netNearSrc }}" net-far-cx="{{ tutBoard.netFarCx }}" net-far-cy="{{ tutBoard.netFarCy }}" net-top-z="{{ tutBoard.netTopZ }}" net-near-cx="{{ tutBoard.netNearCx }}" net-near-cy="{{ tutBoard.netNearCy }}" net-bot-z="{{ tutBoard.netBotZ }}" surface-w="{{ tutBoard.surfaceW }}" surface-h="{{ tutBoard.surfaceH }}" frame-w="441" frame-h="266" board-transform="scaleX(0.8) scaleY(0.4)" hint-size="441px,266px"></dc-import>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6f6a60;padding-left:6px">↙ their goal</div>
+              <div style="display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:10px;font-size:12.5px;color:#6f6a60">
+                <span style="display:flex;align-items:center;gap:7px;white-space:nowrap"><span style="width:14px;height:14px;background:#f7efd0;border:2px solid #c8963e;display:inline-block"></span> where it may go</span>
+                <span style="display:flex;align-items:center;gap:7px;white-space:nowrap"><span style="width:14px;height:14px;display:grid;place-items:center;color:rgba(25,24,23,0.55)">✕</span> spent for good</span>
+                <span style="display:flex;align-items:center;gap:7px;white-space:nowrap"><span style="width:14px;height:14px;display:grid;place-items:center;color:#a97d2c">•</span> can score next turn</span>
+              </div>
+              <div style="display:flex;gap:10px;justify-content:center;margin-top:18px">
+                <button type="button" style="font:inherit;font-size:14px;padding:0.5rem 1rem;border:1px solid #14452f;background:transparent;color:#14452f;cursor:pointer;white-space:nowrap">Take that back</button>
+                <button type="button" style="font:inherit;font-size:14px;padding:0.5rem 1rem;border:1px solid #14452f;background:transparent;color:#14452f;cursor:pointer;white-space:nowrap">Start again</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const W = 11, H = 13, DUALITY = 4, TILE = 40, HD = TILE / 1.41;
+const GOAL = Math.floor(W / 2);
+const mod = (n, m) => ((n % m) + m) % m;
+const key = (r, c) => r + ',' + c;
+const MOVES = [[1,-3],[1,-1],[1,0],[1,1],[1,3],[0,-3],[0,-1],[0,1],[0,3],[-1,-3],[-1,-1],[-1,0],[-1,1],[-1,3],[2,-2],[3,0],[2,2],[-2,-2],[-3,0],[-2,2]];
+const playable = (r, c) => r >= 0 && r < H && (!(r === 0 || r === H - 1) || mod(c, W) === GOAL);
+
+function targets(r, c) {
+  const out = [], seen = new Set();
+  for (const [dr, dc] of MOVES) {
+    const nr = r + dr, nc = mod(c + dc, W);
+    if (!playable(nr, nc) || seen.has(key(nr, nc))) continue;
+    seen.add(key(nr, nc));
+    out.push({ row: nr, col: nc });
+  }
+  return out;
+}
+const legal = (g) => targets(g.row, g.col).filter((s) => !g.burned.has(key(s.row, s.col)));
+const blocked = (g) => targets(g.row, g.col).filter((s) => g.burned.has(key(s.row, s.col)));
+function approaches(burned) {
+  const out = new Map();
+  for (const gr of [0, H - 1]) {
+    for (const [dr, dc] of MOVES) {
+      const nr = gr - dr, nc = mod(GOAL - dc, W);
+      if (!playable(nr, nc) || burned.has(key(nr, nc))) continue;
+      out.set(key(nr, nc), { row: nr, col: nc });
+    }
+  }
+  return [...out.values()];
+}
+const initial = () => ({ row: Math.floor(H / 2), col: GOAL, visited: [], burned: new Set(), turn: 0, status: 'playing', winner: null });
+function apply(g, sq) {
+  const visited = [...g.visited, { row: g.row, col: g.col }];
+  const burned = new Set(g.burned); burned.add(key(g.row, g.col));
+  const next = { row: sq.row, col: mod(sq.col, W), visited, burned };
+  if (next.row === 0) return { ...next, turn: g.turn, status: 'won', winner: 0 };
+  if (next.row === H - 1) return { ...next, turn: g.turn, status: 'won', winner: 1 };
+  if (legal(next).length === 0) return { ...next, turn: g.turn, status: 'tie', winner: null };
+  return { ...next, turn: g.turn === 0 ? 1 : 0, status: 'playing', winner: null };
+}
+function lens(multiplier) {
+  const offset = mod(GOAL - multiplier * GOAL, W);
+  return (c) => mod(multiplier * c + offset, W);
+}
+const LENS = [lens(1), lens(DUALITY)];
+
+function play() {
+  const frames = [initial()];
+  let g = frames[0], i = 0;
+  while (g.status === 'playing' && frames.length < 40) {
+    const opts = legal(g);
+    let pick = frames.length > 12 ? opts.find((s) => s.row === 0 || s.row === H - 1) : null;
+    if (!pick) {
+      const safe = opts.filter((s) => s.row !== 0 && s.row !== H - 1);
+      const list = safe.length ? safe : opts;
+      pick = list[(i * 7 + 3) % list.length];
+    }
+    g = apply(g, pick); frames.push(g); i++;
+  }
+  return frames;
+}
+
+/* The two directions. Marking vocabulary is identical; only surface differs. */
+const DIRS = {
+  chalk: {
+    sports: [
+      { tops: ['#7fb765', '#77ac5c'], sideL: '#6b4a2f', sideR: '#7d5636',
+        ball: 'radial-gradient(circle at 50% 50%,#1c1f24 0 18%,transparent 19%),radial-gradient(circle at 50% 4%,#1c1f24 0 13%,transparent 14%),radial-gradient(circle at 93% 35%,#1c1f24 0 13%,transparent 14%),radial-gradient(circle at 74% 94%,#1c1f24 0 13%,transparent 14%),radial-gradient(circle at 26% 94%,#1c1f24 0 13%,transparent 14%),radial-gradient(circle at 7% 35%,#1c1f24 0 13%,transparent 14%),radial-gradient(circle at 34% 30%,#ffffff 0%,#f4f4f4 48%,#8d949b 100%)' },
+      { tops: ['#e4f0f8', '#d9e9f3'], sideL: '#b3d3e4', sideR: '#a4c8dc',
+        ball: 'radial-gradient(circle at 34% 30%,#4a4f57 0%,#23262b 48%,#0c0d10 100%)' },
+    ],
+    faceBorder: '1px solid rgba(25,24,23,0.30)',
+    wall: '#232019', wallBorder: '1px solid #232019',
+    legalBg: '#f7efd0', legalBorder: '2px solid #c8963e', legalShadow: 'none',
+    blockedBg: '#ece3c9',
+    xColor: 'rgba(25,24,23,0.45)', dotColor: '#a97d2c',
+    ballShadow: '0 0 0 1px rgba(25,24,23,0.35),0 2px 5px rgba(25,24,23,0.30)',
+  },
+  flood: {
+    sports: [
+      { tops: ['#356f42', '#2c6138'], sideL: '#16281c', sideR: '#1e3625',
+        ball: 'radial-gradient(circle at 50% 50%,#0f1216 0 18%,transparent 19%),radial-gradient(circle at 50% 4%,#0f1216 0 13%,transparent 14%),radial-gradient(circle at 93% 35%,#0f1216 0 13%,transparent 14%),radial-gradient(circle at 74% 94%,#0f1216 0 13%,transparent 14%),radial-gradient(circle at 26% 94%,#0f1216 0 13%,transparent 14%),radial-gradient(circle at 7% 35%,#0f1216 0 13%,transparent 14%),radial-gradient(circle at 34% 30%,#ffffff 0%,#eef1f4 48%,#98a1ab 100%)' },
+      { tops: ['#d9edf8', '#cce3f1'], sideL: '#5f8ba3', sideR: '#527c95',
+        ball: 'radial-gradient(circle at 34% 30%,#5b626c 0%,#23262b 48%,#08090b 100%)' },
+    ],
+    faceBorder: '1px solid rgba(0,0,0,0.42)',
+    wall: '#05070a', wallBorder: '1px solid #1b2230',
+    legalBg: '#ffe9a8', legalBorder: '2px solid #f5c451', legalShadow: '0 0 12px rgba(245,196,81,0.7)',
+    blockedBg: '#8d7c4d',
+    xColor: 'rgba(0,0,0,0.55)', dotColor: '#f5c451',
+    ballShadow: '0 0 0 1px rgba(0,0,0,0.6),0 2px 6px rgba(0,0,0,0.55),0 0 16px rgba(255,255,255,0.22)',
+  },
+};
+DIRS.flood.blockedBg = '#8d7c4d';
+
+const iso = (r, c) => ({ left: (c - r + (H - 1)) * HD, top: (c + r) * HD });
+/* A hairline halo in the face's own colour seals the anti-aliasing seams
+   between the three faces of a cube without changing its size. */
+const seal = (colour, extra) => (extra && extra !== 'none' ? extra + ',' : '') + '0 0 0 1.2px ' + colour;
+
+function boardFor(seat, g, dirName, interactive) {
+  const dir = DIRS[dirName];
+  const sport = dir.sports[seat];
+  const toView = LENS[seat];
+  const legalSet = new Set((g.status === 'playing' ? legal(g) : []).map((s) => key(s.row, toView(s.col))));
+  const blockedSet = new Set((g.status === 'playing' ? blocked(g) : []).map((s) => key(s.row, toView(s.col))));
+  const visitedSet = new Set(g.visited.map((s) => key(s.row, toView(s.col))));
+  const dotSet = new Set(approaches(g.burned).map((s) => key(s.row, toView(s.col))));
+  const ballKey = key(g.row, toView(g.col));
+
+  const cells = [];
+  for (let row = 0; row < H; row++) {
+    for (let col = 0; col < W; col++) {
+      const k = key(row, col), pos = iso(row, col);
+      const isWall = (row === 0 || row === H - 1) && col !== GOAL;
+      const isLegal = legalSet.has(k), isBlocked = blockedSet.has(k), lit = isLegal || isBlocked;
+      const isVisited = k !== ballKey && visitedSet.has(k);
+      let glyph = '', glyphColor = dir.xColor, glyphSize = '20px';
+      if (!isWall && k !== ballKey) {
+        if (isVisited) { glyph = '✕'; glyphSize = '17px'; }
+        else if (dotSet.has(k)) { glyph = '•'; glyphColor = dir.dotColor; }
+      }
+      cells.push({
+        left: pos.left.toFixed(2), top: pos.top.toFixed(2), z: row + col,
+        cursor: !isWall && isLegal && interactive ? 'pointer' : 'default',
+        topBg: isWall ? dir.wall : lit ? dir.legalBg : sport.tops[(row + col) % 2],
+        topBorder: isWall ? dir.wallBorder : lit ? dir.legalBorder : dir.faceBorder,
+        topShadow: seal(isWall ? dir.wall : lit ? dir.legalBg : sport.tops[(row + col) % 2], !isWall && lit ? dir.legalShadow : 'none'),
+        sideL: isWall ? dir.wall : sport.sideL,
+        sideR: isWall ? dir.wall : sport.sideR,
+        sideBorder: isWall ? dir.wallBorder : dir.faceBorder,
+        sideLShadow: seal(isWall ? dir.wall : sport.sideL),
+        sideRShadow: seal(isWall ? dir.wall : sport.sideR),
+        glyph, glyphColor, glyphSize,
+      });
+    }
+  }
+  const here = iso(g.row, toView(g.col));
+  const art = seat === 0 ? BALLS.soccer : BALLS.puck;
+  return {
+    cells,
+    ballCx: (here.left + TILE / 2).toFixed(2),
+    ballCy: (here.top + TILE / 2 - (ball.lift ?? 12)).toFixed(2),
+    ballSrc: art.src, ballW: art.w, ballH: art.h,
+  };
+}
+
+/* ------- turn 2: the same engine, parametrised, plus the refined surfaces ---- */
+
+const TUT_MOVES = [[2,-2],[3,0],[2,2],[1,-1],[1,0],[1,1],[0,-3],[0,-1],[0,1],[0,3],[-1,-1],[-1,0],[-1,1],[-2,-2],[-3,0],[-2,2]];
+const CFG = {
+  game: { W: 11, H: 13, dual: 4, moves: MOVES },
+  tut: { W: 9, H: 11, dual: 1, moves: TUT_MOVES },
+};
+const goalColOf = (cfg) => Math.floor(cfg.W / 2);
+const play2able = (cfg, r, c) => r >= 0 && r < cfg.H && (!(r === 0 || r === cfg.H - 1) || mod(c, cfg.W) === goalColOf(cfg));
+
+function targets2(cfg, r, c) {
+  const out = [], seen = new Set();
+  for (const [dr, dc] of cfg.moves) {
+    const nr = r + dr, nc = mod(c + dc, cfg.W);
+    if (!play2able(cfg, nr, nc) || seen.has(key(nr, nc))) continue;
+    seen.add(key(nr, nc));
+    out.push({ row: nr, col: nc });
+  }
+  return out;
+}
+const legal2 = (cfg, g) => targets2(cfg, g.row, g.col).filter((s) => !g.burned.has(key(s.row, s.col)));
+const blocked2 = (cfg, g) => targets2(cfg, g.row, g.col).filter((s) => g.burned.has(key(s.row, s.col)));
+function approaches2(cfg, burned) {
+  const out = new Map(), gc = goalColOf(cfg);
+  for (const gr of [0, cfg.H - 1]) {
+    for (const [dr, dc] of cfg.moves) {
+      const nr = gr - dr, nc = mod(gc - dc, cfg.W);
+      if (!play2able(cfg, nr, nc) || burned.has(key(nr, nc))) continue;
+      out.set(key(nr, nc), { row: nr, col: nc });
+    }
+  }
+  return [...out.values()];
+}
+const initial2 = (cfg) => ({ row: Math.floor(cfg.H / 2), col: goalColOf(cfg), visited: [], burned: new Set(), turn: 0, status: 'playing', winner: null });
+function apply2(cfg, g, sq) {
+  const visited = [...g.visited, { row: g.row, col: g.col }];
+  const burned = new Set(g.burned); burned.add(key(g.row, g.col));
+  const next = { row: sq.row, col: mod(sq.col, cfg.W), visited, burned };
+  if (next.row === 0) return { ...next, turn: g.turn, status: 'won', winner: 0 };
+  if (next.row === cfg.H - 1) return { ...next, turn: g.turn, status: 'won', winner: 1 };
+  if (legal2(cfg, next).length === 0) return { ...next, turn: g.turn, status: 'tie', winner: null };
+  return { ...next, turn: g.turn === 0 ? 1 : 0, status: 'playing', winner: null };
+}
+function lensOf(cfg, seat) {
+  const gc = goalColOf(cfg);
+  const m = seat === 0 ? 1 : cfg.dual;
+  const offset = mod(gc - m * gc, cfg.W);
+  return {
+    toView: (c) => mod(m * c + offset, cfg.W),
+    viewDelta: (dc) => { const v = mod(m * dc, cfg.W); return v > cfg.W / 2 ? v - cfg.W : v; },
+  };
+}
+function play2(cfg, stopAfter) {
+  const frames = [initial2(cfg)];
+  let g = frames[0], i = 0;
+  while (g.status === 'playing' && frames.length < 40) {
+    const opts = legal2(cfg, g);
+    let pick = frames.length > (stopAfter ?? 12) ? opts.find((s) => s.row === 0 || s.row === cfg.H - 1) : null;
+    if (!pick) {
+      const safe = opts.filter((s) => s.row !== 0 && s.row !== cfg.H - 1);
+      const list = safe.length ? safe : opts;
+      pick = list[(i * 7 + 3) % list.length];
+    }
+    g = apply2(cfg, g, pick); frames.push(g); i++;
+  }
+  return frames;
+}
+
+const BALLS = {
+  soccer: { src: 'assets/ball-soccer.png', w: 18, h: 18 },
+  puck: { src: 'assets/ball-puck.png', w: 22, h: 15, lift: 4 },
+  basketball: { src: 'assets/ball-basketball.png', w: 18, h: 18 },
+};
+
+const GOALS = {
+  cage: { far: 'assets/goal-far.png', near: 'assets/goal-near.png' },
+  hoop: { far: 'assets/hoop-far.png', near: 'assets/hoop-near.png' },
+};
+
+const SURFACES = {
+  chalk: {
+    soccer: { tops: ['#7fb765', '#77ac5c'], blocked: '#6fa456', sideL: '#6b4a2f', sideR: '#7d5636', ball: BALLS.soccer, dot: null, goal: GOALS.cage },
+    hockey: { tops: ['#e4f0f8', '#dbebf5'], blocked: '#cfe0eb', sideL: '#b3d3e4', sideR: '#a4c8dc', ball: BALLS.puck, dot: '#14181c', goal: GOALS.cage },
+    basketball: { tops: ['#dfbb85', '#dfbb85'], blocked: '#d0a86f', sideL: '#981717', sideR: '#f9c852', ball: BALLS.basketball, dot: null, goal: GOALS.hoop },
+    spot: 'transparent',
+  },
+  flood: {
+    soccer: { tops: ['#356f42', '#2c6138'], blocked: '#2a5b35', sideL: '#16281c', sideR: '#1e3625', ball: BALLS.soccer, dot: null, goal: GOALS.cage },
+    hockey: { tops: ['#d9edf8', '#cee5f2'], blocked: '#c4dcec', sideL: '#5f8ba3', sideR: '#527c95', ball: BALLS.puck, dot: '#14181c', goal: GOALS.cage },
+    basketball: { tops: ['#dfbb85', '#dfbb85'], blocked: '#d0a86f', sideL: '#981717', sideR: '#f9c852', ball: BALLS.basketball, dot: null, goal: GOALS.hoop },
+    spot: 'transparent',
+  },
+};
+
+function boardFor2(cfg, seat, sportKey, g, dirName, interactive, splitKey) {
+  const dir = DIRS[dirName], sk = SURFACES[dirName], surf = sk[sportKey];
+  /*
+   * Half a pitch and half a rink: the same board, laid in two materials, which
+   * is the whole claim the game makes. The seam is vertical on the page, which
+   * on an isometric board is a diagonal of the grid — so it is drawn from
+   * screen position, not from the grid. The cubes standing on the seam itself
+   * alternate, bottom-most one turf, so both kinds of edge are on show.
+   */
+  const other = splitKey ? sk[splitKey] : null;
+  const seamDiag = Math.round((cfg.W - cfg.H) / 2);
+  /* Parity is anchored to the lowest cube standing on the seam, so that one is
+     always turf whatever the board's proportions. */
+  const bottomSeamRow = Math.min(cfg.H - 1, cfg.W - 1 - seamDiag);
+  const surfaceAt = (row, col) => {
+    if (!other) return surf;
+    if (col - row === seamDiag) return (row - bottomSeamRow) % 2 === 0 ? surf : other;
+    return col - row < seamDiag ? surf : other;
+  };
+  const lens = lensOf(cfg, seat), gc = goalColOf(cfg);
+  const legalSet = new Set((g.status === 'playing' ? legal2(cfg, g) : []).map((s) => key(s.row, lens.toView(s.col))));
+  const blockedSet = new Set((g.status === 'playing' ? blocked2(cfg, g) : []).map((s) => key(s.row, lens.toView(s.col))));
+  const visitedSet = new Set(g.visited.map((s) => key(s.row, lens.toView(s.col))));
+  const dotSet = new Set(approaches2(cfg, g.burned).map((s) => key(s.row, lens.toView(s.col))));
+  const ballKey = key(g.row, lens.toView(g.col));
+  const iso2 = (r, c) => ({ left: (c - r + (cfg.H - 1)) * HD, top: (c + r) * HD });
+  const dotColour = surf.dot ?? dir.dotColor;
+
+  const cells = [];
+  for (let row = 0; row < cfg.H; row++) {
+    for (let col = 0; col < cfg.W; col++) {
+      const k = key(row, col), pos = iso2(row, col), sf = surfaceAt(row, col);
+      const isGoalRow = row === 0 || row === cfg.H - 1;
+      const isWall = isGoalRow && col !== gc;
+      const isLegal = legalSet.has(k), isBlocked = blockedSet.has(k), lit = isLegal || isBlocked;
+      const isVisited = k !== ballKey && visitedSet.has(k);
+      let glyph = '', glyphColor = dir.xColor, glyphSize = '20px';
+      if (!isWall && k !== ballKey) {
+        if (isVisited) { glyph = '✕'; glyphSize = '17px'; }
+        else if (dotSet.has(k)) { glyph = '•'; glyphColor = sf.dot ?? dir.dotColor; }
+      }
+      cells.push({
+        left: pos.left.toFixed(2), top: pos.top.toFixed(2), z: row + col,
+        cursor: !isWall && isLegal && interactive ? 'pointer' : 'default',
+        topBg: isWall ? dir.wall : lit ? dir.legalBg : sf.tops[(row + col) % 2],
+        topBorder: isWall ? dir.wallBorder : lit ? dir.legalBorder : dir.faceBorder,
+        topShadow: seal(isWall ? dir.wall : lit ? dir.legalBg : sf.tops[(row + col) % 2], !isWall && lit ? dir.legalShadow : 'none'),
+        sideL: isWall ? dir.wall : sf.sideL,
+        sideR: isWall ? dir.wall : sf.sideR,
+        sideBorder: isWall ? dir.wallBorder : dir.faceBorder,
+        sideLShadow: seal(isWall ? dir.wall : sf.sideL),
+        sideRShadow: seal(isWall ? dir.wall : sf.sideR),
+        glyph, glyphColor, glyphSize,
+      });
+    }
+  }
+  const here = iso2(g.row, lens.toView(g.col));
+  const ball = surf.ball;
+  const span = (cfg.W - 1 + (cfg.H - 1)) * HD + TILE;
+  /* A net standing in each goal mouth: counter-scaled, so it rises off the tile. */
+  const netAt = (row) => {
+    const p = iso2(row, gc);
+    return { cx: (p.left + TILE / 2).toFixed(2), cy: (p.top + TILE / 2).toFixed(2), z: row + gc };
+  };
+  const netTop = netAt(0), netBot = netAt(cfg.H - 1);
+  return {
+    cells,
+    surfaceW: Math.ceil(span), surfaceH: Math.ceil(span),
+    ballCx: (here.left + TILE / 2).toFixed(2),
+    ballCy: (here.top + TILE / 2 - (ball.lift ?? 12)).toFixed(2),
+    ballW: ball.w, ballH: ball.h, ballSrc: ball.src,
+    spotBg: sk.spot,
+    netFarCx: netTop.cx, netFarCy: netTop.cy, netTopZ: netTop.z,
+    netNearCx: netBot.cx, netNearCy: netBot.cy, netBotZ: netBot.z,
+    netFarSrc: surf.goal.far, netNearSrc: surf.goal.near,
+  };
+}
+
+/** The move palette, as one seat reads it — the duality with the game removed. */
+function paletteFor(cfg, seat) {
+  const rows = Math.min(9, cfg.H), cols = cfg.W;
+  const centreRow = Math.floor(rows / 2), centreCol = Math.floor(cols / 2);
+  const lens = lensOf(cfg, seat);
+  const lit = new Set();
+  for (const [dr, dc] of cfg.moves) {
+    const r = centreRow + dr, c = centreCol + lens.viewDelta(dc);
+    if (r >= 0 && r < rows && c >= 0 && c < cols) lit.add(key(r, c));
+  }
+  const cells = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const on = lit.has(key(r, c)), centre = r === centreRow && c === centreCol;
+      const art = seat === 0 ? BALLS.soccer.src : BALLS.puck.src;
+      cells.push({
+        bg: centre ? `#faf8f3 url(${art}) center/16px 16px no-repeat` : on ? '#f7efd0' : '#faf8f3',
+        border: centre ? '1px solid #191817' : on ? '1px solid #c8963e' : '1px solid #ddd6c7',
+      });
+    }
+  }
+  return { cols, cells };
+}
+
+class Component extends DCLogic {
+  renderVals() {
+    const live = play2(CFG.game)[6];
+    const frames = play2(CFG.game);
+    /*
+     * The hero board is not a position from the game: the ball stands at
+     * mid-field, one column left of centre so that it is on the turf side of
+     * the seam, and far enough from both edges that its star does not wrap.
+     */
+    const heroFrame = {
+      row: Math.floor(CFG.game.H / 2),
+      col: Math.floor(CFG.game.W / 2) - 1,
+      visited: [], burned: new Set(), turn: 0, status: 'playing', winner: null,
+    };
+    const final = frames[frames.length - 1];
+    const tutFrames = play2(CFG.tut);
+    const tut = tutFrames[Math.min(5, tutFrames.length - 2)];
+    return {
+      hero: boardFor2(CFG.game, 0, 'soccer', heroFrame, 'chalk', false, 'hockey'),
+      gameStart: boardFor2(CFG.game, 0, 'soccer', frames[0], 'chalk', false),
+      gameLive: boardFor2(CFG.game, 0, 'soccer', live, 'chalk', true),
+      revealYou: boardFor2(CFG.game, 0, 'soccer', final, 'chalk', false),
+      revealThem: boardFor2(CFG.game, 1, 'hockey', final, 'chalk', false),
+      revealStatus: final.status === 'won'
+        ? (final.winner === 0 ? 'You win.' : 'Your opponent wins.')
+        : 'Nobody could move — a draw.',
+      moveCount: frames.length - 1,
+      sandSoccer: boardFor2(CFG.game, 0, 'soccer', frames[3], 'chalk', true),
+      sandHockey: boardFor2(CFG.game, 1, 'hockey', frames[3], 'chalk', true),
+      palette0: paletteFor(CFG.game, 0),
+      palette1: paletteFor(CFG.game, 1),
+      tutBoard: boardFor2(CFG.tut, 0, 'basketball', tut, 'chalk', true),
+    };
+  }
+}
+</script>
+</body>
+</html>

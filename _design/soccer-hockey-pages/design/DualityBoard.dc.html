@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:relative;margin:0 auto;width:{{ frameW }}px;height:{{ frameH }}px">
+  <div style="position:absolute;left:0;top:0;width:{{ surfaceW }}px;height:{{ surfaceH }}px;transform-origin:top left;transform:{{ boardTransform }}">
+    <sc-for list="{{ cells }}" as="c" hint-placeholder-count="0">
+      <div style="position:absolute;width:40px;height:40px;transform-origin:center;transition:transform 0.2s ease;left:{{ c.left }}px;top:{{ c.top }}px;z-index:{{ c.z }};cursor:{{ c.cursor }}" style-hover="transform:translateY(-15px)">
+        <div style="position:absolute;box-sizing:border-box;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:bold;transform:rotate(45deg);background:{{ c.topBg }};border:{{ c.topBorder }};box-shadow:{{ c.topShadow }}">
+          <span style="display:block;transform:rotate(-45deg) scaleX(1.25) scaleY(2.5);line-height:1;color:{{ c.glyphColor }};font-size:{{ c.glyphSize }}">{{ c.glyph }}</span>
+        </div>
+        <div style="position:absolute;box-sizing:border-box;width:40px;height:40px;background:{{ c.sideL }};border:{{ c.sideBorder }};box-shadow:{{ c.sideLShadow }};transform:scaleY(1.733) translateY(25.2px) translateX(-14.8px) rotate(60deg) scaleY(0.577) rotate(-45deg)"></div>
+        <div style="position:absolute;box-sizing:border-box;width:40px;height:40px;background:{{ c.sideR }};border:{{ c.sideBorder }};box-shadow:{{ c.sideRShadow }};transform:scaleY(1.733) translateY(25.2px) translateX(14.8px) rotate(-60deg) scaleY(0.577) rotate(45deg)"></div>
+      </div>
+    </sc-for>
+    <img src="{{ netFarSrc }}" style="display:{{ netFarDisplay }};position:absolute;width:{{ netBoxW }}px;height:{{ netBoxH }}px;left:{{ netFarLeft }}px;top:{{ netFarTop }}px;z-index:{{ netTopZ }}">
+    <img src="{{ netNearSrc }}" style="display:{{ netNearDisplay }};position:absolute;width:{{ netBoxW }}px;height:{{ netBoxH }}px;left:{{ netNearLeft }}px;top:{{ netNearTop }}px;z-index:{{ netBotZ }}">
+    <div style="position:absolute;width:{{ spotBoxW }}px;height:{{ spotBoxH }}px;border-radius:50%;z-index:9998;left:{{ spotLeft }}px;top:{{ spotTop }}px;background:{{ spotBg }}"></div>
+    <img src="{{ ballSrc }}" style="position:absolute;z-index:9999;width:{{ ballBoxW }}px;height:{{ ballBoxH }}px;left:{{ ballLeft }}px;top:{{ ballTop }}px">
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:540,&quot;height&quot;:330},&quot;cells&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object[]&quot;},&quot;ballLeft&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;ballTop&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;ballSrc&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;assets/ball-soccer.png&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ballW&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:18,&quot;tsType&quot;:&quot;number&quot;},&quot;ballH&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:18,&quot;tsType&quot;:&quot;number&quot;},&quot;spotLeft&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;-200&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;spotTop&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;-200&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;spotBg&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;transparent&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;netFarSrc&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;assets/goalnet-far.png&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;netNearSrc&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;assets/goalnet-near.png&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;netTopLeft&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;-200&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;netTopTop&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;-200&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;netTopZ&quot;:{&quot;editor&quot;:null,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;},&quot;netBotLeft&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;-200&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;netBotTop&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;-200&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;netBotZ&quot;:{&quot;editor&quot;:null,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;},&quot;frameW&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:531,&quot;tsType&quot;:&quot;number&quot;},&quot;frameH&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:318,&quot;tsType&quot;:&quot;number&quot;},&quot;surfaceW&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:664,&quot;tsType&quot;:&quot;number&quot;},&quot;surfaceH&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:664,&quot;tsType&quot;:&quot;number&quot;},&quot;boardTransform&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;scaleX(0.8) scaleY(0.4)&quot;,&quot;tsType&quot;:&quot;string&quot;}}">class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    /* The surface is drawn squashed 0.8 x 0.4, so a sprite that should appear
+       W x H on screen is laid out W/0.8 x H/0.4 and squashed into shape. Doing
+       it this way rather than with a counter-transform keeps the sprites plain
+       boxes, which every renderer (and every screenshot) gets right. */
+    const X = 1.25, Y = 2.5;
+    const bw = (p.ballW ?? 18) * X, bh = (p.ballH ?? 18) * Y;
+    const NET = 88, nw = NET * X, nh = NET * Y;
+    const spotW = 30 * X, spotH = 30 * Y;
+    const at = (cx, cy, w, h) => ({ left: (cx - w / 2).toFixed(2), top: (cy - h / 2).toFixed(2) });
+    const ball = at(p.ballCx ?? -400, p.ballCy ?? -400, bw, bh);
+    const far = at(p.netFarCx ?? -400, p.netFarCy ?? -400, nw, nh);
+    const near = at(p.netNearCx ?? -400, p.netNearCy ?? -400, nw, nh);
+    const spot = at(p.ballCx ?? -400, (p.ballCy ?? -400) + 9, spotW, spotH);
+    return {
+      ballSrc: p.ballSrc ?? 'assets/ball-soccer.png',
+      ballBoxW: bw.toFixed(2), ballBoxH: bh.toFixed(2),
+      ballLeft: ball.left, ballTop: ball.top,
+      netFarSrc: p.netFarSrc ?? 'assets/goal-far.png',
+      netNearSrc: p.netNearSrc ?? 'assets/goal-near.png',
+      netBoxW: nw.toFixed(2), netBoxH: nh.toFixed(2),
+      netFarLeft: far.left, netFarTop: far.top,
+      netNearLeft: near.left, netNearTop: near.top,
+      netFarDisplay: p.netFarCx == null ? 'none' : 'block',
+      netNearDisplay: p.netNearCx == null ? 'none' : 'block',
+      netTopZ: p.netTopZ ?? 1,
+      netBotZ: p.netBotZ ?? 1,
+      spotBoxW: spotW.toFixed(2), spotBoxH: spotH.toFixed(2),
+      spotLeft: spot.left, spotTop: spot.top,
+      spotBg: p.spotBg ?? 'transparent',
+      frameW: p.frameW ?? 531,
+      frameH: p.frameH ?? 318,
+      surfaceW: p.surfaceW ?? 664,
+      surfaceH: p.surfaceH ?? 664,
+      boardTransform: p.boardTransform ?? 'scaleX(0.8) scaleY(0.4)',
+    };
+  }
+}</script>
+</body>
+</html>
