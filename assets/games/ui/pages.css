@@ -7,8 +7,8 @@
  *
  * Load it AFTER board.css so the palette below wins:
  *
- *   <link rel="stylesheet" href="../games/ui/board.css?v=4.20.0" />
- *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.20.0" />
+ *   <link rel="stylesheet" href="../games/ui/board.css?v=4.21.0" />
+ *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.21.0" />
  *
  * The pages need three families. Add to each page's <head>:
  *
@@ -171,8 +171,17 @@ body.dg,
   font-size: 0.7rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--dg-muted);
   white-space: nowrap;
+}
+
+/*
+ * The label is muted; the way home is not. As shipped both took the muted grey,
+ * which left the strip's one clickable thing looking like a caption. The design
+ * file colours the back link like any other link, and it is the only thing in
+ * the strip you can do anything with.
+ */
+.dg-label {
+  color: var(--dg-muted);
 }
 
 .dg-chrome a {
@@ -197,6 +206,56 @@ a.dg-label-red { color: var(--dg-red); }
 
 .dg-page {
   padding: 2rem 2.75rem 2.75rem;
+}
+
+/*
+ * Let a grid track shrink below the board standing in it.
+ *
+ * A track's automatic minimum is its content's min-content width, and a board
+ * is a slab of absolutely positioned cubes carrying an explicit pixel width. So
+ * without this the track is sized to the board rather than the other way round:
+ * the column comes out 441px wide inside a 302px page, and the whole thing
+ * slides sideways on a phone instead of the board scaling down to fit, which is
+ * what `fit()` in board.js is there to do.
+ */
+.dg-hero > *,
+.dg-choices > *,
+.dg-layout > * {
+  min-width: 0;
+}
+
+/*
+ * Phone gutters. 2.75rem down each side of a 390px screen is a quarter of the
+ * screen given to margin, and the chrome strip's two nowrap labels do not fit
+ * in what is left of it. Nothing above 560px changes.
+ */
+@media (max-width: 560px) {
+  .dg-chrome,
+  .dg-page,
+  .dg-hero,
+  .dg-choices {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .dg-build {
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
+  }
+
+  .dg-chrome {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  /* The label drops under the title rather than squeezing the line beside it. */
+  .dg-head {
+    flex-wrap: wrap;
+  }
+
+  .dg-chrome .dg-label {
+    white-space: normal;
+  }
 }
 
 /* ---------------------------------------------------------- headings ---- */
@@ -230,7 +289,16 @@ a.dg-label-red { color: var(--dg-red); }
   max-width: 40ch;
 }
 
-.dg p {
+/*
+ * The default for a paragraph, which any component may overrule.
+ *
+ * `:where()` costs nothing in specificity, so this reads as (0,1,0) rather than
+ * (0,1,1) and a plain class like `.dg-coach-hint` further down the file can win
+ * on source order. As shipped it could not: every styled paragraph on these
+ * pages came out body-coloured, which quietly cost the coach's hint its green
+ * and its body its lighter grey.
+ */
+.dg :where(p) {
   max-width: 62ch;
   color: var(--dg-body);
 }
@@ -739,7 +807,15 @@ a.dg-btn-primary:hover {
   place-items: center;
 }
 
-.dg-mark[data-kind='spent'] { color: rgba(25, 24, 23, 0.55); }
+/*
+ * The ✕ in the legend takes the page's muted ink, not the board's.
+ *
+ * On the board a spent square is drawn near-black in both schemes, because the
+ * court it sits on stays pale in both. Down here it sits on the page, so the
+ * shipped rgba(25, 24, 23, 0.55) disappeared entirely in the dark — a legend
+ * with one of its three marks missing.
+ */
+.dg-mark[data-kind='spent'] { color: var(--dg-muted); }
 .dg-mark[data-kind='dot'] { color: var(--dg-gold-ink); }
 
 /* The rules, folded shut, above the board — not buried under it. */

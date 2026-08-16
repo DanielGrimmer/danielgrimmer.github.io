@@ -31,7 +31,7 @@
  * stand side by side in the reveal.
  */
 
-import { pieceSvg } from './pieces-svg.js?v=4.20.0';
+import { pieceSvg } from './pieces-svg.js?v=4.21.0';
 
 const MIN_SQUARE = 26;
 const MAX_SQUARE = 58;

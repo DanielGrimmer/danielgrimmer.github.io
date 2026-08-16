@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.20.0';
-import { replayFrames } from '../core/game.js?v=4.20.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.21.0';
+import { replayFrames } from '../core/game.js?v=4.21.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -91,11 +91,11 @@ export const BASKETBALL_STEPS = Object.freeze([
       'The ball is the orange circle in the middle. The single gaps in the black ' +
       "walls are the two goals. Player 1's goal is the one at the top right, " +
       "Player 2's goal is at the bottom left.\n\n" +
-      'The yellow highlighted squares show where the ball can go next: short ' +
-      'steps to the squares around it, and longer passes further out. Remember ' +
-      'the star-shape they make around the ball, you will want to recognize it ' +
+      'The gold squares show where the ball can go next: short steps to the ' +
+      'squares around it, and longer passes further out. Remember the ' +
+      'star-shape they make around the ball, you will want to recognize it ' +
       'later.',
-    hint: 'Click any yellow highlighted square to move the ball there.',
+    hint: 'Click any gold square to move the ball there.',
     done: (ctx) => ctx.moveCount >= 1,
   },
   {
@@ -112,11 +112,10 @@ export const BASKETBALL_STEPS = Object.freeze([
     id: 'wrap',
     title: "It's Pac-Man's World, and We're Just Living In It",
     body:
-      'The left-most and right-most columns are connected (like in Pac-Man). ' +
-      'Move the ball towards the left or right so that the star pattern crosses ' +
-      'the “seam”. Now move the ball across the seam. The board is a cylinder, ' +
-      'and the ball leaving one side arrives on the other.',
-    hint: 'Walk the ball off the left or right edge and see where it comes back.',
+      'The left-most and right-most columns are the same edge. Walk the ball ' +
+      'sideways until the star crosses the seam, then step across it: the board ' +
+      'is a cylinder, and what leaves one side arrives on the other.',
+    hint: 'Take the ball off the left or right edge and see where it comes back.',
     done: (ctx) => ctx.hasWrapped,
   },
   {
