@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.21.0';
-import { replayFrames } from '../core/game.js?v=4.21.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.22.0';
+import { replayFrames } from '../core/game.js?v=4.22.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -88,13 +88,12 @@ export const BASKETBALL_STEPS = Object.freeze([
     id: 'welcome',
     title: 'One Ball, Two Goals',
     body:
-      'The ball is the orange circle in the middle. The single gaps in the black ' +
-      "walls are the two goals. Player 1's goal is the one at the top right, " +
-      "Player 2's goal is at the bottom left.\n\n" +
-      'The gold squares show where the ball can go next: short steps to the ' +
-      'squares around it, and longer passes further out. Remember the ' +
-      'star-shape they make around the ball, you will want to recognize it ' +
-      'later.',
+      'The basketball starts in the middle. The gaps in the black walls are the ' +
+      "two goals. Player 1's goal is the one at the top right, Player 2's goal " +
+      "is at the bottom left.\n\n" +
+      'The highlighted squares show where the ball can go next: a short step to ' +
+      'an adjacent square or a longer pass further out. Remember the star-shape ' +
+      'they make around the ball, you will want to recognize it later.',
     hint: 'Click any gold square to move the ball there.',
     done: (ctx) => ctx.moveCount >= 1,
   },

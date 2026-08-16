@@ -5,96 +5,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Soccer Hockey Duality Game (V4.0)</title>
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.21.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.22.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.22.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
-      <header class="dg-masthead">
-        <div>
-          <h1 id="sportTitle">Soccer Hockey</h1>
-          <div class="dg-sub" id="sportSub">Connecting…</div>
-        </div>
+      <div class="dg-chrome">
         <a href="/soccer-hockey/">← Soccer Hockey</a>
-      </header>
+        <span class="dg-label" id="chromeState">Connecting…</span>
+      </div>
 
-      <div class="dg-layout" id="playLayout">
-        <div class="dg-coach" id="coach" aria-live="polite">
-          <div class="dg-coach-progress" id="coachProgress">Room</div>
-          <h2 class="dg-coach-title" id="roomName">…</h2>
-          <p class="dg-coach-body" id="coachBody">Finding you a room…</p>
+      <div class="dg-page">
+        <!--
+          Two states in one file, and they are genuinely different pages: while
+          you are waiting the room is the subject and the board is scenery, and
+          once your friend arrives it is the other way round. The board itself is
+          one view, moved between the two slots rather than built twice — it is
+          the same game either way, and a second board view would mean a second
+          renderer to keep in step.
+        -->
+        <div id="playLayout">
+          <div class="dg-pair" id="pairView">
+            <div>
+              <h1 id="pairTitle">Finding you a room…</h1>
+              <p id="pairBody">Connecting…</p>
 
-          <div class="dg-room-tools" id="roomTools" hidden>
-            <button class="dg-btn dg-btn-primary" id="copyLink" type="button">Copy the invite link</button>
-            <label class="dg-join">
-              Or join a room by name:
-              <span class="dg-join-row">
+              <div class="dg-firewall">
+                <div class="dg-label dg-label-red">From here on</div>
+                <p>
+                  Stop talking. Mute the call, don't look at each other's screen,
+                  and play your own board to the end. Then call each other back.
+                </p>
+              </div>
+
+              <div id="asleepSlot"></div>
+              <div class="dg-label" id="asleepCaption">your pitch, asleep until they arrive</div>
+            </div>
+
+            <aside class="dg-room">
+              <div class="dg-presence">
+                <span class="dg-dot" data-state="waiting"></span>
+                <span id="youPresence">You · waiting</span>
+              </div>
+              <div class="dg-presence">
+                <span class="dg-dot" id="themDot" data-state="absent"></span>
+                <span id="themPresence">Your friend · not here yet</span>
+              </div>
+
+              <button class="dg-btn dg-btn-primary dg-btn-wide js-copy-link" type="button">
+                Copy the invite link
+              </button>
+
+              <div class="dg-label">or join by name</div>
+              <span class="dg-field">
                 <input id="roomInput" list="roomList" placeholder="GreenField" autocomplete="off" />
                 <button class="dg-btn" id="joinRoom" type="button">Join</button>
               </span>
-            </label>
-            <datalist id="roomList"></datalist>
+              <datalist id="roomList"></datalist>
+
+              <div class="dg-room-foot">
+                Two devices, two screens. Side by side is fine for the tutorial;
+                not for this.
+              </div>
+            </aside>
+          </div>
+
+          <div id="playView" hidden>
+            <header class="dg-head">
+              <div>
+                <div class="dg-label">Your game</div>
+                <h1 id="sportTitle">Soccer Hockey</h1>
+              </div>
+              <div class="dg-presence" id="presence">
+                <span class="dg-dot" id="presenceDot"></span>
+                <span id="presenceText"></span>
+              </div>
+            </header>
+
+            <div class="dg-status" id="status">
+              <span id="statusText">Connecting…</span>
+              <span class="dg-status-move" id="statusMove"></span>
+            </div>
+
+            <!-- Which way each of you is heading, said at the end of the board it is at. -->
+            <div class="dg-goal-hint" data-end="yours" id="hintFar">your goal ↗</div>
+            <div id="liveSlot"></div>
+            <div class="dg-goal-hint" data-end="theirs" id="hintNear">↙ their goal</div>
+
+            <div class="dg-legend-row">
+              <span><span class="dg-swatch"></span> <span id="legendMove">where it may go</span></span>
+              <span><span class="dg-mark" data-kind="spent">✕</span> spent for good</span>
+              <span><span class="dg-mark" data-kind="dot">•</span> can score next turn</span>
+            </div>
+
+            <div class="dg-room-foot">
+              <span id="roomFoot"></span>
+              <span class="dg-foot-actions">
+                <button class="dg-btn" id="newGame" type="button" hidden>New game</button>
+                <button class="dg-btn js-copy-link" type="button">Copy the invite link</button>
+                <button class="dg-link" id="leave" type="button">Leave this room</button>
+              </span>
+            </div>
           </div>
         </div>
 
-        <div class="dg-play">
-          <div class="dg-status" id="status">Connecting…</div>
-          <div class="dg-presence" id="presence"></div>
-          <div id="board"></div>
-        </div>
+        <!--
+          The board itself, moved between the two slots above. Dimmed by
+          `dg-board-asleep` for as long as there is nobody to play against.
+        -->
+        <div id="boardHolder" class="dg-pitch"><div id="board"></div></div>
+
+        <!--
+          The reveal. Hidden until the game is over, and then it replaces the
+          board rather than sitting under it: there is nothing left to play, and
+          the two replay boards want the whole width.
+
+          Still in its pre-design markup — this screen is the next one to be
+          rebuilt, and rebuilding it half-way would leave it worse than either.
+        -->
+        <section id="replay" hidden>
+          <div class="dg-replay-intro">
+            <div class="dg-status" id="replayStatus"></div>
+            <div class="dg-coach dg-coach-band" id="replayCoach">
+              <div class="dg-coach-progress">The Big Reveal</div>
+              <h2 class="dg-coach-title" id="replayTitle"></h2>
+              <p class="dg-coach-body" id="replayBody"></p>
+            </div>
+          </div>
+          <div id="replayStage"></div>
+          <div class="dg-replay-intro">
+            <div class="dg-coach dg-coach-band">
+              <p class="dg-coach-body" id="replayAfter"></p>
+            </div>
+          </div>
+          <div class="dg-bar dg-bar-main">
+            <a class="dg-btn dg-btn-primary" id="toSandbox" href="SoccerHockeySandboxV4.0.html">
+              Let's Look under the Hood →
+            </a>
+            <button class="dg-btn" id="newGameOver" type="button">New game</button>
+          </div>
+        </section>
       </div>
 
-      <!--
-        The reveal. Hidden until the game is over, and then it replaces the
-        board rather than sitting under it: there is nothing left to play, and
-        the two replay boards want the whole width.
-      -->
-      <section id="replay" hidden>
-        <!--
-          The reading holds the site's measure and sits centred over the boards;
-          only the boards themselves take the extra width.
-        -->
-        <div class="dg-replay-intro">
-          <div class="dg-status" id="replayStatus"></div>
-          <div class="dg-coach dg-coach-band" id="replayCoach">
-            <div class="dg-coach-progress">The Big Reveal</div>
-            <h2 class="dg-coach-title" id="replayTitle"></h2>
-            <p class="dg-coach-body" id="replayBody"></p>
-          </div>
-        </div>
-        <div id="replayStage"></div>
-        <!--
-          The questions the boards raise, kept until after somebody has stepped
-          through them. Reaching the boards quickly is what makes the reveal
-          land; this keeps perfectly well until afterwards.
-        -->
-        <div class="dg-replay-intro">
-          <div class="dg-coach dg-coach-band">
-            <p class="dg-coach-body" id="replayAfter"></p>
-          </div>
-        </div>
-        <!--
-          Where to go once the reveal has landed. The room name travels with the
-          link, so following it puts both players in the same sandbox.
-        -->
-        <div class="dg-bar dg-bar-main">
-          <a class="dg-btn dg-btn-primary" id="toSandbox" href="SoccerHockeySandboxV4.0.html">
-            Let's Look under the Hood →
-          </a>
-        </div>
-      </section>
-
-      <div class="dg-bar dg-bar-main">
-        <button class="dg-btn" id="newGame" type="button" hidden>New game</button>
-        <button class="dg-btn" id="leave" type="button" hidden>Leave this room</button>
-      </div>
-
-      <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
+      <p class="dg-build">Build <span id="buildStamp">—</span></p>
     </div>
 
     <script type="module">
-      const BUILD = '4.21.0';
+      const BUILD = '4.22.0';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.21.0';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.22.0';
       import {
         initialGame,
         replay,
@@ -102,7 +168,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.21.0';
+      } from '../games/core/game.js?v=4.22.0';
       import {
         presenceOf,
         seatOf,
@@ -110,17 +176,17 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.21.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.21.0';
-      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.21.0';
-      import { replayNote } from '../games/ui/coach.js?v=4.21.0';
+      } from '../games/core/seats.js?v=4.22.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.22.0';
+      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.22.0';
+      import { replayNote } from '../games/ui/coach.js?v=4.22.0';
       import {
         ROOM_NAMES,
         roomFromLocation,
         shareLink,
         rememberRoom,
         recallRoom,
-      } from '../games/net/rooms.js?v=4.21.0';
+      } from '../games/net/rooms.js?v=4.22.0';
       import {
         signIn,
         chooseRoom,
@@ -133,7 +199,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.21.0';
+      } from '../games/net/room.js?v=4.22.0';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -168,22 +234,53 @@
         return config.seats[index]?.goalCorner ?? '';
       }
 
+      /** What the other seat is doing, as the presence line beside the title says it. */
       function describeOpponent() {
         if (seat === null) return '';
-        const them = state.seats[seat === 0 ? 1 : 0];
-        switch (presenceOf(them, now())) {
+        switch (theirPresence()) {
           case PRESENCE.EMPTY:
-            return 'Nobody else is here yet.';
+            return 'nobody else here yet';
           case PRESENCE.ACTIVE:
-            return 'Your opponent is here, and moving about.';
+            return 'opponent here, moving about';
           case PRESENCE.IDLE:
-            return 'Your opponent is here but has been still for a while.';
+            return 'opponent here but still for a while';
           case PRESENCE.GONE:
-            return 'Your opponent has stopped responding. Their seat frees up after five minutes.';
+            return 'opponent not responding — their seat frees up after five minutes';
           default:
             return '';
         }
       }
+
+      function theirPresence() {
+        if (seat === null) return PRESENCE.EMPTY;
+        return presenceOf(state.seats[seat === 0 ? 1 : 0], now());
+      }
+
+      /** The same thing again for the waiting panel, where it is one seat per row. */
+      function describeThem() {
+        switch (theirPresence()) {
+          case PRESENCE.ACTIVE:
+            return 'Your friend · here';
+          case PRESENCE.IDLE:
+            return 'Your friend · here but still for a while';
+          case PRESENCE.GONE:
+            return 'Your friend · not responding';
+          default:
+            return 'Your friend · not here yet';
+        }
+      }
+
+      const dotState = () => {
+        switch (theirPresence()) {
+          case PRESENCE.ACTIVE:
+            return '';
+          case PRESENCE.IDLE:
+          case PRESENCE.GONE:
+            return 'waiting';
+          default:
+            return 'absent';
+        }
+      };
 
       function describeStatus() {
         if (seat === null) {
@@ -205,8 +302,30 @@
         // sport you were handed says nothing about it, and it need not match
         // the side you had in the tutorial. So it is repeated every turn.
         return game.turn === seat
-          ? `Your move. You are heading for the goal at the ${cornerOf(seat)}.`
-          : `Your opponent's move. They are heading for the ${cornerOf(seat === 0 ? 1 : 0)}.`;
+          ? `Your move — heading for the ${cornerOf(seat)}.`
+          : `Your opponent's move — they are heading for the ${cornerOf(seat === 0 ? 1 : 0)}.`;
+      }
+
+      /**
+       * Whether the room is still short of a player. This is the whole of the
+       * difference between the two screens: waiting is a room with an invite in
+       * it, playing is a board.
+       */
+      function waiting() {
+        return seat === null || occupancy(state.seats, now()).held < 2;
+      }
+
+      /**
+       * Move the one board view between the two slots, and dim it while there is
+       * nobody to play against. Refitted after the move, since the width it has
+       * to work with is not the same in the two places.
+       */
+      function placeBoard(asleep) {
+        const holder = el('boardHolder');
+        const slot = asleep ? el('asleepSlot') : el('liveSlot');
+        if (holder.parentElement !== slot) slot.append(holder);
+        holder.classList.toggle('dg-board-asleep', asleep);
+        boardView?.fit();
       }
 
       function draw() {
@@ -244,19 +363,24 @@
                 } catch (err) {
                   // Someone moved first, or the rules refused it. The snapshot
                   // that follows is the truth; say so rather than freezing.
-                  el('status').textContent = `That move did not take: ${explain(err)}`;
+                  el('statusText').textContent = `That move did not take: ${explain(err)}`;
                 }
               }
             : null,
         });
 
-        el('status').textContent = inheritedGame
+        el('statusText').textContent = inheritedGame
           ? 'This room still has somebody else\u2019s finished game in it. Press ' +
             '\u201cNew game\u201d to clear the board and start your own.'
           : describeStatus();
         el('status').dataset.tone =
           !inheritedGame && game.outcome.status === STATUS.WON ? 'win' : '';
-        el('presence').textContent = describeOpponent();
+        el('statusMove').textContent =
+          game.outcome.status === STATUS.PLAYING
+            ? `move ${state.moves.length + 1}`
+            : `${state.moves.length} move${state.moves.length === 1 ? '' : 's'}`;
+        el('presenceText').textContent = describeOpponent();
+        el('presenceDot').dataset.state = dotState();
         el('newGame').hidden = seat === null || game.outcome.status === STATUS.PLAYING;
         el('leave').hidden = seat === null;
         drawReplay();
@@ -279,7 +403,9 @@
         const key = over ? `${room}:${seat}:${state.moves.length}` : null;
 
         el('playLayout').hidden = over;
+        el('boardHolder').hidden = over;
         el('replay').hidden = !over;
+        if (over) el('chromeState').textContent = `Room ${room} · game over`;
         // Two boards at full size need more than the site's text measure.
         document.querySelector('.dg-wrap').classList.toggle('dg-wide', over);
 
@@ -355,28 +481,60 @@
       }
 
       function drawRoom() {
-        el('roomName').textContent = room ?? '…';
-        el('roomTools').hidden = false;
+        const wait = waiting();
+        el('pairView').hidden = !wait;
+        el('playView').hidden = wait;
+        placeBoard(wait);
 
-        if (seat === null) {
-          el('sportTitle').textContent = 'Soccer Hockey';
-          el('sportSub').textContent = 'Both seats taken — you are watching.';
-          el('coachBody').textContent =
-            'This room is full. Pick another room by name below, or ask your ' +
-            'opponent for their invite link.';
+        el('chromeState').textContent = room
+          ? `Room ${room} · ${wait ? 'pairing' : 'playing'}`
+          : 'Finding you a room…';
+
+        if (wait) {
+          drawPairing();
           return;
         }
 
-        el('sportTitle').textContent = `${sportOf(seat)} — you are Player ${seat + 1}`;
-        el('sportSub').textContent = `Your goal is the gap at the ${cornerOf(seat)}.`;
+        /*
+         * The sport, and nothing else. Which one you were handed is the thing
+         * you are not allowed to say out loud, so it is the h1; who is Player 1
+         * and which way you are heading are in the status line, where they are
+         * repeated every turn.
+         */
+        el('sportTitle').textContent = sportOf(seat);
+        el('legendMove').textContent =
+          config.seats[seat].theme === 'hockey' ? 'where you may pass' : 'where you may kick';
+        // The two ends of the board are fixed; which of them is yours is not.
+        el('hintFar').textContent = seat === 0 ? 'your goal ↗' : 'their goal ↗';
+        el('hintNear').textContent = seat === 0 ? '↙ their goal' : '↙ your goal';
+        el('roomFoot').textContent = `Room ${room} · both of you here · no talking until it is over`;
+      }
 
-        const full = occupancy(state.seats, now()).held === 2;
-        el('coachBody').textContent = full
-          ? 'You are both here. Please stop talking to each other now. Once the ' +
-            'first game is over, you can call each other and compare notes.'
-          : 'You are the only one here. Send your opponent the invite link, or ' +
-            'tell them this room name so they can type it in. Once they arrive, ' +
-            'stop talking to each other until the game is over.';
+      /** The waiting screen: a room with an invite in it, and a board asleep. */
+      function drawPairing() {
+        el('themPresence').textContent = describeThem();
+        el('themDot').dataset.state = dotState();
+
+        if (seat === null) {
+          el('pairTitle').textContent = `Room ${room ?? '…'} is full`;
+          el('pairBody').textContent =
+            'Both seats here are taken, so you are watching. Pick another room by ' +
+            'name, or ask your friend for their invite link.';
+          el('youPresence').textContent = 'You · watching';
+          el('asleepCaption').textContent = 'somebody else’s board';
+          return;
+        }
+
+        el('pairTitle').textContent = `You are in room ${room ?? '…'}`;
+        el('pairBody').textContent =
+          'Send your friend the link. The moment they arrive the board wakes up ' +
+          'and one of you goes first — you will not be told which sport the other ' +
+          'one is playing.';
+        el('youPresence').textContent = 'You · waiting';
+        // The word for the ground, not the name of the sport: "your soccer field"
+        // is a mouthful, and the seat already knows which sport it was handed.
+        el('asleepCaption').textContent =
+          `your ${config.seats[seat].theme === 'hockey' ? 'rink' : 'pitch'}, asleep until they arrive`;
       }
 
       /* ------------------------------------------------------------ network */
@@ -420,7 +578,9 @@
             draw();
           },
           (err) => {
-            el('status').textContent = `Lost contact with the room. ${explain(err)}`;
+            const message = `Lost contact with the room. ${explain(err)}`;
+            el('statusText').textContent = message;
+            el('pairBody').textContent = message;
           }
         );
       }
@@ -463,29 +623,37 @@
 
       /* -------------------------------------------------------------- setup */
 
-      el('copyLink').addEventListener('click', async () => {
-        const link = shareLink(location.origin, location.pathname, room);
-        try {
-          await navigator.clipboard.writeText(link);
-          el('copyLink').textContent = 'Link copied';
-          setTimeout(() => (el('copyLink').textContent = 'Copy the invite link'), 2000);
-        } catch {
-          window.prompt('Copy this link:', link);
-        }
-      });
+      // One on the waiting screen and one at the foot of the live board, so the
+      // invite is to hand whether or not your friend has turned up yet.
+      for (const button of document.querySelectorAll('.js-copy-link')) {
+        button.addEventListener('click', async () => {
+          const link = shareLink(location.origin, location.pathname, room);
+          try {
+            await navigator.clipboard.writeText(link);
+            button.textContent = 'Link copied';
+            setTimeout(() => (button.textContent = 'Copy the invite link'), 2000);
+          } catch {
+            window.prompt('Copy this link:', link);
+          }
+        });
+      }
 
       el('joinRoom').addEventListener('click', async () => {
         const wanted = el('roomInput').value.trim();
         if (!ROOM_NAMES.includes(wanted)) {
-          el('coachBody').textContent = `There is no room called “${wanted}”. Pick one from the list.`;
+          el('pairBody').textContent = `There is no room called “${wanted}”. Pick one from the list.`;
           return;
         }
         await enterRoom(wanted);
       });
 
-      el('newGame').addEventListener('click', async () => {
-        await resetRoom({ name: room });
-      });
+      // Offered in two places — under a board somebody else left finished, and
+      // at the foot of the reveal once you have read it.
+      for (const id of ['newGame', 'newGameOver']) {
+        el(id).addEventListener('click', async () => {
+          await resetRoom({ name: room });
+        });
+      }
 
       el('leave').addEventListener('click', async () => {
         await leaveRoom({ name: room, uid });
@@ -516,8 +684,9 @@
           startBeating();
         } catch (err) {
           // Name the switch that needs flipping rather than the call that failed.
-          el('status').textContent = 'The game could not start.';
-          el('coachBody').textContent = explain(err);
+          el('statusText').textContent = 'The game could not start.';
+          el('pairTitle').textContent = 'The game could not start.';
+          el('pairBody').textContent = explain(err);
           console.error(err);
         }
       })();

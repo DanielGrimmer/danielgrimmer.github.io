@@ -19,8 +19,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.21.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.21.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.22.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.22.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -53,13 +53,14 @@
         <details class="dg-rules">
           <summary>The rules, in one place</summary>
           <p class="dg-legend">
-            The ball is the orange one. Gold squares are where it may go — short
-            steps to the squares around it, longer passes further out. A
-            <strong>✕</strong> marks a square already used, closed for the rest of
-            the game. The dots in front of each goal are the only squares that can
-            reach it next move. The board wraps left to right. Player 1 scores at
-            the top right, Player 2 at the bottom left. Nowhere legal to go is a
-            draw.
+            The basketball starts in the middle. The highlighted squares are where
+            it may go next: a short step to an adjacent square, or a longer pass
+            further out. An <strong>✕</strong> marks a square already used, closed
+            off for the rest of the game. The dots in front of each goal are the
+            only squares that can score on next move. The board wraps around on
+            itself, left to right (like in Pac-Man). Player 1 scores at the top
+            right, Player 2 at the bottom left. With nowhere legal to go, the game
+            is a draw.
           </p>
         </details>
 
@@ -106,9 +107,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.21.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.22.0'; // keep in step with the ?v= tokens below
 
-      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.21.0';
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.22.0';
       import {
         initialGame,
         applyMove,
@@ -116,8 +117,8 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.21.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.21.0';
+      } from '../games/core/game.js?v=4.22.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.22.0';
       import {
         contextFor,
         stepIndex,
@@ -125,7 +126,7 @@
         STALLED_HINT,
         BASKETBALL_STEPS,
         BASKETBALL_OUTRO,
-      } from '../games/ui/coach.js?v=4.21.0';
+      } from '../games/ui/coach.js?v=4.22.0';
 
       const config = BASKETBALL_TUTORIAL;
 
