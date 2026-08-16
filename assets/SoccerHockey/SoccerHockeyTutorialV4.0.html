@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.14.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.16.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -28,6 +28,28 @@
         Play both sides yourself, or take turns with whoever is sitting next to
         you.
       </p>
+
+      <!--
+        Above the board, not below it.
+
+        A court and a coach panel fill a screen on their own, so a summary
+        underneath them can be played straight past. Folded shut it costs one
+        line here and is in front of the reader from the first move. Escher
+        Chess does the same thing with the same class.
+      -->
+      <details class="dg-rules">
+        <summary>The rules, in one place</summary>
+        <p class="dg-legend">
+          The ball is the orange circle. The yellow highlighted squares are where
+          it can go — short steps to the squares around it, longer passes further
+          out. A <strong>✕</strong> marks a square the ball has already used,
+          which is closed for the rest of the game. The dots in front of each
+          goal are the squares that can reach it on the next move. The board
+          wraps onto itself from left to right (like in Pac-Man). Player 1 scores
+          at the top right, Player 2 at the bottom left. If the player to move
+          has nowhere legal to go, the game is a draw.
+        </p>
+      </details>
 
       <div class="dg-layout">
         <div class="dg-coach" id="coach" aria-live="polite">
@@ -49,27 +71,15 @@
         </div>
       </div>
 
-      <h2>The rules, in one place</h2>
-      <p class="dg-legend">
-        The ball is the orange circle. The yellow highlighted squares are where it
-        can go — short steps to the squares around it, longer passes further out.
-        A <strong>✕</strong> marks a square the ball has already used, which is
-        closed for the rest of the game. The dots in front of each goal are the
-        squares that can reach it on the next move. The board wraps onto itself
-        from left to right (like in Pac-Man). Player 1 scores at the top right,
-        Player 2 at the bottom left. If the player to move has nowhere legal to
-        go, the game is a draw.
-      </p>
-
       <p class="dg-legend dg-build">
         Build <span id="buildStamp">—</span>
       </p>
     </div>
 
     <script type="module">
-      const BUILD = '4.14.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.16.0'; // keep in step with the ?v= tokens below
 
-      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.14.0';
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.16.0';
       import {
         initialGame,
         applyMove,
@@ -77,8 +87,8 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.14.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.14.0';
+      } from '../games/core/game.js?v=4.16.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.16.0';
       import {
         contextFor,
         stepIndex,
@@ -86,7 +96,7 @@
         STALLED_HINT,
         BASKETBALL_STEPS,
         BASKETBALL_OUTRO,
-      } from '../games/ui/coach.js?v=4.14.0';
+      } from '../games/ui/coach.js?v=4.16.0';
 
       const config = BASKETBALL_TUTORIAL;
 

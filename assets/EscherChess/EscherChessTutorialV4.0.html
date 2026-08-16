@@ -12,7 +12,7 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.14.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.16.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -50,33 +50,63 @@
         <summary>The rules, in one place</summary>
         <p class="dg-legend">
           Ordinary chess, on a board five files wide and ten ranks deep, with
-          four changes. <strong>All movement is jumpy</strong>: every piece goes
-          straight to its destination and nothing can be blocked, including a
-          pawn's opening double step. <strong>Everything is short range</strong>:
-          a rook reaches three squares along a rank or a file, a bishop two
-          along a diagonal. <strong>The board is a cylinder</strong>, so the leftmost
-          and rightmost files are neighbours. There is no queen on this board, no
-          castling and no en passant; a pawn reaching the far rank promotes.
-          Checkmate wins; a player with no legal move who is not in check draws.
+          four changes.
+        </p>
+        <ol class="dg-legend">
+          <li>
+            <strong>All movement is jumpy</strong>: every piece goes straight to
+            its destination and nothing can be blocked, including a pawn's
+            opening double step.
+          </li>
+          <li>
+            <strong>Everything is short range</strong>: the bishops can only move
+            two spaces diagonally; the rooks can only move three spaces along a
+            rank or a file.
+          </li>
+          <li>
+            <strong>The board is a cylinder</strong>, so the leftmost and
+            rightmost files are neighbours (like in Pac-Man).
+          </li>
+          <li>
+            There is no queen on this board, no castling and no en passant; a
+            pawn reaching the far rank promotes.
+          </li>
+        </ol>
+        <p class="dg-legend">
+          As always, checkmate wins; a player with no legal move who is not in
+          check draws.
         </p>
       </details>
 
       <details class="dg-rules" data-board="escher-8x8" hidden>
         <summary>The rules, in one place</summary>
+        <p class="dg-legend">Ordinary chess, with five changes.</p>
+        <ol class="dg-legend">
+          <li>
+            <strong>All movement is jumpy</strong>: every piece goes straight to
+            its destination and nothing can be blocked, including a pawn's
+            opening double step.
+          </li>
+          <li>
+            <strong>Everything is short range</strong>: the bishops (and the
+            queen) can only move two spaces diagonally; the rooks (and the queen)
+            can only move three spaces along a rank or a file (note: this leaves
+            a single blind spot on the rank).
+          </li>
+          <li>
+            <strong>The knight is wider here</strong>. Its typical pattern of
+            (2,1) and (1,2) is widened horizontally to (2,2) and (3,1). See the
+            tutorial below.
+          </li>
+          <li>
+            <strong>The board is a cylinder</strong>, so the leftmost and
+            rightmost files are neighbours (like in Pac-Man).
+          </li>
+          <li>No castling and no en passant.</li>
+        </ol>
         <p class="dg-legend">
-          Ordinary chess, on a board eight files wide and eight ranks deep, with
-          four changes. <strong>All movement is jumpy</strong>: every piece goes
-          straight to its destination and nothing can be blocked, including a
-          pawn's opening double step. <strong>Everything is short range</strong>:
-          a rook or a queen reaches three squares along a rank or a file — which
-          on eight files leaves one square of its own rank out of reach, the one
-          directly opposite — and two along a diagonal.
-          <strong>The knight is wider here</strong>: two and two, or one and
-          three, rather than the two and one of the narrow board.
-          <strong>The board is a cylinder</strong>, so the leftmost and rightmost
-          files are neighbours. No castling and no en passant; a pawn reaching
-          the far rank promotes, to a queen if you like. Checkmate wins; a player
-          with no legal move who is not in check draws.
+          As always, checkmate wins; a player with no legal move who is not in
+          check draws.
         </p>
       </details>
 
@@ -104,9 +134,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.14.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.16.0'; // keep in step with the ?v= tokens below
 
-      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.14.0';
+      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.16.0';
       import {
         initialGame,
         applyMove,
@@ -115,8 +145,8 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.14.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.14.0';
+      } from '../games/escher/game.js?v=4.16.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.16.0';
       import {
         contextFor,
         stepIndex,
@@ -124,7 +154,7 @@
         STALLED_HINT,
         TUTORIALS,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.14.0';
+      } from '../games/escher/coach.js?v=4.16.0';
 
       /*
        * Which of the two practice boards this is.
@@ -144,14 +174,15 @@
       for (const block of document.querySelectorAll('.dg-rules')) {
         block.hidden = block.dataset.board !== (isWide ? 'escher-8x8' : 'escher-5x10');
       }
+      document.getElementById('title').textContent =
+        `Escher Chess (${board.width}\u00d7${board.height})`;
       if (isWide) {
         document.getElementById('sub').textContent =
-          'The second practice board. Two pieces are not the ones you learnt.';
+          'A second practice board for learning two new pieces.';
         document.getElementById('intro').textContent =
-          'You have played the narrow game and seen how it ends. What follows ' +
-          'is not an opening position but a practice one: your queen and your ' +
-          'knight stand in the middle of an almost empty board, where the whole ' +
-          'of what each of them does fits on the screen at once.';
+          'You have just finished playing the 5\u00d710 game and are now ready to ' +
+          'move on to the 8\u00d78 game. Unlike in the narrower game, we now have a ' +
+          'queen and the knight moves a little bit differently.';
       }
 
       // The move log is the state, exactly as a networked room will hold it.

@@ -13,9 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.14.0';
-import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.14.0';
-import { PIECE } from './pieces.js?v=4.14.0';
+import { replayFrames, inCheck } from './game.js?v=4.16.0';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.16.0';
+import { PIECE } from './pieces.js?v=4.16.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -113,23 +113,25 @@ const NARROW_SCRIPT = [
  */
 const WIDE_SCRIPT = [
   /*
-   * A select beat's note is one sentence and no more.
+   * A select beat's note is one short instruction and no more.
    *
-   * The click that satisfies it is the obvious thing to do after reading the
-   * first line, so anything after that line is read by nobody: the panel has
+   * The click that satisfies it is the obvious thing to do the moment it has
+   * been read, so anything much after that is read by nobody: the panel has
    * already moved on. Whatever there is to notice therefore belongs in the
    * *next* beat, which the reader meets with the piece still held and every one
    * of its moves still lit up.
    */
   ['queen', 'select', at(5, 5), null, 'Click the white queen.'],
   ['queen', 'move', at(5, 5), at(7, 5),
-    'Every square she can reach is marked, and nothing is standing in the way of any of it: three along her rank, three along her file, two along each diagonal. Count along the rank she is on — six of the other seven files are marked, and file 1 is not. Three squares each way on eight files always leaves one file out of reach, the one directly opposite, and your rooks have the same blind spot. Now move her two squares straight up the board, onto rank 7. That is check.'],
+    'Note that she can move only two spaces diagonally (like the bishop) and only three spaces horizontally or vertically (like the rook). This means that she always has a blind spot on her rank, as do all rooks. Now move her two squares forward onto rank 7, placing the black king in check.'],
+  ['queen', 'select', at(7, 2), null,
+    'Click the black king and note that he can survive while staying on the 7th rank.'],
   ['queen', 'move', at(7, 2), at(7, 1),
-    'The black king cannot take her: she is three files away, and everything between them on that rank is hers. Look at file 1, though. Move the king one square to its left, onto the one square on that rank she cannot reach.'],
+    'Namely, he can move into the queen’s blind spot. Move him there now.'],
 
   ['knight', 'select', at(3, 4), null, 'Click the white knight.'],
   ['knight', 'move', at(3, 4), at(4, 7),
-    'Eight squares, in a ring: four of them two-and-two and four of them one-and-three, and not one of them the two-and-one you played with on the narrow board. It is standing on file 4 because its long arm is three files, and from anywhere nearer an edge half that ring would be round the back of the board. One of the eight has the black rook on it. Take it.'],
+    'Eight squares in a ring, as usual, but note that this ring is wider than we are used to. The pattern of combinations of (±1,±2) and (±2,±1) has here been widened horizontally to (±2,±2) and (±3,±1). Use this wider move-set to take the black rook.'],
 ];
 
 const WIDE_STEPS = [
@@ -137,19 +139,16 @@ const WIDE_STEPS = [
     id: 'queen',
     title: 'The Queen',
     body:
-      'There is no queen on the narrow board, so she is the one piece here you ' +
-      'have never moved. Nothing about her is new, though: she is a rook and a ' +
-      'bishop at once, and you know both. She is standing in the middle of an ' +
-      'almost empty board so that you can see the whole of her at once.',
+      'Unlike on the narrow board, there is now a queen in the mix. Like ' +
+      'everything else, she is short ranged and jumpy.',
   },
   {
     id: 'knight',
     title: 'The Knight Is Wider Here',
     body:
-      'The knight is the one piece whose move genuinely changes with the size ' +
-      'of the board. On five files it went two and one. On eight it goes two ' +
-      'and two, or one and three. Why it should depend on the board at all is ' +
-      'worth wondering about; the game will answer it.',
+      'The knight is the only piece whose move-set has to change with the size ' +
+      'of the board. Why this is so is worth wondering about later. For now, ' +
+      'let’s see how it moves.',
   },
 ];
 
@@ -350,24 +349,21 @@ export const ESCHER_OUTRO = Object.freeze({
 /**
  * The eight-file tutorial's closing note.
  *
- * Says less about not talking, because this reader has already done that once
- * and found out why — and more about the fact that the trick is the same trick,
- * so that they go in looking rather than waiting to be surprised.
+ * Says the same thing about not talking as the first one did, because it is the
+ * instruction the whole game rests on and a reader who has done it once is not
+ * thereby excused. What it adds is that the trick is the *same* trick, so that
+ * they go in looking rather than waiting to be surprised.
  */
 const WIDE_OUTRO = Object.freeze({
-  title: 'Now the Wider Game',
+  title: 'Now on to the Real Game',
   body:
-    'That was a position to be looked at rather than a game — black has nothing ' +
-    'left but a king now, and the board is yours if you want to finish it off.\n\n' +
-    'That is everything that changes. The same trick is waiting on this board ' +
-    'as on the last one: one of you will play with the pieces just described, ' +
-    'and will watch the other play with something else. You know what to do ' +
-    'this time — watch what their pieces actually do, rather than what you ' +
-    'expect them to.\n\n' +
-    'Separate screens, separate devices, and nothing said to each other but ' +
-    'your moves until the game is over. There are more pieces on this board ' +
-    'and more of them are strange, so it takes longer to see. That is the ' +
-    'point of playing it second.',
+    'This completes the 8×8 tutorial. You and your friend can now continue on ' +
+    'to the real 8×8 game where the same trick is waiting for you. Namely, you ' +
+    'will both think that you have the (relatively) normal pieces whereas your ' +
+    'opponent will have bizarro pieces. As before, you will need to watch what ' +
+    'their pieces actually do, rather than what you expect them to.\n\n' +
+    'You must now use separate screens on separate devices. For the best ' +
+    'experience, say nothing to each other until the game is over.',
   href: '/assets/EscherChess/EscherChessGameV4.0.html?board=escher-8x8',
   cta: 'Play the 8×8 Game →',
 });

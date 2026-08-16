@@ -287,14 +287,17 @@ test('the 8x8 script teaches the two pieces that are new', async (t) => {
   });
 
   /*
-   * A select beat's note has to be one sentence: the reader clicks the moment
-   * they have read it, and the panel is on the next beat before they could have
-   * read anything else. Anything worth noticing goes in the move beat, which
-   * they meet with the piece still held and its whole pattern still lit.
+   * A select beat's note has to be short enough to be read before the click
+   * that satisfies it — which is the click the reader makes the moment they
+   * have understood the first line, at which point the panel is already showing
+   * the next beat. So it opens with the instruction and stops soon after;
+   * anything worth noticing goes in the move beat, which they meet with the
+   * piece still held and its whole pattern still lit.
    */
-  await t.test('a select beat asks for the click and says nothing else', () => {
+  await t.test('a select beat leads with the click and stops', () => {
     for (const beat of tut.script.filter((b) => b.kind === 'select')) {
-      assert.match(beat.note, /^Click the white \w+\.$/, beat.note);
+      assert.match(beat.note, /^Click the /, beat.note);
+      assert.ok(beat.note.length <= 100, `${beat.note.length} characters is too much to read first`);
     }
   });
 
