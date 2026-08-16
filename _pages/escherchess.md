@@ -3,7 +3,7 @@ layout: page
 permalink: /escher-chess/
 title: escher chess # the navbar label, lower-case like its siblings
 display_title: The Escher Chess Duality Game # the <h1> on the page itself
-description: A chess variant with a mystery at its heart. Two players, two boards that cannot both be right — and yet are.
+description: An Escher-inspired chess variant with a mystery at its heart.
 nav: false # surfaced via the 'games' dropdown in _pages/games.md
 ---
 
@@ -56,9 +56,9 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
     <div class="dg-hero" id="ecHero" style="padding-top: 1.75rem">
       <p>
         A chess variant for two players, played first on a 5×10 board and then
-        on an 8×8 one. You and your opponent look at different boards, and
-        there are two seemingly contradictory ways of seeing the game that
-        turn out to be perfectly coherent with each other.
+        on an 8×8 one. In each case, there are two flatly contradictory ways of
+        seeing this game which somehow turn out to be perfectly coherent with
+        each other.
       </p>
       <!--
         The chess-set illusion: one set drawn from two irreconcilable
@@ -79,19 +79,19 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
         <div class="dg-firewall">
           <div class="dg-label dg-label-red">The firewall</div>
           <p>
-            Separate devices for the games, and say nothing to each other but
-            your moves — by file and rank, and nothing else — until it is over.
-            Then call each other, put both screens side by side, and compare
-            notes. That is when it lands.
+            You and your friend must play on separate devices. No peeking at
+            each other's screen. No talking — mute the call. For the first game,
+            each of you should attend only to your own board. Breaking the
+            firewall spoils the mystery. Call each other afterwards.
           </p>
         </div>
 
         <p>
-          There are four screens, and they go in this order. It is not a
-          suggestion: each one is written assuming you have done the one before,
-          and taken out of order they spoil each other. The two tutorials are
-          played alone, or with somebody next to you; the two games need a
-          friend on their own device.
+          There is a tutorial and a game in both sizes (5×10 and 8×8). Please
+          play them in the correct order as they build upon each other. Taken
+          out of order they will spoil each other. The two tutorials can be
+          played alone, or side-by-side with your friend. But the two games
+          require that you use separate devices.
         </p>
 
         <ol class="dg-doors">
@@ -100,9 +100,8 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
             <span>
               <span class="dg-door-title">The 5×10 tutorial</span>
               <span class="dg-door-note">
-                A few minutes, on your own. The same game with the strangeness
-                switched off, so that you learn your own pieces before anything
-                is hidden from you.
+                It will only take a few minutes to familiarize yourself with the
+                new board shape and the slightly funny pieces.
               </span>
             </span>
             <a class="dg-btn dg-btn-primary" href="{{ '/assets/EscherChess/EscherChessTutorialV4.0.html' | relative_url }}">Tutorial</a>
@@ -112,7 +111,7 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
             <span>
               <span class="dg-door-title">The 5×10 game</span>
               <span class="dg-door-note">
-                With a friend, on separate devices, in the same room name.
+                Play with a friend on separate devices. Chat afterwards.
               </span>
             </span>
             <a class="dg-btn dg-btn-primary" href="{{ '/assets/EscherChess/EscherChessGameV4.0.html' | relative_url }}">Play</a>
@@ -122,9 +121,8 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
             <span>
               <span class="dg-door-title">The 8×8 tutorial</span>
               <span class="dg-door-note">
-                Shorter, and again on your own. Two pieces on the wider board are
-                not the ones you have been playing with: the knight moves
-                differently, and there is a queen. This is where you meet them.
+                Another (even shorter) tutorial to familiarize yourself with how
+                the pieces behave on the new board.
               </span>
             </span>
             <a class="dg-btn" href="{{ '/assets/EscherChess/EscherChessTutorialV4.0.html?board=escher-8x8' | relative_url }}">Tutorial</a>
@@ -134,9 +132,7 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
             <span>
               <span class="dg-door-title">The 8×8 game</span>
               <span class="dg-door-note">
-                The same trick, with more pieces and more of them strange, so it
-                takes longer to see. Separate devices and no talking, exactly as
-                before.
+                Play with a friend on separate devices. Chat afterwards.
               </span>
             </span>
             <a class="dg-btn" href="{{ '/assets/EscherChess/EscherChessGameV4.0.html?board=escher-8x8' | relative_url }}">Play</a>
@@ -156,13 +152,6 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
           <li>two devices, two screens</li>
           <li>a way to talk <em>afterwards</em></li>
         </ul>
-        <div class="dg-aside-foot">
-          It is a complete-information game: nothing is hidden from you, you
-          know exactly what your opponent is trying to do and exactly how they
-          can do it. They will still surprise you. You will not be told how your
-          opponent's pieces move — working that out from watching them is the
-          game.
-        </div>
       </aside>
     </div>
   </div>
