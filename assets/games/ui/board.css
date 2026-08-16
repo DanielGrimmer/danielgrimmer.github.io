@@ -371,8 +371,9 @@ body.dg {
   :root:not([data-dg-theme='light']) .dg-board[data-theme='soccer'] {
     --dg-top-a: #356f42;
     --dg-top-b: #2c6138;
-    --dg-side-l: #16281c;
-    --dg-side-r: #1e3625;
+    /* Dirt, not grass in shadow: the pitch is laid on earth in both schemes. */
+    --dg-side-l: #2e1e12;
+    --dg-side-r: #3d2818;
   }
   :root:not([data-dg-theme='light']) .dg-board[data-theme='hockey'] {
     --dg-top-a: #d9edf8;
@@ -394,8 +395,8 @@ body.dg {
 [data-dg-theme='dark'] .dg-board[data-theme='soccer'] {
   --dg-top-a: #356f42;
   --dg-top-b: #2c6138;
-  --dg-side-l: #16281c;
-  --dg-side-r: #1e3625;
+  --dg-side-l: #2e1e12;
+  --dg-side-r: #3d2818;
 }
 
 [data-dg-theme='dark'] .dg-board[data-theme='hockey'] {

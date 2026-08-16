@@ -13,9 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.19.0';
-import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.19.0';
-import { PIECE } from './pieces.js?v=4.19.0';
+import { replayFrames, inCheck } from './game.js?v=4.20.0';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.20.0';
+import { PIECE } from './pieces.js?v=4.20.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both

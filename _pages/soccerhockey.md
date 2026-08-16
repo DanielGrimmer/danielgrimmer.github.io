@@ -21,8 +21,8 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.19.0" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.19.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.20.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.20.0" />
 
 <div class="dg dg-scope">
   <div class="dg-wrap">
@@ -112,11 +112,17 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
    * down the middle of the picture. It is the page's claim in one image, and it
    * is never played — no click handler and no trail.
    *
-   * Everything else about it is a real position, drawn by the real renderer:
-   * the ball at mid-field, the star of squares it may move to lit around it,
-   * and an approach dot on every square a goal can be reached from. The star is
-   * the part that earns its place, because it is the one shape on the page that
-   * crosses the seam.
+   * What it does draw is a real position, by the real renderer: the ball at
+   * mid-field and an approach dot on every square from which a goal can be
+   * reached. No star of legal moves — this is a picture of a game, and a lit
+   * star reads as an invitation to click one.
+   *
+   * The dots are the picture's one piece of sleight of hand, and the only part
+   * of it that is really two boards. On the turf they are the soccer player's,
+   * on the ice the hockey player's, because that is what each of them would
+   * have in front of them. Four of them shift a square outwards as they cross
+   * the seam, which is the whole duality showing itself in the smallest
+   * possible way: the same eight squares, counted with a different reach.
    *
    * The split is by *screen* position rather than by grid, because the board is
    * drawn isometrically: a column is a diagonal on screen, so colouring by
@@ -127,9 +133,9 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
    * `data-theme` on the surface, and one rule in pages.css lets a cube restate
    * the rink's surface colours from a `data-surface` of its own. No fork.
    */
-  import { SOCCER_HOCKEY } from '{{ "/assets/games/core/presets.js" | relative_url }}?v=4.19.0';
-  import { initialGame, viewOf, squareFromView } from '{{ "/assets/games/core/game.js" | relative_url }}?v=4.19.0';
-  import { createBoardView } from '{{ "/assets/games/ui/board.js" | relative_url }}?v=4.19.0';
+  import { SOCCER_HOCKEY } from '{{ "/assets/games/core/presets.js" | relative_url }}?v=4.20.0';
+  import { initialGame, viewOf, squareFromView } from '{{ "/assets/games/core/game.js" | relative_url }}?v=4.20.0';
+  import { createBoardView } from '{{ "/assets/games/ui/board.js" | relative_url }}?v=4.20.0';
 
   /*
    * Follow the site's own light/dark toggle rather than the operating system.
@@ -161,21 +167,26 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
    * Mid-field, one file to the turf side of the goal's own file — the ball's
    * real starting square stands on the seam, and the ball belongs on the grass.
    * Named in view coordinates, since that is where the picture is composed, and
-   * put back through the lens so the star and the dots come out of the ordinary
-   * rules rather than being drawn by hand.
+   * put back through the lens so the dots come out of the ordinary rules rather
+   * than being drawn by hand.
    */
   const stand = squareFromView(config, 0, {
     row: Math.floor(height / 2),
     col: Math.floor(width / 2) - 1,
   });
-  const view = viewOf(config, { ...initialGame(config), ...stand }, 0);
+  const game = { ...initialGame(config), ...stand };
+  const view = viewOf(config, game, 0);
+  /** The same approach squares, as the seat on the other side of the seam reads them. */
+  const iceDots = new Set(
+    viewOf(config, game, 1).goalApproaches.map(({ row, col }) => `${row},${col}`)
+  );
 
   const board = createBoardView(document.getElementById('heroBoard'), {
     board: config.board,
     theme: 'soccer',
     interactive: false,
   });
-  board.render(view);
+  board.render({ ...view, legalMoves: [], blockedMoves: [] });
 
   /*
    * Which side of the seam each cube falls on. `seam` is chosen so the divide
@@ -195,6 +206,14 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
     const col = Number(cell.dataset.col);
     const side = col - row - seam;
     const ice = side > 0 || (side === 0 && (lowestSeamRow - row) % 2 === 1);
-    if (ice) cell.dataset.surface = 'hockey';
+    if (!ice) continue;
+    cell.dataset.surface = 'hockey';
+    /*
+     * Redraw this cube's dot, or take it away. The renderer has already put the
+     * soccer player's dots down across the whole board, and on this side of the
+     * seam they are the wrong ones. Safe to write over: the hero has no trail,
+     * so a dot is the only glyph any cube can be carrying.
+     */
+    cell.querySelector('.dg-glyph').textContent = iceDots.has(`${row},${col}`) ? '•' : '';
   }
 </script>
