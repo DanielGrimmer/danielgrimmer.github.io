@@ -24,7 +24,7 @@
  * violate it silently.
  */
 
-import { mod, signedRep } from '../core/duality.js?v=4.25.0';
+import { mod, signedRep } from '../core/duality.js?v=4.26.0';
 
 export const PIECE = Object.freeze({
   PAWN: 'pawn',

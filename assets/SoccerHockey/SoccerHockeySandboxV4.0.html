@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.25.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.25.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.26.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.26.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -37,16 +37,6 @@
         <div class="dg-sandbox-intro">
           <div>
             <p id="note"></p>
-            <!--
-              Three things that are true of the boards below, the first of them
-              read off the dials rather than fixed: this is the one page where
-              the numbers change under the sentence describing them.
-            -->
-            <ul class="dg-claims">
-              <li id="claimAcross"></li>
-              <li>A row is a row for both of you — that is why you can agree who won.</li>
-              <li>Set the duality to a factor of the width and the whole thing collapses.</li>
-            </ul>
             <div class="dg-status" id="status">Connecting…</div>
             <div class="dg-presence" id="presence"></div>
           </div>
@@ -127,7 +117,7 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.25.0';
+      const BUILD = '4.26.0';
 
       import {
         initialGame,
@@ -136,7 +126,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.25.0';
+      } from '../games/core/game.js?v=4.26.0';
       import {
         DEFAULT_SPEC,
         normaliseSpec,
@@ -147,12 +137,11 @@
         encodeSpec,
         decodeSpec,
         describeSpec,
-        acrossFor,
         inWords,
-      } from '../games/core/sandbox.js?v=4.25.0';
-      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.25.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.25.0';
-      import { createPaletteView } from '../games/ui/palette.js?v=4.25.0';
+      } from '../games/core/sandbox.js?v=4.26.0';
+      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.26.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.26.0';
+      import { createPaletteView } from '../games/ui/palette.js?v=4.26.0';
       import {
         ROOM_NAMES,
         roomFromLocation,
@@ -160,7 +149,7 @@
         rememberRoom,
         recallRoom,
         LAST_SANDBOX_KEY,
-      } from '../games/net/rooms.js?v=4.25.0';
+      } from '../games/net/rooms.js?v=4.26.0';
       import {
         signIn,
         chooseRoom,
@@ -174,7 +163,7 @@
         explain,
         HEARTBEAT_MS,
         SANDBOX_COLLECTION,
-      } from '../games/net/room.js?v=4.25.0';
+      } from '../games/net/room.js?v=4.26.0';
 
       const el = (id) => document.getElementById(id);
       const now = () => Date.now();
@@ -209,13 +198,13 @@
       ];
 
       const NOTE =
-        'Every dial is shared, and either of you may push the ball. Change the ' +
-        'width, the height, or the duality number — which has to share no factor ' +
-        'with the width, or the two views stop being views of one game. Then ' +
-        'switch a single move on in one palette and watch a different move light ' +
-        'up in the other: that is the duality, with the game taken away from it. ' +
-        'Then try it again with a different duality number, and see if you can ' +
-        'work out what is going on behind the scenes.';
+        'Every dial is shared, and either of you may push the ball. Try changing ' +
+        'the width, the height, or the duality number — which has to share no ' +
+        'prime factor with the width. Then try switching on/off the allowed ' +
+        'moves using the toggle box below. Watch a different move light up in ' +
+        'the other board: that is the duality. Then try all this again with a ' +
+        'different duality number, and see if you can work out what is going on ' +
+        'behind the scenes.';
 
       /* ------------------------------------------------------------ drawing */
 
@@ -301,13 +290,7 @@
         el('leave').hidden = seat === null;
         el('roomTools').hidden = false;
 
-        /*
-         * The first claim is read off the dials rather than fixed: this is the
-         * page where they change, and a sentence naming a number the box beside
-         * it no longer holds would be the one thing here you cannot check.
-         */
-        el('claimAcross').innerHTML =
-          `One across for Player 1 is <strong>${inWords(acrossFor(spec))} across</strong> for Player 2.`;
+        // Counted rather than asserted: switch a move off and it says nineteen.
         el('sameMoves').textContent =
           `both palettes hold the same ${inWords(config.moveSet.length)} moves — read differently`;
 

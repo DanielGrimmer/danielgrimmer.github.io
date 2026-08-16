@@ -17,9 +17,9 @@
  * must not take the page down for both of them.
  */
 
-import { mod, areCoprime, validMultipliers, modInverse } from './duality.js?v=4.25.0';
-import { dualMoveSet } from './rules.js?v=4.25.0';
-import { makeConfig } from './game.js?v=4.25.0';
+import { mod, areCoprime, validMultipliers } from './duality.js?v=4.26.0';
+import { dualMoveSet } from './rules.js?v=4.26.0';
+import { makeConfig } from './game.js?v=4.26.0';
 
 /**
  * Wider and taller than this and two boards no longer fit side by side at a
@@ -259,35 +259,6 @@ const NUMBER_WORDS = Object.freeze([
 /** Small numbers read better as words in a sentence; the board never gets large. */
 export const inWords = (n) => NUMBER_WORDS[n] ?? String(n);
 
-/**
- * How far one player's step across is, read off the other's board.
- *
- * The left-hand board is the canonical one, so a displacement of `dc` there is
- * `dc × duality` here. One is the interesting case, and it is the first thing
- * the page claims.
- */
-export function acrossFor(spec, dc = 1) {
-  return mod(dc * spec.duality, spec.width);
-}
-
-/**
- * The arithmetic behind the two boards, in one line.
- *
- * The duality number and its inverse mod the width are what the whole thing
- * turns on: multiplying by one carries the left board to the right, and by the
- * other carries it back. Printing the product makes the claim checkable rather
- * than asking anybody to take it on faith.
- */
-export function dialArithmetic(spec) {
-  const { width, duality } = spec;
-  if (!areCoprime(duality, width)) return '';
-  const inverse = modInverse(duality, width);
-  return (
-    `${duality} × ${inverse} = ${duality * inverse} ≡ 1 (mod ${width}) — ` +
-    `${inWords(inverse)} across for Player 1 is one across for Player 2.`
-  );
-}
-
 export function describeSpec(spec, notes = []) {
   if (notes.length) return notes[0];
   switch (trivialityOf(spec)) {
@@ -299,8 +270,7 @@ export function describeSpec(spec, notes = []) {
         'two boards are mirror images of each other.'
       );
     default:
-      // Nothing is wrong and nothing has collapsed, so say what is going on.
-      return dialArithmetic(spec);
+      return '';
   }
 }
 

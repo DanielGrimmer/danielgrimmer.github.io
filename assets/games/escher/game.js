@@ -21,9 +21,9 @@
  * as intended rather than a missing feature.
  */
 
-import { mod } from '../core/duality.js?v=4.25.0';
-import { PIECE } from './pieces.js?v=4.25.0';
-import { SIDE } from './presets.js?v=4.25.0';
+import { mod } from '../core/duality.js?v=4.26.0';
+import { PIECE } from './pieces.js?v=4.26.0';
+import { SIDE } from './presets.js?v=4.26.0';
 
 export const STATUS = Object.freeze({
   PLAYING: 'playing',

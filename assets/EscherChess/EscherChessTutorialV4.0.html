@@ -12,24 +12,39 @@
       shipped. Bump these together whenever a game module changes; the build
       stamp at the foot of the page reports which set is actually running.
     -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.25.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.26.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.26.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
-      <header class="dg-masthead">
-        <div>
-          <h1 id="title">Escher Chess</h1>
-          <div class="dg-sub" id="sub">
-            A practice board. Learn the pieces here; the real game comes after.
-          </div>
-        </div>
+      <!-- One strip: the way home on the left, where you are on the right. -->
+      <div class="dg-chrome">
         <a href="/escher-chess/">← Escher Chess</a>
-      </header>
+        <span class="dg-label" id="chromeState">Practice board · duality off</span>
+      </div>
 
-      <p class="dg-intro" id="intro">
-        Play both sides yourself, or take turns with whoever is sitting next to
-        you.
-      </p>
+      <div class="dg-page">
+        <header class="dg-head">
+          <div>
+            <h1 id="title">Escher Chess</h1>
+            <div class="dg-head-sub" id="sub">
+              A practice board. Learn the pieces here; the real game comes after.
+            </div>
+          </div>
+          <div class="dg-label">no opponent needed</div>
+        </header>
+
+        <p id="intro">
+          Play both sides yourself, or take turns with whoever is sitting next to
+          you.
+        </p>
 
       <!--
         Above the board, not below it.
@@ -111,17 +126,23 @@
       </details>
 
       <div class="dg-layout">
-        <div class="dg-coach" id="coach" aria-live="polite">
-          <div class="dg-coach-progress" id="coachProgress"></div>
+        <aside class="dg-coach" id="coach" aria-live="polite">
+          <div class="dg-coach-progress">
+            <span id="coachProgress"></span>
+            <span class="dg-steps" id="coachSteps"></span>
+          </div>
           <h2 class="dg-coach-title" id="coachTitle"></h2>
           <p class="dg-coach-body" id="coachBody"></p>
           <p class="dg-coach-hint" id="coachHint"></p>
           <a class="dg-btn dg-btn-primary" id="playReal" href="/escher-chess/" hidden></a>
           <button class="dg-link" id="coachSkip" type="button">Skip this bit</button>
-        </div>
+        </aside>
 
         <div class="dg-play">
-          <div class="dg-status" id="status">White to move.</div>
+          <div class="dg-status" id="status">
+            <span id="statusText">White to move.</span>
+            <span class="dg-status-move" id="statusMove"></span>
+          </div>
           <div id="board"></div>
           <div class="dg-bar">
             <button class="dg-btn" id="undo" type="button">Take that back</button>
@@ -129,14 +150,15 @@
           </div>
         </div>
       </div>
+      </div>
 
-      <p class="dg-legend dg-build">Build <span id="buildStamp">—</span></p>
+      <p class="dg-build">Build <span id="buildStamp">—</span></p>
     </div>
 
     <script type="module">
-      const BUILD = '4.25.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.26.0'; // keep in step with the ?v= tokens below
 
-      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.25.0';
+      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.26.0';
       import {
         initialGame,
         applyMove,
@@ -145,8 +167,8 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.25.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.25.0';
+      } from '../games/escher/game.js?v=4.26.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.26.0';
       import {
         contextFor,
         stepIndex,
@@ -154,7 +176,7 @@
         STALLED_HINT,
         TUTORIALS,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.25.0';
+      } from '../games/escher/coach.js?v=4.26.0';
 
       /*
        * Which of the two practice boards this is.
@@ -176,6 +198,8 @@
       }
       document.getElementById('title').textContent =
         `Escher Chess (${board.width}\u00d7${board.height})`;
+      document.getElementById('chromeState').textContent =
+        `Practice board ${board.width}\u00d7${board.height} \u00b7 duality off`;
       if (isWide) {
         document.getElementById('sub').textContent =
           'A second practice board for learning two new pieces.';
@@ -221,9 +245,30 @@
       });
 
       const el = (id) => document.getElementById(id);
-      const statusEl = el('status');
 
       const SIDE_NAME = ['White', 'Black'];
+
+      /**
+       * How far in, in the corner of the status line: the move about to be
+       * played while there is one, and the length of the game once there is not.
+       */
+      function moveText() {
+        if (game.outcome.status === STATUS.PLAYING) return `move ${moves.length + 1}`;
+        return `${moves.length} move${moves.length === 1 ? '' : 's'}`;
+      }
+
+      /** One tick per step: done behind you, gold where you are. */
+      function drawTicks(index) {
+        el('coachSteps').replaceChildren(
+          ...steps.map((_, i) => {
+            const tick = document.createElement('span');
+            tick.className = 'dg-step-tick';
+            if (i < index) tick.dataset.state = 'done';
+            else if (i === index) tick.dataset.state = 'here';
+            return tick;
+          })
+        );
+      }
 
       function statusText() {
         const { status, winner } = game.outcome;
@@ -243,6 +288,7 @@
         el('coachProgress').textContent = done
           ? 'Done'
           : `Step ${index + 1} of ${steps.length}`;
+        drawTicks(index);
         el('coachTitle').textContent = done ? outro.title : step.title;
         el('coachBody').textContent = done ? outro.body : step.body;
         // A finished board cannot satisfy the step being asked for, so say so
@@ -304,8 +350,9 @@
           },
         });
 
-        statusEl.textContent = statusText();
-        statusEl.dataset.tone = game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
+        el('statusText').textContent = statusText();
+        el('statusMove').textContent = moveText();
+        el('status').dataset.tone = game.outcome.status === STATUS.CHECKMATE ? 'win' : '';
         el('undo').disabled = moves.length === 0;
         drawCoach();
       }
