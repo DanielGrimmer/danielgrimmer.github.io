@@ -22,7 +22,7 @@
  * games differ by a collection name.
  */
 
-import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.29.0';
+import { firebaseConfig, appCheckSiteKey } from '../../SoccerHockey/firebaseConfig.js?v=4.30.0';
 import {
   ROOM_NAMES,
   ESCHER_ROOM_NAMES,
@@ -35,7 +35,7 @@ import {
   escherNamesFor,
   isRoomName,
   namesFor,
-} from './rooms.js?v=4.29.0';
+} from './rooms.js?v=4.30.0';
 import {
   claimSeat,
   touchSeat,
@@ -45,7 +45,7 @@ import {
   isAbandonedGame,
   seatOf,
   HEARTBEAT_MS,
-} from '../core/seats.js?v=4.29.0';
+} from '../core/seats.js?v=4.30.0';
 
 /** While it is your move, beat faster so the other side can see you are there. */
 const ACTIVE_HEARTBEAT_MS = 15 * 1000;
@@ -286,10 +286,15 @@ export async function chooseRoom({
    * is.
    */
   names = null,
+  /**
+   * A room to rule out — the one being walked away from. "Move to a new room"
+   * without this would often pick the room just left, which still looks open.
+   */
+  avoid = null,
 }) {
   const all = namesFor(collection);
-  const pool = names ?? all;
-  if (isRoomName(preferred, all)) return preferred;
+  const pool = (names ?? all).filter((n) => n !== avoid);
+  if (preferred !== avoid && isRoomName(preferred, all)) return preferred;
 
   if (uid && isRoomName(remembered, pool)) {
     const mine = await peekRoom({ name: remembered, collection });

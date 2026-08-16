@@ -21,9 +21,9 @@
  * as intended rather than a missing feature.
  */
 
-import { mod } from '../core/duality.js?v=4.29.0';
-import { PIECE } from './pieces.js?v=4.29.0';
-import { SIDE } from './presets.js?v=4.29.0';
+import { mod } from '../core/duality.js?v=4.30.0';
+import { PIECE } from './pieces.js?v=4.30.0';
+import { SIDE } from './presets.js?v=4.30.0';
 
 export const STATUS = Object.freeze({
   PLAYING: 'playing',
@@ -322,6 +322,26 @@ function applyAction(board, game, { action }) {
 /** Only the entries that move a piece — what a replay viewer steps through. */
 export function boardMoves(moves) {
   return moves.filter((m) => !m?.action);
+}
+
+/**
+ * Frames for a replay viewer: the opening position, then one per board move.
+ *
+ * Folded through the FULL log, actions included, and only then thinned. The
+ * actions cannot simply be stripped before the fold, because they carry the
+ * turn parity: after "White offers a draw" it is Black's move, and a fold of
+ * the stripped log would try to play Black's reply as White and throw — which
+ * is a reveal with no replay in it, over exactly the game whose ending made
+ * the replay worth watching.
+ */
+export function boardFrames(board, moves) {
+  const frames = [initialGame(board)];
+  let game = frames[0];
+  for (const move of moves) {
+    game = applyMove(board, game, move);
+    if (!move?.action) frames.push(game);
+  }
+  return frames;
 }
 
 /** Fold a log into a game. How a room's state is reconstructed. */

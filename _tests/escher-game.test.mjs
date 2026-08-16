@@ -23,6 +23,7 @@ import {
   viewOf,
   ACTION,
   boardMoves,
+  boardFrames,
 } from '../assets/games/escher/game.js';
 
 /** Chess letters: knight is N, because king already has the K. */
@@ -790,5 +791,26 @@ test('ending early', async (t) => {
     const opening = legalMoves(board, initialGame(board))[0];
     const log = [{ action: ACTION.DRAW_OFFER }, opening, { action: ACTION.FORFEIT }];
     assert.deepEqual(boardMoves(log), [opening]);
+  });
+
+  await t.test('REGRESSION: the replay of an offer-move-forfeit game folds', () => {
+    /*
+     * The reported game, verbatim: White requested a draw, Black moved a pawn,
+     * White forfeited. Stripping the actions before folding replayed Black's
+     * pawn move on White's turn and threw — a reveal with no replay in it.
+     * The fold has to run through the full log and only then thin the frames.
+     */
+    const offered = replay(board, [{ action: ACTION.DRAW_OFFER }]);
+    const blackReply = legalMoves(board, offered)[0];
+    const log = [{ action: ACTION.DRAW_OFFER }, blackReply, { action: ACTION.FORFEIT }];
+
+    const frames = boardFrames(board, log);
+    assert.equal(frames.length, 2, 'the opening position plus the one board move');
+    assert.equal(frames[1].lastMove.side, SIDE.BLACK);
+    assert.equal(replay(board, log).outcome.status, STATUS.RESIGNED);
+    assert.equal(replay(board, log).outcome.winner, SIDE.BLACK, 'White forfeited');
+
+    // And the stripped fold really does throw, which is why boardFrames exists.
+    assert.throws(() => replayFrames(board, boardMoves(log)), /illegal move/);
   });
 });

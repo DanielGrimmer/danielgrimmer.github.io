@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.29.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.29.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.30.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.30.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -96,6 +96,20 @@
             </div>
 
             <!--
+              Ending early, at the top where a weary player looks first. Both
+              ride the move log — the one thing the rules let a player write —
+              so both are acts you take on your own turn. Offering a draw
+              spends the turn, which is why the button says (pass): if your
+              friend declines by playing on, you have not fallen behind — you
+              passed, and the game simply continues from there.
+            -->
+            <div class="dg-endgame">
+              <button class="dg-btn dg-btn-primary" id="acceptDraw" type="button" hidden>Accept the draw</button>
+              <button class="dg-btn" id="requestDraw" type="button" hidden>Request draw (pass)</button>
+              <button class="dg-btn" id="forfeit" type="button" hidden>Forfeit</button>
+            </div>
+
+            <!--
               The gate between the last move and the reveal. The game is over,
               but the reveal only lands if the players talk *first*: the friend
               saying "what strange pieces? YOU had the strange pieces" out loud
@@ -117,14 +131,19 @@
               the top and bottom edges of the board itself, which is where a
               player looks for them.
             -->
+            <!--
+              The board with the hint ladder standing beside it rather than
+              under it: mid-game confusion looks sideways, not down. On the
+              8×8, and on a phone, the row folds back to one column.
+            -->
+            <div class="dg-play-row">
             <div id="liveSlot"></div>
 
             <!--
-              A ladder of hints for the confused, every rung folded shut: the
-              outer fold costs one line under the board, and each piece costs a
-              second click, so nothing is spoiled by accident. Five-file board
-              only — the hints describe that board's duality, and the 8×8 has
-              its own strangeness.
+              A ladder of hints for the confused, every rung folded shut: each
+              piece costs its own deliberate click, so nothing is spoiled by
+              accident. Five-file board only — the hints describe that board's
+              duality, and the 8×8 has its own strangeness.
             -->
             <details class="dg-rules" id="hints" hidden>
               <summary>What is going on with my opponent’s pieces?!?</summary>
@@ -170,19 +189,19 @@
                 </p>
               </details>
             </details>
+            </div>
 
             <div class="dg-room-foot">
               <span id="roomFoot"></span>
               <span class="dg-foot-actions">
-                <!--
-                  Ending early. Both ride the move log — the one thing the
-                  rules let a player write — so both are moves you make on
-                  your own turn, exactly as over a real board.
-                -->
-                <button class="dg-btn dg-btn-primary" id="acceptDraw" type="button" hidden>Accept the draw</button>
-                <button class="dg-btn" id="requestDraw" type="button" hidden>Request draw</button>
-                <button class="dg-btn" id="forfeit" type="button" hidden>Forfeit</button>
                 <button class="dg-btn" id="newGame" type="button" hidden>New game</button>
+                <!--
+                  The way out of a room you are done with — most of all one
+                  still holding a finished game, which a returning seat resumes
+                  straight into. Before this the only exit was deleting the
+                  browser's history, which nobody should have to learn.
+                -->
+                <button class="dg-btn" id="newRoom" type="button">Move to a new room</button>
                 <button class="dg-btn js-copy-link" type="button">Copy the invite link</button>
                 <button class="dg-link" id="leave" type="button">Leave this room</button>
               </span>
@@ -231,6 +250,7 @@
                 board is recorded.
               -->
               <button class="dg-btn dg-btn-primary" id="otherBoard" type="button"></button>
+              <button class="dg-btn" id="newRoomOver" type="button">Move to a new room</button>
             </div>
           </div>
         </section>
@@ -240,19 +260,19 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.29.0';
+      const BUILD = '4.30.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.29.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.30.0';
       import {
         initialGame,
         replay,
-        replayFrames,
+        boardFrames,
         boardMoves,
         viewOf,
         fromView,
         STATUS,
         ACTION,
-      } from '../games/escher/game.js?v=4.29.0';
+      } from '../games/escher/game.js?v=4.30.0';
       import {
         presenceOf,
         seatOf,
@@ -261,10 +281,10 @@
         mayMove,
         PRESENCE,
         OUTCOME,
-      } from '../games/core/seats.js?v=4.29.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.29.0';
-      import { createReplayView } from '../games/ui/replay.js?v=4.29.0';
-      import { revealNote } from '../games/escher/coach.js?v=4.29.0';
+      } from '../games/core/seats.js?v=4.30.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.30.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.30.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.30.0';
       import {
         ESCHER_ROOM_NAMES,
         ESCHER_BOARD_ROOMS,
@@ -276,14 +296,14 @@
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.29.0';
+      } from '../games/net/rooms.js?v=4.30.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.29.0';
+      } from '../games/net/room.js?v=4.30.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
@@ -612,12 +632,13 @@
          * the caption are Escher Chess's, and are handed over here.
          */
         /*
-         * Board moves only: a forfeit or a draw offer in the log changes no
-         * position, and a frame that repeats the one before it reads as the
-         * scrubber sticking.
+         * Board moves only for the viewer — a forfeit changes no position —
+         * but folded through the full log: the actions carry the turn parity,
+         * and stripping them before the fold made Black's replies replay as
+         * White and threw, leaving the reveal with no replay in it.
          */
         const played = boardMoves(state.moves);
-        const frames = replayFrames(board, played);
+        const frames = boardFrames(board, state.moves);
 
         // Built after the section is unhidden: each board measures itself as it
         // is created, and a hidden parent measures as nothing at all.
@@ -642,6 +663,11 @@
           describe: (index) => `move ${index} / ${played.length}`,
           // And the part that will not fit there, underneath.
           caption(index) {
+            // A game forfeited before anyone moved has nothing to play back,
+            // and a dead scrubber over the opening position should say so.
+            if (played.length === 0) {
+              return 'No moves were played — both boards show the opening position.';
+            }
             if (index === 0) {
               return `The opening position — ${played.length} moves to come`;
             }
@@ -931,6 +957,29 @@
         revealUnlocked = true;
         drawReplay();
       });
+
+      /*
+       * Out of this room and into a fresh one on the same board — most of all
+       * out of a room still holding a finished game, which a returning seat
+       * resumes straight into. `avoid` keeps the pool scan from handing back
+       * the room being left, which still looks perfectly open.
+       */
+      async function moveToNewRoom() {
+        try {
+          const fresh = await escher.choose({
+            uid,
+            now: now(),
+            board: board.id,
+            avoid: room,
+          });
+          await enterRoom(fresh);
+        } catch (err) {
+          el('statusText').textContent = `Could not change rooms: ${explain(err)}`;
+          el('pairBody').textContent = `Could not change rooms: ${explain(err)}`;
+        }
+      }
+      el('newRoom').addEventListener('click', moveToNewRoom);
+      el('newRoomOver').addEventListener('click', moveToNewRoom);
 
       el('newGame').addEventListener('click', async () => {
         await escher.reset({ name: room });
