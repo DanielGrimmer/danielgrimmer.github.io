@@ -62,18 +62,17 @@ for (const [name, tut] of BOTH) {
       assert.equal(game.outcome.status, STATUS.PLAYING, 'and the script does not end the game');
     });
 
-    await t.test('and the last move gives check, which is what the last step promises', () => {
+    // Where the checks fall is each script's own business — the narrow one saves
+    // its for the end, the wide one opens with it — so what is asked here is
+    // only that nobody is ever left in check by their own move, which is the
+    // engine's job and would break every instruction after it.
+    await t.test('nobody ever moves into check', () => {
       let game = initialGame(board);
-      tut.moves.forEach((step, i) => {
+      for (const [i, step] of tut.moves.entries()) {
+        const mover = game.turn;
         game = applyMove(board, game, asMove(step));
-        // Nothing before the end should be checking anybody: the steps up to
-        // there are about how the pieces move, not about the king.
-        assert.equal(
-          inCheck(board, game, game.turn),
-          i === tut.moves.length - 1,
-          `after move ${i + 1}`
-        );
-      });
+        assert.equal(inCheck(board, game, mover), false, `after move ${i + 1}`);
+      }
     });
 
     await t.test('a select beat points at the piece the next move uses', () => {
@@ -189,6 +188,20 @@ test('the two tutorials are told apart by the board they prepare you for', async
 test('the 5x10 script, move by move', async (t) => {
   const tut = NARROW_TUTORIAL;
 
+  await t.test('only the last move gives check, which is what step four promises', () => {
+    let game = initialGame(TUTORIAL);
+    tut.moves.forEach((step, i) => {
+      game = applyMove(TUTORIAL, game, asMove(step));
+      // Nothing before the end should be checking anybody: the steps up to
+      // there are about how the pieces move, not about the king.
+      assert.equal(
+        inCheck(TUTORIAL, game, game.turn),
+        i === tut.moves.length - 1,
+        `after move ${i + 1}`
+      );
+    });
+  });
+
   await t.test('the captures land where the copy says they do', () => {
     let game = initialGame(TUTORIAL);
     const takes = [];
@@ -261,11 +274,28 @@ test('the 8x8 script teaches the two pieces that are new', async (t) => {
   };
   const selectBeat = (step) => tut.script.find((b) => b.kind === 'select' && b.step === step);
 
-  await t.test('three steps, and nothing spent getting into position', () => {
-    assert.deepEqual(tut.steps.map((s) => s.id), ['queen', 'knight', 'check']);
-    // Short on purpose: every move is about a piece rather than about reaching
-    // one, which is what starting from a set position buys.
-    assert.ok(tut.moves.length <= 6, `${tut.moves.length} moves`);
+  await t.test('two steps and three moves, and none of them spent manoeuvring', () => {
+    assert.deepEqual(tut.steps.map((s) => s.id), ['queen', 'knight']);
+    assert.equal(tut.moves.length, 3);
+    // Every white move is one of the two pieces the tutorial is about.
+    const game = initialGame(board);
+    const mine = tut.moves.filter((_, i) => i % 2 === 0);
+    assert.deepEqual(
+      mine.map((m) => pieceAt(game, m.from.rank, m.from.file)?.type).filter(Boolean),
+      ['queen', 'knight']
+    );
+  });
+
+  /*
+   * A select beat's note has to be one sentence: the reader clicks the moment
+   * they have read it, and the panel is on the next beat before they could have
+   * read anything else. Anything worth noticing goes in the move beat, which
+   * they meet with the piece still held and its whole pattern still lit.
+   */
+  await t.test('a select beat asks for the click and says nothing else', () => {
+    for (const beat of tut.script.filter((b) => b.kind === 'select')) {
+      assert.match(beat.note, /^Click the white \w+\.$/, beat.note);
+    }
   });
 
   /*
@@ -275,9 +305,8 @@ test('the 8x8 script teaches the two pieces that are new', async (t) => {
    */
   const noneWrap = (from, to) => {
     for (const s of to) {
-      const df = s.file - from.file;
       assert.ok(
-        Math.abs(df) <= board.width / 2,
+        Math.abs(s.file - from.file) <= board.width / 2,
         `${from.file} -> ${s.file} crosses the seam`
       );
     }
@@ -306,6 +335,36 @@ test('the 8x8 script teaches the two pieces that are new', async (t) => {
     assert.equal(rank.has((beat.from.file + board.width / 2) % board.width), false);
   });
 
+  /*
+   * The payoff, and the whole reason the first step is worth reading: the queen
+   * checks from three files away, and the king's answer is to step onto the one
+   * square of that rank she cannot cover. If the geometry ever stops working the
+   * copy is telling a lie, and this says so.
+   */
+  await t.test('the check is answered by stepping into her blind square', () => {
+    const [openWith, escape] = tut.moves;
+    const after = applyMove(board, initialGame(board), asMove(openWith));
+    assert.equal(after.lastMove.type, 'queen');
+    assert.equal(after.lastMove.to.rank, board.height - 2, 'she arrives on rank 7');
+    assert.ok(inCheck(board, after, after.turn), 'and it is check');
+
+    const king = pieceAt(after, escape.from.rank, escape.from.file);
+    assert.equal(king.type, 'king');
+    assert.equal(Math.abs(escape.from.file - openWith.to.file), 3, 'too far for it to take her');
+    assert.equal(escape.to.rank, openWith.to.rank, 'it stays on her rank');
+    assert.equal(
+      escape.to.file,
+      (openWith.to.file + board.width / 2) % board.width,
+      'and lands on the one file she cannot reach'
+    );
+    assert.ok(
+      legalMoves(board, after).some(
+        (m) => m.to.rank === escape.to.rank && m.to.file === escape.to.file
+      ),
+      'which is legal, so the blind spot is real and not just arithmetic'
+    );
+  });
+
   // Eight destinations, none of them a two-and-one: that is the whole lesson.
   await t.test('the knight shows all eight, in one piece', () => {
     const beat = selectBeat('knight');
@@ -331,27 +390,6 @@ test('the 8x8 script teaches the two pieces that are new', async (t) => {
     // And the script does.
     const next = tut.script[tut.script.indexOf(beat) + 1];
     assert.deepEqual(next.to, takes[0]);
-  });
-
-  /*
-   * The payoff: the closing check is answerable by walking into the file the
-   * queen cannot reach. It is the first step's lesson doing something, so if
-   * the geometry ever stops working the copy is wrong and this says so.
-   */
-  await t.test('the check leaves the king an escape into her blind file', () => {
-    const last = tut.script[tut.script.length - 1];
-    const before = positionAt(last);
-    assert.equal(pieceAt(before, last.from.rank, last.from.file).type, 'queen');
-    const after = applyMove(board, before, asMove(last));
-    assert.ok(inCheck(board, after, after.turn), 'it is check');
-    assert.equal(after.outcome.status, STATUS.PLAYING, 'and not mate');
-
-    const blind = (last.to.file + board.width / 2) % board.width;
-    const escapes = legalMoves(board, after).map((m) => m.to);
-    assert.ok(
-      escapes.some((s) => s.rank === last.to.rank && s.file === blind),
-      'the king can step onto the one file she does not cover'
-    );
   });
 });
 

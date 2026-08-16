@@ -45,8 +45,8 @@
  * through their lenses and never asks which one is the identity.
  */
 
-import { Lens, dualityBetween } from '../core/duality.js?v=4.13.0';
-import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.13.0';
+import { Lens, dualityBetween } from '../core/duality.js?v=4.14.0';
+import { PIECE, makePieces, ESCHER_DIALS, dualityReport } from './pieces.js?v=4.14.0';
 
 const { PAWN: P, KNIGHT: N, BISHOP: B, ROOK: R, QUEEN: Q, KING: K } = PIECE;
 
@@ -356,30 +356,40 @@ export const TUTORIAL = boardFor({
  * visible takes half a dozen moves of shuffling, and the reader spends that
  * time being told about pieces they cannot yet see.
  *
- * So the two of them start in the middle of an almost empty board, on the
- * squares where the pattern comes out whole:
+ * So this is a position chosen to be looked at, and every square in it is load
+ * bearing:
  *
- * - The queen on file 5. A rook reaches three each way, which on eight files
- *   spans seven of the eight — from file 5 that is files 2 to 8, and no part of
- *   it runs off the edge. The one file she cannot reach is the one directly
- *   opposite, and here it is the far left, sitting there unmarked.
- * - The knight on file 4, three ranks from either end. Its long arm is three
- *   files, so anywhere but the middle two files it would leave the board and
- *   come back, and the ring would be cut in half on the screen.
+ * - **The queen on file 5.** Three squares each way spans seven of the eight
+ *   files; from file 5 that is files 2 to 8, so none of it runs off the edge and
+ *   the whole of her is on screen at once. The file she cannot reach — the one
+ *   directly opposite, four away — is file 1, sitting there unmarked.
+ * - **The black king on file 2, rank 7.** Two squares up her file puts the queen
+ *   on rank 7 checking it from three files away, which is too far for the king
+ *   to take her; and file 1 is the square next door. So the king's answer to the
+ *   check is to step onto the one square on that rank she does not cover, which
+ *   is the first lesson doing something.
+ * - **The knight on file 4, and on rank 3 rather than up with the action.** File
+ *   4 because its long arm is three files: from anywhere but the middle two,
+ *   half the ring would be round the back of the board and read as two halves of
+ *   nothing. Rank 3 because a knight covers the ranks two either side of it, so
+ *   one anywhere near rank 7 would be covering the square the king has to escape
+ *   to — and a demonstration that quietly stops working is worse than no
+ *   demonstration. There is nowhere on ranks 5 or 6 that does not either shadow
+ *   the queen's own pattern or take that square away.
+ * - **The black rook on file 7, rank 4**, which is one of the knight's eight, so
+ *   the ring has something in it to take rather than eight empty squares.
  *
- * The rook on the far rank is there to be taken, so that the ring has something
- * in it besides empty squares; the kings are there because a chess position
- * without them is not one.
+ * The kings are there because a chess position without them is not one.
  */
 const WIDE_TUTORIAL_LAYOUT = Object.freeze([
-  '. r . . . . k .',
-  '. p . . . . . .',
-  '. . . N . . . .',
+  '. . . . . . . .',
+  '. k . . . . . .',
   '. . . . . . . .',
   '. . . . Q . . .',
+  '. . . . . . r .',
+  '. . . N . . . .',
   '. . . . . . . .',
-  '. . . . . . . .',
-  '. K . . . . . .',
+  'K . . . . . . .',
 ]);
 
 export const TUTORIAL_WIDE = boardFor({

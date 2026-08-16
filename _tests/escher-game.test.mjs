@@ -313,12 +313,15 @@ test('the 8x8 practice board is a position somebody chose', async (t) => {
     const at = (rank, file) => TUTORIAL_WIDE.placement.find(
       (m) => m.rank === rank - 1 && m.file === file - 1
     );
-    // The two squares the whole tutorial is built on: the queen where three
-    // files each way stays on the board, the knight where three does too.
-    assert.deepEqual(at(4, 5), { type: PIECE.QUEEN, side: SIDE.WHITE, rank: 3, file: 4 });
-    assert.deepEqual(at(6, 4), { type: PIECE.KNIGHT, side: SIDE.WHITE, rank: 5, file: 3 });
-    // Six men in all: those two, both kings, and a rook and a pawn for black.
-    assert.equal(TUTORIAL_WIDE.placement.length, 6, 'and nothing else in the way');
+    // The three squares the whole tutorial is built on: the queen where three
+    // files each way stays on the board, the black king three files from where
+    // she arrives with her blind file next door, and the knight far enough down
+    // the board not to be covering that file when the king needs it.
+    assert.deepEqual(at(5, 5), { type: PIECE.QUEEN, side: SIDE.WHITE, rank: 4, file: 4 });
+    assert.deepEqual(at(7, 2), { type: PIECE.KING, side: SIDE.BLACK, rank: 6, file: 1 });
+    assert.deepEqual(at(3, 4), { type: PIECE.KNIGHT, side: SIDE.WHITE, rank: 2, file: 3 });
+    // Five men in all: those three, the white king, and a rook to be taken.
+    assert.equal(TUTORIAL_WIDE.placement.length, 5, 'and nothing else in the way');
   });
 });
 
