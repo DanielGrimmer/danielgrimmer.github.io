@@ -21,6 +21,22 @@
 # Source -> **GitHub Actions**. Re-select it even if it already reads that; the
 # built-in workflow is triggered by a branch-based source, and a stale setting
 # is what leaves it running.
+#
+# ## If "Deploy site" itself failed
+#
+# Look at which job died before assuming the commit is at fault. Five of the
+# last thirty runs failed, and every one was GitHub's own infrastructure
+# rather than the site: 429s from codeload.github.com while downloading an
+# action, and 503s from the Pages deployment API. Both are transient and both
+# are now retried — the actions/* downloads by the runner itself, the
+# deployment by the second attempt at the foot of this file.
+#
+# The dangerous part is not the failed run, it is the silence afterwards: a
+# failed deploy leaves the previous build live, so the site simply stays at an
+# older version with nothing on the page to say so. The build stamp at the
+# foot of each game page is how to check — if it does not match the version in
+# the newest commit, the deploy did not land, and re-running the workflow
+# (Actions -> Deploy site -> Run workflow) is the fix.
 
 name: Deploy site
 
@@ -98,8 +114,21 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
+      # Retried, because the failure is usually not ours. The Pages deployment
+      # API answers 503 ("No server is currently available… please re-run the
+      # deployment at a later time") often enough to matter: it lost the 4.37.0
+      # deploy outright, and the only sign was the site quietly staying two
+      # builds behind. `error_count` is how many polling errors deploy-pages
+      # tolerates once a deployment exists; it does nothing for a 503 on
+      # creation, so the retry has to wrap the step.
       - name: Deploy to GitHub Pages
         id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Deploy to GitHub Pages (retry)
+        id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
