@@ -1,8 +1,9 @@
 ---
 layout: page
 permalink: /games/
-title: duality games
-description: Two-player games in which each player sees a different board — and neither of them is wrong.
+title: duality games # the navbar label, lower-case like its siblings
+display_title: Duality Games # the <h1> on the page itself
+description: Two-player games in which each player sees a radically different world, and yet neither of them is wrong.
 nav: true
 nav_order: 5
 dropdown: true
@@ -26,20 +27,16 @@ children:
 
 Two theories are **dual** when they look nothing alike and yet say precisely the
 same thing: every state, every observable and every prediction on one side has a
-counterpart on the other, and no experiment can pull them apart. Physics has real
-examples. The AdS/CFT correspondence relates a theory of gravity in a curved
-spacetime to a quantum field theory living on that spacetime's boundary — a
-different number of dimensions, different objects, arguably a different space
-altogether.
+counterpart on the other side, and no experiment can discriminate between these
+two world-views. Physics has real examples. The AdS/CFT correspondence relates a
+theory of gravity in a curved spacetime to a quantum field theory living on that
+spacetime's boundary — a different number of dimensions, different objects,
+arguably a different space altogether.
 
 Which leaves the question I keep returning to in my work: if each description
 accounts for everything there is to account for, which one tells us what the world
-is _really_ like? Or is the question itself confused?
-
-These games are that question, made playable. In each of them you and your
-opponent are given different-looking boards, and each of you is told — truthfully
-— that you are playing the game in front of you. You are not playing the same
-game as your opponent. You are also not playing a different one.
+is _really_ like? Or is the question itself somehow confused? These games are that
+question, made playable.
 
 <!--
   Styled inline rather than with the theme's `btn` classes: those are only given a
@@ -95,46 +92,25 @@ game as your opponent. You are also not playing a different one.
 <div class="dg-cards">
   <div class="dg-card">
     <h3><a href="{{ '/soccer-hockey/' | relative_url }}">Soccer Hockey Duality</a></h3>
-    <p>
-      One of you is playing soccer. The other is playing hockey. Every move made in
-      one game is a legal, sensible move in the other, because the two boards are
-      different representations of a single underlying game state.
-    </p>
+    <p>Soccer and Hockey are clearly different sports, right?</p>
     <a class="dg-play" href="{{ '/soccer-hockey/' | relative_url }}">How to play →</a>
   </div>
 
   <div class="dg-card">
     <h3><a href="{{ '/escher-chess/' | relative_url }}">Escher Chess</a></h3>
-    <p>
-      A chess variant on a 5×10 and then an 8×8 board. You and your opponent see
-      different boards, and there are two apparently contradictory ways of
-      reading the game that turn out to be perfectly consistent with one
-      another. You are not told how your opponent's pieces move; working it out
-      is the game. Four screens, and they go in order.
-    </p>
+    <p>Surprisingly there is a duality hidden within chess!</p>
     <a class="dg-play" href="{{ '/escher-chess/' | relative_url }}">How to play →</a>
   </div>
 </div>
 
 ## What you need
 
-Both games are played in the browser, and both need **a second player**. For the
-real thing you also need to _not_ be able to see each other's screen — that is the
-whole point of the exercise. Open the game on your own devices, join the same
-room, and the state syncs between you. Each game comes with a tutorial that is
-fine to play side by side; the game itself is not.
-
-Afterwards, play a second time looking at each other's screens, and compare notes.
-That is when it lands.
+Both games are played in the browser, and both need **a second player** playing on
+a second screen. It is crucial that you cannot see each other's screens, as that
+is the whole point of these duality games: they may have a radically different
+experience than you think they would. After the first game, you can (and should)
+talk and compare notes. This is when the mystery will reveal itself.
 
 Soccer Hockey then has a third screen — a sandbox, opened from the end of the
 reveal — where the board size, the duality number and the moves themselves
 become dials the two of you share.
-
-## Further reading
-
-The philosophical case behind these games is set out in _Dualities, Quantum
-Mechanics, and the Uncommon Common Core_ (with Enrico Cinti and Rasmus Jaksland),
-[_The British Journal for the Philosophy of Science_](https://www.journals.uchicago.edu/doi/10.1086/730421),
-and the broader view of spacetime structure it belongs to is developed in my
-[DPhil thesis]({{ '/publications/' | relative_url }}).
