@@ -13,9 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.30.0';
-import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.30.0';
-import { PIECE } from './pieces.js?v=4.30.0';
+import { replayFrames, inCheck } from './game.js?v=4.31.0';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.31.0';
+import { PIECE } from './pieces.js?v=4.31.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -470,6 +470,72 @@ function whatTheirPiecesWere(board) {
 }
 
 /**
+ * The two columns of the ledger, for the board actually played.
+ *
+ * These are the point of the screen, so they name real squares from the real
+ * opening position rather than gesturing at the idea — and every square below
+ * is checked against the engine in `_tests/escher-coach.test.mjs`. Reorder a
+ * file, shorten a piece, and the tests fall over rather than the reveal
+ * quietly telling the reader something false about the board they just played.
+ *
+ * The middle claim is worded differently on the two boards because the boards
+ * differ. On five files the seats disagree about whether a move jumps anything
+ * at all: White's knight step is not a straight line, so nothing is "between",
+ * while Black reads the same move as a bishop's two-square diagonal passing
+ * right over a piece. On eight files rank 2 is a solid wall of pawns, so both
+ * seats always see *something* jumped and the disagreement is only ever about
+ * which man it was.
+ */
+const LEDGERS = Object.freeze({
+  [NARROW.id]: Object.freeze({
+    places: 'E.g., Knight on R1 to A3.',
+    disagree: Object.freeze([
+      Object.freeze({
+        claim: 'which files are adjacent to which',
+        example: 'Do the rank 3 pawns begin adjacent? The rank 8 pawns?',
+      }),
+      Object.freeze({
+        claim: 'whether a move requires jumping',
+        example: 'Does Knight on R1 to A3 require jumping over the bishop on E2?',
+      }),
+      Object.freeze({
+        claim: 'whether a move crosses the seam',
+        example: 'Does Bishop on R2 to D4 wrap around?',
+      }),
+    ]),
+  }),
+  [WIDE.id]: Object.freeze({
+    places: 'E.g., Bishop on H1 to C3.',
+    disagree: Object.freeze([
+      Object.freeze({
+        claim: 'which files are adjacent to which',
+        example: 'Do the knights on D1 and S1 begin side by side? The rooks on C1 and L1?',
+      }),
+      Object.freeze({
+        claim: 'which man a move jumps over',
+        example: 'Does Bishop on H1 to C3 jump the pawn on D2, or the one on A2?',
+      }),
+      Object.freeze({
+        claim: 'whether a move crosses the seam',
+        example: 'Does Knight on S1 to C3 wrap around?',
+      }),
+    ]),
+  }),
+});
+
+/**
+ * A board nobody has written examples for — a sandbox one, say — still gets the
+ * claims, which are true of any board whose two seats read the files in
+ * different orders. Only the worked examples are board-specific.
+ */
+const PLAIN = Object.freeze({
+  places: null,
+  disagree: Object.freeze(
+    LEDGERS[NARROW.id].disagree.map(({ claim }) => Object.freeze({ claim, example: null }))
+  ),
+});
+
+/**
  * The note above the two replay boards, once the real game has finished. The
  * one place in the game where the thing being demonstrated is said out loud.
  */
@@ -490,37 +556,36 @@ export function revealNote(board, seat) {
         'something completely different.';
 
   /*
-   * The old second paragraph, as two lists — what survived the translation and
-   * what did not — generated from the duality table exactly as the prose was,
-   * so the eight-file board's queen names herself here too.
+   * Each line is a claim and, where there is one, a worked example underneath
+   * it in the reader's own file names. The examples are what stop the two
+   * columns reading as slogans: "which files are adjacent to which" is an
+   * abstraction until you are asked whether the two pawns you have been staring
+   * at for twenty minutes were ever next to each other.
    */
-  const swaps = Object.entries(board.duality)
-    .filter(([, d]) => !d.selfDual && d.dualTo)
-    .map(([name, { dualTo }]) => `how their ${plural(name)} moved — like your ${plural(dualTo)}`);
-  const odd = strangePieces(board).map((n) => `${n}s`);
-  const held = unchangedPieces(board).map((n) => `${n}s`);
+  const ledger = LEDGERS[board.id] ?? PLAIN;
 
   return {
     title: 'You Were Both Playing with the Normal Pieces!',
     subtitle: 'and you both thought your opponent had the strange pieces.',
     body: opening,
     agree: Object.freeze([
-      'when every piece was captured',
-      'whenever a king was in check',
-      ...(held.length ? [`how the ${list(held)} moved`] : []),
-      'who won',
+      Object.freeze({ claim: 'when every piece was captured', example: null }),
+      Object.freeze({ claim: 'whenever a king was in check', example: null }),
+      Object.freeze({
+        claim: 'the rank and file of every piece at every time',
+        example: ledger.places,
+      }),
+      Object.freeze({ claim: 'who won', example: null }),
     ]),
-    disagree: Object.freeze([
-      ...swaps,
-      ...(odd.length ? [`what their ${list(odd)} were doing at all`] : []),
-    ]),
+    disagree: ledger.disagree,
     after:
       'This is a duality in the sense the word carries in physics: two ' +
-      'descriptions of one system, neither of them the true one, related by a ' +
-      'dictionary that translates every statement of the first into a statement ' +
-      'of the second. Nobody here was mistaken. There was no fact of the matter ' +
-      'about whose bishop was a bishop, and the game was still perfectly ' +
-      'well-defined — somebody won it.\n\n' +
+      'descriptions of one system related by a complicated dictionary that ' +
+      'translates every statement of the first into a statement of the second. ' +
+      'Arguably, although the players disagree, neither is wrong here. There ' +
+      'may simply not be a fact of the matter about whose view of the world is ' +
+      'correct. And yet the game was still perfectly well-defined — somebody ' +
+      'won it.\n\n' +
       'My research is about what follows from that. If two theories are related ' +
       'this way, the question of which one is *true* stops being a question ' +
       'about the world and becomes a question about the language you happened ' +

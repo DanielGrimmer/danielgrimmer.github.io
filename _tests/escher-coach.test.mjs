@@ -28,6 +28,7 @@ import {
 } from '../assets/games/escher/game.js';
 
 import { legalMovesFrom, legalMoves } from '../assets/games/escher/game.js';
+import { mod, signedRep } from '../assets/games/core/duality.js';
 
 const asMove = (m) => ({ from: m.from, to: m.to, promote: null });
 /** The first `n` scripted moves of a tutorial, as a log. */
@@ -412,9 +413,6 @@ test('the reveal describes the board it is actually on', async (t) => {
   await t.test('the eight-file board gets its queen named too', () => {
     assert.deepEqual(pieceRevelations(WIDE), pieceRevelations(NARROW));
     assert.deepEqual(strangePieces(WIDE), ['pawn', 'king', 'queen']);
-    // The strangeness moved from the body's second paragraph to the ledger.
-    assert.match(revealNote(WIDE, SIDE.WHITE).disagree.at(-1), /pawns, kings and queens/);
-    assert.match(revealNote(NARROW, SIDE.WHITE).disagree.at(-1), /pawns and kings/);
   });
 
   await t.test('and the tutorial board, where nothing swaps, produces no swaps', () => {
@@ -429,10 +427,33 @@ test('the reveal describes the board it is actually on', async (t) => {
       assert.match(note.title, /Both Playing with the Normal Pieces/);
       assert.match(note.subtitle, /both thought your opponent had the strange pieces/);
       assert.match(note.body, /The left-hand one is the board you were looking at/);
-      assert.match(note.disagree[0], /their knights moved — like your bishops/);
-      assert.match(note.disagree[1], /their bishops moved — like your knights/);
-      // The rooks are the one piece both players read the same way.
-      assert.ok(note.agree.some((line) => /rooks/.test(line)));
+      assert.deepEqual(
+        note.disagree.map((line) => line.claim),
+        [
+          'which files are adjacent to which',
+          'whether a move requires jumping',
+          'whether a move crosses the seam',
+        ]
+      );
+      // What the two seats never disagree about is where anything is, which is
+      // the line the ledger's one worked example hangs off.
+      assert.equal(note.agree[2].claim, 'the rank and file of every piece at every time');
+    }
+  });
+
+  await t.test('every ledger line is a claim, and most carry an example', () => {
+    for (const board of [NARROW, WIDE]) {
+      const note = revealNote(board, SIDE.WHITE);
+      for (const line of [...note.agree, ...note.disagree]) {
+        assert.equal(typeof line.claim, 'string');
+        assert.ok(line.claim.length > 0);
+        assert.ok(line.example === null || typeof line.example === 'string');
+      }
+      assert.equal(
+        note.disagree.every((line) => line.example),
+        true,
+        `${board.id}: every disagreement is shown, not just asserted`
+      );
     }
   });
 
@@ -463,5 +484,173 @@ test('the reveal describes the board it is actually on', async (t) => {
         }
       }
     }
+  });
+});
+
+/* ------------------------------------------- the ledger's worked examples ---- */
+
+/*
+ * The reveal names real squares — "does Knight on R1 to A3 jump the bishop on
+ * E2?" — and a reader who has just spent twenty minutes on that board will
+ * check. So every one of those squares is checked here first, against the same
+ * engine the game ran on. Reorder a file, shorten a piece, move a pawn, and
+ * this is what falls over, rather than the reveal quietly saying something
+ * false at the one moment the whole game is asking to be believed.
+ */
+
+/** "R1" -> canonical {rank, file}. Both seats use these names for these squares. */
+function square(board, name) {
+  const file = board.files[SIDE.WHITE].indexOf(name[0]);
+  assert.notEqual(file, -1, `${name} names a file of ${board.id}`);
+  return { rank: Number(name.slice(1)) - 1, file };
+}
+
+/** Where a square sits in one seat's own left-to-right order. */
+const colOf = (board, seat, file) => board.lenses[seat].toView(file);
+
+/** How many files apart two squares look to one seat, the short way round. */
+const gap = (board, seat, a, b) =>
+  Math.abs(signedRep(colOf(board, seat, square(board, b).file) - colOf(board, seat, square(board, a).file), board.width));
+
+/** Does this seat draw the move as running off one edge and back on the other? */
+function wrapsFor(board, seat, from, to) {
+  const a = colOf(board, seat, from.file);
+  const step = signedRep(colOf(board, seat, to.file) - a, board.width);
+  for (let i = 1; i <= Math.abs(step); i++) {
+    const raw = a + Math.sign(step) * i;
+    if (raw < 0 || raw >= board.width) return true;
+  }
+  return false;
+}
+
+/**
+ * The squares this seat sees the piece pass over, or null when the move is not
+ * a straight line in this seat's own geometry — which is when "did it jump
+ * that?" is not even a question they can ask.
+ */
+function betweenFor(board, seat, from, to) {
+  const a = colOf(board, seat, from.file);
+  const df = signedRep(colOf(board, seat, to.file) - a, board.width);
+  const dr = to.rank - from.rank;
+  if (df !== 0 && dr !== 0 && Math.abs(df) !== Math.abs(dr)) return null;
+  const out = [];
+  for (let i = 1; i < Math.max(Math.abs(dr), Math.abs(df)); i++) {
+    out.push({
+      rank: from.rank + Math.sign(dr) * i,
+      file: board.lenses[seat].toCanonical(mod(a + Math.sign(df) * i, board.width)),
+    });
+  }
+  return out;
+}
+
+/** The example's move, checked to be that piece's, and playable from move one. */
+function openingMove(board, from, to, type) {
+  const game = initialGame(board);
+  const move = { from: square(board, from), to: square(board, to), promote: null };
+  assert.equal(pieceAt(game, move.from.rank, move.from.file)?.type, type, `${from} holds a ${type}`);
+  assert.ok(isLegalMove(board, game, move), `${from} to ${to} is legal from the opening`);
+  return move;
+}
+
+const manAt = (board, name) => {
+  const s = square(board, name);
+  return pieceAt(initialGame(board), s.rank, s.file);
+};
+
+test('the reveal ledger names squares that are really there', async (t) => {
+  await t.test('both seats call every square by the same name', () => {
+    for (const board of [NARROW, WIDE]) {
+      for (let file = 0; file < board.width; file++) {
+        assert.equal(
+          board.files[SIDE.BLACK][colOf(board, SIDE.BLACK, file)],
+          board.files[SIDE.WHITE][colOf(board, SIDE.WHITE, file)],
+          `${board.id} file ${file}`
+        );
+      }
+    }
+  });
+
+  /* ------------------------------------------------------- five files ---- */
+
+  await t.test('5x10: "Knight on R1 to A3" is a knight, and a legal opening move', () => {
+    const note = revealNote(NARROW, SIDE.WHITE);
+    assert.match(note.agree[2].example, /Knight on R1 to A3/);
+    openingMove(NARROW, 'R1', 'A3', 'knight');
+  });
+
+  // White reads ARMED and Black reads DREAM, so R and E are two apart for one
+  // and side by side for the other — and the pawns each player pushed out on
+  // their own third rank are the pair that shows it.
+  await t.test('5x10: the rank 3 pawns are adjacent to Black alone, the rank 8 pawns to White alone', () => {
+    assert.match(revealNote(NARROW, SIDE.WHITE).disagree[0].example, /rank 3 pawns.*rank 8 pawns/s);
+    for (const name of ['R3', 'E3', 'A8', 'R8']) {
+      assert.equal(manAt(NARROW, name)?.type, 'pawn', `${name} is a pawn`);
+    }
+    assert.equal(gap(NARROW, SIDE.WHITE, 'R3', 'E3'), 2);
+    assert.equal(gap(NARROW, SIDE.BLACK, 'R3', 'E3'), 1);
+    assert.equal(gap(NARROW, SIDE.WHITE, 'A8', 'R8'), 1);
+    assert.equal(gap(NARROW, SIDE.BLACK, 'A8', 'R8'), 2);
+  });
+
+  /*
+   * The one that would be easiest to get wrong, and was: the destination has to
+   * be A3 rather than R3. Up its own file is a move both seats read identically
+   * — and is not a knight's move anyway.
+   */
+  await t.test('5x10: R1 to A3 is no line at all to White and jumps the bishop on E2 to Black', () => {
+    assert.match(revealNote(NARROW, SIDE.WHITE).disagree[1].example, /R1 to A3.*bishop on E2/);
+    const move = openingMove(NARROW, 'R1', 'A3', 'knight');
+    assert.equal(manAt(NARROW, 'E2')?.type, 'bishop');
+    assert.equal(betweenFor(NARROW, SIDE.WHITE, move.from, move.to), null, 'White sees an L, with no between');
+    assert.deepEqual(
+      betweenFor(NARROW, SIDE.BLACK, move.from, move.to),
+      [square(NARROW, 'E2')],
+      'Black sees a two-square diagonal, straight over E2'
+    );
+  });
+
+  await t.test('5x10: Bishop R2 to D4 crosses the seam for White and not for Black', () => {
+    assert.match(revealNote(NARROW, SIDE.WHITE).disagree[2].example, /Bishop on R2 to D4/);
+    const move = openingMove(NARROW, 'R2', 'D4', 'bishop');
+    assert.equal(wrapsFor(NARROW, SIDE.WHITE, move.from, move.to), true);
+    assert.equal(wrapsFor(NARROW, SIDE.BLACK, move.from, move.to), false);
+  });
+
+  /* ------------------------------------------------------ eight files ---- */
+
+  await t.test('8x8: "Bishop on H1 to C3" is a bishop, and a legal opening move', () => {
+    const note = revealNote(WIDE, SIDE.WHITE);
+    assert.match(note.agree[2].example, /Bishop on H1 to C3/);
+    openingMove(WIDE, 'H1', 'C3', 'bishop');
+  });
+
+  await t.test('8x8: the knights are neighbours to Black, the rooks to White', () => {
+    assert.match(revealNote(WIDE, SIDE.WHITE).disagree[0].example, /D1 and S1.*C1 and L1/s);
+    for (const name of ['D1', 'S1']) assert.equal(manAt(WIDE, name)?.type, 'knight');
+    for (const name of ['C1', 'L1']) assert.equal(manAt(WIDE, name)?.type, 'rook');
+    assert.equal(gap(WIDE, SIDE.WHITE, 'D1', 'S1'), 3);
+    assert.equal(gap(WIDE, SIDE.BLACK, 'D1', 'S1'), 1);
+    assert.equal(gap(WIDE, SIDE.WHITE, 'C1', 'L1'), 1);
+    assert.equal(gap(WIDE, SIDE.BLACK, 'C1', 'L1'), 3);
+  });
+
+  /*
+   * Rank 2 is a solid wall of pawns here, so both seats always see the bishop
+   * jump *something* — which is why the eight-file claim asks which man it was
+   * rather than whether there was one.
+   */
+  await t.test('8x8: H1 to C3 jumps D2 for White and A2 for Black', () => {
+    assert.match(revealNote(WIDE, SIDE.WHITE).disagree[1].example, /H1 to C3.*D2.*A2/);
+    const move = openingMove(WIDE, 'H1', 'C3', 'bishop');
+    assert.deepEqual(betweenFor(WIDE, SIDE.WHITE, move.from, move.to), [square(WIDE, 'D2')]);
+    assert.deepEqual(betweenFor(WIDE, SIDE.BLACK, move.from, move.to), [square(WIDE, 'A2')]);
+    for (const name of ['D2', 'A2']) assert.equal(manAt(WIDE, name)?.type, 'pawn');
+  });
+
+  await t.test('8x8: Knight S1 to C3 crosses the seam for White and not for Black', () => {
+    assert.match(revealNote(WIDE, SIDE.WHITE).disagree[2].example, /Knight on S1 to C3/);
+    const move = openingMove(WIDE, 'S1', 'C3', 'knight');
+    assert.equal(wrapsFor(WIDE, SIDE.WHITE, move.from, move.to), true);
+    assert.equal(wrapsFor(WIDE, SIDE.BLACK, move.from, move.to), false);
   });
 });

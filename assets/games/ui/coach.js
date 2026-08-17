@@ -17,8 +17,8 @@
  * whole tutorial can be driven from a list of moves in a test, with no DOM.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.30.0';
-import { replayFrames } from '../core/game.js?v=4.30.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.31.0';
+import { replayFrames } from '../core/game.js?v=4.31.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only

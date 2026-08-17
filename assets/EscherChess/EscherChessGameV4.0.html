@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.30.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.30.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.31.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.31.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -260,9 +260,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.30.0';
+      const BUILD = '4.31.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.30.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.31.0';
       import {
         initialGame,
         replay,
@@ -272,7 +272,7 @@
         fromView,
         STATUS,
         ACTION,
-      } from '../games/escher/game.js?v=4.30.0';
+      } from '../games/escher/game.js?v=4.31.0';
       import {
         presenceOf,
         seatOf,
@@ -281,10 +281,10 @@
         mayMove,
         PRESENCE,
         OUTCOME,
-      } from '../games/core/seats.js?v=4.30.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.30.0';
-      import { createReplayView } from '../games/ui/replay.js?v=4.30.0';
-      import { revealNote } from '../games/escher/coach.js?v=4.30.0';
+      } from '../games/core/seats.js?v=4.31.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.31.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.31.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.31.0';
       import {
         ESCHER_ROOM_NAMES,
         ESCHER_BOARD_ROOMS,
@@ -296,17 +296,36 @@
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.30.0';
+      } from '../games/net/rooms.js?v=4.31.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.30.0';
+      } from '../games/net/room.js?v=4.31.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
+
+      /**
+       * Write prose that may carry *emphasised* spans.
+       *
+       * The reveal's closing paragraph turns on one word — whether a theory is
+       * *true* — and textContent would print the asterisks around it. Built
+       * from nodes rather than innerHTML, so nothing else in the string can
+       * ever be treated as markup. The tutorial page does the same for **bold**.
+       */
+      function setEmphasis(node, text) {
+        node.replaceChildren(
+          ...text.split(/\*(.+?)\*/gs).map((part, i) => {
+            if (i % 2 === 0) return document.createTextNode(part);
+            const em = document.createElement('em');
+            em.textContent = part;
+            return em;
+          })
+        );
+      }
 
       /*
        * Which board this room is played on.
@@ -586,16 +605,25 @@
         el('replayTitle').textContent = note.title;
         el('replaySubtitle').textContent = note.subtitle;
         el('replayBody').textContent = note.body;
+        // A ledger line is a claim, and under most of them a worked example in
+        // the reader's own file names. The example is a second line rather than
+        // a parenthesis so the four claims still read as a list at a glance.
         for (const [id, items] of [['agreeList', note.agree], ['disagreeList', note.disagree]]) {
           el(id).replaceChildren(
-            ...items.map((text) => {
+            ...items.map(({ claim, example }) => {
               const li = document.createElement('li');
-              li.textContent = text;
+              li.append(claim);
+              if (example) {
+                const eg = document.createElement('span');
+                eg.className = 'dg-eg';
+                eg.textContent = example;
+                li.append(eg);
+              }
               return li;
             })
           );
         }
-        el('replayAfter').textContent = note.after;
+        setEmphasis(el('replayAfter'), note.after);
         /*
          * Where to go next, and it is not symmetric.
          *

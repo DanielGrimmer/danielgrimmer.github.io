@@ -7,8 +7,8 @@
  *
  * Load it AFTER board.css so the palette below wins:
  *
- *   <link rel="stylesheet" href="../games/ui/board.css?v=4.30.0" />
- *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.30.0" />
+ *   <link rel="stylesheet" href="../games/ui/board.css?v=4.31.0" />
+ *   <link rel="stylesheet" href="../games/ui/pages.css?v=4.31.0" />
  *
  * The pages need three families. Add to each page's <head>:
  *
@@ -1139,6 +1139,25 @@ a.dg-btn-primary:hover {
   font-size: 0.875rem;
   line-height: 1.7;
   color: var(--dg-body-2);
+}
+
+/*
+ * The worked example under a ledger claim: the same question asked of two real
+ * squares. Its own line, quieter and a size down, so the claims still read as a
+ * list when the eye runs down the column — and the extra leading below keeps a
+ * claim attached to its own example rather than floating between two.
+ */
+.dg-ledger-col ul:has(.dg-eg) li + li {
+  margin-top: 0.375rem;
+}
+
+.dg-ledger-col .dg-eg {
+  display: block;
+  margin-top: 0.125rem;
+  font-family: var(--dg-mono);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--dg-muted);
 }
 
 .dg-outro {
