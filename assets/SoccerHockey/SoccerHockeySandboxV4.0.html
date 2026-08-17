@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.32.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.32.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.33.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.33.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -117,7 +117,7 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.32.0';
+      const BUILD = '4.33.0';
 
       import {
         initialGame,
@@ -126,7 +126,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.32.0';
+      } from '../games/core/game.js?v=4.33.0';
       import {
         DEFAULT_SPEC,
         normaliseSpec,
@@ -138,10 +138,10 @@
         decodeSpec,
         describeSpec,
         inWords,
-      } from '../games/core/sandbox.js?v=4.32.0';
-      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.32.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.32.0';
-      import { createPaletteView } from '../games/ui/palette.js?v=4.32.0';
+      } from '../games/core/sandbox.js?v=4.33.0';
+      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.33.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.33.0';
+      import { createPaletteView } from '../games/ui/palette.js?v=4.33.0';
       import {
         ROOM_NAMES,
         roomFromLocation,
@@ -149,7 +149,7 @@
         rememberRoom,
         recallRoom,
         LAST_SANDBOX_KEY,
-      } from '../games/net/rooms.js?v=4.32.0';
+      } from '../games/net/rooms.js?v=4.33.0';
       import {
         signIn,
         chooseRoom,
@@ -163,7 +163,7 @@
         explain,
         HEARTBEAT_MS,
         SANDBOX_COLLECTION,
-      } from '../games/net/room.js?v=4.32.0';
+      } from '../games/net/room.js?v=4.33.0';
 
       const el = (id) => document.getElementById(id);
       const now = () => Date.now();

@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.32.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.32.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.33.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.33.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -260,9 +260,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.32.0';
+      const BUILD = '4.33.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.32.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.33.0';
       import {
         initialGame,
         replay,
@@ -272,7 +272,7 @@
         fromView,
         STATUS,
         ACTION,
-      } from '../games/escher/game.js?v=4.32.0';
+      } from '../games/escher/game.js?v=4.33.0';
       import {
         presenceOf,
         seatOf,
@@ -281,10 +281,10 @@
         mayMove,
         PRESENCE,
         OUTCOME,
-      } from '../games/core/seats.js?v=4.32.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.32.0';
-      import { createReplayView } from '../games/ui/replay.js?v=4.32.0';
-      import { revealNote } from '../games/escher/coach.js?v=4.32.0';
+      } from '../games/core/seats.js?v=4.33.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.33.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.33.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.33.0';
       import {
         ESCHER_ROOM_NAMES,
         ESCHER_BOARD_ROOMS,
@@ -296,17 +296,26 @@
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.32.0';
+      } from '../games/net/rooms.js?v=4.33.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.32.0';
+      } from '../games/net/room.js?v=4.33.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
+
+      /**
+       * A tooltip, or none at all. Assigning '' leaves the attribute in place,
+       * and an empty title is still a tooltip — an empty box on hover.
+       */
+      function setNote(node, text) {
+        if (text) node.title = text;
+        else node.removeAttribute('title');
+      }
 
       /**
        * Write prose that may carry *emphasised* spans.
@@ -547,13 +556,42 @@
          * Ending early. The same gate as a board move — your seat, your turn,
          * a live opponent — because each of these is an append to the log and
          * the rules will hold it to exactly that.
+         *
+         * But the gate now greys the buttons rather than removing them. They
+         * used to appear and vanish every half-turn, which is movement in the
+         * corner of the eye on a screen where the only other thing that moves
+         * is your opponent's piece; and a way out you have to wait for is hard
+         * to find at the moment you have had enough. So they keep their place
+         * all game, and say why they are unavailable when they are.
          */
         const playing = game.outcome.status === STATUS.PLAYING;
         const offered = game.drawOffer !== null && game.drawOffer !== seat;
-        el('acceptDraw').hidden = !(playing && mayMoveNow && offered);
-        el('requestDraw').hidden = !(playing && mayMoveNow && !offered);
-        el('forfeit').hidden = !(playing && mayMoveNow);
-        if (el('forfeit').hidden) resetForfeitArm();
+        const yours = playing && seat !== null;
+        const why = !full
+          ? 'Waiting for a second player to join this room.'
+          : mayMoveNow
+            ? ''
+            : 'Wait for your turn — ending the game is a move like any other.';
+
+        el('requestDraw').hidden = !yours;
+        el('requestDraw').disabled = !(mayMoveNow && !offered);
+        setNote(
+          el('requestDraw'),
+          offered ? 'Your friend has offered a draw — accept it, or play on to decline.' : why
+        );
+
+        el('forfeit').hidden = !yours;
+        el('forfeit').disabled = !mayMoveNow;
+        setNote(el('forfeit'), why);
+
+        // The third only exists while there is an offer on the table, so it
+        // comes and goes: a permanently greyed "Accept the draw" would be a
+        // standing invitation to something nobody has proposed.
+        el('acceptDraw').hidden = !(yours && offered);
+        el('acceptDraw').disabled = !mayMoveNow;
+
+        // An armed "sure?" must not sit there through your friend's turn.
+        if (el('forfeit').disabled) resetForfeitArm();
 
         drawReplay();
       }

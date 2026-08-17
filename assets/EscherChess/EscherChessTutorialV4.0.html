@@ -19,8 +19,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.32.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.32.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.33.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.33.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -156,9 +156,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.32.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.33.0'; // keep in step with the ?v= tokens below
 
-      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.32.0';
+      import { NARROW, SIDE } from '../games/escher/presets.js?v=4.33.0';
       import {
         initialGame,
         applyMove,
@@ -167,8 +167,8 @@
         fromView,
         toView,
         STATUS,
-      } from '../games/escher/game.js?v=4.32.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.32.0';
+      } from '../games/escher/game.js?v=4.33.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.33.0';
       import {
         contextFor,
         stepIndex,
@@ -176,7 +176,7 @@
         STALLED_HINT,
         TUTORIALS,
         nextScripted,
-      } from '../games/escher/coach.js?v=4.32.0';
+      } from '../games/escher/coach.js?v=4.33.0';
 
       /*
        * Which of the two practice boards this is.
