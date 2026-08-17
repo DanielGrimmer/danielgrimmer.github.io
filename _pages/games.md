@@ -108,9 +108,5 @@ question, made playable.
 Both games are played in the browser, and both need **a second player** playing on
 a second screen. It is crucial that you cannot see each other's screens, as that
 is the whole point of these duality games: they may have a radically different
-experience than you think they would. After the first game, you can (and should)
-talk and compare notes. This is when the mystery will reveal itself.
-
-Soccer Hockey then has a third screen — a sandbox, opened from the end of the
-reveal — where the board size, the duality number and the moves themselves
-become dials the two of you share.
+experience than you think they would have. After the first game, you can (and
+should) talk and compare notes. This is when the mystery will reveal itself.
