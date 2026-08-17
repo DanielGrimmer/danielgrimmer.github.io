@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.31.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.31.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.32.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.32.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -94,6 +94,23 @@
               <span class="dg-status-move" id="statusMove"></span>
             </div>
 
+            <!--
+              The gate between the last move and the reveal, exactly as on the
+              Escher Chess page. The game is over, but the reveal only lands if
+              the players talk *first*: the friend describing a game of hockey
+              you are certain was soccer is the punchline, and the screen should
+              not beat them to it.
+            -->
+            <div class="dg-gate" id="gate" hidden>
+              <div class="dg-label dg-label-gold">Before you go on</div>
+              <p>
+                <span id="gateOutcome"></span> Call your friend, to talk through
+                your respective experiences. Once you have, click this button to
+                continue.
+              </p>
+              <button class="dg-btn dg-btn-primary" id="gateGo" type="button">Continue →</button>
+            </div>
+
             <!-- Which way each of you is heading, said at the end of the board it is at. -->
             <div class="dg-goal-hint" data-end="yours" id="hintFar">your goal ↗</div>
             <div id="liveSlot"></div>
@@ -123,15 +140,8 @@
         <div id="boardHolder" class="dg-pitch"><div id="board"></div></div>
 
         <!--
-          The reveal. Hidden until the game is over, and then it replaces the
-          board rather than sitting under it: there is nothing left to play, and
-          the two replay boards want the whole width.
-
-          Still in its pre-design markup — this screen is the next one to be
-          rebuilt, and rebuilding it half-way would leave it worse than either.
-        -->
-        <!--
-          The reveal, in place of the board once there is nothing left to play.
+          The reveal, in place of the board once there is nothing left to play,
+          and only once the player has been through the gate above.
 
           The order is the argument: the claim, then the evidence, then what to
           make of it. The two lists between the boards and the philosophy are
@@ -179,9 +189,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.31.0';
+      const BUILD = '4.32.0';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.31.0';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.32.0';
       import {
         initialGame,
         replay,
@@ -189,7 +199,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.31.0';
+      } from '../games/core/game.js?v=4.32.0';
       import {
         presenceOf,
         seatOf,
@@ -197,10 +207,10 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.31.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.31.0';
-      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.31.0';
-      import { replayNote } from '../games/ui/coach.js?v=4.31.0';
+      } from '../games/core/seats.js?v=4.32.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.32.0';
+      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.32.0';
+      import { replayNote } from '../games/ui/coach.js?v=4.32.0';
       import {
         ROOM_NAMES,
         nextRoomName,
@@ -208,7 +218,7 @@
         shareLink,
         rememberRoom,
         recallRoom,
-      } from '../games/net/rooms.js?v=4.31.0';
+      } from '../games/net/rooms.js?v=4.32.0';
       import {
         signIn,
         chooseRoom,
@@ -221,7 +231,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.31.0';
+      } from '../games/net/room.js?v=4.32.0';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -234,6 +244,12 @@
       let boardView = null;
       let replayView = null;
       let replayKey = null; // what the replay on screen is currently showing
+      /*
+       * Whether this player has been through the gate: called their friend,
+       * heard them describe the other sport, and pressed on. Local on purpose —
+       * each player goes through on their own device, at their own pace.
+       */
+      let revealUnlocked = false;
       /*
        * True when the game in this room was already finished at the moment we
        * sat down — somebody else's game, which we have no business being shown
@@ -304,20 +320,39 @@
         }
       };
 
+      /**
+       * How this game ended, from this seat's chair. Also the first sentence of
+       * the gate, which is why it stands alone.
+       */
+      function outcomeSentence() {
+        if (game.outcome.status === STATUS.WON) {
+          return game.outcome.winner === seat ? 'You win!' : 'Your opponent wins.';
+        }
+        if (game.outcome.status === STATUS.TIE) return 'Nobody can move — a draw.';
+        return '';
+      }
+
+      /**
+       * The line above the two replay boards. Empty for a player: the gate said
+       * the result a moment ago and their friend has just said the rest out
+       * loud, so repeating it here would land on nobody. A spectator went
+       * through no gate, so they still get told where they are.
+       */
+      function revealStatus() {
+        return seat === null
+          ? 'Both seats in this room are taken — you are watching this game back.'
+          : '';
+      }
+
       function describeStatus() {
         if (seat === null) {
           return 'Both seats in this room are taken — you are watching. Join another room to play.';
         }
         // The result comes first: a finished game stays finished even after the
         // other player closes their tab, and the replay underneath would look
-        // absurd above the words "waiting for a second player".
-        const callThem = 'Call your friend, to talk through your respective experiences.';
-        if (game.outcome.status === STATUS.WON) {
-          return game.outcome.winner === seat
-            ? `You win! ${callThem}`
-            : `Your opponent wins. ${callThem}`;
-        }
-        if (game.outcome.status === STATUS.TIE) return `Nobody can move — a draw. ${callThem}`;
+        // absurd above the words "waiting for a second player". The
+        // call-your-friend part lives in the gate now, not here.
+        if (game.outcome.status !== STATUS.PLAYING) return outcomeSentence();
         const full = occupancy(state.seats, now()).held === 2;
         if (!full) return 'Waiting for a second player to join this room.';
         // Which way you are heading is the thing players lose track of: the
@@ -418,19 +453,34 @@
        * still reading their way through it.
        */
       function drawReplay() {
-        if (state.moves.length === 0) inheritedGame = false;
+        if (state.moves.length === 0) {
+          inheritedGame = false;
+          // A fresh game re-arms the gate for the next reveal.
+          revealUnlocked = false;
+        }
         // A finished game we walked in on is not a reveal; it is somebody
         // else's board that nobody cleared. Say so and offer a fresh one.
         const over = game.outcome.status !== STATUS.PLAYING && !inheritedGame;
-        const key = over ? `${room}:${seat}:${state.moves.length}` : null;
+        /*
+         * The gate: the game is over, but the reveal waits until this player
+         * has called their friend and pressed on. Spectators skip it — they
+         * have nobody to call. Until then the final board stays on screen with
+         * the gate under the status line.
+         */
+        const gated = over && !revealUnlocked && seat !== null;
+        el('gate').hidden = !gated;
+        if (gated) el('gateOutcome').textContent = outcomeSentence();
 
-        el('playLayout').hidden = over;
-        el('boardHolder').hidden = over;
-        el('replay').hidden = !over;
+        const shown = over && !gated;
+        const key = shown ? `${room}:${seat}:${state.moves.length}` : null;
+
+        el('playLayout').hidden = shown;
+        el('boardHolder').hidden = shown;
+        el('replay').hidden = !shown;
         if (over) el('chromeState').textContent = `Room ${room} · game over`;
 
         if (key === replayKey) {
-          if (over) el('replayStatus').textContent = describeStatus();
+          if (shown) el('replayStatus').textContent = revealStatus();
           return;
         }
         replayKey = key;
@@ -439,7 +489,7 @@
           replayView.destroy();
           replayView = null;
         }
-        if (!over) return;
+        if (!shown) return;
 
         const note = replayNote(config, seat);
         el('replayTitle').textContent = note.title;
@@ -460,8 +510,8 @@
         el('toSandbox').href = room
           ? `SoccerHockeySandboxV4.0.html?room=${encodeURIComponent(room)}`
           : 'SoccerHockeySandboxV4.0.html';
-        el('replayStatus').textContent = describeStatus();
-        el('replayStatus').dataset.tone = game.outcome.status === STATUS.WON ? 'win' : '';
+        el('replayStatus').textContent = revealStatus();
+        el('replayStatus').dataset.tone = '';
 
         // Your own board first, so "on the left" in the note is true for both
         // players even though they hold different seats.
@@ -699,6 +749,12 @@
        * and the one they wanted free. If neither presses, nothing happens —
        * this is not a vote.
        */
+      // Through the gate: this player has called their friend and heard it.
+      el('gateGo').addEventListener('click', () => {
+        revealUnlocked = true;
+        drawReplay();
+      });
+
       el('newGameOver').addEventListener('click', async () => {
         const button = el('newGameOver');
         button.disabled = true;

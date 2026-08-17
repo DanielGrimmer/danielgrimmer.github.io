@@ -13,12 +13,13 @@
  * skipped.
  *
  * The step logic is pure: `contextFor` reduces a move log to a handful of facts,
- * and each step decides from those facts alone whether it is finished. So the
- * whole tutorial can be driven from a list of moves in a test, with no DOM.
+ * and `stepIndex` walks the steps against those facts to say which one is being
+ * asked for. So the whole tutorial can be driven from a list of moves in a test,
+ * with no DOM — and every bug fixed in it has a test written that way.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.31.0';
-import { replayFrames } from '../core/game.js?v=4.31.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.32.0';
+import { replayFrames } from '../core/game.js?v=4.32.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -29,8 +30,22 @@ export function isWrapMove(from, to, width) {
 }
 
 /**
- * Reduce a game to the facts the steps care about. Each is cumulative — once
- * true it stays true — so the tutorial only ever moves forwards.
+ * Reduce a game to the facts the steps care about.
+ *
+ * ## Why these are move numbers and not booleans
+ *
+ * They used to be booleans, cumulative over the whole log — "has the ball ever
+ * wrapped", "has it ever stood on a dot". That quietly broke two steps. A
+ * player pushing the ball around during step 2 may well cross the seam or land
+ * on a scoring dot without being asked to, and by the time the step that
+ * *teaches* the seam came round the flag was already true, so the step was
+ * skipped before it was ever read. The two lessons most easily met by accident
+ * were the two most likely to be missed.
+ *
+ * So each fact is recorded as *when* it happened — the 1-based move numbers, in
+ * order — and a step asks whether it happened while that step was the one being
+ * asked for. Doing something before you were told to no longer counts as being
+ * told.
  */
 export function contextFor(config, moves) {
   const frames = replayFrames(config, moves);
@@ -38,21 +53,26 @@ export function contextFor(config, moves) {
     goalApproaches(config.board, config.moveSet, []).map((s) => squareKey(s.row, s.col))
   );
 
-  let hasWrapped = false;
-  let hasReachedApproach = false;
+  const wrapsAt = [];
+  const approachesAt = [];
 
   for (let i = 0; i < moves.length; i++) {
     const from = frames[i];
     const to = frames[i + 1];
-    if (isWrapMove(from, to, config.board.width)) hasWrapped = true;
-    if (approaches.has(squareKey(to.row, to.col))) hasReachedApproach = true;
+    if (isWrapMove(from, to, config.board.width)) wrapsAt.push(i + 1);
+    if (approaches.has(squareKey(to.row, to.col))) approachesAt.push(i + 1);
   }
 
   const last = frames[frames.length - 1];
   return {
     moveCount: moves.length,
-    hasWrapped,
-    hasReachedApproach,
+    /** The moves that crossed the seam, and the moves that landed on a dot. */
+    wrapsAt: Object.freeze(wrapsAt),
+    approachesAt: Object.freeze(approachesAt),
+    // Kept because plenty of prose is easier to read this way; the steps
+    // themselves must use the move numbers, or they answer the wrong question.
+    hasWrapped: wrapsAt.length > 0,
+    hasReachedApproach: approachesAt.length > 0,
     isOver: last.outcome.status !== 'playing',
     outcome: last.outcome,
   };
@@ -61,10 +81,30 @@ export function contextFor(config, moves) {
 /**
  * The first step not yet finished and not skipped. Returns `steps.length` when
  * every step is done, which the page shows as the closing note.
+ *
+ * Walks the steps in order, carrying `since` — the move at which the previous
+ * step was satisfied — so each step is judged only on what happened after the
+ * one before it finished. `floor` is how far the tutorial had already got on an
+ * earlier board: "Start again" clears the court but not your place in the
+ * lesson, which is what the stalled hint promises.
+ *
+ * `skipped` may be a Set or a Map of id -> the move count when it was skipped.
+ * A Map is better — it stops the *next* step being satisfied by something that
+ * happened before you gave up on this one — but a bare Set still works.
  */
-export function stepIndex(steps, ctx, skipped = new Set()) {
-  const i = steps.findIndex((step) => !skipped.has(step.id) && !step.done(ctx));
-  return i === -1 ? steps.length : i;
+export function stepIndex(steps, ctx, skipped = new Map(), floor = 0) {
+  let since = 0;
+  for (let i = floor; i < steps.length; i++) {
+    const step = steps[i];
+    if (skipped.has(step.id)) {
+      since = Math.max(since, skipped.get?.(step.id) ?? since);
+      continue;
+    }
+    const at = step.doneAt(ctx, since);
+    if (at == null) return i;
+    since = at;
+  }
+  return steps.length;
 }
 
 /**
@@ -73,9 +113,12 @@ export function stepIndex(steps, ctx, skipped = new Set()) {
  * cylinder. Without this the panel would sit there asking for something the
  * dead board can no longer provide.
  */
-export function isStalled(steps, ctx, skipped = new Set()) {
-  return ctx.isOver && stepIndex(steps, ctx, skipped) < steps.length;
+export function isStalled(steps, ctx, skipped = new Map(), floor = 0) {
+  return ctx.isOver && stepIndex(steps, ctx, skipped, floor) < steps.length;
 }
+
+/** The first move after `since` at which something happened, or null. */
+const firstAfter = (whenList, since) => whenList.find((n) => n > since) ?? null;
 
 export const STALLED_HINT = 'That game is over — press “Start again” and pick up where you left off.';
 
@@ -94,8 +137,9 @@ export const BASKETBALL_STEPS = Object.freeze([
       'The highlighted squares show where the ball can go next: a short step to ' +
       'an adjacent square or a longer pass further out. Remember the star-shape ' +
       'they make around the ball, you will want to recognize it later.',
-    hint: 'Click any gold square to move the ball there.',
-    done: (ctx) => ctx.moveCount >= 1,
+    hint: 'Click any highlighted square to move the ball there.',
+    // Any one move at all: the step is only asking them to touch the board.
+    doneAt: (ctx, since) => (ctx.moveCount > since ? since + 1 : null),
   },
   {
     id: 'trail',
@@ -105,7 +149,8 @@ export const BASKETBALL_STEPS = Object.freeze([
       'again. Squares only ever close up, they never open: that is what will ' +
       'eventually force a goal (or a tie if the ball runs out of places to go).',
     hint: 'Push it around a little and watch the available spaces thin out.',
-    done: (ctx) => ctx.moveCount >= 4,
+    // Three more moves, so there is a visible trail to look at.
+    doneAt: (ctx, since) => (ctx.moveCount >= since + 3 ? since + 3 : null),
   },
   {
     id: 'wrap',
@@ -115,7 +160,7 @@ export const BASKETBALL_STEPS = Object.freeze([
       'sideways until the star crosses the seam, then step across it: the board ' +
       'is a cylinder, and what leaves one side arrives on the other.',
     hint: 'Take the ball off the left or right edge and see where it comes back.',
-    done: (ctx) => ctx.hasWrapped,
+    doneAt: (ctx, since) => firstAfter(ctx.wrapsAt, since),
   },
   {
     id: 'dots',
@@ -127,7 +172,7 @@ export const BASKETBALL_STEPS = Object.freeze([
       'knock the ball away, and then that dot is burnt. Use them all up and the ' +
       'goal is sealed for good. You must be clever…',
     hint: 'Get the ball onto one of the dots.',
-    done: (ctx) => ctx.hasReachedApproach,
+    doneAt: (ctx, since) => firstAfter(ctx.approachesAt, since),
   },
   {
     id: 'strategy',
@@ -137,7 +182,7 @@ export const BASKETBALL_STEPS = Object.freeze([
       'must somehow force them to hand you victory. Late in the game, you will ' +
       'both have very few options left.',
     hint: 'Play a game through to the end.',
-    done: (ctx) => ctx.isOver,
+    doneAt: (ctx) => (ctx.isOver ? ctx.moveCount : null),
   },
 ]);
 
