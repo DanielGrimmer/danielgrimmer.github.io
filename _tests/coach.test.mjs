@@ -108,16 +108,6 @@ test('stepping through the tutorial', async (t) => {
     assert.notEqual(BASKETBALL_STEPS[stepIndex(BASKETBALL_STEPS, ctx)].id, 'wrap');
   });
 
-  await t.test('a skipped step is passed over without blocking', () => {
-    const ctx = contextFor(config, walkWithoutWrapping(8));
-    const stuck = stepIndex(BASKETBALL_STEPS, ctx);
-    assert.equal(BASKETBALL_STEPS[stuck].id, 'wrap', 'held on the unmet step');
-
-    const moved = stepIndex(BASKETBALL_STEPS, ctx, new Set(['wrap']));
-    assert.ok(moved > stuck, 'skipping must advance');
-    assert.notEqual(BASKETBALL_STEPS[moved]?.id, 'wrap');
-  });
-
   await t.test('every step is reachable and none is finished at the start', () => {
     const fresh = contextFor(config, []);
     for (const step of BASKETBALL_STEPS) {
@@ -160,14 +150,6 @@ test('stepping through the tutorial', async (t) => {
     assert.equal(dots.doneAt(ctx, 4), null, 'nor does a dot');
     assert.equal(wrap.doneAt(ctx, 1), 2, 'one during the step does');
     assert.equal(dots.doneAt(ctx, 2), 3);
-  });
-
-  await t.test('giving up on a step does not hand the next one your earlier play', () => {
-    const ctx = contextFor(config, wrapEarlyThenDot());
-    // Skipping the seam step at move 4 must not let the dot reached *on* move 4
-    // satisfy the step that follows it.
-    const skipped = new Map([['wrap', ctx.moveCount]]);
-    assert.equal(BASKETBALL_STEPS[stepIndex(BASKETBALL_STEPS, ctx, skipped)].id, 'dots');
   });
 
   // "Start again" really does mean again — the stalled hint promises a run

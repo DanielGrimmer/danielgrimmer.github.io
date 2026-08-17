@@ -17,7 +17,7 @@ import { join } from 'node:path';
  * from a page's map still loads — at its plain URL, cached for up to ten
  * minutes past every deploy. Nothing errors; that one file is just stale. So
  * every page's map must cover every module that exists, at the same version as
- * the page's BUILD constant and its two stylesheet links, and no import
+ * the page's BUILD constant and its three stylesheet links, and no import
  * anywhere may carry a token of its own.
  */
 
@@ -94,9 +94,9 @@ test('the version convention holds everywhere', async (t) => {
         assert.ok(!script[1].includes('?v='), `${page}: module scripts carry no tokens`);
       }
 
-      // The stylesheets cannot ride the map, so they carry the version by hand.
-      const css = [...source.matchAll(/games\/ui\/(?:board|pages)\.css[^"]*\?v=([\d.]+)/g)];
-      assert.equal(css.length, 2, `${page} links both stylesheets, versioned`);
+      // The three stylesheets cannot ride the map, so they carry it by hand.
+      const css = [...source.matchAll(/games\/ui\/(?:fonts|board|pages)\.css[^"]*\?v=([\d.]+)/g)];
+      assert.equal(css.length, 3, `${page} links all three stylesheets, versioned`);
       for (const [, v] of css) assert.equal(v, version, `${page}: stylesheets match the map`);
 
       // And the build stamp reports the same set (the .md page has none).
@@ -108,13 +108,58 @@ test('the version convention holds everywhere', async (t) => {
   await t.test('style-only pages ride the same version', () => {
     const version = [...seen][0];
     for (const page of STYLE_ONLY) {
-      const css = [...read(page).matchAll(/games\/ui\/(?:board|pages)\.css[^"]*\?v=([\d.]+)/g)];
-      assert.equal(css.length, 2, `${page} links both stylesheets, versioned`);
+      const css = [...read(page).matchAll(/games\/ui\/(?:fonts|board|pages)\.css[^"]*\?v=([\d.]+)/g)];
+      assert.equal(css.length, 3, `${page} links all three stylesheets, versioned`);
       for (const [, v] of css) assert.equal(v, version, `${page}: stylesheets match the maps`);
     }
   });
 
   await t.test('and it is the same version on every page', () => {
     assert.equal(seen.size, 1, `one version across all pages, got: ${[...seen]}`);
+  });
+});
+
+/*
+ * The fonts are served from this repository rather than from Google, so the
+ * two halves of that arrangement have to agree: every face fonts.css declares
+ * must exist on disk, and nothing may reach back out to a font CDN.
+ */
+test('the fonts are ours, and all of them are here', async (t) => {
+  const css = readFileSync('assets/games/ui/fonts.css', 'utf-8');
+
+  await t.test('every declared face has its file', () => {
+    const srcs = [...css.matchAll(/url\('\.\.\/fonts\/([^']+)'\)/g)].map((m) => m[1]);
+    assert.ok(srcs.length >= 12, `expected the latin subsets, got ${srcs.length}`);
+    const present = new Set(readdirSync('assets/games/fonts'));
+    for (const file of srcs) assert.ok(present.has(file), `assets/games/fonts/${file} exists`);
+  });
+
+  await t.test('and every file is declared — no orphans left behind', () => {
+    const srcs = new Set([...css.matchAll(/url\('\.\.\/fonts\/([^']+)'\)/g)].map((m) => m[1]));
+    for (const file of readdirSync('assets/games/fonts')) {
+      assert.ok(srcs.has(file), `${file} is declared in fonts.css`);
+    }
+  });
+
+  /*
+   * A *reference*, not a mention: fonts.css's own header explains where these
+   * faces used to be served from, and should go on saying so. What must not
+   * survive anywhere is a link, a preconnect or a src pointing at the CDN.
+   */
+  await t.test('no game page reaches out to a font CDN', () => {
+    const REFERENCE = /(?:href|src|url\()\s*=?\s*['"(]?https?:\/\/fonts\.(?:googleapis|gstatic)\.com/;
+    for (const page of [...PAGES, ...STYLE_ONLY, 'assets/games/ui/pages.css', 'assets/games/ui/fonts.css']) {
+      assert.ok(!REFERENCE.test(read(page)), `${page} fetches nothing from a font CDN`);
+    }
+  });
+
+  await t.test('every page loads fonts.css before the stylesheets that use them', () => {
+    for (const page of [...PAGES, ...STYLE_ONLY]) {
+      const source = read(page);
+      const fonts = source.indexOf('fonts.css');
+      const board = source.indexOf('board.css');
+      assert.ok(fonts > -1, `${page} links fonts.css`);
+      assert.ok(fonts < board, `${page} links fonts.css first`);
+    }
   });
 });

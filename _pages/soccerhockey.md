@@ -18,11 +18,10 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
   the page does not own the body. See the head of pages.css.
 -->
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.36.0" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.36.0" />
+<!-- The three families, served from this repository; see fonts.css. -->
+<link rel="stylesheet" href="{{ '/assets/games/ui/fonts.css' | relative_url }}?v=4.37.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.37.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.37.0" />
 
 <div class="dg dg-scope">
   <div class="dg-wrap">
@@ -118,24 +117,24 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
 <script type="importmap">
 {
   "imports": {
-    "/assets/games/core/duality.js": "/assets/games/core/duality.js?v=4.36.0",
-    "/assets/games/core/game.js": "/assets/games/core/game.js?v=4.36.0",
-    "/assets/games/core/presets.js": "/assets/games/core/presets.js?v=4.36.0",
-    "/assets/games/core/rules.js": "/assets/games/core/rules.js?v=4.36.0",
-    "/assets/games/core/sandbox.js": "/assets/games/core/sandbox.js?v=4.36.0",
-    "/assets/games/core/seats.js": "/assets/games/core/seats.js?v=4.36.0",
-    "/assets/games/escher/coach.js": "/assets/games/escher/coach.js?v=4.36.0",
-    "/assets/games/escher/game.js": "/assets/games/escher/game.js?v=4.36.0",
-    "/assets/games/escher/pieces.js": "/assets/games/escher/pieces.js?v=4.36.0",
-    "/assets/games/escher/presets.js": "/assets/games/escher/presets.js?v=4.36.0",
-    "/assets/games/net/room.js": "/assets/games/net/room.js?v=4.36.0",
-    "/assets/games/net/rooms.js": "/assets/games/net/rooms.js?v=4.36.0",
-    "/assets/games/ui/board.js": "/assets/games/ui/board.js?v=4.36.0",
-    "/assets/games/ui/chessboard.js": "/assets/games/ui/chessboard.js?v=4.36.0",
-    "/assets/games/ui/coach.js": "/assets/games/ui/coach.js?v=4.36.0",
-    "/assets/games/ui/palette.js": "/assets/games/ui/palette.js?v=4.36.0",
-    "/assets/games/ui/pieces-svg.js": "/assets/games/ui/pieces-svg.js?v=4.36.0",
-    "/assets/games/ui/replay.js": "/assets/games/ui/replay.js?v=4.36.0"
+    "/assets/games/core/duality.js": "/assets/games/core/duality.js?v=4.37.0",
+    "/assets/games/core/game.js": "/assets/games/core/game.js?v=4.37.0",
+    "/assets/games/core/presets.js": "/assets/games/core/presets.js?v=4.37.0",
+    "/assets/games/core/rules.js": "/assets/games/core/rules.js?v=4.37.0",
+    "/assets/games/core/sandbox.js": "/assets/games/core/sandbox.js?v=4.37.0",
+    "/assets/games/core/seats.js": "/assets/games/core/seats.js?v=4.37.0",
+    "/assets/games/escher/coach.js": "/assets/games/escher/coach.js?v=4.37.0",
+    "/assets/games/escher/game.js": "/assets/games/escher/game.js?v=4.37.0",
+    "/assets/games/escher/pieces.js": "/assets/games/escher/pieces.js?v=4.37.0",
+    "/assets/games/escher/presets.js": "/assets/games/escher/presets.js?v=4.37.0",
+    "/assets/games/net/room.js": "/assets/games/net/room.js?v=4.37.0",
+    "/assets/games/net/rooms.js": "/assets/games/net/rooms.js?v=4.37.0",
+    "/assets/games/ui/board.js": "/assets/games/ui/board.js?v=4.37.0",
+    "/assets/games/ui/chessboard.js": "/assets/games/ui/chessboard.js?v=4.37.0",
+    "/assets/games/ui/coach.js": "/assets/games/ui/coach.js?v=4.37.0",
+    "/assets/games/ui/palette.js": "/assets/games/ui/palette.js?v=4.37.0",
+    "/assets/games/ui/pieces-svg.js": "/assets/games/ui/pieces-svg.js?v=4.37.0",
+    "/assets/games/ui/replay.js": "/assets/games/ui/replay.js?v=4.37.0"
   }
 }
 </script>

@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Basketball — Duality Games tutorial (V4.0)</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
-    />
+    <!-- The three families, served from this repository; see fonts.css. -->
+    <link rel="stylesheet" href="../games/ui/fonts.css?v=4.37.0" />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.36.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.36.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.37.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.37.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -67,7 +63,6 @@
             <p class="dg-coach-body" id="coachBody"></p>
             <p class="dg-coach-hint" id="coachHint"></p>
             <a class="dg-btn dg-btn-primary" id="playReal" href="/soccer-hockey/" hidden></a>
-            <button class="dg-link" id="coachSkip" type="button">Skip this bit</button>
           </aside>
 
           <div class="dg-play">
@@ -113,30 +108,30 @@
     <script type="importmap">
 {
   "imports": {
-    "/assets/games/core/duality.js": "/assets/games/core/duality.js?v=4.36.0",
-    "/assets/games/core/game.js": "/assets/games/core/game.js?v=4.36.0",
-    "/assets/games/core/presets.js": "/assets/games/core/presets.js?v=4.36.0",
-    "/assets/games/core/rules.js": "/assets/games/core/rules.js?v=4.36.0",
-    "/assets/games/core/sandbox.js": "/assets/games/core/sandbox.js?v=4.36.0",
-    "/assets/games/core/seats.js": "/assets/games/core/seats.js?v=4.36.0",
-    "/assets/games/escher/coach.js": "/assets/games/escher/coach.js?v=4.36.0",
-    "/assets/games/escher/game.js": "/assets/games/escher/game.js?v=4.36.0",
-    "/assets/games/escher/pieces.js": "/assets/games/escher/pieces.js?v=4.36.0",
-    "/assets/games/escher/presets.js": "/assets/games/escher/presets.js?v=4.36.0",
-    "/assets/games/net/room.js": "/assets/games/net/room.js?v=4.36.0",
-    "/assets/games/net/rooms.js": "/assets/games/net/rooms.js?v=4.36.0",
-    "/assets/games/ui/board.js": "/assets/games/ui/board.js?v=4.36.0",
-    "/assets/games/ui/chessboard.js": "/assets/games/ui/chessboard.js?v=4.36.0",
-    "/assets/games/ui/coach.js": "/assets/games/ui/coach.js?v=4.36.0",
-    "/assets/games/ui/palette.js": "/assets/games/ui/palette.js?v=4.36.0",
-    "/assets/games/ui/pieces-svg.js": "/assets/games/ui/pieces-svg.js?v=4.36.0",
-    "/assets/games/ui/replay.js": "/assets/games/ui/replay.js?v=4.36.0"
+    "/assets/games/core/duality.js": "/assets/games/core/duality.js?v=4.37.0",
+    "/assets/games/core/game.js": "/assets/games/core/game.js?v=4.37.0",
+    "/assets/games/core/presets.js": "/assets/games/core/presets.js?v=4.37.0",
+    "/assets/games/core/rules.js": "/assets/games/core/rules.js?v=4.37.0",
+    "/assets/games/core/sandbox.js": "/assets/games/core/sandbox.js?v=4.37.0",
+    "/assets/games/core/seats.js": "/assets/games/core/seats.js?v=4.37.0",
+    "/assets/games/escher/coach.js": "/assets/games/escher/coach.js?v=4.37.0",
+    "/assets/games/escher/game.js": "/assets/games/escher/game.js?v=4.37.0",
+    "/assets/games/escher/pieces.js": "/assets/games/escher/pieces.js?v=4.37.0",
+    "/assets/games/escher/presets.js": "/assets/games/escher/presets.js?v=4.37.0",
+    "/assets/games/net/room.js": "/assets/games/net/room.js?v=4.37.0",
+    "/assets/games/net/rooms.js": "/assets/games/net/rooms.js?v=4.37.0",
+    "/assets/games/ui/board.js": "/assets/games/ui/board.js?v=4.37.0",
+    "/assets/games/ui/chessboard.js": "/assets/games/ui/chessboard.js?v=4.37.0",
+    "/assets/games/ui/coach.js": "/assets/games/ui/coach.js?v=4.37.0",
+    "/assets/games/ui/palette.js": "/assets/games/ui/palette.js?v=4.37.0",
+    "/assets/games/ui/pieces-svg.js": "/assets/games/ui/pieces-svg.js?v=4.37.0",
+    "/assets/games/ui/replay.js": "/assets/games/ui/replay.js?v=4.37.0"
   }
 }
     </script>
 
     <script type="module">
-      const BUILD = '4.36.0'; // keep in step with the import map above
+      const BUILD = '4.37.0'; // keep in step with the import map above
 
       import { BASKETBALL_TUTORIAL } from '../games/core/presets.js';
       import {
@@ -163,8 +158,6 @@
       // Undo is then just dropping the last entry and replaying.
       let moves = [];
       let game = initialGame(config);
-      /** id -> the move count when it was given up on. See `stepIndex`. */
-      const skipped = new Map();
 
       // In the tutorial the duality is 1, so both lenses are the identity and
       // the two seats see an identical board. There is nothing to swap between
@@ -210,10 +203,10 @@
 
       function drawCoach() {
         const ctx = contextFor(config, moves);
-        const index = stepIndex(BASKETBALL_STEPS, ctx, skipped);
+        const index = stepIndex(BASKETBALL_STEPS, ctx);
         const step = BASKETBALL_STEPS[index];
         const done = index >= BASKETBALL_STEPS.length;
-        const stalled = isStalled(BASKETBALL_STEPS, ctx, skipped);
+        const stalled = isStalled(BASKETBALL_STEPS, ctx);
 
         el('coachProgress').textContent = done
           ? 'Done'
@@ -229,7 +222,6 @@
         cta.hidden = !done;
         cta.textContent = BASKETBALL_OUTRO.cta;
         cta.href = BASKETBALL_OUTRO.href;
-        el('coachSkip').hidden = done;
         el('coach').dataset.done = String(done);
         el('coach').dataset.stalled = String(stalled);
       }
@@ -257,7 +249,6 @@
       // to the top, which is what the stalled hint promises.
       el('reset').addEventListener('click', () => {
         moves = [];
-        skipped.clear();
         game = initialGame(config);
         draw();
       });
@@ -266,15 +257,6 @@
         moves = moves.slice(0, -1);
         game = replay(config, moves);
         draw();
-      });
-
-      // Giving up on a step records *when*, so the step after it cannot be
-      // satisfied by something that happened before you gave up.
-      el('coachSkip').addEventListener('click', () => {
-        const ctx = contextFor(config, moves);
-        const step = BASKETBALL_STEPS[stepIndex(BASKETBALL_STEPS, ctx, skipped)];
-        if (step) skipped.set(step.id, ctx.moveCount);
-        drawCoach();
       });
 
       // Reports which set of modules the browser actually ran, so a stale cache

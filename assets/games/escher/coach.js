@@ -236,11 +236,11 @@ export function contextFor(board, script, moves, selected = null) {
 }
 
 /**
- * The first step not yet finished and not skipped. Returns `steps.length` when
+ * The first step not yet finished. Returns `steps.length` when
  * every step is done, which the page shows as the closing note.
  */
-export function stepIndex(steps, ctx, skipped = new Set()) {
-  const i = steps.findIndex((step) => !skipped.has(step.id) && !step.done(ctx));
+export function stepIndex(steps, ctx) {
+  const i = steps.findIndex((step) => !step.done(ctx));
   return i === -1 ? steps.length : i;
 }
 
@@ -249,8 +249,8 @@ export function stepIndex(steps, ctx, skipped = new Set()) {
  * script is running, since the script does not end a game — but it is cheap
  * insurance against a step that can no longer be satisfied.
  */
-export function isStalled(steps, ctx, skipped = new Set()) {
-  return ctx.isOver && stepIndex(steps, ctx, skipped) < steps.length;
+export function isStalled(steps, ctx) {
+  return ctx.isOver && stepIndex(steps, ctx) < steps.length;
 }
 
 export const STALLED_HINT =

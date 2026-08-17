@@ -9,8 +9,7 @@
  *
  * Deliberately not modal. A pop-up that must be dismissed interrupts the thing
  * it is trying to teach, and this game is learned by pushing the ball around.
- * The panel sits beside the board, play is never blocked, and any step can be
- * skipped.
+ * The panel sits beside the board and play is never blocked.
  *
  * The step logic is pure: `contextFor` reduces a move log to a handful of facts,
  * and `stepIndex` walks the steps against those facts to say which one is being
@@ -79,25 +78,20 @@ export function contextFor(config, moves) {
 }
 
 /**
- * The first step not yet finished and not skipped. Returns `steps.length` when
- * every step is done, which the page shows as the closing note.
+ * The first step not yet finished. Returns `steps.length` when every step is
+ * done, which the page shows as the closing note.
  *
  * Walks the steps in order, carrying `since` — the move at which the previous
  * step was satisfied — so each step is judged only on what happened after the
  * one before it finished.
  *
- * `skipped` may be a Set or a Map of id -> the move count when it was skipped.
- * A Map is better — it stops the *next* step being satisfied by something that
- * happened before you gave up on this one — but a bare Set still works.
+ * There was a "Skip this bit" button, and this took the set of steps given up
+ * on. It went after a playtest: the steps are short and each one ends the
+ * moment you do the thing, so skipping only ever bought a reader confusion.
  */
-export function stepIndex(steps, ctx, skipped = new Map()) {
+export function stepIndex(steps, ctx) {
   let since = 0;
-  for (let i = 0; i < steps.length; i++) {
-    const step = steps[i];
-    if (skipped.has(step.id)) {
-      since = Math.max(since, skipped.get?.(step.id) ?? since);
-      continue;
-    }
+  for (const [i, step] of steps.entries()) {
     const at = step.doneAt(ctx, since);
     if (at == null) return i;
     since = at;
@@ -111,8 +105,8 @@ export function stepIndex(steps, ctx, skipped = new Map()) {
  * cylinder. Without this the panel would sit there asking for something the
  * dead board can no longer provide.
  */
-export function isStalled(steps, ctx, skipped = new Map()) {
-  return ctx.isOver && stepIndex(steps, ctx, skipped) < steps.length;
+export function isStalled(steps, ctx) {
+  return ctx.isOver && stepIndex(steps, ctx) < steps.length;
 }
 
 /** The first move after `since` at which something happened, or null. */

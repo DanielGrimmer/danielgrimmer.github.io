@@ -321,6 +321,8 @@ body.dg {
   --dg-lit-glow: 0 0 0 0 transparent;
   --dg-legal-glow: 0 0 0 0 transparent;
   --dg-x: rgba(25, 24, 23, 0.45);
+  /* The newest cross: the same ink, at full strength. */
+  --dg-x-latest: rgba(25, 24, 23, 0.9);
 }
 
 .dg-board[data-theme='soccer'] {
@@ -367,6 +369,7 @@ body.dg {
     --dg-legal-edge: #f5c451;
     --dg-lit-glow: 0 0 12px rgba(245, 196, 81, 0.7);
     --dg-x: rgba(0, 0, 0, 0.55);
+    --dg-x-latest: rgba(0, 0, 0, 0.95);
   }
   :root:not([data-dg-theme='light']) .dg-board[data-theme='soccer'] {
     --dg-top-a: #356f42;
@@ -390,6 +393,7 @@ body.dg {
   --dg-legal-edge: #f5c451;
   --dg-lit-glow: 0 0 12px rgba(245, 196, 81, 0.7);
   --dg-x: rgba(0, 0, 0, 0.55);
+  --dg-x-latest: rgba(0, 0, 0, 0.95);
 }
 
 [data-dg-theme='dark'] .dg-board[data-theme='soccer'] {
@@ -491,6 +495,21 @@ body.dg {
 .dg-cell.is-visited .dg-glyph {
   color: var(--dg-x);
   font-size: 17px;
+}
+
+/*
+ * The last move, said with weight rather than with an arrow.
+ *
+ * Playtesters lost track of what their opponent had just done — the board
+ * only ever gains crosses, and one more among a dozen is invisible. The
+ * square the ball left last is drawn solid and a size up while the rest stay
+ * translucent, so "it came from there to here" reads in one glance. An arrow
+ * would have been a second kind of mark on a board whose whole subject is the
+ * shape these crosses make.
+ */
+.dg-cell.is-latest .dg-glyph {
+  color: var(--dg-x-latest);
+  font-size: 21px;
 }
 
 /* ----------------------------------------------------------- chessboard ---- */

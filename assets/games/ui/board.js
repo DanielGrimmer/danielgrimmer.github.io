@@ -174,6 +174,14 @@ export function createBoardView(container, { board, theme, interactive = true })
     const visited = new Set(view.visited.map(keyOf));
     const approaches = showApproaches ? new Set(view.goalApproaches.map(keyOf)) : new Set();
     const ballKey = keyOf(view.ball);
+    /*
+     * The square the ball left last, which with the ball itself is the whole of
+     * the last move. Its cross is drawn solid while the older ones stay
+     * translucent — enough to find at a glance, and no arrow to clutter a board
+     * whose whole business is the shape the crosses make. `visited` is pushed
+     * to in move order, so the newest is simply the last of them.
+     */
+    const latestKey = view.visited.length ? keyOf(view.visited[view.visited.length - 1]) : null;
 
     for (const [key, { cell, glyph }] of cells) {
       const [row, col] = key.split(',').map(Number);
@@ -187,6 +195,7 @@ export function createBoardView(container, { board, theme, interactive = true })
       cell.classList.toggle('is-blocked', blocked.has(key));
       cell.classList.toggle('is-ball', key === ball);
       cell.classList.toggle('is-visited', key !== ball && visited.has(key));
+      cell.classList.toggle('is-latest', key !== ball && key === latestKey);
       cell.classList.toggle('is-playable', !isWall && legal.has(key));
 
       // A spent square is a cross and an approach is a dot, so the three read as
