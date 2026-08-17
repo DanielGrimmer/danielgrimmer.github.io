@@ -13,9 +13,9 @@
  * armies. That stops being so on the next screen, which is the point.
  */
 
-import { replayFrames, inCheck } from './game.js?v=4.33.0';
-import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.33.0';
-import { PIECE } from './pieces.js?v=4.33.0';
+import { replayFrames, inCheck } from './game.js?v=4.34.0';
+import { NARROW, WIDE, TUTORIAL, TUTORIAL_WIDE } from './presets.js?v=4.34.0';
+import { PIECE } from './pieces.js?v=4.34.0';
 
 /**
  * A square, written the way the board is labelled: rank first, then file, both
@@ -509,7 +509,7 @@ const LEDGERS = Object.freeze({
     disagree: Object.freeze([
       Object.freeze({
         claim: 'which files are adjacent to which',
-        example: 'Do the knights on D1 and S1 begin side by side? The rooks on C1 and L1?',
+        example: 'Do the knights on D1 and S1 begin side by side? The knights on D8 and H8?',
       }),
       Object.freeze({
         claim: 'which man a move jumps over',

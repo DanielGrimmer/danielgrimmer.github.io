@@ -624,14 +624,18 @@ test('the reveal ledger names squares that are really there', async (t) => {
     openingMove(WIDE, 'H1', 'C3', 'bishop');
   });
 
-  await t.test('8x8: the knights are neighbours to Black, the rooks to White', () => {
-    assert.match(revealNote(WIDE, SIDE.WHITE).disagree[0].example, /D1 and S1.*C1 and L1/s);
-    for (const name of ['D1', 'S1']) assert.equal(manAt(WIDE, name)?.type, 'knight');
-    for (const name of ['C1', 'L1']) assert.equal(manAt(WIDE, name)?.type, 'rook');
+  // The same pair of pieces, one army each, and the adjacency flips: White's
+  // knights are split to White and together to Black, Black's the other way
+  // round. That symmetry is what makes it one question asked twice.
+  await t.test('8x8: each army’s knights are neighbours to one seat only', () => {
+    assert.match(revealNote(WIDE, SIDE.WHITE).disagree[0].example, /D1 and S1.*D8 and H8/s);
+    for (const name of ['D1', 'S1', 'D8', 'H8']) {
+      assert.equal(manAt(WIDE, name)?.type, 'knight', `${name} is a knight`);
+    }
     assert.equal(gap(WIDE, SIDE.WHITE, 'D1', 'S1'), 3);
     assert.equal(gap(WIDE, SIDE.BLACK, 'D1', 'S1'), 1);
-    assert.equal(gap(WIDE, SIDE.WHITE, 'C1', 'L1'), 1);
-    assert.equal(gap(WIDE, SIDE.BLACK, 'C1', 'L1'), 3);
+    assert.equal(gap(WIDE, SIDE.WHITE, 'D8', 'H8'), 1);
+    assert.equal(gap(WIDE, SIDE.BLACK, 'D8', 'H8'), 3);
   });
 
   /*
