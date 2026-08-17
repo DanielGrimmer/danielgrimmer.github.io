@@ -7,7 +7,7 @@
  * into blocked cells was never declared stalemated and the game hung.
  */
 
-import { mod, modInverse, signedRep, areCoprime, validMultipliers } from './duality.js?v=4.35.0';
+import { mod, modInverse, signedRep, areCoprime, validMultipliers } from './duality.js';
 
 /** @typedef {{row:number, col:number}} Square */
 /** @typedef {[number, number]} Offset  a [rowStep, colStep] pair */

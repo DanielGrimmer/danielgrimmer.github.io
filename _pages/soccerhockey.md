@@ -21,8 +21,8 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.35.0" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.35.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.36.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.36.0" />
 
 <div class="dg dg-scope">
   <div class="dg-wrap">
@@ -106,6 +106,40 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
   </div>
 </div>
 
+<!--
+  The version lives in ONE place per page: this import map. The three imports
+  below carry no ?v= token; the browser resolves each to its absolute URL,
+  finds it here, and fetches the ?v= form instead — so the whole module graph
+  is cache-busted from this block and the two stylesheet links above. Written
+  as plain absolute paths (not relative_url) because import-map keys must match
+  resolved URLs exactly, and this site is served from the domain root.
+  _tests/versions.test.mjs holds every page to this convention.
+-->
+<script type="importmap">
+{
+  "imports": {
+    "/assets/games/core/duality.js": "/assets/games/core/duality.js?v=4.36.0",
+    "/assets/games/core/game.js": "/assets/games/core/game.js?v=4.36.0",
+    "/assets/games/core/presets.js": "/assets/games/core/presets.js?v=4.36.0",
+    "/assets/games/core/rules.js": "/assets/games/core/rules.js?v=4.36.0",
+    "/assets/games/core/sandbox.js": "/assets/games/core/sandbox.js?v=4.36.0",
+    "/assets/games/core/seats.js": "/assets/games/core/seats.js?v=4.36.0",
+    "/assets/games/escher/coach.js": "/assets/games/escher/coach.js?v=4.36.0",
+    "/assets/games/escher/game.js": "/assets/games/escher/game.js?v=4.36.0",
+    "/assets/games/escher/pieces.js": "/assets/games/escher/pieces.js?v=4.36.0",
+    "/assets/games/escher/presets.js": "/assets/games/escher/presets.js?v=4.36.0",
+    "/assets/games/net/room.js": "/assets/games/net/room.js?v=4.36.0",
+    "/assets/games/net/rooms.js": "/assets/games/net/rooms.js?v=4.36.0",
+    "/assets/games/ui/board.js": "/assets/games/ui/board.js?v=4.36.0",
+    "/assets/games/ui/chessboard.js": "/assets/games/ui/chessboard.js?v=4.36.0",
+    "/assets/games/ui/coach.js": "/assets/games/ui/coach.js?v=4.36.0",
+    "/assets/games/ui/palette.js": "/assets/games/ui/palette.js?v=4.36.0",
+    "/assets/games/ui/pieces-svg.js": "/assets/games/ui/pieces-svg.js?v=4.36.0",
+    "/assets/games/ui/replay.js": "/assets/games/ui/replay.js?v=4.36.0"
+  }
+}
+</script>
+
 <script type="module">
   /*
    * The hero board: half soccer pitch, half hockey rink, with the seam running
@@ -133,9 +167,9 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
    * `data-theme` on the surface, and one rule in pages.css lets a cube restate
    * the rink's surface colours from a `data-surface` of its own. No fork.
    */
-  import { SOCCER_HOCKEY } from '{{ "/assets/games/core/presets.js" | relative_url }}?v=4.35.0';
-  import { initialGame, viewOf, squareFromView } from '{{ "/assets/games/core/game.js" | relative_url }}?v=4.35.0';
-  import { createBoardView } from '{{ "/assets/games/ui/board.js" | relative_url }}?v=4.35.0';
+  import { SOCCER_HOCKEY } from '{{ "/assets/games/core/presets.js" | relative_url }}';
+  import { initialGame, viewOf, squareFromView } from '{{ "/assets/games/core/game.js" | relative_url }}';
+  import { createBoardView } from '{{ "/assets/games/ui/board.js" | relative_url }}';
 
   /*
    * Follow the site's own light/dark toggle rather than the operating system.

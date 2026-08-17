@@ -88,11 +88,15 @@ duality off), the real game (one board each, ending in the reveal), and — for
 Soccer Hockey only — the sandbox (both boards, every dial shared). Each is a
 thin HTML file over those modules; none of them holds a rule.
 
-Every intra-project import carries a `?v=` token. GitHub Pages serves assets
-with a ten-minute max-age, so an edited module keeps loading from cache while
-the page itself is refetched — which looks exactly like a change that never
-shipped. Bump them together, and the build stamp at the foot of each page
-reports which set the browser actually ran.
+Modules import each other with plain relative paths; each page carries an
+import map sending every module URL to a `?v=` form, so the version lives in
+one block per page. GitHub Pages serves assets with a ten-minute max-age, so
+an unversioned fetch would keep loading from cache while the page itself is
+refetched — which looks exactly like a change that never shipped. To bump:
+change the version in each page's import map, its `BUILD` constant, and the
+two stylesheet links. The build stamp at the foot of each page reports which
+set the browser actually ran, and `_tests/versions.test.mjs` fails if any
+page or module strays from the convention.
 
 ### One world, two lenses
 

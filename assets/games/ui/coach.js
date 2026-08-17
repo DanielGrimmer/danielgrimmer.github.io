@@ -18,8 +18,8 @@
  * with no DOM — and every bug fixed in it has a test written that way.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.35.0';
-import { replayFrames } from '../core/game.js?v=4.35.0';
+import { goalApproaches, squareKey } from '../core/rules.js';
+import { replayFrames } from '../core/game.js';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only

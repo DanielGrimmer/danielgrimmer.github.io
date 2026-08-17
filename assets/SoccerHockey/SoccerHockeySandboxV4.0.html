@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.35.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.35.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.36.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.36.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -116,8 +116,44 @@
       <p class="dg-build">Build <span id="buildStamp">—</span></p>
     </div>
 
+    <!--
+      The version lives in ONE place per page: this import map. Modules import
+      each other with plain relative paths; the browser resolves each to its
+      absolute URL, finds it here, and fetches the ?v= form instead. GitHub
+      Pages serves assets with a ten-minute max-age, so without this an edited
+      module keeps loading from cache while the page itself is refetched —
+      which looks exactly like the change not having shipped. Bump the version
+      here, in BUILD, and on the two stylesheet links together; the build stamp
+      at the foot of the page reports which set actually ran, and
+      _tests/versions.test.mjs holds every page and module to this convention.
+    -->
+    <script type="importmap">
+{
+  "imports": {
+    "/assets/games/core/duality.js": "/assets/games/core/duality.js?v=4.36.0",
+    "/assets/games/core/game.js": "/assets/games/core/game.js?v=4.36.0",
+    "/assets/games/core/presets.js": "/assets/games/core/presets.js?v=4.36.0",
+    "/assets/games/core/rules.js": "/assets/games/core/rules.js?v=4.36.0",
+    "/assets/games/core/sandbox.js": "/assets/games/core/sandbox.js?v=4.36.0",
+    "/assets/games/core/seats.js": "/assets/games/core/seats.js?v=4.36.0",
+    "/assets/games/escher/coach.js": "/assets/games/escher/coach.js?v=4.36.0",
+    "/assets/games/escher/game.js": "/assets/games/escher/game.js?v=4.36.0",
+    "/assets/games/escher/pieces.js": "/assets/games/escher/pieces.js?v=4.36.0",
+    "/assets/games/escher/presets.js": "/assets/games/escher/presets.js?v=4.36.0",
+    "/assets/games/net/room.js": "/assets/games/net/room.js?v=4.36.0",
+    "/assets/games/net/rooms.js": "/assets/games/net/rooms.js?v=4.36.0",
+    "/assets/games/ui/board.js": "/assets/games/ui/board.js?v=4.36.0",
+    "/assets/games/ui/chessboard.js": "/assets/games/ui/chessboard.js?v=4.36.0",
+    "/assets/games/ui/coach.js": "/assets/games/ui/coach.js?v=4.36.0",
+    "/assets/games/ui/palette.js": "/assets/games/ui/palette.js?v=4.36.0",
+    "/assets/games/ui/pieces-svg.js": "/assets/games/ui/pieces-svg.js?v=4.36.0",
+    "/assets/games/ui/replay.js": "/assets/games/ui/replay.js?v=4.36.0"
+  }
+}
+    </script>
+
     <script type="module">
-      const BUILD = '4.35.0';
+      const BUILD = '4.36.0';
 
       import {
         initialGame,
@@ -126,7 +162,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.35.0';
+      } from '../games/core/game.js';
       import {
         DEFAULT_SPEC,
         normaliseSpec,
@@ -138,10 +174,10 @@
         decodeSpec,
         describeSpec,
         inWords,
-      } from '../games/core/sandbox.js?v=4.35.0';
-      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js?v=4.35.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.35.0';
-      import { createPaletteView } from '../games/ui/palette.js?v=4.35.0';
+      } from '../games/core/sandbox.js';
+      import { presenceOf, seatOf, normaliseSeats, occupancy, PRESENCE } from '../games/core/seats.js';
+      import { createBoardView } from '../games/ui/board.js';
+      import { createPaletteView } from '../games/ui/palette.js';
       import {
         ROOM_NAMES,
         roomFromLocation,
@@ -149,7 +185,7 @@
         rememberRoom,
         recallRoom,
         LAST_SANDBOX_KEY,
-      } from '../games/net/rooms.js?v=4.35.0';
+      } from '../games/net/rooms.js';
       import {
         signIn,
         chooseRoom,
@@ -163,7 +199,7 @@
         explain,
         HEARTBEAT_MS,
         SANDBOX_COLLECTION,
-      } from '../games/net/room.js?v=4.35.0';
+      } from '../games/net/room.js';
 
       const el = (id) => document.getElementById(id);
       const now = () => Date.now();
