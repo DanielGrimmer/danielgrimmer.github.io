@@ -256,3 +256,52 @@ test('the pawn, which is where it stops looking normal', async (t) => {
     assert.deepEqual(across(WIDE), [3]); // one file becomes three
   });
 });
+
+/*
+ * The in-game hint ladders make quantitative claims about what the opponent's
+ * pieces look like, and the two boards' numbers differ. These pin every such
+ * claim to the lens arithmetic, so an edit to a dial cannot quietly leave a
+ * rung telling the reader something false about the board beside it.
+ */
+test('the hint ladders say what the lens actually does', async (t) => {
+  const sideSteps = (pieces, name, opts) =>
+    new Set(
+      throughLens(pieces[name], opts)
+        .filter((m) => m.step[0] !== 0)
+        .map((m) => Math.abs(m.step[1]))
+    );
+
+  await t.test('5x10: pawns seem to capture two to either side, the king doubles', () => {
+    const captures = throughLens(NARROW_PIECES[PIECE.PAWN], NARROW).filter((m) => m.requiresCapture);
+    assert.deepEqual(captures.map((m) => [...m.step]).sort(), [[1, -2], [1, 2]]);
+    // Every off-axis king step carries a doubled horizontal component.
+    const king = throughLens(NARROW_PIECES[PIECE.KING], NARROW);
+    for (const m of king) {
+      if (m.step[1] !== 0) assert.equal(Math.abs(m.step[1]), 2, `king step ${m.step}`);
+    }
+  });
+
+  await t.test('8x8: pawns seem to capture three to either side, the king triples', () => {
+    const captures = throughLens(WIDE_PIECES[PIECE.PAWN], WIDE).filter((m) => m.requiresCapture);
+    assert.deepEqual(captures.map((m) => [...m.step]).sort(), [[1, -3], [1, 3]]);
+    const king = throughLens(WIDE_PIECES[PIECE.KING], WIDE);
+    for (const m of king) {
+      if (m.step[1] !== 0) assert.equal(Math.abs(m.step[1]), 3, `king step ${m.step}`);
+    }
+  });
+
+  /*
+   * The 8x8 rung with a name in it. The queen is rook + bishop; the rook is
+   * self-dual and the bishop's image is the (widened) knight, so her image is
+   * rook + knight — the compound fairy-chess players call the empress. Checked
+   * as sets of destinations, which is the comparison the duality is defined by.
+   */
+  await t.test('8x8: the queen reads as rook plus knight — the empress', () => {
+    const image = destinations(throughLens(WIDE_PIECES[PIECE.QUEEN], WIDE), WIDE.width);
+    const empress = destinations(
+      [...WIDE_PIECES[PIECE.ROOK], ...WIDE_PIECES[PIECE.KNIGHT]],
+      WIDE.width
+    );
+    assert.deepEqual([...image].sort(), [...empress].sort());
+  });
+});

@@ -18,8 +18,8 @@
  * with no DOM — and every bug fixed in it has a test written that way.
  */
 
-import { goalApproaches, squareKey } from '../core/rules.js?v=4.34.0';
-import { replayFrames } from '../core/game.js?v=4.34.0';
+import { goalApproaches, squareKey } from '../core/rules.js?v=4.35.0';
+import { replayFrames } from '../core/game.js?v=4.35.0';
 
 /**
  * Did this move cross the seam? On a cylinder the short way round is the only
@@ -84,17 +84,15 @@ export function contextFor(config, moves) {
  *
  * Walks the steps in order, carrying `since` — the move at which the previous
  * step was satisfied — so each step is judged only on what happened after the
- * one before it finished. `floor` is how far the tutorial had already got on an
- * earlier board: "Start again" clears the court but not your place in the
- * lesson, which is what the stalled hint promises.
+ * one before it finished.
  *
  * `skipped` may be a Set or a Map of id -> the move count when it was skipped.
  * A Map is better — it stops the *next* step being satisfied by something that
  * happened before you gave up on this one — but a bare Set still works.
  */
-export function stepIndex(steps, ctx, skipped = new Map(), floor = 0) {
+export function stepIndex(steps, ctx, skipped = new Map()) {
   let since = 0;
-  for (let i = floor; i < steps.length; i++) {
+  for (let i = 0; i < steps.length; i++) {
     const step = steps[i];
     if (skipped.has(step.id)) {
       since = Math.max(since, skipped.get?.(step.id) ?? since);
@@ -113,14 +111,15 @@ export function stepIndex(steps, ctx, skipped = new Map(), floor = 0) {
  * cylinder. Without this the panel would sit there asking for something the
  * dead board can no longer provide.
  */
-export function isStalled(steps, ctx, skipped = new Map(), floor = 0) {
-  return ctx.isOver && stepIndex(steps, ctx, skipped, floor) < steps.length;
+export function isStalled(steps, ctx, skipped = new Map()) {
+  return ctx.isOver && stepIndex(steps, ctx, skipped) < steps.length;
 }
 
 /** The first move after `since` at which something happened, or null. */
 const firstAfter = (whenList, since) => whenList.find((n) => n > since) ?? null;
 
-export const STALLED_HINT = 'That game is over — press “Start again” and pick up where you left off.';
+export const STALLED_HINT =
+  'That game is over — press “Start again” to run the tutorial from the top.';
 
 /**
  * The basketball tutorial, in the order the board teaches it. Each step ends on

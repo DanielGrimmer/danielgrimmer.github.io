@@ -170,37 +170,14 @@ test('stepping through the tutorial', async (t) => {
     assert.equal(BASKETBALL_STEPS[stepIndex(BASKETBALL_STEPS, ctx, skipped)].id, 'dots');
   });
 
-  /*
-   * The stalled hint says: press "Start again" and pick up where you left off.
-   * It used to drop the reader back on step one, because the move log is the
-   * state and clearing it cleared their place too. `floor` is what the page
-   * banks before wiping the log.
-   */
-  await t.test('REGRESSION: Start again keeps your place in the lesson', () => {
+  // "Start again" really does mean again — the stalled hint promises a run
+  // from the top, so a cleared board must read as step one.
+  await t.test('a cleared board starts the tutorial over, as the hint promises', () => {
     const quick = walkIntoTopGoal();
-    const dead = contextFor(config, quick);
-    assert.ok(isStalled(BASKETBALL_STEPS, dead), 'the board is finished, the tutorial is not');
-    const stuckAt = stepIndex(BASKETBALL_STEPS, dead);
-
-    const fresh = contextFor(config, []);
-    assert.equal(stepIndex(BASKETBALL_STEPS, fresh), 0, 'a bare fresh board reads step one');
-    assert.equal(
-      stepIndex(BASKETBALL_STEPS, fresh, new Map(), stuckAt),
-      stuckAt,
-      'carrying the floor keeps the step the reader was on'
-    );
-    assert.ok(!isStalled(BASKETBALL_STEPS, fresh, new Map(), stuckAt), 'and it is playable again');
-  });
-
-  await t.test('and the tutorial goes on from that floor rather than restarting', () => {
-    const floor = 2; // the seam step
-    assert.equal(BASKETBALL_STEPS[floor].id, 'wrap');
-    const seam = contextFor(config, walkToSeam());
-    assert.equal(
-      BASKETBALL_STEPS[stepIndex(BASKETBALL_STEPS, seam, new Map(), floor)].id,
-      'dots',
-      'one wrap on the new board advances it, with no need to redo steps one and two'
-    );
+    assert.ok(isStalled(BASKETBALL_STEPS, contextFor(config, quick)), 'stalled mid-tutorial');
+    assert.match(STALLED_HINT, /Start again/);
+    assert.match(STALLED_HINT, /from the top/);
+    assert.equal(stepIndex(BASKETBALL_STEPS, contextFor(config, [])), 0);
   });
 
   await t.test('a game won in three moves leaves the tutorial stalled, and says so', () => {

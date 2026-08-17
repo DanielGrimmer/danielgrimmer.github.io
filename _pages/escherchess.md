@@ -19,8 +19,8 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.34.0" />
-<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.34.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/board.css' | relative_url }}?v=4.35.0" />
+<link rel="stylesheet" href="{{ '/assets/games/ui/pages.css' | relative_url }}?v=4.35.0" />
 
 <div class="dg dg-scope">
   <div class="dg-wrap">

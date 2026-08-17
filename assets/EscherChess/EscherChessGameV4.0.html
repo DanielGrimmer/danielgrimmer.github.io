@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.34.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.34.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.35.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.35.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -142,8 +142,9 @@
             <!--
               A ladder of hints for the confused, every rung folded shut: each
               piece costs its own deliberate click, so nothing is spoiled by
-              accident. Five-file board only — the hints describe that board's
-              duality, and the 8×8 has its own strangeness.
+              accident. One ladder per board, because the numbers differ: on
+              five files a sideways step doubles through the lens, on eight it
+              triples — and only the 8x8 has a queen to be wrong about.
             -->
             <details class="dg-rules" id="hints" hidden>
               <summary>What is going on with my opponent’s pieces?!?</summary>
@@ -185,6 +186,66 @@
                   Their king moves forward and backwards normally, but whenever
                   it moves sideways (or diagonally) its horizontal movement is
                   doubled. This makes it quite a puzzle how to get a
+                  checkmate...
+                </p>
+              </details>
+            </details>
+
+            <!--
+              The same ladder for the 8x8, where the numbers change: a sideways
+              step reads as three through this lens, not two, and the queen's
+              image is a piece with a name. Every quantitative claim in these
+              rungs is pinned against the engine in escher-coach.test.mjs.
+            -->
+            <details class="dg-rules" id="hints8" hidden>
+              <summary>What is going on with my opponent’s pieces?!?</summary>
+              <p class="dg-legend">
+                Part of the fun of the game is to figure this out for yourself.
+                But if you need it, here are some hints about each piece:
+              </p>
+              <details>
+                <summary>Regarding Knights:</summary>
+                <p class="dg-legend">
+                  Their knights seem to move like bishops. Recall that in this
+                  game bishops are short ranged and jumpy.
+                </p>
+              </details>
+              <details>
+                <summary>Regarding Bishops:</summary>
+                <p class="dg-legend">Their bishops seem to move like knights.</p>
+              </details>
+              <details>
+                <summary>Regarding Rooks:</summary>
+                <p class="dg-legend">
+                  Their rooks are actually behaving completely normally (that is,
+                  for Escher Chess). Short-ranged and jumpy.
+                </p>
+              </details>
+              <details>
+                <summary>Regarding the Queen:</summary>
+                <p class="dg-legend">
+                  Their queen still slides like a rook, but her diagonal moves
+                  have gone strange: she seems to leap like a knight instead. A
+                  rook combined with a knight is a piece chess players have a
+                  name for — the <strong>empress</strong>.
+                </p>
+              </details>
+              <details>
+                <summary>Regarding Pawns:</summary>
+                <p class="dg-legend">
+                  While their pawns are moving forward normally, they do not seem
+                  to capture normally. Concretely, they seem to be attacking
+                  forward and <strong>three spaces to either side</strong>
+                  instead of just one. That would also help explain their strange
+                  pawn structure...
+                </p>
+              </details>
+              <details>
+                <summary>Regarding King:</summary>
+                <p class="dg-legend">
+                  Their king moves forward and backwards normally, but whenever
+                  it moves sideways (or diagonally) its horizontal movement is
+                  tripled. This makes it quite a puzzle how to get a
                   checkmate...
                 </p>
               </details>
@@ -260,9 +321,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.34.0';
+      const BUILD = '4.35.0';
 
-      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.34.0';
+      import { BOARDS, NARROW, WIDE, SIDE } from '../games/escher/presets.js?v=4.35.0';
       import {
         initialGame,
         replay,
@@ -272,7 +333,7 @@
         fromView,
         STATUS,
         ACTION,
-      } from '../games/escher/game.js?v=4.34.0';
+      } from '../games/escher/game.js?v=4.35.0';
       import {
         presenceOf,
         seatOf,
@@ -281,10 +342,10 @@
         mayMove,
         PRESENCE,
         OUTCOME,
-      } from '../games/core/seats.js?v=4.34.0';
-      import { createChessboard } from '../games/ui/chessboard.js?v=4.34.0';
-      import { createReplayView } from '../games/ui/replay.js?v=4.34.0';
-      import { revealNote } from '../games/escher/coach.js?v=4.34.0';
+      } from '../games/core/seats.js?v=4.35.0';
+      import { createChessboard } from '../games/ui/chessboard.js?v=4.35.0';
+      import { createReplayView } from '../games/ui/replay.js?v=4.35.0';
+      import { revealNote } from '../games/escher/coach.js?v=4.35.0';
       import {
         ESCHER_ROOM_NAMES,
         ESCHER_BOARD_ROOMS,
@@ -296,14 +357,14 @@
         recallRoom,
         emptyEscherRoomDoc,
         LAST_ESCHER_KEY,
-      } from '../games/net/rooms.js?v=4.34.0';
+      } from '../games/net/rooms.js?v=4.35.0';
       import {
         signIn,
         escher,
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.34.0';
+      } from '../games/net/room.js?v=4.35.0';
 
       const el = (id) => document.getElementById(id);
       const SIDE_NAME = ['White', 'Black'];
@@ -380,6 +441,21 @@
       let revealUnlocked = false;
       let unwatch = null;
       let interacted = false; // has anyone touched this tab since the last beat
+      /*
+       * The tab title carries the one fact a player who tabbed away needs:
+       * that the game wants them back. Set while the tab is hidden, restored
+       * the moment it is looked at — a title that shouts at a visible page
+       * is noise, and a visibilitychange listener is the whole mechanism.
+       */
+      const BASE_TITLE = document.title;
+      let titleBeat = '';
+      function refreshTitle() {
+        document.title =
+          titleBeat && document.visibilityState === 'hidden'
+            ? `● ${titleBeat} — Escher Chess`
+            : BASE_TITLE;
+      }
+      document.addEventListener('visibilitychange', refreshTitle);
 
       const now = () => Date.now();
       const other = (s) => (s === 0 ? 1 : 0);
@@ -489,8 +565,46 @@
         return "Your friend's move.";
       }
 
+      /*
+       * The room's log will not fold into a game. The rules cannot check that
+       * an append is a legal move — they only count, so a buggy or outdated
+       * client can write an entry that throws here on every device in the
+       * room, forever. Without this the throw lands in the snapshot callback,
+       * the screen freezes on whatever it last showed, and the buttons that
+       * could clear the log are never drawn. So the broken log gets its own
+       * honest screen, with the two ways out on it.
+       */
+      function drawUnreadable() {
+        el('pairView').hidden = true;
+        el('playView').hidden = false;
+        el('playLayout').hidden = false;
+        el('boardHolder').hidden = false;
+        el('replay').hidden = true;
+        el('gate').hidden = true;
+        placeBoard(false);
+        el('chromeState').textContent = `Room ${room} · unreadable`;
+        el('statusText').textContent =
+          'This room’s game can’t be read — its log holds a move that is ' +
+          'not legal on this board, perhaps written by an older version of the game. ' +
+          'Press “New game” to clear it, or move to a new room.';
+        el('statusMove').textContent = '';
+        el('status').dataset.tone = '';
+        for (const id of ['acceptDraw', 'requestDraw', 'forfeit', 'hints', 'hints8']) {
+          el(id).hidden = true;
+        }
+        el('newGame').hidden = seat === null;
+        el('leave').hidden = seat === null;
+        titleBeat = '';
+        refreshTitle();
+      }
+
       function draw() {
-        game = replay(board, state.moves);
+        try {
+          game = replay(board, state.moves);
+        } catch {
+          drawUnreadable();
+          return;
+        }
         const lens = seat ?? SIDE.WHITE;
 
         if (!boardView) {
@@ -592,6 +706,27 @@
 
         // An armed "sure?" must not sit there through your friend's turn.
         if (el('forfeit').disabled) resetForfeitArm();
+
+        /*
+         * What the tab title says while nobody is looking at it. "Game over"
+         * stops beating once this player has been through the gate — they
+         * know — and an untouched log with both seats held means the friend
+         * has just arrived, which the waiting player is exactly the person to
+         * want to hear.
+         */
+        titleBeat =
+          seat === null || inheritedGame
+            ? ''
+            : !playing
+              ? revealUnlocked
+                ? ''
+                : 'Game over'
+              : mayMoveNow
+                ? 'Your move'
+                : full && state.moves.length === 0
+                  ? 'Your friend is here'
+                  : '';
+        refreshTitle();
 
         drawReplay();
       }
@@ -771,6 +906,7 @@
         el('sideSub').textContent =
           seat === SIDE.WHITE ? 'You move first.' : 'White moves first.';
         el('hints').hidden = board !== NARROW;
+        el('hints8').hidden = board !== WIDE;
         el('roomFoot').textContent =
           `Room ${room} · both of you here · nothing but your moves until it is over`;
       }
@@ -882,11 +1018,18 @@
          * reload after our own last move should show us our own reveal rather
          * than telling us it belongs to a stranger.
          */
+        // The same fold as draw(); an unreadable log is draw()'s to report.
+        let alreadyOver = false;
+        try {
+          alreadyOver = replay(board, state.moves).outcome.status !== STATUS.PLAYING;
+        } catch {
+          alreadyOver = false;
+        }
         inheritedGame =
           joined.seat !== null &&
           !joined.abandoned &&
           joined.outcome !== OUTCOME.RESUMED &&
-          replay(board, state.moves).outcome.status !== STATUS.PLAYING;
+          alreadyOver;
         drawRoom();
         draw();
 

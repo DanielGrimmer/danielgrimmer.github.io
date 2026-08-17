@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.34.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.34.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.35.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.35.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -189,9 +189,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.34.0';
+      const BUILD = '4.35.0';
 
-      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.34.0';
+      import { SOCCER_HOCKEY } from '../games/core/presets.js?v=4.35.0';
       import {
         initialGame,
         replay,
@@ -199,7 +199,7 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.34.0';
+      } from '../games/core/game.js?v=4.35.0';
       import {
         presenceOf,
         seatOf,
@@ -207,10 +207,10 @@
         occupancy,
         mayMove,
         PRESENCE,
-      } from '../games/core/seats.js?v=4.34.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.34.0';
-      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.34.0';
-      import { replayNote } from '../games/ui/coach.js?v=4.34.0';
+      } from '../games/core/seats.js?v=4.35.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.35.0';
+      import { createReplayView, moverAt } from '../games/ui/replay.js?v=4.35.0';
+      import { replayNote } from '../games/ui/coach.js?v=4.35.0';
       import {
         ROOM_NAMES,
         nextRoomName,
@@ -218,7 +218,7 @@
         shareLink,
         rememberRoom,
         recallRoom,
-      } from '../games/net/rooms.js?v=4.34.0';
+      } from '../games/net/rooms.js?v=4.35.0';
       import {
         signIn,
         chooseRoom,
@@ -231,7 +231,7 @@
         explain,
         HEARTBEAT_MS,
         ACTIVE_HEARTBEAT_MS,
-      } from '../games/net/room.js?v=4.34.0';
+      } from '../games/net/room.js?v=4.35.0';
 
       const config = SOCCER_HOCKEY;
       const el = (id) => document.getElementById(id);
@@ -244,6 +244,21 @@
       let boardView = null;
       let replayView = null;
       let replayKey = null; // what the replay on screen is currently showing
+      /*
+       * The tab title carries the one fact a player who tabbed away needs:
+       * that the game wants them back. Set while the tab is hidden, restored
+       * the moment it is looked at — a title that shouts at a visible page
+       * is noise, and a visibilitychange listener is the whole mechanism.
+       */
+      const BASE_TITLE = document.title;
+      let titleBeat = '';
+      function refreshTitle() {
+        document.title =
+          titleBeat && document.visibilityState === 'hidden'
+            ? `● ${titleBeat} — Soccer Hockey`
+            : BASE_TITLE;
+      }
+      document.addEventListener('visibilitychange', refreshTitle);
       /*
        * Whether this player has been through the gate: called their friend,
        * heard them describe the other sport, and pressed on. Local on purpose —
@@ -385,8 +400,42 @@
         boardView?.fit();
       }
 
+      /*
+       * The room's log will not fold into a game. The rules cannot check that
+       * an append is a legal move — they only count, so a buggy or outdated
+       * client can write an entry that throws here on every device in the
+       * room, forever. Without this the throw lands in the snapshot callback,
+       * the screen freezes on whatever it last showed, and the buttons that
+       * could clear the log are never drawn. So the broken log gets its own
+       * honest screen, with the two ways out on it.
+       */
+      function drawUnreadable() {
+        el('pairView').hidden = true;
+        el('playView').hidden = false;
+        el('playLayout').hidden = false;
+        el('boardHolder').hidden = false;
+        el('replay').hidden = true;
+        placeBoard(false);
+        el('chromeState').textContent = `Room ${room} · unreadable`;
+        el('statusText').textContent =
+          'This room’s game can’t be read — its log holds a move that is ' +
+          'not legal on this board, perhaps written by an older version of the game. ' +
+          'Press “New game” to clear it, or leave this room.';
+        el('statusMove').textContent = '';
+        el('status').dataset.tone = '';
+        el('newGame').hidden = seat === null;
+        el('leave').hidden = seat === null;
+        titleBeat = '';
+        refreshTitle();
+      }
+
       function draw() {
-        game = replay(config, state.moves);
+        try {
+          game = replay(config, state.moves);
+        } catch {
+          drawUnreadable();
+          return;
+        }
         const lens = seat ?? 0;
 
         if (!boardView) {
@@ -440,6 +489,27 @@
         el('presenceDot').dataset.state = dotState();
         el('newGame').hidden = seat === null || game.outcome.status === STATUS.PLAYING;
         el('leave').hidden = seat === null;
+
+        /*
+         * What the tab title says while nobody is looking at it. "Game over"
+         * stops beating once this player has been through the gate — they
+         * know — and an untouched log with both seats held means the friend
+         * has just arrived, which the waiting player is exactly the person to
+         * want to hear.
+         */
+        titleBeat =
+          seat === null || inheritedGame
+            ? ''
+            : game.outcome.status !== STATUS.PLAYING
+              ? revealUnlocked
+                ? ''
+                : 'Game over'
+              : mayMoveNow
+                ? 'Your move'
+                : full && state.moves.length === 0
+                  ? 'Your friend is here'
+                  : '';
+        refreshTitle();
         drawReplay();
       }
 
@@ -642,10 +712,14 @@
         if (seat !== null) rememberRoom(window.localStorage, name);
         // Whether the game was already over when we arrived, before any of our
         // own moves can have changed it.
-        inheritedGame =
-          joined.seat !== null &&
-          !joined.abandoned &&
-          replay(config, state.moves).outcome.status !== STATUS.PLAYING;
+        // The same fold as draw(); an unreadable log is draw()'s to report.
+        let alreadyOver = false;
+        try {
+          alreadyOver = replay(config, state.moves).outcome.status !== STATUS.PLAYING;
+        } catch {
+          alreadyOver = false;
+        }
+        inheritedGame = joined.seat !== null && !joined.abandoned && alreadyOver;
         drawRoom();
         draw();
 

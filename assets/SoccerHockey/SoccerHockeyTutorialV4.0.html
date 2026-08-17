@@ -19,8 +19,8 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <!-- board.css owns the board; pages.css owns everything around it, and must load second. -->
-    <link rel="stylesheet" href="../games/ui/board.css?v=4.34.0" />
-    <link rel="stylesheet" href="../games/ui/pages.css?v=4.34.0" />
+    <link rel="stylesheet" href="../games/ui/board.css?v=4.35.0" />
+    <link rel="stylesheet" href="../games/ui/pages.css?v=4.35.0" />
   </head>
   <body class="dg">
     <div class="dg-wrap">
@@ -107,9 +107,9 @@
     </div>
 
     <script type="module">
-      const BUILD = '4.34.0'; // keep in step with the ?v= tokens below
+      const BUILD = '4.35.0'; // keep in step with the ?v= tokens below
 
-      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.34.0';
+      import { BASKETBALL_TUTORIAL } from '../games/core/presets.js?v=4.35.0';
       import {
         initialGame,
         applyMove,
@@ -117,8 +117,8 @@
         viewOf,
         squareFromView,
         STATUS,
-      } from '../games/core/game.js?v=4.34.0';
-      import { createBoardView } from '../games/ui/board.js?v=4.34.0';
+      } from '../games/core/game.js?v=4.35.0';
+      import { createBoardView } from '../games/ui/board.js?v=4.35.0';
       import {
         contextFor,
         stepIndex,
@@ -126,7 +126,7 @@
         STALLED_HINT,
         BASKETBALL_STEPS,
         BASKETBALL_OUTRO,
-      } from '../games/ui/coach.js?v=4.34.0';
+      } from '../games/ui/coach.js?v=4.35.0';
 
       const config = BASKETBALL_TUTORIAL;
 
@@ -136,15 +136,6 @@
       let game = initialGame(config);
       /** id -> the move count when it was given up on. See `stepIndex`. */
       const skipped = new Map();
-      /**
-       * How far the tutorial had got before the board was last cleared.
-       *
-       * The move log is the state, so wiping it would wipe your place in the
-       * lesson too — and the stalled hint explicitly promises otherwise: press
-       * "Start again" and pick up where you left off. This is what makes that
-       * true. Reloading the page is what starts the tutorial over.
-       */
-      let floor = 0;
 
       // In the tutorial the duality is 1, so both lenses are the identity and
       // the two seats see an identical board. There is nothing to swap between
@@ -190,10 +181,10 @@
 
       function drawCoach() {
         const ctx = contextFor(config, moves);
-        const index = stepIndex(BASKETBALL_STEPS, ctx, skipped, floor);
+        const index = stepIndex(BASKETBALL_STEPS, ctx, skipped);
         const step = BASKETBALL_STEPS[index];
         const done = index >= BASKETBALL_STEPS.length;
-        const stalled = isStalled(BASKETBALL_STEPS, ctx, skipped, floor);
+        const stalled = isStalled(BASKETBALL_STEPS, ctx, skipped);
 
         el('coachProgress').textContent = done
           ? 'Done'
@@ -233,20 +224,11 @@
         drawCoach();
       }
 
-      /*
-        Start again clears the court and leaves you where you were in the
-        lesson. That is what the stalled hint promises — score in three moves
-        and the panel tells you to press this and pick up where you left off —
-        and it used to drop you back on step one instead.
-
-        The place has to be banked *before* the log goes, since the log is what
-        it is computed from. `skipped` can go with it: a skipped step is always
-        behind the step index, so the floor has already absorbed it.
-       */
+      // Start again really is again: the court and the tutorial both go back
+      // to the top, which is what the stalled hint promises.
       el('reset').addEventListener('click', () => {
-        floor = stepIndex(BASKETBALL_STEPS, contextFor(config, moves), skipped, floor);
-        skipped.clear();
         moves = [];
+        skipped.clear();
         game = initialGame(config);
         draw();
       });
@@ -261,7 +243,7 @@
       // satisfied by something that happened before you gave up.
       el('coachSkip').addEventListener('click', () => {
         const ctx = contextFor(config, moves);
-        const step = BASKETBALL_STEPS[stepIndex(BASKETBALL_STEPS, ctx, skipped, floor)];
+        const step = BASKETBALL_STEPS[stepIndex(BASKETBALL_STEPS, ctx, skipped)];
         if (step) skipped.set(step.id, ctx.moveCount);
         drawCoach();
       });
