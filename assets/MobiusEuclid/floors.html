@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax — Floor Studio (Euclid ↔ Möbius)</title>
+<!--
+  FLOOR STUDIO — the Radon bridge between the two floors.
+
+  Each floor = its own paint layer + the dual image of the other floor's paint layer:
+      Möbius's floor  =  paintM  +  R  paintE      R  f(theta, r) = ∫ f  along the line (theta, r)        (sinogram)
+      Euclid's floor  =  paintE  +  R* paintM      R* g(x, y)     = ∫ g(theta, x cos theta + y sin theta) dtheta   (back-projection)
+  Both integrals run on the GPU every time a layer changes, so painting on either side updates the other live.
+  The grid and the dashed fibers are chart decorations, not objects, so they are not transformed.
+
+  Möbius's paint layer is stored on the fundamental domain theta in [0, pi), r in [-RA, RA]; the displayed
+  strip tiles it with the identification (theta + pi, -r) ~ (theta, r), so a stroke that crosses a seam
+  continues, flipped, in the next tile.  Exports match the game: Euclid 1024x1024 over [-RA,RA]^2,
+  Möbius 885x1024 over theta in [0, 2pi) (one full period, i.e. two tiles) x r in [-RA, RA].
+-->
+<style>
+  body { margin:0; background:#0a0a0a; color:#e8dcb0; font-family:"Avenir Next","Segoe UI",Helvetica,Arial,sans-serif; }
+  header { padding:16px 22px 8px; }
+  h1 { margin:0; font-size:18px; letter-spacing:.22em; text-transform:uppercase; color:#f5c518; font-weight:700; }
+  .sub { font-size:13px; opacity:.75; margin-top:5px; max-width:70em; line-height:1.45; }
+  #tools { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; padding:10px 22px; border-top:1px solid #222; border-bottom:1px solid #222; font-size:13px; }
+  #tools label { display:flex; align-items:center; gap:6px; white-space:nowrap; }
+  .grp { display:flex; gap:6px; align-items:center; padding-right:14px; border-right:1px solid #222; }
+  .grp:last-child { border-right:0; }
+  button { background:#161616; color:#f5c518; border:1px solid #3a3a3a; padding:5px 10px; font:inherit; font-size:13px; cursor:pointer; border-radius:3px; }
+  button:hover { border-color:#f5c518; }
+  button.on { background:#f5c518; color:#000; border-color:#f5c518; }
+  input[type=text] { background:#111; color:#fff; border:1px solid #3a3a3a; padding:4px 6px; font:inherit; width:100px; }
+  input[type=range] { width:80px; }
+  input[type=color] { width:28px; height:24px; border:1px solid #3a3a3a; background:#111; padding:0; }
+  #stage { margin:18px 22px 90px; position:relative; }
+  canvas#gl { display:block; background:#000; max-width:100%; height:auto; cursor:crosshair; touch-action:none; }
+  .cap { position:absolute; top:100%; margin-top:8px; font-size:12px; line-height:1.5; opacity:.85; }
+  .cap b { color:#f5c518; font-weight:600; }
+  .cap i { color:#bbb; }
+  #err { display:none; padding:30px; color:#ddd; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Parallax · Floor Studio</h1>
+  <div class="sub">Paint or stamp text on either floor and the other floor updates live through the Radon transform: a mark on Euclid's floor becomes a sinusoidal band on Möbius's (the sinogram); a mark on Möbius's floor becomes a sheaf of lines on Euclid's (the back-projection). Grid and fibers are chart decorations and are not transformed.</div>
+</header>
+<div id="tools">
+  <div class="grp">
+    <button id="tBrush" class="on">Brush</button><button id="tText">Text</button><button id="tErase">Eraser</button>
+    <label><input type="color" id="color" value="#f5c518"></label>
+    <label>Size <input type="range" id="size" min="2" max="60" value="12"></label>
+  </div>
+  <div class="grp">
+    <label>Text <input type="text" id="text" value="Level 2"></label>
+    <label>Text size <input type="range" id="tsize" min="16" max="160" value="48"></label>
+    <span style="opacity:.6">(pick Text, then click a floor)</span>
+  </div>
+  <div class="grp">
+    <label>Preset label <input type="text" id="preset" value="Level 1" style="width:70px"></label>
+    <button id="applyPreset">Apply preset</button>
+    <button id="clearE">Clear Euclid paint</button><button id="clearM">Clear Möbius paint</button><button id="undo">Undo</button>
+  </div>
+  <div class="grp">
+    <label>Dual on Möbius <input type="range" id="gainM" min="0" max="30" value="3.5" step="0.5"></label>
+    <label>Dual on Euclid <input type="range" id="gainE" min="0" max="120" value="30"></label>
+    <label><input type="checkbox" id="chart" checked> chart</label>
+  </div>
+  <div class="grp">
+    <label>Image → <button id="imgE">Euclid</button><button id="imgM">Möbius</button><input type="file" id="file" accept="image/*" style="display:none"></label>
+    <button id="expE">Download Euclid floor</button><button id="expM">Download Möbius floor</button>
+  </div>
+</div>
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <div class="cap" id="capE"><b>Euclid's floor</b> — the disk of radius 8. <i>Rf</i>(θ,r) of what you paint here appears on the right.</div>
+  <div class="cap" id="capM"><b>Möbius's floor</b> — the strip, three tiles shown; alternate tiles are the same points seen after a half turn, so they appear flipped. <i>R*g</i>(x,y) of what you paint here appears on the left.</div>
+</div>
+<div id="err">three.js failed to load — check the network connection.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+if (typeof THREE === 'undefined') { document.getElementById('err').style.display = 'block'; }
+else (function () {
+'use strict';
+const PI = Math.PI;
+const RA = 8, S = 3.4;                                  // same world parameters as the game
+const E_PX = 500, H_PX = 500, GAP = 36, M_SPAN = 3 * PI;
+const M_PX = Math.round(M_SPAN * S / (2 * RA) * H_PX);   // display width of the strip panel
+const NE = 1024, NM_H = 1024, NM_W = Math.round(PI * S / (2 * RA) * NM_H);   // paint layers (Möbius: fundamental domain only)
+const K = NE / E_PX;                                    // native pixels per display pixel (same on both panels by construction)
+const DE = 512;                                         // interactive resolution of the back-projection
+const EXPORT_M_W = Math.round(2 * PI * S / (2 * RA) * NM_H);                  // 885: one full period of the strip
+
+// ------------------------------------------------------------ paint layers (2D canvases)
+const mkCanvas = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return { c, ctx: c.getContext('2d', { willReadFrequently: true }) }; };
+const natE = mkCanvas(NE, NE), natM = mkCanvas(NM_W, NM_H);
+const setTex = t => { t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t; };
+const texE = setTex(new THREE.CanvasTexture(natE.c)), texM = setTex(new THREE.CanvasTexture(natM.c));
+const parity = k => (((k % 2) + 2) % 2 === 0) ? 1 : -1;
+const dirty = { E: true, M: true };
+const mark = side => { dirty[side] = true; (side === 'E' ? texE : texM).needsUpdate = true; };
+
+// ------------------------------------------------------------ GPU
+const canvas = document.getElementById('gl'); canvas.width = E_PX + GAP + M_PX; canvas.height = H_PX;
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(canvas.width, canvas.height, false); renderer.autoClear = false;
+{ const T = E_PX + GAP + M_PX; document.getElementById('capE').style.width = (E_PX / T * 100) + '%'; document.getElementById('capM').style.left = ((E_PX + GAP) / T * 100) + '%'; document.getElementById('capM').style.width = (M_PX / T * 100) + '%'; }
+
+const rt = (w, h) => new THREE.WebGLRenderTarget(w, h, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, type: THREE.UnsignedByteType, depthBuffer: false, stencilBuffer: false });
+const dualM = rt(NM_W, NM_H), dualE = rt(DE, DE);
+
+const VS = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+const HEAD = 'precision highp float; const float PI = 3.14159265358979; varying vec2 vUv;';
+// R f: for each (theta, r) of the strip, integrate Euclid's paint along the line
+const FS_SINO = HEAD + `
+uniform sampler2D src; uniform float RA, gain; uniform int n;
+void main(){
+  float th = vUv.x * PI, r = (vUv.y - 0.5) * 2.0 * RA;
+  vec2 foot = r * vec2(cos(th), sin(th)), dir = vec2(-sin(th), cos(th));
+  float L = 1.42 * RA, ds = 2.0 * L / float(n); vec3 acc = vec3(0.0);
+  for (int i = 0; i < 2048; i++) { if (i >= n) break;
+    vec2 p = foot + (-L + (float(i) + 0.5) * ds) * dir; vec2 uv = p / (2.0 * RA) + 0.5;
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) continue;
+    vec4 c = texture2D(src, uv); acc += c.rgb * c.a * ds;
+  }
+  gl_FragColor = vec4(acc * gain, 1.0);
+}`;
+// R* g: for each point of the plane, integrate Möbius's paint over the lines through it
+const FS_BACK = HEAD + `
+uniform sampler2D src; uniform float RA, gain; uniform int n;
+void main(){
+  vec2 p = (vUv - 0.5) * 2.0 * RA; float dth = PI / float(n); vec3 acc = vec3(0.0);
+  for (int i = 0; i < 4096; i++) { if (i >= n) break;
+    float th = (float(i) + 0.5) * dth, r = p.x * cos(th) + p.y * sin(th);
+    if (abs(r) >= RA) continue;
+    vec4 c = texture2D(src, vec2(th / PI, r / (2.0 * RA) + 0.5)); acc += c.rgb * c.a * dth;
+  }
+  gl_FragColor = vec4(acc * gain, 1.0);
+}`;
+// Euclid's floor = grid (chart) + paintE + R* paintM
+const FS_DISP_E = HEAD + `
+uniform sampler2D nat, dual; uniform float RA, pxw, chart;
+void main(){
+  vec2 p = (vUv - 0.5) * 2.0 * RA; vec3 col = vec3(0.0);
+  if (chart > 0.5 && length(p) < RA) { float sp = RA / 10.0; vec2 g = abs(fract(p / sp + 0.5) - 0.5) * sp; if (min(g.x, g.y) < 0.65 * pxw) col = vec3(0.86); }
+  vec4 n = texture2D(nat, vUv); col = mix(col, n.rgb, n.a); col += texture2D(dual, vUv).rgb;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+// Möbius's floor = fibers (chart) + paintM + R paintE, tiled with the half-twist identification
+const FS_DISP_M = HEAD + `
+uniform sampler2D nat, dual; uniform float RA, S, th0, span, pxw, chart;
+void main(){
+  float thd = th0 + vUv.x * span, rd = (vUv.y - 0.5) * 2.0 * RA;
+  float k = floor(thd / PI), thc = thd - k * PI, sgn = mod(k, 2.0) < 0.5 ? 1.0 : -1.0;
+  vec2 uv = vec2(thc / PI, sgn * rd / (2.0 * RA) + 0.5); vec3 col = vec3(0.0);
+  if (chart > 0.5) { float sp = PI / 4.0, g = abs(fract(thd / sp + 0.5) - 0.5) * sp * S; if (g < 0.7 * pxw && mod(rd + RA, 0.85) < 0.5) col = vec3(0.32); }
+  vec4 n = texture2D(nat, uv); col = mix(col, n.rgb, n.a); col += texture2D(dual, uv).rgb;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+const mat = (fs, uniforms) => new THREE.ShaderMaterial({ vertexShader: VS, fragmentShader: fs, uniforms, depthTest: false, depthWrite: false });
+const sino = mat(FS_SINO, { src: { value: texE }, RA: { value: RA }, gain: { value: 0.35 }, n: { value: 360 } });
+const back = mat(FS_BACK, { src: { value: texM }, RA: { value: RA }, gain: { value: 3.0 }, n: { value: 240 } });
+const dispE = mat(FS_DISP_E, { nat: { value: texE }, dual: { value: dualE.texture }, RA: { value: RA }, pxw: { value: 2 * RA / H_PX }, chart: { value: 1 } });
+const dispM = mat(FS_DISP_M, { nat: { value: texM }, dual: { value: dualM.texture }, RA: { value: RA }, S: { value: S }, th0: { value: 0 }, span: { value: M_SPAN }, pxw: { value: 2 * RA / H_PX }, chart: { value: 1 } });
+const qScene = new THREE.Scene(), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), dispE); quad.frustumCulled = false; qScene.add(quad);
+const qCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+function pass(m, target, vp) {
+  quad.material = m; renderer.setRenderTarget(target);
+  if (vp) { renderer.setScissorTest(true); renderer.setViewport(vp[0], vp[1], vp[2], vp[3]); renderer.setScissor(vp[0], vp[1], vp[2], vp[3]); }
+  else renderer.setScissorTest(false);
+  renderer.render(qScene, qCam);
+}
+function frame() {
+  if (dirty.E) { pass(sino, dualM); dirty.E = false; }
+  if (dirty.M) { pass(back, dualE); dirty.M = false; }
+  renderer.setRenderTarget(null); renderer.setScissorTest(false); renderer.clear();
+  pass(dispE, null, [0, 0, E_PX, H_PX]);
+  pass(dispM, null, [E_PX + GAP, 0, M_PX, H_PX]);
+  requestAnimationFrame(frame);
+}
+
+// ------------------------------------------------------------ painting
+const $ = id => document.getElementById(id);
+let tool = 'brush';
+const setTool = t => { tool = t; for (const [id, name] of [['tBrush', 'brush'], ['tText', 'text'], ['tErase', 'erase']]) $(id).classList.toggle('on', name === t); };
+$('tBrush').onclick = () => setTool('brush'); $('tText').onclick = () => setTool('text'); $('tErase').onclick = () => setTool('erase');
+const FONT = px => `${px}px "DejaVu Sans", Verdana, "Segoe UI", Helvetica, Arial, sans-serif`;
+
+// Where does a display pixel land in the paint layers?  E: one spot.  M: one canonical spot plus its two neighbours across the seams.
+function toNativeE(u, v) { return [{ x: u * NE, y: v * NE, flip: 1 }]; }
+function toNativeM(u, v) {
+  const thd = u * M_SPAN, rd = (0.5 - v) * 2 * RA, k = Math.floor(thd / PI), thc = thd - k * PI, rc = parity(k) * rd;
+  const out = [];
+  for (const j of [-1, 0, 1]) out.push({ x: (thc + j * PI) / PI * NM_W, y: (0.5 - parity(j) * rc / (2 * RA)) * NM_H, flip: parity(j) });
+  return out;
+}
+function dab(side, u, v) {
+  const L = side === 'E' ? natE : natM, spots = side === 'E' ? toNativeE(u, v) : toNativeM(u, v), rad = +$('size').value * K / 2;
+  const ctx = L.ctx; ctx.save();
+  ctx.globalCompositeOperation = tool === 'erase' ? 'destination-out' : 'source-over'; ctx.fillStyle = $('color').value;
+  for (const s of spots) { ctx.beginPath(); ctx.arc(s.x, s.y, rad, 0, 2 * PI); ctx.fill(); }
+  ctx.restore(); mark(side);
+}
+function stamp(side, u, v, str, px, color) {
+  const L = side === 'E' ? natE : natM, spots = side === 'E' ? toNativeE(u, v) : toNativeM(u, v);
+  const ctx = L.ctx; ctx.save(); ctx.font = FONT(px * K); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = color;
+  for (const s of spots) { ctx.save(); ctx.translate(s.x, s.y); ctx.scale(1, s.flip); ctx.fillText(str, 0, 0); ctx.restore(); }
+  ctx.restore(); mark(side);
+}
+function stampImage(side, u, v, img, wDisp) {
+  const L = side === 'E' ? natE : natM, spots = side === 'E' ? toNativeE(u, v) : toNativeM(u, v);
+  const w = wDisp * K, h = w * img.height / img.width, ctx = L.ctx;
+  for (const s of spots) { ctx.save(); ctx.translate(s.x, s.y); ctx.scale(1, s.flip); ctx.drawImage(img, -w / 2, -h / 2, w, h); ctx.restore(); }
+  mark(side);
+}
+const undoStack = [];
+function pushUndo(side) { const L = side === 'E' ? natE : natM; undoStack.push({ side, data: L.ctx.getImageData(0, 0, L.c.width, L.c.height) }); if (undoStack.length > 12) undoStack.shift(); }
+$('undo').onclick = () => { const u = undoStack.pop(); if (!u) return; (u.side === 'E' ? natE : natM).ctx.putImageData(u.data, 0, 0); mark(u.side); };
+addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'z') { $('undo').onclick(); e.preventDefault(); } });
+const clear = side => { pushUndo(side); const L = side === 'E' ? natE : natM; L.ctx.clearRect(0, 0, L.c.width, L.c.height); mark(side); };
+$('clearE').onclick = () => clear('E'); $('clearM').onclick = () => clear('M');
+
+function hit(e) {
+  const b = canvas.getBoundingClientRect(), x = (e.clientX - b.left) * canvas.width / b.width, y = (e.clientY - b.top) * canvas.height / b.height;
+  if (x >= 0 && x < E_PX) return { side: 'E', u: x / E_PX, v: y / H_PX };
+  if (x >= E_PX + GAP && x < E_PX + GAP + M_PX) return { side: 'M', u: (x - E_PX - GAP) / M_PX, v: y / H_PX };
+  return null;
+}
+let drawing = null, last = null;
+canvas.addEventListener('pointerdown', e => {
+  const h = hit(e); if (!h) return; e.preventDefault(); canvas.setPointerCapture(e.pointerId);
+  pushUndo(h.side);
+  if (tool === 'text') { stamp(h.side, h.u, h.v, $('text').value, +$('tsize').value, $('color').value); return; }
+  drawing = h.side; last = h; dab(h.side, h.u, h.v);
+});
+canvas.addEventListener('pointermove', e => {
+  if (!drawing) return; const h = hit(e); if (!h || h.side !== drawing) return;
+  const px = drawing === 'E' ? E_PX : M_PX, d = Math.hypot((h.u - last.u) * px, (h.v - last.v) * H_PX), steps = Math.max(1, Math.ceil(d / Math.max(1, +$('size').value / 3)));
+  for (let i = 1; i <= steps; i++) dab(drawing, last.u + (h.u - last.u) * i / steps, last.v + (h.v - last.v) * i / steps);
+  last = h;
+});
+const stop = () => { drawing = null; last = null; };
+canvas.addEventListener('pointerup', stop); canvas.addEventListener('pointercancel', stop);
+
+// preset: the Level-1 layout from the Mathematica floors — text at the top of the disk, text at the bottom of each tile
+function preset(label) {
+  for (const side of ['E', 'M']) { const L = side === 'E' ? natE : natM; L.ctx.clearRect(0, 0, L.c.width, L.c.height); }
+  stamp('E', 0.5, 0.11, label, 48, '#f5c518');                        // (0, +0.78 RA)
+  stamp('M', (PI / 2) / M_SPAN, 0.89, label, 48, '#f5c518');          // (theta = pi/2, r = -0.78 RA)
+  undoStack.length = 0;
+}
+$('applyPreset').onclick = () => preset($('preset').value);
+$('gainM').oninput = e => { sino.uniforms.gain.value = +e.target.value / 10; mark('E'); };
+$('gainE').oninput = e => { back.uniforms.gain.value = +e.target.value / 10; mark('M'); };
+$('chart').onchange = e => { dispE.uniforms.chart.value = dispM.uniforms.chart.value = e.target.checked ? 1 : 0; };
+
+// image import: dropped into the middle of the disk / the middle of a tile
+let imgTarget = 'E';
+$('imgE').onclick = () => { imgTarget = 'E'; $('file').click(); }; $('imgM').onclick = () => { imgTarget = 'M'; $('file').click(); };
+$('file').onchange = e => {
+  const f = e.target.files[0]; if (!f) return; const img = new Image();
+  img.onload = () => { pushUndo(imgTarget); if (imgTarget === 'E') stampImage('E', 0.5, 0.5, img, 300); else stampImage('M', (PI / 2) / M_SPAN, 0.5, img, 150); URL.revokeObjectURL(img.src); };
+  img.src = URL.createObjectURL(f); e.target.value = '';
+};
+
+// ------------------------------------------------------------ export (game-sized textures)
+function download(target, name) {
+  const w = target.width, h = target.height, buf = new Uint8Array(w * h * 4);
+  renderer.readRenderTargetPixels(target, 0, 0, w, h, buf);
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d'), im = ctx.createImageData(w, h);
+  for (let y = 0; y < h; y++) im.data.set(buf.subarray((h - 1 - y) * w * 4, (h - y) * w * 4), y * w * 4);   // GPU rows are bottom-up
+  ctx.putImageData(im, 0, 0);
+  const a = document.createElement('a'); a.download = name; a.href = c.toDataURL('image/png'); a.click();
+}
+$('expE').onclick = () => {
+  const hq = rt(NE, NE), out = rt(NE, NE), n0 = back.uniforms.n.value;
+  back.uniforms.n.value = 900; pass(back, hq);
+  dispE.uniforms.dual.value = hq.texture; dispE.uniforms.pxw.value = 2 * RA / NE; pass(dispE, out);
+  download(out, 'floorEuc.png');
+  dispE.uniforms.dual.value = dualE.texture; dispE.uniforms.pxw.value = 2 * RA / H_PX; back.uniforms.n.value = n0; hq.dispose(); out.dispose();
+};
+$('expM').onclick = () => {
+  const out = rt(EXPORT_M_W, NM_H);
+  if (dirty.E) { pass(sino, dualM); dirty.E = false; }
+  dispM.uniforms.th0.value = 0; dispM.uniforms.span.value = 2 * PI; dispM.uniforms.pxw.value = 2 * RA / NM_H; pass(dispM, out);
+  download(out, 'floorMob.png');
+  dispM.uniforms.span.value = M_SPAN; dispM.uniforms.pxw.value = 2 * RA / H_PX; out.dispose();
+};
+
+preset('Level 1');
+window.floorStudio = { natE, natM, stamp, dab, preset, mark, setTool, sino, back };
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
