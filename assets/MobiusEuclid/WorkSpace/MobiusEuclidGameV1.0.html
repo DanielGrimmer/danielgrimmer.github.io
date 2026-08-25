@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mobius Euclid Game V1.0</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+      #gameUI {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white;
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        pointer-events: none;
+      }
+      #instructions {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        z-index: 10;
+      }
+      #instructions.hidden {
+        display: none;
+      }
+      ul {
+        text-align: left;
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="gameUI">
+      <div id="playerTypeDisplay">Player Type: <span id="playerType">Loading...</span></div>
+      <div id="playerPerspDisplay">Player Perspective: <span id="playerPersp">Loading...</span></div>
+    </div>
+    <div id="instructions">
+      <h1>Mobius Euclid Game</h1>
+      <p>Click anywhere to start the game</p>
+      <div>
+        <p>Controls:</p>
+        <ul>
+          <li>W, A, S, D - Move</li>
+          <li>Click and drag mouse - Look around</li>
+          <li>Space - Jump</li>
+        </ul>
+      </div>
+    </div>
+    <script type="module" src="MobiusEuclidGameLogic.js"></script>
+  </body>
+</html>

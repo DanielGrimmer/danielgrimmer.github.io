@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  PARALLAX — Möbius & Euclid (proof of concept)
+
+  One scene, two fields, one canonical state.
+  * Euclid's field is the plane; Möbius's field is the unrolled Möbius strip (theta, r), tiled
+    with alternate tiles flipped (theta + pi, -r).  The fields sit far apart in the same scene;
+    each player has his own camera and his own ordinary platformer physics on his own field.
+  * Everything on Möbius's field is computed from Euclid-coordinates through the dictionary:
+      Euclidean point (a,b)         ->  section  r = a cos(theta) + b sin(theta)
+      Euclidean line (theta, r)     ->  point (theta, r) of the strip
+      convex point-made object      ->  band between the min and max of its vertices' sections
+      Möbius-world box on the strip ->  a family of lines (sheaf) on the plane
+    Sections are anti-periodic, so drawing them over a long theta range gives every tile for free.
+  * Collision is incidence: |a cos(theta) + b sin(theta) - r| is at once the distance from Euclid to
+    Möbius's line and the fiber-distance from Möbius to Euclid's section, so both fields agree.
+  Controls: Euclid W A S D + Space, Möbius arrows + Enter, R to restart.  window.parallax exposes the state.
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax — Möbius &amp; Euclid</title>
+<style>
+  html, body { margin:0; height:100%; background:#000; overflow:hidden;
+    font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif; color:#f5c518; }
+  canvas#c { display:block; width:100vw; height:100vh; }
+  #hud { position:absolute; inset:0; pointer-events:none; }
+  .panel { position:absolute; top:0; bottom:0; display:flex; flex-direction:column;
+    justify-content:space-between; padding:14px 18px; box-sizing:border-box; }
+  #hudE { left:0; }
+  #hudM { right:0; }
+  .name { font-size:20px; letter-spacing:.22em; font-weight:700; text-transform:uppercase; }
+  .keys { font-size:13px; letter-spacing:.06em; color:#e8dcb0; opacity:.85; margin-top:4px; }
+  .goal { font-size:14px; line-height:1.4; color:#f5c518; max-width:34em; }
+  .goal b { color:#fff; font-weight:600; }
+  #divider { position:absolute; top:0; bottom:0; width:2px; background:#2a2a2a; }
+  #msg { position:absolute; left:50%; top:18px; transform:translateX(-50%); padding:10px 22px;
+    background:rgba(0,0,0,.72); border:1px solid rgba(245,197,24,.55); border-radius:4px;
+    text-align:center; font-size:18px; letter-spacing:.04em; color:#ffe27a; white-space:nowrap;
+    opacity:0; transition:opacity .6s; }
+  #msg.on { opacity:1; }
+  #err { position:absolute; inset:0; display:none; place-items:center; color:#ddd; font-size:16px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div class="panel" id="hudE">
+    <div><div class="name">Euclid</div><div class="keys">W A S D move &nbsp;·&nbsp; Space jump &nbsp;·&nbsp; R restart</div></div>
+    <div class="goal" id="goalE"></div>
+  </div>
+  <div id="divider"></div>
+  <div class="panel" id="hudM">
+    <div style="text-align:right"><div class="name">Möbius</div><div class="keys">Arrows move &nbsp;·&nbsp; Enter jump</div></div>
+    <div class="goal" id="goalM" style="text-align:right;align-self:flex-end"></div>
+  </div>
+  <div id="msg"></div>
+</div>
+<div id="err">three.js failed to load — check the network connection.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+if (typeof THREE === 'undefined') { document.getElementById('err').style.display = 'grid'; }
+else (function () {
+'use strict';
+const PI = Math.PI, TAU = 2 * Math.PI;
+
+// ============================================================
+//  World parameters
+// ============================================================
+const RA   = 8;       // Euclid's arena is the disk |p| <= RA.  Dually, Möbius's arena is the band |r| <= RA.
+const S    = 2.2;     // world units per radian along Möbius's strip (tile width = S*pi)
+const XM0  = 500;     // Möbius's field lives far away in the same scene, out of view of Euclid's
+const TH_MIN = -4.5 * PI, TH_MAX = 4.5 * PI;   // range of theta drawn on Möbius's field
+const NSEG = 480;     // samples per band mesh across that range
+const PR = 0.35, PH = 1.0;   // player radius / height
+const W  = 0.30;             // half-thickness of each player's proxy in the other world
+const G = 30, JUMP_V = 10, SPEED = 6, STEP = 0.3;
+
+// ============================================================
+//  Canonical state (Euclid coordinates + Möbius's (theta, r))
+//  Both players are stored as (u, v, z): Euclid u=a, v=b ; Möbius u=theta*S, v=r
+// ============================================================
+const euclid = { u: -5.5, v: 0.0, z: 0, vz: 0, grounded: true };
+const mobius = { u: 0.6 * S, v: -5.5, z: 0, vz: 0, grounded: true };
+
+const sigma = (a, b, th) => a * Math.cos(th) + b * Math.sin(th);      // section of point (a,b); also = signed distance from (a,b) to line (th, 0)
+function sigmaRange(a, b, th1, th2) {                                  // [min,max] of a cos + b sin on [th1, th2]
+  const f = t => a * Math.cos(t) + b * Math.sin(t);
+  let lo = Math.min(f(th1), f(th2)), hi = Math.max(f(th1), f(th2));
+  const phi = Math.atan2(b, a);
+  for (let k = Math.ceil((th1 - phi) / PI); k <= Math.floor((th2 - phi) / PI); k++) {
+    const v = f(phi + k * PI); lo = Math.min(lo, v); hi = Math.max(hi, v);
+  }
+  return [lo, hi];
+}
+const distToSeg = (px, py, ax, ay, bx, by) => {
+  const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy;
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / L2));
+  return Math.hypot(px - ax - t * dx, py - ay - t * dy);
+};
+const parity = k => (((k % 2) + 2) % 2 === 0) ? 1 : -1;               // (-1)^k for any integer k
+
+// ============================================================
+//  Level 1 objects (all defined once, in canonical coordinates)
+// ============================================================
+const pillar = { c: [0.6, 0.9], R: 1.2, h: 2.0, color: 0x22cc22 };
+const slab   = { P: [-3.4, 3.0], Q: [-1.4, 0.2], t: 0.35, h: 2.2, color: 0x0e0e8e };
+const yblock = { th: [2.6, 3.0], r: [6.0, 7.0], h: 1.5, color: 0xf5c518 };   // a Möbius-world simple: a box on the strip = a family of lines for Euclid
+const sw     = { c: [-2.4, -4.2] };                                          // gold marker (non-solid)
+
+// slab corners (a thickened segment is a rectangle; its Möbius band is bounded by the min/max of its corner sections)
+(function () {
+  const dx = slab.Q[0] - slab.P[0], dy = slab.Q[1] - slab.P[1], L = Math.hypot(dx, dy);
+  const nx = -dy / L * slab.t, ny = dx / L * slab.t;
+  slab.corners = [[slab.P[0] + nx, slab.P[1] + ny], [slab.P[0] - nx, slab.P[1] - ny],
+                  [slab.Q[0] + nx, slab.Q[1] + ny], [slab.Q[0] - nx, slab.Q[1] - ny]];
+  slab.len = L; slab.ang = Math.atan2(dy, dx);
+})();
+
+// Band edge functions on Möbius's field (v = r as a function of theta)
+const diskBand = o => ({ lo: th => sigma(o.c[0], o.c[1], th) - o.R, hi: th => sigma(o.c[0], o.c[1], th) + o.R });
+const rectBand = o => ({
+  lo: th => Math.min(...o.corners.map(c => sigma(c[0], c[1], th))),
+  hi: th => Math.max(...o.corners.map(c => sigma(c[0], c[1], th))) });
+pillar.band = diskBand(pillar); slab.band = rectBand(slab);
+
+// ------------------------------------------------------------
+//  Solids, as each player meets them on his own field.
+//  overlap(u, v, rad) is a footprint test in that field's coordinates.
+// ------------------------------------------------------------
+const bandOverlap = (band, u, v, rad) => {
+  for (const du of [-rad, 0, rad]) {
+    const th = (u + du) / S;
+    if (v > band.lo(th) - rad && v < band.hi(th) + rad) return true;
+  }
+  return false;
+};
+const solidsE = [   // what Euclid can bump into / stand on
+  { overlap: (u, v, rad) => Math.hypot(u - pillar.c[0], v - pillar.c[1]) < pillar.R + rad, base: () => 0, top: () => pillar.h },
+  { overlap: (u, v, rad) => distToSeg(u, v, slab.P[0], slab.P[1], slab.Q[0], slab.Q[1]) < slab.t + rad, base: () => 0, top: () => slab.h },
+  { overlap: (u, v, rad) => { const [lo, hi] = sigmaRange(u, v, yblock.th[0], yblock.th[1]);   // Euclid's point lies on one of the block's lines
+      return hi > yblock.r[0] - rad && lo < yblock.r[1] + rad; }, base: () => 0, top: () => yblock.h },
+  { overlap: (u, v, rad) => Math.abs(sigma(u, v, mobius.u / S) - mobius.v) < W + rad,          // Möbius's line
+    base: () => mobius.z, top: () => mobius.z + PH },
+];
+const solidsM = [   // what Möbius can bump into / stand on
+  { overlap: (u, v, rad) => bandOverlap(pillar.band, u, v, rad), base: () => 0, top: () => pillar.h },
+  { overlap: (u, v, rad) => bandOverlap(slab.band, u, v, rad),   base: () => 0, top: () => slab.h },
+  { overlap: (u, v, rad) => {                                                                     // copies of the block at (th + k pi, (-1)^k r)
+      for (let k = -6; k <= 6; k++) {
+        const s = parity(k), u1 = (yblock.th[0] + k * PI) * S, u2 = (yblock.th[1] + k * PI) * S;
+        const r1 = Math.min(s * yblock.r[0], s * yblock.r[1]), r2 = Math.max(s * yblock.r[0], s * yblock.r[1]);
+        if (u > u1 - rad && u < u2 + rad && v > r1 - rad && v < r2 + rad) return true;
+      }
+      return false; }, base: () => 0, top: () => yblock.h },
+  { overlap: (u, v, rad) => bandOverlap({ lo: th => sigma(euclid.u, euclid.v, th) - W, hi: th => sigma(euclid.u, euclid.v, th) + W }, u, v, rad),   // Euclid's section
+    base: () => euclid.z, top: () => euclid.z + PH },
+];
+const inArenaE = (u, v, rad) => Math.hypot(u, v) < RA - rad;
+const inArenaM = (u, v, rad) => Math.abs(v) < RA - rad;
+
+// ============================================================
+//  Physics: ordinary platformer step, run separately on each field
+// ============================================================
+function stepPlayer(P, solids, inArena, ctl, dt) {
+  const blocked = (u, v) => !inArena(u, v, PR) ||
+    solids.some(s => s.overlap(u, v, PR) && s.top() > P.z + STEP && s.base() < P.z + PH);
+  let du = (ctl.right - ctl.left) * SPEED * dt, dv = (ctl.up - ctl.down) * SPEED * dt;
+  if (du && dv) { du *= Math.SQRT1_2; dv *= Math.SQRT1_2; }
+  if (du && !blocked(P.u + du, P.v)) P.u += du;
+  if (dv && !blocked(P.u, P.v + dv)) P.v += dv;
+  if (ctl.jump && P.grounded) { P.vz = JUMP_V; P.grounded = false; }
+  P.vz -= G * dt;
+  let support = 0;
+  for (const s of solids) if (s.overlap(P.u, P.v, PR * 0.8) && s.top() <= P.z + STEP) support = Math.max(support, s.top());
+  const zn = P.z + P.vz * dt;
+  if (P.vz <= 0 && zn <= support) { P.z = support; P.vz = 0; P.grounded = true; }
+  else { P.z = zn; P.grounded = false; }
+}
+
+// ============================================================
+//  Scene
+// ============================================================
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setScissorTest(true);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000000);
+scene.add(new THREE.AmbientLight(0xffffff, 0.42));
+const sun = new THREE.DirectionalLight(0xffffff, 0.62); sun.position.set(40, 90, 60); scene.add(sun);
+const sun2 = new THREE.DirectionalLight(0xffffff, 0.62); sun2.position.set(XM0 + 40, 90, 60); sun2.target.position.set(XM0, 0, 0); scene.add(sun2); scene.add(sun2.target);
+
+const camE = new THREE.PerspectiveCamera(42, 1, 0.5, 300);
+const camM = new THREE.PerspectiveCamera(42, 1, 0.5, 300);
+
+const YEL = 0xf5c518;
+const swMat = new THREE.MeshLambertMaterial({ color: 0xffcf3d, emissive: 0x6a4600, side: THREE.DoubleSide });
+const lambert = (color, extra) => new THREE.MeshLambertMaterial(Object.assign({ color, side: THREE.DoubleSide }, extra || {}));
+const E2W = (a, b, y) => new THREE.Vector3(a, y, -b);                         // Euclid field -> scene
+const M2W = (th, r, y) => new THREE.Vector3(XM0 + th * S, y, -r);           // Möbius field -> scene
+
+// ---------- band mesh (a curved wall on the strip between two theta->r curves) ----------
+class Band {
+  constructor(material) {
+    this.geo = new THREE.BufferGeometry();
+    this.pos = new Float32Array(NSEG * 18 * 3);
+    this.geo.setAttribute('position', new THREE.BufferAttribute(this.pos, 3));
+    this.mesh = new THREE.Mesh(this.geo, material);
+    this.mesh.frustumCulled = false;
+  }
+  set(lo, hi, base, h) {
+    const p = this.pos; let j = 0;
+    const put = (x, y, z) => { p[j++] = x; p[j++] = y; p[j++] = z; };
+    const quad = (A, B, C, D) => { put(...A); put(...B); put(...C); put(...A); put(...C); put(...D); };
+    for (let i = 0; i < NSEG; i++) {
+      const t0 = TH_MIN + (TH_MAX - TH_MIN) * i / NSEG, t1 = TH_MIN + (TH_MAX - TH_MIN) * (i + 1) / NSEG;
+      const x0 = XM0 + t0 * S, x1 = XM0 + t1 * S;
+      const l0 = -lo(t0), l1 = -lo(t1), h0 = -hi(t0), h1 = -hi(t1);   // scene z = -r
+      const yb = base, yt = base + h;
+      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);        // top
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);        // wall along lower edge
+      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);        // wall along upper edge
+    }
+    this.geo.attributes.position.needsUpdate = true;
+    this.geo.computeVertexNormals();
+  }
+}
+
+// ---------- text as a floor decal + as a point set (for its dual image) ----------
+function makeText(str, flip) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128;
+  const ctx = cv.getContext('2d');
+  if (flip) { ctx.translate(0, 128); ctx.scale(1, -1); }
+  ctx.font = 'bold 84px "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#f5c518'; ctx.fillText(str, 256, 66);
+  const tex = new THREE.CanvasTexture(cv); tex.minFilter = THREE.LinearFilter;
+  return tex;
+}
+function textPoints(str, n) {       // sample n pixel positions of the glyphs, in [0,1]x[0,1] (y down)
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128;
+  const ctx = cv.getContext('2d');
+  ctx.font = 'bold 84px "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.fillText(str, 256, 66);
+  const d = ctx.getImageData(0, 0, 512, 128).data, pts = [];
+  for (let y = 0; y < 128; y += 2) for (let x = 0; x < 512; x += 2) if (d[(y * 512 + x) * 4 + 3] > 128) pts.push([x / 512, y / 128]);
+  const out = [], stride = Math.max(1, pts.length / n);
+  for (let i = 0; i < pts.length; i += stride) out.push(pts[Math.floor(i)]);
+  return out;
+}
+const decalMat = tex => new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false });
+function decal(tex, w, pos, flipY) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, w / 4), decalMat(tex));
+  m.rotation.x = -PI / 2; if (flipY) m.scale.y = -1; m.position.copy(pos); return m;
+}
+const lineMat = (color, opacity) => new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+const segsGeo = pts => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3)); return g; };
+
+// ============================================================
+//  Euclid's field
+// ============================================================
+{
+  // grid clipped to the arena disk
+  const pts = [];
+  for (let k = -RA + 1; k <= RA - 1; k++) {
+    const c = Math.sqrt(RA * RA - k * k);
+    pts.push(k, 0, -c, k, 0, c, -c, 0, -k, c, 0, -k);
+  }
+  scene.add(new THREE.LineSegments(segsGeo(pts), lineMat(0xdedede, 0.55)));
+  const ring = []; for (let i = 0; i <= 128; i++) { const t = i / 128 * TAU; ring.push(RA * Math.cos(t), 0, -RA * Math.sin(t)); }
+  scene.add(new THREE.Line(segsGeo(ring), lineMat(0xdedede, 0.9)));
+  scene.add(decal(makeText('Level 1', false), 7, E2W(0, 6.7, 0.02), false));
+
+  // point-made objects
+  const pil = new THREE.Mesh(new THREE.CylinderGeometry(pillar.R, pillar.R, pillar.h, 40), lambert(pillar.color));
+  pil.position.copy(E2W(pillar.c[0], pillar.c[1], pillar.h / 2)); scene.add(pil);
+  const sl = new THREE.Mesh(new THREE.BoxGeometry(slab.len, slab.h, 2 * slab.t), lambert(slab.color));
+  sl.position.copy(E2W((slab.P[0] + slab.Q[0]) / 2, (slab.P[1] + slab.Q[1]) / 2, slab.h / 2)); sl.rotation.y = slab.ang; scene.add(sl);
+  const swm = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.12, 32), swMat);
+  swm.position.copy(E2W(sw.c[0], sw.c[1], 0.06)); scene.add(swm);
+
+  // the Möbius-world block, seen by Euclid: a family of lines
+  const fan = [], wallGeo = new THREE.PlaneGeometry(30, yblock.h);
+  const wallMat = new THREE.MeshBasicMaterial({ color: YEL, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false });
+  for (let i = 0; i < 6; i++) for (let j = 0; j < 4; j++) {
+    const th = yblock.th[0] + (yblock.th[1] - yblock.th[0]) * i / 5, r = yblock.r[0] + (yblock.r[1] - yblock.r[0]) * j / 3;
+    const fx = r * Math.cos(th), fy = r * Math.sin(th), dx = -Math.sin(th), dy = Math.cos(th);
+    fan.push(fx - 30 * dx, 0.04, -(fy - 30 * dy), fx + 30 * dx, 0.04, -(fy + 30 * dy));
+    if (i % 2 === 0 || j % 3 === 0) { const wall = new THREE.Mesh(wallGeo, wallMat); wall.position.copy(E2W(fx, fy, yblock.h / 2)); wall.rotation.y = th + PI / 2; scene.add(wall); }
+  }
+  scene.add(new THREE.LineSegments(segsGeo(fan), lineMat(YEL, 0.4)));
+
+  // the Möbius-world floor text, seen by Euclid: a bundle of lines (one per glyph pixel)
+  const tx = [];
+  for (const [px, py] of textPoints('Level 1', 34)) {
+    const th = PI / 2 + (px - 0.5) * (6 / S), r = -6.7 + (0.5 - py) * 1.5;
+    const fx = r * Math.cos(th), fy = r * Math.sin(th), dx = -Math.sin(th), dy = Math.cos(th);
+    tx.push(fx - 40 * dx, 0.03, -(fy - 40 * dy), fx + 40 * dx, 0.03, -(fy + 40 * dy));
+  }
+  scene.add(new THREE.LineSegments(segsGeo(tx), lineMat(YEL, 0.32)));
+}
+
+// ============================================================
+//  Möbius's field
+// ============================================================
+{
+  // fibers (dashed), arena edges
+  const dashed = new THREE.LineDashedMaterial({ color: 0x9a9a9a, dashSize: 0.45, gapSize: 0.35, transparent: true, opacity: 0.75 });
+  for (let th = Math.ceil(TH_MIN / (PI / 6)) * PI / 6; th <= TH_MAX; th += PI / 6) {
+    const l = new THREE.Line(segsGeo([XM0 + th * S, 0, -RA, XM0 + th * S, 0, RA]), dashed); l.computeLineDistances(); scene.add(l);
+  }
+  scene.add(new THREE.LineSegments(segsGeo([XM0 + TH_MIN * S, 0, -RA, XM0 + TH_MAX * S, 0, -RA, XM0 + TH_MIN * S, 0, RA, XM0 + TH_MAX * S, 0, RA]), lineMat(0xdedede, 0.9)));
+
+  // floor text, one copy per tile, flipped on odd tiles
+  const texN = makeText('Level 1', false), texF = makeText('Level 1', true);
+  for (let k = -5; k <= 5; k++) {
+    const s = parity(k);
+    scene.add(decal(s > 0 ? texN : texF, 6, M2W(PI / 2 + k * PI, s * -6.7, 0.02), false));
+  }
+
+  // point-made objects appear as bands; Möbius-world block appears as itself (with its identified copies)
+  const mk = (band, o, mat) => { const b = new Band(mat || lambert(o.color)); b.set(band.lo, band.hi, 0, o.h); scene.add(b.mesh); return b; };
+  mk(pillar.band, pillar); mk(slab.band, slab);
+  const swb = new Band(swMat);
+  swb.set(th => sigma(sw.c[0], sw.c[1], th) - 0.07, th => sigma(sw.c[0], sw.c[1], th) + 0.07, 0, 0.12); scene.add(swb.mesh);
+  const yg = new THREE.BoxGeometry((yblock.th[1] - yblock.th[0]) * S, yblock.h, yblock.r[1] - yblock.r[0]), ym = lambert(yblock.color);
+  for (let k = -6; k <= 6; k++) {
+    const s = parity(k), m = new THREE.Mesh(yg, ym);
+    m.position.copy(M2W((yblock.th[0] + yblock.th[1]) / 2 + k * PI, s * (yblock.r[0] + yblock.r[1]) / 2, yblock.h / 2)); scene.add(m);
+  }
+
+  // Euclid's floor text, seen by Möbius: a bundle of sections
+  const tx = [];
+  for (const [px, py] of textPoints('Level 1', 34)) {
+    const a = (px - 0.5) * 7, b = 6.7 + (0.5 - py) * 1.75;
+    let prev = null;
+    for (let i = 0; i <= 240; i++) {
+      const th = TH_MIN + (TH_MAX - TH_MIN) * i / 240, p = [XM0 + th * S, 0.03, -sigma(a, b, th)];
+      if (prev) tx.push(...prev, ...p); prev = p;
+    }
+  }
+  scene.add(new THREE.LineSegments(segsGeo(tx), lineMat(YEL, 0.2)));
+}
+
+// ============================================================
+//  Players and their proxies
+// ============================================================
+const playerMats = [lambert(0x8a5a3a), lambert(0xf0c8a0), lambert(0x6a4028)];
+const playerGeo = new THREE.CylinderGeometry(PR, PR, PH, 28);
+const shadowGeo = new THREE.CircleGeometry(PR * 1.05, 24), shadowMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.55, depthWrite: false });
+const mkPlayer = () => { const m = new THREE.Mesh(playerGeo, playerMats); const sh = new THREE.Mesh(shadowGeo, shadowMat); sh.rotation.x = -PI / 2; return { m, sh }; };
+const eMesh = mkPlayer(); scene.add(eMesh.m, eMesh.sh);
+const mMeshes = []; for (let k = -6; k <= 6; k++) { const pm = mkPlayer(); scene.add(pm.m, pm.sh); mMeshes.push(pm); }
+const proxyMat = lambert(0x5c2727);
+const bar = new THREE.Mesh(new THREE.BoxGeometry(60, PH, 2 * W), proxyMat); scene.add(bar);       // Möbius, as Euclid sees him
+const tube = new Band(proxyMat); scene.add(tube.mesh);                                              // Euclid, as Möbius sees him
+
+// ============================================================
+//  Input
+// ============================================================
+const keys = {};
+addEventListener('keydown', e => { keys[e.code] = true; if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.code)) e.preventDefault(); if (e.code === 'KeyR') reset(); });
+addEventListener('keyup', e => { keys[e.code] = false; });
+const ctlE = () => ({ left: keys.KeyA ? 1 : 0, right: keys.KeyD ? 1 : 0, up: keys.KeyW ? 1 : 0, down: keys.KeyS ? 1 : 0, jump: !!keys.Space });
+const ctlM = () => ({ left: keys.ArrowLeft ? 1 : 0, right: keys.ArrowRight ? 1 : 0, up: keys.ArrowUp ? 1 : 0, down: keys.ArrowDown ? 1 : 0, jump: !!keys.Enter });
+
+// ============================================================
+//  Goal: one line through two points
+// ============================================================
+const msg = document.getElementById('msg');
+document.getElementById('goalE').innerHTML = 'Level 1 &nbsp;·&nbsp; Get the maroon line to pass through <b>you</b> and the <b>gold marker</b> at the same time.';
+document.getElementById('goalM').innerHTML = 'Level 1 &nbsp;·&nbsp; Stand where the <b>gold curve</b> crosses the <b>maroon curve</b> — and touch it.';
+let solved = false;
+function reset() {
+  Object.assign(euclid, { u: -5.5, v: 0, z: 0, vz: 0, grounded: true });
+  Object.assign(mobius, { u: 0.6 * S, v: -5.5, z: 0, vz: 0, grounded: true });
+  solved = false; swMat.color.setHex(0xffcf3d); swMat.emissive.setHex(0x6a4600); msg.classList.remove('on');
+}
+function checkGoal() {
+  const th = mobius.u / S, r = mobius.v;
+  const dE = Math.abs(sigma(euclid.u, euclid.v, th) - r), dS = Math.abs(sigma(sw.c[0], sw.c[1], th) - r);
+  if (!solved && dE < W + PR + 0.3 && dS < 0.5) {
+    solved = true;
+    swMat.color.setHex(0xffffff); swMat.emissive.setHex(0xffc040);
+    msg.textContent = 'Aligned — through any two points there passes exactly one line.  (R to restart)';
+    msg.classList.add('on');
+  }
+}
+
+// ============================================================
+//  Frame
+// ============================================================
+window.parallax = { euclid, mobius, sigma, S, reset, keys,
+  step: (who, ctl, dt) => who === 'E' ? stepPlayer(euclid, solidsE, inArenaE, ctl, dt) : stepPlayer(mobius, solidsM, inArenaM, ctl, dt) };
+let last = performance.now();
+function frame(now) {
+    const dt = Math.min(1 / 30, (now - last) / 1000); last = now;
+  stepPlayer(euclid, solidsE, inArenaE, ctlE(), dt);
+  stepPlayer(mobius, solidsM, inArenaM, ctlM(), dt);
+  if (mobius.u > TAU * S) mobius.u -= TAU * S;          // (theta + 2pi, r) is the same point of the strip
+  if (mobius.u < -TAU * S) mobius.u += TAU * S;
+  checkGoal();
+
+  const th = mobius.u / S, r = mobius.v;
+  eMesh.m.position.copy(E2W(euclid.u, euclid.v, euclid.z + PH / 2)); eMesh.sh.position.copy(E2W(euclid.u, euclid.v, 0.015));
+  bar.position.copy(E2W(r * Math.cos(th), r * Math.sin(th), mobius.z + PH / 2)); bar.rotation.y = th + PI / 2;
+  mMeshes.forEach((pm, i) => {
+    const k = i - 6, tk = th + k * PI, vis = tk > TH_MIN && tk < TH_MAX;
+    pm.m.visible = pm.sh.visible = vis; if (!vis) return;
+    pm.m.position.copy(M2W(tk, parity(k) * r, mobius.z + PH / 2)); pm.sh.position.copy(M2W(tk, parity(k) * r, 0.015));
+  });
+  tube.set(t => sigma(euclid.u, euclid.v, t) - W, t => sigma(euclid.u, euclid.v, t) + W, euclid.z, PH);
+
+  // cameras: fixed orientation (north up / theta right), following each player
+  const Wd = renderer.domElement.clientWidth, Hd = renderer.domElement.clientHeight;
+  const wE = Math.round(Math.min(Wd * 0.42, Hd * 1.05)), wM = Wd - wE;
+  document.getElementById('divider').style.left = wE + 'px';
+  document.getElementById('hudE').style.width = wE + 'px'; document.getElementById('hudM').style.width = wM + 'px';
+  camE.aspect = wE / Hd; camE.updateProjectionMatrix();
+  camM.aspect = wM / Hd; camM.updateProjectionMatrix();
+  camE.position.set(0, 28, 9); camE.lookAt(0, 0, 0);
+  const m = M2W(th, 0, 0); camM.position.set(m.x, 29, 7.5); camM.lookAt(m.x, 0, 0);
+  renderer.setViewport(0, 0, wE, Hd); renderer.setScissor(0, 0, wE, Hd); renderer.render(scene, camE);
+  renderer.setViewport(wE, 0, wM, Hd); renderer.setScissor(wE, 0, wM, Hd); renderer.render(scene, camM);
+  requestAnimationFrame(frame);
+}
+function resize() { renderer.setSize(window.innerWidth, window.innerHeight, false); }
+addEventListener('resize', resize); resize();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

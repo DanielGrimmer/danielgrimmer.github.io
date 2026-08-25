@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mobius-Euclid Game Demo</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+      background: url('floorEuc1.png') no-repeat center center;
+      /* The transform here is kept from your version – adjust as needed */
+      transform: scaleY(0.5) translateY(-250px);
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .instructions {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="instructions">
+    <h2>Mobius-Euclid Game Demo</h2>
+    <p>Euclid (Circle) Player: Use W A S D to move, SPACE to jump</p>
+    <p>Mobius (Line) Player: Use Left/Right arrows to rotate, Up/Down to move line, SHIFT to jump</p>
+  </div>
+  <canvas id="gameCanvas" width="500" height="500"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Constants
+    const ARENA_RADIUS = 240;
+    const CENTER_X = canvas.width / 2;
+    const CENTER_Y = canvas.height / 2;
+    const JUMP_DURATION = 500;
+    const SEGMENTS = 20;
+    const SEGMENT_HEIGHT = 2;
+    const JUMP_HEIGHT = 1.5 * SEGMENTS * SEGMENT_HEIGHT; // maximum jump height
+    const COLLISION_RADIUS = 20; // For horizontal collision detection (assume both players have similar size)
+    const LANDING_THRESHOLD = 10; // Vertical separation below which players are considered to be “landing” on each other
+
+    // Game state
+    const circle = {
+      x: 0,
+      y: 200,
+      radius: 10,
+      speed: 1,
+      jumpStartTime: 0,
+      height: 0 // computed each frame from the jump function
+    };
+
+    // For the Mobius (line) player we store its polar parameters,
+    // and we’ll compute its Cartesian coordinates when needed.
+    const line = {
+      theta: -Math.PI/2,
+      r: 200,
+      moveSpeed: 1,
+      rotationSpeed: 0.01,
+      jumpStartTime: 0,
+      height: 0
+    };
+
+    // Track pressed keys
+    const keys = {};
+    let lastSpacePress = 0;
+
+    // Key event listeners
+    window.addEventListener('keydown', (e) => {
+      keys[e.key.toLowerCase()] = true;
+      if (e.key === ' ' && !isJumping()) {
+        lastSpacePress = Date.now();
+        circle.jumpStartTime = Date.now();
+      }
+      if (e.key === 'Shift' && !isLineJumping()) {
+        line.jumpStartTime = Date.now();
+      }
+      e.preventDefault();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key.toLowerCase()] = false;
+    });
+
+    // Jump functions – parabolic jump curve
+    function isJumping() {
+      return Date.now() - lastSpacePress < JUMP_DURATION;
+    }
+
+    function getJumpHeight() {
+      if (!isJumping()) return 0;
+      const jumpProgress = (Date.now() - circle.jumpStartTime) / JUMP_DURATION;
+      return -4 * JUMP_HEIGHT * Math.pow(jumpProgress - 0.5, 2) + JUMP_HEIGHT;
+    }
+
+    function isLineJumping() {
+      return Date.now() - line.jumpStartTime < JUMP_DURATION;
+    }
+
+    function getLineJumpHeight() {
+      if (!isLineJumping()) return 0;
+      const jumpProgress = (Date.now() - line.jumpStartTime) / JUMP_DURATION;
+      return -4 * JUMP_HEIGHT * Math.pow(jumpProgress - 0.5, 2) + JUMP_HEIGHT;
+    }
+
+    // Compute Mobius (line) player's Cartesian coordinates from its polar (r, theta) values.
+    function getLinePosition() {
+      return {
+        x: line.r * Math.cos(line.theta),
+        y: line.r * Math.sin(line.theta)
+      };
+    }
+
+    // New collision detection: treat each player as a circle at (x, y) with a given collision radius.
+    // Then only block horizontal movement if their vertical separation is less than LANDING_THRESHOLD.
+    function playersColliding(circleX, circleY, circleZ, lineTheta, lineR, lineZ) {
+      const sep = Math.abs(circleX * Math.cos(lineTheta) + circleY * Math.sin(lineTheta) - lineR)
+      if (sep < COLLISION_RADIUS && Math.abs(circleZ - lineZ) < LANDING_THRESHOLD) {
+        return true;
+      }
+      return false;
+    }
+
+    // Update Euclid (circle) player's position.
+    function updateCircle() {
+      let newX = circle.x;
+      let newY = circle.y;
+      if (keys['w']) newY -= circle.speed;
+      if (keys['s']) newY += circle.speed;
+      if (keys['a']) newX -= circle.speed;
+      if (keys['d']) newX += circle.speed;
+
+      const newZ = getJumpHeight();
+      // Use current line values for collision detection.
+      if (!playersColliding(newX, newY, newZ, line.theta, line.r, line.height)) {
+        // Stay within arena bounds.
+        const distanceFromCenter = Math.sqrt(newX * newX + newY * newY);
+        if (distanceFromCenter <= ARENA_RADIUS - circle.radius) {
+          circle.x = newX;
+          circle.y = newY;
+        } else {
+          const angle = Math.atan2(newY, newX);
+          circle.x = (ARENA_RADIUS - circle.radius) * Math.cos(angle);
+          circle.y = (ARENA_RADIUS - circle.radius) * Math.sin(angle);
+        }
+      }
+      // If a collision is detected and the circle is below the line, “land” by canceling the jump.
+      if (playersColliding(circle.x, circle.y, newZ, line.theta, line.r, line.height) && newZ < line.height) {
+        circle.jumpStartTime = 0; // This will make getJumpHeight() return 0.
+      }
+      circle.height = getJumpHeight();
+    }
+
+    // Update Mobius (line) player's parameters.
+    function updateLine() {
+      const oldTheta = line.theta;
+      const oldR = line.r;
+
+      if (keys['arrowleft']) line.theta += line.rotationSpeed;
+      if (keys['arrowright']) line.theta -= line.rotationSpeed;
+      
+      let newR = line.r + (keys['arrowup'] ? line.moveSpeed : 0) - (keys['arrowdown'] ? line.moveSpeed : 0);
+      newR = Math.max(-0.95*ARENA_RADIUS, Math.min(0.95*ARENA_RADIUS, newR));
+
+      // Compute new jump height for line.
+      const newZ = getLineJumpHeight();
+      // Test if applying the horizontal changes would cause a collision.
+      if (playersColliding(circle.x, circle.y, circle.height, line.theta, newR, newZ)) {
+        // If Mobius is lower than Euclid, simulate landing by canceling its jump.
+        if (newZ < circle.height) {
+          line.jumpStartTime = 0;
+        } else {
+          // Otherwise, block horizontal movement by reverting to previous polar coordinates.
+          line.theta = oldTheta;
+          newR = oldR;
+        }
+      }
+      line.r = newR;
+      line.height = getLineJumpHeight();
+    }
+
+    // Drawing functions – these now simply render each player.
+    function drawCircle() {
+      ctx.save();
+      ctx.translate(CENTER_X, CENTER_Y);
+      for (let i = 0; i < SEGMENTS; i++) {
+        const height = circle.height + i * SEGMENT_HEIGHT;
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y - height, circle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "blue";
+        ctx.fill();
+        ctx.closePath();
+      }
+      ctx.restore();
+    }
+
+    function drawLinePlayer() {
+      // For drawing the Mobius (line) player, we render a “fence” style object.
+      const linePos = getLinePosition();
+      ctx.save();
+      ctx.translate(CENTER_X, CENTER_Y);
+      const dx = -Math.sin(line.theta);
+      const dy = Math.cos(line.theta);
+      // Determine the span across the arena from the line’s position.
+      const t = Math.sqrt(ARENA_RADIUS * ARENA_RADIUS - line.r * line.r);
+      for (let i = 0; i < SEGMENTS; i++) {
+        const height = line.height + i * SEGMENT_HEIGHT;
+        const startX = linePos.x + t * dx;
+        const startY = linePos.y + t * dy;
+        const endX = linePos.x - t * dx;
+        const endY = linePos.y - t * dy;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY - height);
+        ctx.lineTo(endX, endY - height);
+        ctx.strokeStyle = "green";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.closePath();
+      }
+      ctx.restore();
+    }
+
+    function drawArena() {
+      ctx.save();
+      ctx.translate(CENTER_X, CENTER_Y);
+      ctx.beginPath();
+      ctx.arc(0, 0, ARENA_RADIUS, 0, Math.PI * 2);
+      ctx.strokeStyle = "yellow";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+      ctx.restore();
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawArena();
+      updateCircle();
+      updateLine();
+      drawLinePlayer();
+      drawCircle();
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>

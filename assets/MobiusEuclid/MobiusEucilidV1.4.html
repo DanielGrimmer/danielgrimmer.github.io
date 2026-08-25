@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mobius-Euclid Game Demo</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .instructions {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    canvas {
+      border: 1px solid black;
+      background: url('floorEuc1.png') no-repeat center center;
+      background-size: 400px 400px;
+      transform: scaleY(0.5) translateY(-200px);
+    }
+    /* Style for the polar view canvas */
+    #polarCanvas {
+      border: 1px solid black;
+      background: url('floorMob1.png') no-repeat center center;
+      background-size: 1200px 400px;
+      transform: scaleY(0.5) translateY(-200px);
+    }
+  </style>
+</head>
+<body>
+  <div class="instructions">
+    <h2>Mobius-Euclid Game Demo</h2>
+    <p>Euclid (Circle) Player: Use W A S D to move</p>
+    <p>Mobius (Line) Player: Use Left/Right arrows to rotate, Up/Down to move</p>
+    <p>Main view is shown above; the polar-coordinate view is below.</p>
+  </div>
+  <!-- Main (Cartesian) game canvas -->
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+  <!-- Second (polar) view canvas -->
+  <canvas id="polarCanvas" width="1200" height="400"></canvas>
+
+  <script>
+    // Get canvases and contexts
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const polarCanvas = document.getElementById('polarCanvas');
+    const polarCtx = polarCanvas.getContext('2d');
+
+    // Constants
+    const ARENA_RADIUS = 0.96*canvas.width;
+    const CENTER_X = canvas.width / 2;
+    const CENTER_Y = canvas.height / 2;
+    const SEGMENTS = 20;
+    const SEGMENT_HEIGHT = 2;
+
+    // Game state (jumping removed)
+    const circle = {
+      x: 0,
+      y: 240,
+      z: 0,  
+      radius: 10,
+      height: SEGMENTS*SEGMENT_HEIGHT,
+      speed: 2
+    };
+
+    const line = {
+      theta: -Math.PI / 2,
+      r: 120,
+      z:0,  
+      height: SEGMENTS*SEGMENT_HEIGHT,
+      moveSpeed: 2.8,
+      rotationSpeed: 0.01
+    };
+
+    // Track pressed keys
+    const keys = {};
+
+    // Key event listeners (only movement keys now)
+    window.addEventListener('keydown', (e) => {
+      keys[e.key.toLowerCase()] = true;
+      e.preventDefault();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key.toLowerCase()] = false;
+    });
+
+    // Collision detection using the provided code:
+    // Returns true if the separation is less than or equal to the circle's radius.
+    function checkCollision(circleX, circleY, lineTheta = line.theta, lineR = line.r) {
+      const sep = Math.abs(circleX * Math.cos(lineTheta) + circleY * Math.sin(lineTheta) - lineR);
+      return sep <= circle.radius;
+    }
+
+    // Compute Mobius (line) player's Cartesian coordinates from its polar (r, theta) values.
+    function getLinePosition() {
+      return {
+        x: line.r * Math.cos(line.theta),
+        y: line.r * Math.sin(line.theta)
+      };
+    }
+      
+    // Update Euclid (circle) player's position.
+    function updateCircle() {
+      let newX = circle.x;
+      let newY = circle.y;
+      if (keys['w']) newY -= circle.speed;
+      if (keys['s']) newY += circle.speed;
+      if (keys['a']) newX -= circle.speed;
+      if (keys['d']) newX += circle.speed;
+
+      // Only update if the new position does not produce a collision.
+      if (!checkCollision(newX, newY)) {
+        const distanceFromCenter = Math.sqrt(newX * newX + newY * newY);
+        if (distanceFromCenter <= ARENA_RADIUS - circle.radius) {
+          circle.x = newX;
+          circle.y = newY;
+        } else {
+          const angle = Math.atan2(newY, newX);
+          circle.x = (ARENA_RADIUS - circle.radius) * Math.cos(angle);
+          circle.y = (ARENA_RADIUS - circle.radius) * Math.sin(angle);
+        }
+      }
+    }
+
+    // Update Mobius (line) player's parameters.
+    function updateLine() {
+      const oldTheta = line.theta;
+      const oldR = line.r;
+      if (keys['arrowleft']) line.theta += line.rotationSpeed;
+      if (keys['arrowright']) line.theta -= line.rotationSpeed;
+      let newR = line.r + (keys['arrowup'] ? line.moveSpeed : 0) - (keys['arrowdown'] ? line.moveSpeed : 0);
+      newR = Math.max(-ARENA_RADIUS, Math.min(ARENA_RADIUS, newR));
+      
+      // If the new polar position causes a collision, revert to the old parameters.
+      if (checkCollision(circle.x, circle.y, line.theta, newR)) {
+        line.theta = oldTheta;
+        newR = oldR;
+      }
+      line.r = newR;
+    }
+
+    // Main view drawing functions
+    function drawArena() {
+      ctx.save();
+      ctx.translate(CENTER_X, CENTER_Y);
+      ctx.beginPath();
+      ctx.arc(0, 0, ARENA_RADIUS, 0, Math.PI * 2);
+      ctx.strokeStyle = "yellow";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+      ctx.restore();
+    }
+
+    function drawCircle() {
+      ctx.save();
+      ctx.translate(CENTER_X, CENTER_Y);
+      for (let i = 0; i < SEGMENTS; i++) {
+        const height = circle.height + i * SEGMENT_HEIGHT;
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y - height, circle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "blue";
+        ctx.fill();
+        ctx.closePath();
+      }
+      ctx.restore();
+    }
+
+    function drawLinePlayer() {
+      // For drawing the Mobius (line) player, we render a “fence” style object.
+      const linePos = getLinePosition();
+      ctx.save();
+      ctx.translate(CENTER_X, CENTER_Y);
+      const dx = -Math.sin(line.theta);
+      const dy = Math.cos(line.theta);
+      // Determine the span across the arena from the line’s position.
+      const t = Math.sqrt(ARENA_RADIUS * ARENA_RADIUS - line.r * line.r);
+      for (let i = 0; i < SEGMENTS; i++) {
+        const height = line.height + i * SEGMENT_HEIGHT;
+        const startX = linePos.x + t * dx;
+        const startY = linePos.y + t * dy;
+        const endX = linePos.x - t * dx;
+        const endY = linePos.y - t * dy;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY - height);
+        ctx.lineTo(endX, endY - height);
+        ctx.strokeStyle = "green";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.closePath();
+      }
+      ctx.restore();
+    }
+
+    // Polar view drawing functions
+
+    // Map polar coordinates (theta, r) to canvas coordinates.
+    // We assume theta ∈ [-π, π] maps to x ∈ [0, polarCanvas.width],
+    // and r ∈ [-ARENA_RADIUS, ARENA_RADIUS] maps to y ∈ [polarCanvas.height, 0] (r increasing upward).
+    function mapPolar(theta, r) {
+      const width = polarCanvas.width;
+      const height = polarCanvas.height;
+      const x = ((theta + Math.PI) / (2 * Math.PI)) * width;
+      const y = height - ((r + ARENA_RADIUS) / (2 * ARENA_RADIUS)) * height;
+      return { x, y };
+    }
+
+    // Draw Euclid as the curve: r = circle.x*cos(theta) + circle.y*sin(theta)
+    function drawEuclidPolar() {
+      polarCtx.beginPath();
+      const steps = 360;
+      for (let i = 0; i <= steps; i++) {
+        const theta = -Math.PI + (2 * Math.PI * i) / steps;
+        const r = circle.x * Math.cos(theta) + circle.y * Math.sin(theta);
+        const pt = mapPolar(theta, r);
+        if (i === 0) {
+          polarCtx.moveTo(pt.x, pt.y);
+        } else {
+          polarCtx.lineTo(pt.x, pt.y);
+        }
+      }
+      polarCtx.strokeStyle = "blue";
+      polarCtx.lineWidth = 2;
+      polarCtx.stroke();
+      polarCtx.closePath();
+    }
+
+    // Draw Mobius as a stack of discs at (line.theta, line.r)
+    function drawMobiusPolar() {
+      const pt = mapPolar(line.theta, line.r);
+      const discRadius = 5; // radius for each disc in the stack
+      const stackCount = 5;
+      for (let i = 0; i < stackCount; i++) {
+        polarCtx.beginPath();
+        // Offset each disc vertically (in canvas coordinates) by a few pixels.
+        polarCtx.arc(pt.x, pt.y - i * (discRadius + 1), discRadius, 0, Math.PI * 2);
+        polarCtx.fillStyle = "green";
+        polarCtx.fill();
+        polarCtx.closePath();
+      }
+    }
+
+    // Optionally, draw polar axes for reference.
+    function drawPolarAxes() {
+      const width = polarCanvas.width;
+      const height = polarCanvas.height;
+      // Draw theta axis (horizontal line for r = 0)
+      const r0 = mapPolar(0, 0).y;
+      polarCtx.beginPath();
+      polarCtx.moveTo(0, r0);
+      polarCtx.lineTo(width, r0);
+      polarCtx.strokeStyle = "gray";
+      polarCtx.lineWidth = 1;
+      polarCtx.stroke();
+      polarCtx.closePath();
+      // Draw vertical line for theta = 0
+      const pt0 = mapPolar(0, 0);
+      polarCtx.beginPath();
+      polarCtx.moveTo(pt0.x, 0);
+      polarCtx.lineTo(pt0.x, height);
+      polarCtx.strokeStyle = "gray";
+      polarCtx.lineWidth = 1;
+      polarCtx.stroke();
+      polarCtx.closePath();
+    }
+
+    // Draw the entire polar view.
+    function drawPolarView() {
+      polarCtx.clearRect(0, 0, polarCanvas.width, polarCanvas.height);
+      drawPolarAxes();
+      drawEuclidPolar();
+      drawMobiusPolar();
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawArena();
+      updateCircle();
+      updateLine();
+      drawLinePlayer();
+      drawCircle();
+      drawPolarView();
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>

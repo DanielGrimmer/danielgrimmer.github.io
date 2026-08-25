@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Circle vs Line Game</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            background: #f0f0f0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .instructions {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h2>Circle vs Line Game</h2>
+        <p>Circle Player: Use W A S D to move</p>
+        <p>Line Player: Use Arrow Keys to move and rotate</p>
+    </div>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game state
+        const circle = {
+            x: 300,
+            y: 200,
+            radius: 10,
+            speed: 5
+        };
+
+        const line = {
+            x: 300,
+            y: 200,
+            length: 600,
+            angle: 0,
+            rotationSpeed: 0.05,
+            moveSpeed: 5
+        };
+
+        // Track pressed keys
+        const keys = {};
+
+        // Key event listeners
+        window.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            e.preventDefault();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        function updateCircle() {
+            if (keys['w']) circle.y -= circle.speed;
+            if (keys['s']) circle.y += circle.speed;
+            if (keys['a']) circle.x -= circle.speed;
+            if (keys['d']) circle.x += circle.speed;
+
+            // Keep circle within bounds
+            circle.x = Math.max(circle.radius, Math.min(canvas.width - circle.radius, circle.x));
+            circle.y = Math.max(circle.radius, Math.min(canvas.height - circle.radius, circle.y));
+        }
+
+        function updateLine() {
+            if (keys['arrowleft']) line.x -= line.moveSpeed;
+            if (keys['arrowright']) line.x += line.moveSpeed;
+            if (keys['arrowup']) line.y -= line.moveSpeed;
+            if (keys['arrowdown']) line.y += line.moveSpeed;
+
+            // Rotate line
+            if (keys['[']) line.angle -= line.rotationSpeed;
+            if (keys[']']) line.angle += line.rotationSpeed;
+
+            // Keep line center within bounds
+            line.x = Math.max(0, Math.min(canvas.width, line.x));
+            line.y = Math.max(0, Math.min(canvas.height, line.y));
+        }
+
+        function drawCircle() {
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'blue';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawLine() {
+            const startX = line.x - Math.cos(line.angle) * line.length / 2;
+            const startY = line.y - Math.sin(line.angle) * line.length / 2;
+            const endX = line.x + Math.cos(line.angle) * line.length / 2;
+            const endY = line.y + Math.sin(line.angle) * line.length / 2;
+
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            updateCircle();
+            updateLine();
+            
+            drawLine();
+            drawCircle();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>

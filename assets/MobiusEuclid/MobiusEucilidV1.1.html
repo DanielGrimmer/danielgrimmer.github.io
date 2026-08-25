@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mobius-Euclid Game Demo</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            background: #f0f0f0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .instructions {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h2>Circle vs Line Game</h2>
+        <p>Circle Player: Use W A S D to move, SPACE to jump</p>
+        <p>Line Player: Use Left/Right arrows to rotate, Up/Down to move line</p>
+        <p id="collisionStatus"></p>
+    </div>
+    <canvas id="gameCanvas" width="500" height="250"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const collisionStatus = document.getElementById('collisionStatus');
+
+        // Constants
+        const ARENA_RADIUS = 200;
+        const CENTER_X = canvas.width / 2;
+        const CENTER_Y = canvas.height / 2;
+        const JUMP_DURATION = 500;
+        const JUMP_HEIGHT = 80;
+        const VERTICAL_SEGMENTS = 20;
+        const FENCE_SEGMENTS = 20;
+        const SEGMENT_HEIGHT = 2;
+
+        // Game state
+        const circle = {
+            x: 0,
+            y: 150,
+            radius: 10,
+            speed: 5,
+            jumpStartTime: 0,
+            height: 0
+        };
+
+        const line = {
+            theta: -Math.PI/2,
+            r: 150,
+            moveSpeed: 5,
+            rotationSpeed: 0.05
+        };
+
+        // Track pressed keys
+        const keys = {};
+        let lastSpacePress = 0;
+
+        // Key event listeners
+        window.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key === ' ' && !isJumping()) {
+                lastSpacePress = Date.now();
+                circle.jumpStartTime = Date.now();
+            }
+            e.preventDefault();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        function isJumping() {
+            return Date.now() - lastSpacePress < JUMP_DURATION;
+        }
+
+        function getJumpHeight() {
+            if (!isJumping()) return 0;
+            
+            const jumpProgress = (Date.now() - circle.jumpStartTime) / JUMP_DURATION;
+            return -4 * JUMP_HEIGHT * Math.pow(jumpProgress - 0.5, 2) + JUMP_HEIGHT;
+        }
+
+        function updateCircle() {
+            let newX = circle.x;
+            let newY = circle.y;
+
+            if (keys['w']) newY -= circle.speed;
+            if (keys['s']) newY += circle.speed;
+            if (keys['a']) newX -= circle.speed;
+            if (keys['d']) newX += circle.speed;
+
+            const wouldCollide = checkCollision(newX, newY);
+            
+            if (!wouldCollide || isJumping()) {
+                const distanceFromCenter = Math.sqrt(newX * newX + newY * newY);
+                if (distanceFromCenter <= ARENA_RADIUS - circle.radius) {
+                    circle.x = newX;
+                    circle.y = newY;
+                } else {
+                    const angle = Math.atan2(newY, newX);
+                    circle.x = (ARENA_RADIUS - circle.radius) * Math.cos(angle);
+                    circle.y = (ARENA_RADIUS - circle.radius) * Math.sin(angle);
+                }
+            }
+
+            circle.height = getJumpHeight();
+        }
+
+        function updateLine() {
+            const oldTheta = line.theta;
+            const oldR = line.r;
+
+            if (keys['arrowleft']) line.theta += line.rotationSpeed;
+            if (keys['arrowright']) line.theta -= line.rotationSpeed;
+
+            const newR = line.r + 
+                (keys['arrowup'] ? line.moveSpeed : 0) -
+                (keys['arrowdown'] ? line.moveSpeed : 0);
+
+            line.r = Math.max(-ARENA_RADIUS, Math.min(ARENA_RADIUS, newR));
+            
+            if (checkCollision(circle.x, circle.y) && !isJumping()) {
+                line.theta = oldTheta;
+                line.r = oldR;
+            }
+        }
+
+        function checkCollision(circleX, circleY) {
+            const distanceToLine = Math.abs(
+                circleX * Math.cos(line.theta) + 
+                circleY * Math.sin(line.theta) - 
+                line.r
+            );
+
+            const collision = distanceToLine <= circle.radius;
+            collisionStatus.textContent = collision && !isJumping() ? "Collision!" : "";
+            return collision;
+        }
+
+        function drawCylinder(x, y, baseHeight) {
+            ctx.save();
+            ctx.translate(CENTER_X, CENTER_Y);
+            ctx.scale(1, 0.5);
+
+            for (let i = 0; i < VERTICAL_SEGMENTS; i++) {
+                const height = baseHeight + i * SEGMENT_HEIGHT;
+                const opacity = 1 - (i / VERTICAL_SEGMENTS) * 0.5;
+                
+                ctx.beginPath();
+                ctx.arc(x, y - height, circle.radius, 0, Math.PI * 2);
+                ctx.fillStyle = checkCollision(x, y) ? 
+                    `rgba(255, 0, 0, ${opacity})` : 
+                    `rgba(0, 0, 255, ${opacity})`;
+                ctx.fill();
+                ctx.closePath();
+            }
+            
+            ctx.restore();
+        }
+
+        function drawFence() {
+            ctx.save();
+            ctx.translate(CENTER_X, CENTER_Y);
+            ctx.scale(1, 0.5);
+            
+            const x0 = line.r * Math.cos(line.theta);
+            const y0 = line.r * Math.sin(line.theta);
+            const dx = -Math.sin(line.theta);
+            const dy = Math.cos(line.theta);
+            let t = Math.sqrt(ARENA_RADIUS * ARENA_RADIUS - line.r * line.r);
+            
+            for (let i = 0; i < FENCE_SEGMENTS; i++) {
+                const height = i * SEGMENT_HEIGHT;
+                const opacity = 1 - (i / FENCE_SEGMENTS) * 0.5;
+                
+                const startX = x0 + t * dx;
+                const startY = y0 + t * dy;
+                const endX = x0 - t * dx;
+                const endY = y0 - t * dy;
+
+                ctx.beginPath();
+                ctx.moveTo(startX, startY - height);
+                ctx.lineTo(endX, endY - height);
+                ctx.strokeStyle = checkCollision(circle.x, circle.y) ? 
+                    `rgba(255, 0, 0, ${opacity})` : 
+                    `rgba(0, 128, 0, ${opacity})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.closePath();
+            }
+            
+            ctx.restore();
+        }
+
+        function drawArena() {
+            ctx.save();
+            ctx.translate(CENTER_X, CENTER_Y);
+            ctx.scale(1, 0.5);
+            
+            ctx.beginPath();
+            ctx.arc(0, 0, ARENA_RADIUS, 0, Math.PI * 2);
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+            
+            ctx.restore();
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawArena();
+            updateCircle();
+            updateLine();
+            
+            drawFence();
+            drawCylinder(circle.x, circle.y, circle.height);
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>

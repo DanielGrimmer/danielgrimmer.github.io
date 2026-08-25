@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mobius Euclid Setup V1.0</title>
+    <link rel="stylesheet" href="MobiusEuclidSetupStyle.css">
+    <script type="module" src="MobiusEuclidSetupLogic.js"></script>
+  </head>
+  <body>   
+      <div class="innerdiv">
+      <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+      Welcome to the Mobius Euclid Game! This is a two-player cooperative puzzle game which should take less than 30 minutes to play. 
+      <br><br>    
+      There is a mystery at the heart of this game which the two players should try to solve after playing their first game together. In brief, there 
+      are two seemingly contradictory ways of looking at this game which are nonetheless somehow coherent with each other.
+      <br><br>
+	    Before getting to the real game, however, you should call a friend and work through this setup page together. For the game to work, it will be
+      important that you and your friend cannot see each other's screens. You can both open the link to this webpage separately on your own devices 
+      and the game state will automatically be synchronized across the two browser sessions once you are in the same game room.
+    </p>
+    </div>
+    <!-- Room Controls -->
+    <div class="room-controls">
+      <button id="nextRoomButton" class="game-button">Get Next Available Room</button>
+      <div id="currentRoom" class="room-display"></div>
+      <div class="room-input-container">
+          <input type="text" id="roomInput" placeholder="Enter room name">
+          <button id="joinRoomButton" class="game-button">Join Room</button>
+      </div>
+    </div>
+    <div class="innerdiv">
+    <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+    Once, you are in the same game room, you and your friend should decide who will play as Mobius and who will play as Euclid. Click the "Change Player 
+    Type" button if needed.
+    </p>
+    </div>  
+    <!-- Buttons -->
+    <div class="button-container">
+      <button id="changePlayerTypeButton" class="game-button">Change Player Type</button>
+    </div>
+    <!-- New display field for user player type -->
+    <div class="turn-container">
+      <div class="turn-column" id="playerTypeDisplay">Loading player type...</div>
+    </div>
+
+    <div class="innerdiv">
+    <p style="text-align: justify; max-width: 600px; margin: 20px auto; padding: 10px;"> 
+    You are now ready to play the game! Just be sure not to peek at the other player's screen. You can now 
+    click <a id="gameLink" href="MobiusEuclidGameV1.0.html">this link</a> to play the Mobius Euclid game.
+      </p>
+    </div>
+  </body>
+</html>
