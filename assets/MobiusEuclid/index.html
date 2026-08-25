@@ -59,7 +59,8 @@
 </div>
 <div id="err">three.js failed to load — check the network connection.</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="three.r128.min.js"></script>
+<script>if (typeof THREE === 'undefined') document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
 <script>
 if (typeof THREE === 'undefined') { document.getElementById('err').style.display = 'grid'; }
 else (function () {

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  PARALLAX — Object Catalogue (mechanics sandbox)
+
+  The Mathematica-era catalogue of object types, rebuilt in the engine: a bare
+  playing field holding one of every shape, walkable by both players at one
+  keyboard.  No goal and no levels — this is the reference demo for showing
+  somebody the mechanics.  Pick an object from the strip of chips along the
+  top and it pulses in BOTH panels while a caption under each panel says what
+  that world takes the object to be.
+
+  The dictionary is the same as the game's (index.html):
+      Euclidean point (a,b)      ->  section  r = a cos(theta) + b sin(theta)
+      convex point-made object   ->  band between the min and max of its vertices' sections
+      Mobius-native region       ->  a sheaf of lines on the plane (one line per point)
+  and collision is incidence, so both worlds always agree about touching.
+
+  Catalogue: cylinder, block, wedge, point-marker (Euclid-native);
+             block-on-the-strip, wedge-on-the-strip (Mobius-native);
+             and the two players themselves, each point-like at home and
+             extended abroad.
+
+  Controls: Euclid W A S D + Space, Mobius arrows + Enter, R resets, Tab cycles
+  the selection.  window.catalogue exposes the state for tests.
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax — Object Catalogue</title>
+<style>
+  html, body { margin:0; height:100%; background:#000; overflow:hidden;
+    font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif; color:#f5c518; }
+  canvas#c { display:block; width:100vw; height:100vh; }
+  #hud { position:absolute; inset:0; pointer-events:none; }
+  .panel { position:absolute; top:0; bottom:0; display:flex; flex-direction:column;
+    justify-content:space-between; padding:56px 18px 14px; box-sizing:border-box; }
+  #hudE { left:0; }
+  #hudM { right:0; }
+  .name { font-size:18px; letter-spacing:.22em; font-weight:700; text-transform:uppercase; }
+  .keys { font-size:12px; letter-spacing:.06em; color:#e8dcb0; opacity:.85; margin-top:3px; }
+  .cap { font-size:14px; line-height:1.45; color:#f5c518; max-width:34em; min-height:3em; }
+  .cap b { color:#fff; font-weight:600; }
+  #divider { position:absolute; top:0; bottom:0; width:2px; background:#2a2a2a; }
+  #chips { position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    display:flex; gap:6px; pointer-events:auto; flex-wrap:wrap; justify-content:center; max-width:96vw; }
+  #chips button { background:rgba(10,10,10,.8); color:#f5c518; border:1px solid #3a3a3a;
+    padding:5px 11px; font:inherit; font-size:13px; cursor:pointer; border-radius:3px; white-space:nowrap; }
+  #chips button:hover { border-color:#f5c518; }
+  #chips button.on { background:#f5c518; color:#000; border-color:#f5c518; font-weight:600; }
+  #err { position:absolute; inset:0; display:none; place-items:center; color:#ddd; font-size:16px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div class="panel" id="hudE">
+    <div><div class="name">Euclid</div><div class="keys">W A S D move &nbsp;·&nbsp; Space jump &nbsp;·&nbsp; R reset &nbsp;·&nbsp; Tab next object</div></div>
+    <div class="cap" id="capE"></div>
+  </div>
+  <div id="divider"></div>
+  <div class="panel" id="hudM">
+    <div style="text-align:right"><div class="name">Möbius</div><div class="keys">Arrows move &nbsp;·&nbsp; Enter jump</div></div>
+    <div class="cap" id="capM" style="text-align:right;align-self:flex-end"></div>
+  </div>
+  <div id="chips"></div>
+</div>
+<div id="err">three.js failed to load — check the network connection.</div>
+
+<script src="three.r128.min.js"></script>
+<script>if (typeof THREE === 'undefined') document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+<script>
+if (typeof THREE === 'undefined') { document.getElementById('err').style.display = 'grid'; }
+else (function () {
+'use strict';
+const PI = Math.PI, TAU = 2 * Math.PI;
+
+// ------------------------------------------------------------ world (same as the game)
+const RA = 8, S = 2.2, XM0 = 500;
+const TH_MIN = -4.5 * PI, TH_MAX = 4.5 * PI, NSEG = 480;
+const PR = 0.35, PH = 1.0, W = 0.30;
+const G = 30, JUMP_V = 10, SPEED = 6, STEP = 0.3;
+
+const E_HOME = { u: 0.9, v: -2.2 };             // spawns clear of every object AND every sheaf (the W+PR buffer counts)
+const M_HOME = { u: 1.8 * S, v: -6.8 };
+const euclid = { u: E_HOME.u, v: E_HOME.v, z: 0, vz: 0, grounded: true };
+const mobius = { u: M_HOME.u, v: M_HOME.v, z: 0, vz: 0, grounded: true };
+
+const sigma = (a, b, th) => a * Math.cos(th) + b * Math.sin(th);
+function sigmaRange(a, b, th1, th2) {
+  const f = t => sigma(a, b, t);
+  let lo = Math.min(f(th1), f(th2)), hi = Math.max(f(th1), f(th2));
+  const phi = Math.atan2(b, a);
+  for (let k = Math.ceil((th1 - phi) / PI); k <= Math.floor((th2 - phi) / PI); k++) {
+    const v = f(phi + k * PI); lo = Math.min(lo, v); hi = Math.max(hi, v);
+  }
+  return [lo, hi];
+}
+const distToSeg = (px, py, ax, ay, bx, by) => {
+  const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1e-9;
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / L2));
+  return Math.hypot(px - ax - t * dx, py - ay - t * dy);
+};
+const parity = k => (((k % 2) + 2) % 2 === 0) ? 1 : -1;
+const triContains = (px, py, A, B, C) => {
+  const s = (P, Q) => (Q[0] - P[0]) * (py - P[1]) - (Q[1] - P[1]) * (px - P[0]);
+  const a = s(A, B), b = s(B, C), c = s(C, A);
+  return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0);
+};
+const distToTri = (px, py, A, B, C) =>
+  triContains(px, py, A, B, C) ? 0 :
+  Math.min(distToSeg(px, py, ...A, ...B), distToSeg(px, py, ...B, ...C), distToSeg(px, py, ...C, ...A));
+
+// ------------------------------------------------------------ scene scaffolding
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setScissorTest(true);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000000);
+scene.add(new THREE.AmbientLight(0xffffff, 0.42));
+const sun = new THREE.DirectionalLight(0xffffff, 0.62); sun.position.set(40, 90, 60); scene.add(sun);
+const sun2 = new THREE.DirectionalLight(0xffffff, 0.62); sun2.position.set(XM0 + 40, 90, 60); sun2.target.position.set(XM0, 0, 0); scene.add(sun2); scene.add(sun2.target);
+const camE = new THREE.PerspectiveCamera(42, 1, 0.5, 300);
+const camM = new THREE.PerspectiveCamera(42, 1, 0.5, 300);
+
+const lambert = (color, extra) => new THREE.MeshLambertMaterial(Object.assign({ color, side: THREE.DoubleSide }, extra || {}));
+const lineMat = (color, opacity) => new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+const segsGeo = pts => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3)); return g; };
+const E2W = (a, b, y) => new THREE.Vector3(a, y, -b);
+const M2W = (th, r, y) => new THREE.Vector3(XM0 + th * S, y, -r);
+
+// Charts: the disk grid and ring; the strip fibers and edges.
+{
+  const pts = [];
+  for (let k = -RA + 1; k <= RA - 1; k++) {
+    const c = Math.sqrt(RA * RA - k * k);
+    pts.push(k, 0, -c, k, 0, c, -c, 0, -k, c, 0, -k);
+  }
+  scene.add(new THREE.LineSegments(segsGeo(pts), lineMat(0xdedede, 0.55)));
+  const ring = []; for (let i = 0; i <= 128; i++) { const t = i / 128 * TAU; ring.push(RA * Math.cos(t), 0, -RA * Math.sin(t)); }
+  scene.add(new THREE.Line(segsGeo(ring), lineMat(0xdedede, 0.9)));
+  const dashed = new THREE.LineDashedMaterial({ color: 0x9a9a9a, dashSize: 0.45, gapSize: 0.35, transparent: true, opacity: 0.75 });
+  for (let th = Math.ceil(TH_MIN / (PI / 6)) * PI / 6; th <= TH_MAX; th += PI / 6) {
+    const l = new THREE.Line(segsGeo([XM0 + th * S, 0, -RA, XM0 + th * S, 0, RA]), dashed); l.computeLineDistances(); scene.add(l);
+  }
+  scene.add(new THREE.LineSegments(segsGeo([XM0 + TH_MIN * S, 0, -RA, XM0 + TH_MAX * S, 0, -RA, XM0 + TH_MIN * S, 0, RA, XM0 + TH_MAX * S, 0, RA]), lineMat(0xdedede, 0.9)));
+}
+
+// A curved wall on the strip between two theta->r curves (from the game).
+class Band {
+  constructor(material) {
+    this.geo = new THREE.BufferGeometry();
+    this.pos = new Float32Array(NSEG * 18 * 3);
+    this.geo.setAttribute('position', new THREE.BufferAttribute(this.pos, 3));
+    this.mesh = new THREE.Mesh(this.geo, material);
+    this.mesh.frustumCulled = false;
+  }
+  set(lo, hi, base, h) {
+    const p = this.pos; let j = 0;
+    const put = (x, y, z) => { p[j++] = x; p[j++] = y; p[j++] = z; };
+    const quad = (A, B, C, D) => { put(...A); put(...B); put(...C); put(...A); put(...C); put(...D); };
+    for (let i = 0; i < NSEG; i++) {
+      const t0 = TH_MIN + (TH_MAX - TH_MIN) * i / NSEG, t1 = TH_MIN + (TH_MAX - TH_MIN) * (i + 1) / NSEG;
+      const x0 = XM0 + t0 * S, x1 = XM0 + t1 * S;
+      const l0 = -lo(t0), l1 = -lo(t1), h0 = -hi(t0), h1 = -hi(t1);
+      const yb = base, yt = base + h;
+      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);
+      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);
+    }
+    this.geo.attributes.position.needsUpdate = true;
+    this.geo.computeVertexNormals();
+  }
+}
+
+/** A prism from a 2D footprint: local (x, y) verts extruded to height h, laid flat. */
+function prism(verts, h, material) {
+  const shape = new THREE.Shape(verts.map(([x, y]) => new THREE.Vector2(x, y)));
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
+  const mesh = new THREE.Mesh(geo, material);
+  mesh.rotation.x = -PI / 2;      // local (x, y, height) -> world (x, height, -y)
+  return mesh;
+}
+
+/** A Mobius-native region drawn in Euclid's world: the flat fan plus faint walls. */
+function sheafVisual(samples, h, color) {
+  const group = new THREE.Group();
+  const fan = [];
+  const wallGeo = new THREE.PlaneGeometry(30, h);
+  const wallMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false });
+  samples.forEach(([th, r], i) => {
+    const fx = r * Math.cos(th), fy = r * Math.sin(th), dx = -Math.sin(th), dy = Math.cos(th);
+    fan.push(fx - 30 * dx, 0.04, -(fy - 30 * dy), fx + 30 * dx, 0.04, -(fy + 30 * dy));
+    if (i % 4 === 0) {
+      const wall = new THREE.Mesh(wallGeo, wallMat);
+      wall.position.copy(E2W(fx, fy, h / 2)); wall.rotation.y = th + PI / 2; group.add(wall);
+    }
+  });
+  const lines = new THREE.LineSegments(segsGeo(fan), lineMat(color, 0.4));
+  group.add(lines);
+  return { group, lines };
+}
+
+// ------------------------------------------------------------ the catalogue
+// Each entry: how each world meets it (overlap/base/top in that world's own
+// coordinates), how each world draws it, one caption per world, and a pulse.
+const objects = [];
+const pulses = [];  // fns (t, selectedId) -> ()
+
+function register(entry, meshes, lineMats) {
+  objects.push(entry);
+  const mats = [];
+  for (const m of meshes) (Array.isArray(m.material) ? m.material : [m.material]).forEach(x => mats.push(x));
+  pulses.push((t, sel) => {
+    const on = sel === entry.id;
+    const k = on ? 0.45 + 0.35 * Math.sin(t * 5) : 0;
+    for (const m of mats) if (m.emissive) { m.emissive.set(entry.color); m.emissiveIntensity = k; }
+    for (const lm of lineMats || []) lm.opacity = lm.userData.base + (on ? 0.3 * (0.5 + 0.5 * Math.sin(t * 5)) : 0);
+  });
+}
+
+// ---- Euclid-native: cylinder --------------------------------------------
+{
+  const o = { id: 'pillar', label: 'Cylinder', color: 0x22cc22, c: [2.2, 1.5], R: 1.1, h: 1.6 };
+  const band = { lo: th => sigma(o.c[0], o.c[1], th) - o.R, hi: th => sigma(o.c[0], o.c[1], th) + o.R };
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(o.R, o.R, o.h, 40), lambert(o.color));
+  mesh.position.copy(E2W(o.c[0], o.c[1], o.h / 2)); scene.add(mesh);
+  const b = new Band(lambert(o.color)); b.set(band.lo, band.hi, 0, o.h); scene.add(b.mesh);
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: (u, v, rad) => Math.hypot(u - o.c[0], v - o.c[1]) < o.R + rad,
+    overlapM: (u, v, rad) => bandOverlap(band, u, v, rad),
+    base: () => 0, top: () => o.h,
+    capE: '<b>A cylinder</b> — a disk of points, each one simple.',
+    capM: '<b>A band</b> between two section curves: every point of the disk, swept into its sine wave.',
+  }, [mesh, b.mesh]);
+}
+
+// ---- Euclid-native: block (a thick segment) ------------------------------
+{
+  const o = { id: 'block', label: 'Block', color: 0x0e0e8e, P: [-3.6, 2.6], Q: [-1.2, 0.6], t: 0.5, h: 2.0 };
+  const dx = o.Q[0] - o.P[0], dy = o.Q[1] - o.P[1], L = Math.hypot(dx, dy);
+  const nx = -dy / L * o.t, ny = dx / L * o.t;
+  const corners = [[o.P[0] + nx, o.P[1] + ny], [o.P[0] - nx, o.P[1] - ny], [o.Q[0] + nx, o.Q[1] + ny], [o.Q[0] - nx, o.Q[1] - ny]];
+  const band = {
+    lo: th => Math.min(...corners.map(c => sigma(c[0], c[1], th))),
+    hi: th => Math.max(...corners.map(c => sigma(c[0], c[1], th))),
+  };
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(L, o.h, 2 * o.t), lambert(o.color));
+  mesh.position.copy(E2W((o.P[0] + o.Q[0]) / 2, (o.P[1] + o.Q[1]) / 2, o.h / 2));
+  mesh.rotation.y = Math.atan2(dy, dx); scene.add(mesh);
+  const b = new Band(lambert(o.color)); b.set(band.lo, band.hi, 0, o.h); scene.add(b.mesh);
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: (u, v, rad) => distToSeg(u, v, ...o.P, ...o.Q) < o.t + rad,
+    overlapM: (u, v, rad) => bandOverlap(band, u, v, rad),
+    base: () => 0, top: () => o.h,
+    capE: '<b>A block</b> — a thickened segment of the plane.',
+    capM: '<b>A band</b> bounded by the extreme corners’ sections.',
+  }, [mesh, b.mesh]);
+}
+
+// ---- Euclid-native: wedge (a triangular prism) ---------------------------
+{
+  const o = { id: 'wedge', label: 'Wedge', color: 0xcc5a22, verts: [[3.5, -2.2], [5.3, -3.4], [3.1, -4.6]], h: 1.2 };
+  const band = {
+    lo: th => Math.min(...o.verts.map(c => sigma(c[0], c[1], th))),
+    hi: th => Math.max(...o.verts.map(c => sigma(c[0], c[1], th))),
+  };
+  const mesh = prism(o.verts.map(([a, b2]) => [a, b2]), o.h, lambert(o.color)); scene.add(mesh);
+  const b = new Band(lambert(o.color)); b.set(band.lo, band.hi, 0, o.h); scene.add(b.mesh);
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: (u, v, rad) => distToTri(u, v, ...o.verts) <= rad,
+    overlapM: (u, v, rad) => bandOverlap(band, u, v, rad),
+    base: () => 0, top: () => o.h,
+    capE: '<b>A wedge</b> — a triangle of points.',
+    capM: '<b>A band whose edges hand off between corners</b> as θ turns — watch for the creases.',
+  }, [mesh, b.mesh]);
+}
+
+// ---- Euclid-native: a point-like marker ----------------------------------
+{
+  const o = { id: 'marker', label: 'Point', color: 0xffcf3d, c: [-2.0, -4.6], R: 0.45, h: 0.12 };
+  const mat = lambert(o.color, { emissive: 0x6a4600 });
+  const band = { lo: th => sigma(o.c[0], o.c[1], th) - 0.07, hi: th => sigma(o.c[0], o.c[1], th) + 0.07 };
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(o.R, o.R, o.h, 32), mat);
+  mesh.position.copy(E2W(o.c[0], o.c[1], o.h / 2)); scene.add(mesh);
+  const b = new Band(mat); b.set(band.lo, band.hi, 0, o.h); scene.add(b.mesh);
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: () => false, overlapM: () => false,   // a marker, not a solid
+    base: () => 0, top: () => 0,
+    capE: '<b>A point</b> (almost) — the smallest thing this world has.',
+    capM: '<b>A single thin section</b> — one sine thread, one crest per tile.',
+  }, [mesh, b.mesh]);
+}
+
+// ---- Mobius-native: block on the strip -----------------------------------
+{
+  const o = { id: 'mblock', label: 'Strip block', color: 0xf5c518, th: [2.5, 2.95], r: [6.4, 7.4], h: 1.4 };
+  const samples = [];
+  for (let i = 0; i < 6; i++) for (let j = 0; j < 4; j++) {
+    samples.push([o.th[0] + (o.th[1] - o.th[0]) * i / 5, o.r[0] + (o.r[1] - o.r[0]) * j / 3]);
+  }
+  const sheaf = sheafVisual(samples, o.h, o.color); scene.add(sheaf.group);
+  sheaf.lines.material.userData.base = 0.4;
+  const meshes = [];
+  const geo = new THREE.BoxGeometry((o.th[1] - o.th[0]) * S, o.h, o.r[1] - o.r[0]), mat = lambert(o.color);
+  for (let k = -6; k <= 6; k++) {
+    const m = new THREE.Mesh(geo, mat);
+    m.position.copy(M2W((o.th[0] + o.th[1]) / 2 + k * PI, parity(k) * (o.r[0] + o.r[1]) / 2, o.h / 2));
+    scene.add(m); meshes.push(m);
+  }
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: (u, v, rad) => {
+      const [lo, hi] = sigmaRange(u, v, o.th[0], o.th[1]);
+      return hi > o.r[0] - rad && lo < o.r[1] + rad;
+    },
+    overlapM: (u, v, rad) => {
+      for (let k = -6; k <= 6; k++) {
+        const s = parity(k), u1 = (o.th[0] + k * PI) * S, u2 = (o.th[1] + k * PI) * S;
+        const r1 = Math.min(s * o.r[0], s * o.r[1]), r2 = Math.max(s * o.r[0], s * o.r[1]);
+        if (u > u1 - rad && u < u2 + rad && v > r1 - rad && v < r2 + rad) return true;
+      }
+      return false;
+    },
+    base: () => 0, top: () => o.h,
+    capE: '<b>A sheaf of lines</b> — one line for every point of the box.',
+    capM: '<b>A block</b> — an ordinary θ × r box (with its half-turn copies).',
+  }, meshes, [sheaf.lines.material]);
+}
+
+// ---- Mobius-native: wedge on the strip -----------------------------------
+{
+  const o = { id: 'mwedge', label: 'Strip wedge', color: 0x9a4dcc, verts: [[0.7, -3.2], [1.25, -4.9], [0.35, -5.6]], h: 1.0 };
+  // Sample the triangle on a barycentric grid for its Euclid-side sheaf.
+  const samples = [];
+  const [A, B, C] = o.verts;
+  for (let i = 0; i <= 4; i++) for (let j = 0; j <= 4 - i; j++) {
+    const a = i / 4, b2 = j / 4, c = 1 - a - b2;
+    samples.push([a * A[0] + b2 * B[0] + c * C[0], a * A[1] + b2 * B[1] + c * C[1]]);
+  }
+  const sheaf = sheafVisual(samples, o.h, o.color); scene.add(sheaf.group);
+  sheaf.lines.material.userData.base = 0.4;
+  const meshes = [], mat = lambert(o.color);
+  for (let k = -6; k <= 6; k++) {
+    const m = prism(o.verts.map(([th, r]) => [th * S, r]), o.h, mat);
+    m.scale.y = parity(k);                       // local y is r; odd copies flip
+    m.position.x = XM0 + k * PI * S;
+    scene.add(m); meshes.push(m);
+  }
+  // r-interval of the triangle at a given theta, or null outside its span.
+  const rSpan = th => {
+    const rs = [];
+    const edges = [[A, B], [B, C], [C, A]];
+    for (const [P, Q] of edges) {
+      if ((th - P[0]) * (th - Q[0]) <= 0 && P[0] !== Q[0]) rs.push(P[1] + (Q[1] - P[1]) * (th - P[0]) / (Q[0] - P[0]));
+    }
+    return rs.length >= 2 ? [Math.min(...rs), Math.max(...rs)] : null;
+  };
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: (u, v, rad) => {
+      const lo = Math.min(A[0], B[0], C[0]), hi = Math.max(A[0], B[0], C[0]);
+      for (let i = 0; i <= 24; i++) {
+        const th = lo + (hi - lo) * i / 24, span = rSpan(th);
+        if (span && sigma(u, v, th) > span[0] - W - rad && sigma(u, v, th) < span[1] + W + rad) return true;
+      }
+      return false;
+    },
+    overlapM: (u, v, rad) => {
+      for (let k = -6; k <= 6; k++) {
+        const s = parity(k);
+        const tri = o.verts.map(([th, r]) => [(th + k * PI) * S, s * r]);
+        if (distToTri(u, v, ...tri) <= rad) return true;
+      }
+      return false;
+    },
+    base: () => 0, top: () => o.h,
+    capE: '<b>A sheaf that thins</b> toward the wedge’s point.',
+    capM: '<b>A wedge</b> — a triangle drawn straight onto the strip.',
+  }, meshes, [sheaf.lines.material]);
+}
+
+const bandOverlap = (band, u, v, rad) => {
+  for (const du of [-rad, 0, rad]) {
+    const th = (u + du) / S;
+    if (v > band.lo(th) - rad && v < band.hi(th) + rad) return true;
+  }
+  return false;
+};
+
+// ---- the two players, who are also catalogue entries ---------------------
+// Separate material sets per player, so selecting one pulses only him — and
+// each player's proxy in the other world wears his own colour, so identity
+// tracks across the divider: brown is Euclid everywhere, maroon is Möbius.
+const mkMats = (a, b, c) => [lambert(a), lambert(b), lambert(c)];
+const eMats = mkMats(0x8a5a3a, 0xd8b090, 0x6a4028);
+const mMats = mkMats(0x5c2727, 0xb07070, 0x431c1c);
+const playerGeo = new THREE.CylinderGeometry(PR, PR, PH, 28);
+const shadowGeo = new THREE.CircleGeometry(PR * 1.05, 24), shadowMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.55, depthWrite: false });
+const mkPlayer = mats => { const m = new THREE.Mesh(playerGeo, mats); const sh = new THREE.Mesh(shadowGeo, shadowMat); sh.rotation.x = -PI / 2; return { m, sh }; };
+const eMesh = mkPlayer(eMats); scene.add(eMesh.m, eMesh.sh);
+const mMeshes = []; for (let k = -6; k <= 6; k++) { const pm = mkPlayer(mMats); scene.add(pm.m, pm.sh); mMeshes.push(pm); }
+const bar = new THREE.Mesh(new THREE.BoxGeometry(60, PH, 2 * W), lambert(0x5c2727)); scene.add(bar);
+const tube = new Band(lambert(0x8a5a3a)); scene.add(tube.mesh);
+
+register({
+  id: 'euclid', label: 'Euclid himself', color: 0x8a5a3a,
+  overlapE: () => false, overlapM: () => false, base: () => 0, top: () => 0,
+  capE: '<b>Euclid, at home</b>: a point-like creature of the plane.',
+  capM: '<b>Euclid, abroad</b>: a cosine-shaped section, one crest per tile.',
+}, [eMesh.m, tube.mesh], []);
+register({
+  id: 'mobius', label: 'Möbius himself', color: 0x5c2727,
+  overlapE: () => false, overlapM: () => false, base: () => 0, top: () => 0,
+  capE: '<b>Möbius, abroad</b>: an infinite line sweeping the arena.',
+  capM: '<b>Möbius, at home</b>: a point-like creature of the strip.',
+}, [mMeshes[6].m, bar], []);
+
+// ------------------------------------------------------------ solids and physics
+const solid = objects.filter(o => o.top() > 0);
+const solidsE = [
+  ...solid.map(o => ({ overlap: o.overlapE, base: o.base, top: o.top })),
+  { overlap: (u, v, rad) => Math.abs(sigma(u, v, mobius.u / S) - mobius.v) < W + rad,
+    base: () => mobius.z, top: () => mobius.z + PH },
+];
+const solidsM = [
+  ...solid.map(o => ({ overlap: o.overlapM, base: o.base, top: o.top })),
+  { overlap: (u, v, rad) => bandOverlap({ lo: th => sigma(euclid.u, euclid.v, th) - W, hi: th => sigma(euclid.u, euclid.v, th) + W }, u, v, rad),
+    base: () => euclid.z, top: () => euclid.z + PH },
+];
+const inArenaE = (u, v, rad) => Math.hypot(u, v) < RA - rad;
+const inArenaM = (u, v, rad) => Math.abs(v) < RA - rad;
+
+function stepPlayer(P, solids, inArena, ctl, dt) {
+  const blocked = (u, v) => !inArena(u, v, PR) ||
+    solids.some(s => s.overlap(u, v, PR) && s.top() > P.z + STEP && s.base() < P.z + PH);
+  let du = (ctl.right - ctl.left) * SPEED * dt, dv = (ctl.up - ctl.down) * SPEED * dt;
+  if (du && dv) { du *= Math.SQRT1_2; dv *= Math.SQRT1_2; }
+  if (du && !blocked(P.u + du, P.v)) P.u += du;
+  if (dv && !blocked(P.u, P.v + dv)) P.v += dv;
+  if (ctl.jump && P.grounded) { P.vz = JUMP_V; P.grounded = false; }
+  P.vz -= G * dt;
+  let support = 0;
+  for (const s of solids) if (s.overlap(P.u, P.v, PR * 0.8) && s.top() <= P.z + STEP) support = Math.max(support, s.top());
+  const zn = P.z + P.vz * dt;
+  if (P.vz <= 0 && zn <= support) { P.z = support; P.vz = 0; P.grounded = true; }
+  else { P.z = zn; P.grounded = false; }
+}
+
+// ------------------------------------------------------------ selection UI
+let selected = 'pillar';
+const chips = document.getElementById('chips');
+for (const o of objects) {
+  const b = document.createElement('button');
+  b.textContent = o.label; b.dataset.id = o.id;
+  b.onclick = () => select(o.id);
+  chips.appendChild(b);
+}
+function select(id) {
+  selected = id;
+  for (const b of chips.children) b.classList.toggle('on', b.dataset.id === id);
+  const o = objects.find(x => x.id === id);
+  document.getElementById('capE').innerHTML = o.capE;
+  document.getElementById('capM').innerHTML = o.capM;
+}
+select(selected);
+
+// ------------------------------------------------------------ input
+const keys = {};
+addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Tab'].includes(e.code)) e.preventDefault();
+  if (e.code === 'KeyR') reset();
+  if (e.code === 'Tab') {
+    const i = objects.findIndex(o => o.id === selected);
+    select(objects[(i + 1) % objects.length].id);
+  }
+});
+addEventListener('keyup', e => { keys[e.code] = false; });
+const ctlE = () => ({ left: keys.KeyA ? 1 : 0, right: keys.KeyD ? 1 : 0, up: keys.KeyW ? 1 : 0, down: keys.KeyS ? 1 : 0, jump: !!keys.Space });
+const ctlM = () => ({ left: keys.ArrowLeft ? 1 : 0, right: keys.ArrowRight ? 1 : 0, up: keys.ArrowUp ? 1 : 0, down: keys.ArrowDown ? 1 : 0, jump: !!keys.Enter });
+function reset() {
+  Object.assign(euclid, { u: E_HOME.u, v: E_HOME.v, z: 0, vz: 0, grounded: true });
+  Object.assign(mobius, { u: M_HOME.u, v: M_HOME.v, z: 0, vz: 0, grounded: true });
+}
+
+// ------------------------------------------------------------ frame
+window.catalogue = {
+  euclid, mobius, objects, select, sigma, S, reset,
+  step: (who, ctl, dt) => who === 'E' ? stepPlayer(euclid, solidsE, inArenaE, ctl, dt) : stepPlayer(mobius, solidsM, inArenaM, ctl, dt),
+};
+let last = performance.now();
+function frame(now) {
+  const t = now / 1000, dt = Math.min(1 / 30, (now - last) / 1000); last = now;
+  stepPlayer(euclid, solidsE, inArenaE, ctlE(), dt);
+  stepPlayer(mobius, solidsM, inArenaM, ctlM(), dt);
+  if (mobius.u > TAU * S) mobius.u -= TAU * S;
+  if (mobius.u < -TAU * S) mobius.u += TAU * S;
+
+  const th = mobius.u / S, r = mobius.v;
+  eMesh.m.position.copy(E2W(euclid.u, euclid.v, euclid.z + PH / 2)); eMesh.sh.position.copy(E2W(euclid.u, euclid.v, 0.015));
+  bar.position.copy(E2W(r * Math.cos(th), r * Math.sin(th), mobius.z + PH / 2)); bar.rotation.y = th + PI / 2;
+  mMeshes.forEach((pm, i) => {
+    const k = i - 6, tk = th + k * PI, vis = tk > TH_MIN && tk < TH_MAX;
+    pm.m.visible = pm.sh.visible = vis; if (!vis) return;
+    pm.m.position.copy(M2W(tk, parity(k) * r, mobius.z + PH / 2)); pm.sh.position.copy(M2W(tk, parity(k) * r, 0.015));
+  });
+  tube.set(x => sigma(euclid.u, euclid.v, x) - W, x => sigma(euclid.u, euclid.v, x) + W, euclid.z, PH);
+
+  for (const p of pulses) p(t, selected);
+
+  const Wd = renderer.domElement.clientWidth, Hd = renderer.domElement.clientHeight;
+  const wE = Math.round(Math.min(Wd * 0.42, Hd * 1.05)), wM = Wd - wE;
+  document.getElementById('divider').style.left = wE + 'px';
+  document.getElementById('hudE').style.width = wE + 'px'; document.getElementById('hudM').style.width = wM + 'px';
+  camE.aspect = wE / Hd; camE.updateProjectionMatrix();
+  camM.aspect = wM / Hd; camM.updateProjectionMatrix();
+  camE.position.set(0, 28, 9); camE.lookAt(0, 0, 0);
+  const m = M2W(th, 0, 0); camM.position.set(m.x, 29, 7.5); camM.lookAt(m.x, 0, 0);
+  renderer.setViewport(0, 0, wE, Hd); renderer.setScissor(0, 0, wE, Hd); renderer.render(scene, camE);
+  renderer.setViewport(wE, 0, wM, Hd); renderer.setScissor(wE, 0, wM, Hd); renderer.render(scene, camM);
+  requestAnimationFrame(frame);
+}
+function resize() { renderer.setSize(window.innerWidth, window.innerHeight, false); }
+addEventListener('resize', resize); resize();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

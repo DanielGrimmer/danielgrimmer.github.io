@@ -61,13 +61,21 @@ In the order it was made:
 | `TitleSlide.png`, `MobiusEuclid3.jpeg`, the GIFs (Sep 2025) | The visual target, rendered **frame by frame in Mathematica** — no engine behind them. These illustrate the pitch deck. |
 | `index.html` (Aug 2026) | The first real engine: one three.js scene, two fields far apart, one camera each, ordinary platformer physics per field, and the Radon dictionary translating every object both ways. Level 1 is playable at one keyboard (Euclid WASD+Space, Möbius arrows+Enter) and ends on the punchline: *through any two points there passes exactly one line.* |
 | `floors.html` (Aug 2026) | The Floor Studio: paint either floor and the other updates live through the GPU Radon transform (sinogram one way, back-projection the other). Replaces the Mathematica floor pipeline; exports game-sized floor textures. |
+| `catalogue.html` (Aug 2026) | The object catalogue, rebuilt from the Mathematica-era one (those files are lost): a bare playing field with one of every shape — cylinder, block, wedge, point marker, strip block, strip wedge, and the two players — walkable at one keyboard, each object selectable and captioned in both frames. The mechanics sandbox for demos and the pitch. |
 
-Both current pages load three.js r128 from cdnjs — the one external
-dependency. Known loose end: `floors.html` sets the strip scale `S = 3.4`
-while `index.html` uses `S = 2.2`; the studio's header comment ("same world
-parameters as the game", 885-wide Möbius export) was written for 2.2.
+three.js r128 is vendored in this folder (`three.r128.min.js`); every page
+loads it locally and falls back to cdnjs, so the demos survive classroom
+wifi. Known loose end: `floors.html` sets the strip scale `S = 3.4` while
+`index.html` and `catalogue.html` use `S = 2.2`; the studio's header comment
+("same world parameters as the game", 885-wide Möbius export) was written
+for 2.2.
 
 ## Milestones
+
+0. **~Three weeks out: the game-club pitch** (that was last year's timing).
+   The pitch package is the playable `index.html`, the `catalogue.html`
+   object zoo, and the Floor Studio — a live answer to last year's "too hard
+   to start" objection.
 
 1. **Mid-October (this term): classroom demo.** A good draft of the game to
    show students in the philosophy of physics course, as the live version of
@@ -108,6 +116,14 @@ parameters as the game", 885-wide Möbius export) was written for 2.2.
   about area is an open (and philosophically on-message) design question.
 
 ## Relation to the rest of this site
+
+The build order is settled: single-computer versions first (no backend at
+all), then a Firebase backend like the other games' so two strangers'
+screens can disagree mysteriously — but demos for third parties show both
+panels at once, which is this duality's equivalent of the other games'
+reveal screen. Mechanics before levels: the catalogue is the bare field to
+walk people around in; level design comes when the mechanics have proven
+themselves.
 
 Soccer Hockey and Escher Chess are turn-based: the duality is hidden during
 play and revealed afterwards. Parallax is the inverse — the duality is on
