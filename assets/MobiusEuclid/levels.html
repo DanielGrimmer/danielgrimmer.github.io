@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  PARALLAX — Level Viewer (the Mathematica notebook, reborn)
+
+  A direct port of MobiusEuclidGame.nb (in this folder): the notebook's
+  declarative level format, its three levels verbatim in its own units, and
+  its dual renderers — now walkable in real time instead of rendered frame by
+  frame.
+
+  The notebook's scene compiler takes a list of typed records and draws each
+  once per world:
+
+      ["F", lev]                       the floor, with its Level text
+      ["D", x, y, rho, f, h, color]    a cylinder for Euclid; for Mobius the
+                                       band |r - sigma(x,y,theta)| < rho
+      ["L", x, y, th0, s, f, h, color] a wall segment from (x,y), direction
+                                       th0, length s; for Mobius the region
+                                       swept by its points' sections — at each
+                                       theta the interval between the two
+                                       endpoint sections
+      ["E", x, y, rho, f, h, color]    the Euclid player: cylinder at home,
+                                       section ribbon abroad
+      ["M", r, th0, rho, f, h, color]  the Mobius player: cylinder at home
+                                       (with half-turn ghost copies at 50%
+                                       opacity — the notebook's convention),
+                                       an endless wall abroad
+
+  Every record carries a floating base f, so platforms can hover — the one
+  mechanical feature the notebook had that index.html does not yet.
+
+  World, verbatim from the notebook: num = 3; winMob = 3 pi/2; winEuc =
+  winMob/sqrt(2).  Euclid's arena is the SQUARE [-winEuc, winEuc]^2 (not a
+  disk); the strip shows theta in [pi/2 - winMob, pi/2 + winMob] (three
+  tiles) with r in [-winMob, winMob] = sqrt(2) winEuc, the square's diagonal,
+  so every line that clips the square fits on the strip.
+
+  One deliberate divergence: the notebook Radons the white grid into the
+  Mobius floor (the woven background of the old renders).  Here, as in
+  floors.html, grids and fibers are chart decorations and are not
+  transformed; only the Level text crosses the dictionary, in vector form.
+  And the two players keep this repo's identity colours (brown Euclid,
+  maroon Mobius) rather than the notebook's both-brown.
+
+  Controls: Euclid W A S D + Space, Mobius arrows + Enter, R resets, keys
+  1/2/3 or the chips switch level.  window.levels exposes state for tests.
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax — Level Viewer</title>
+<style>
+  html, body { margin:0; height:100%; background:#000; overflow:hidden;
+    font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif; color:#f5c518; }
+  canvas#c { display:block; width:100vw; height:100vh; }
+  #hud { position:absolute; inset:0; pointer-events:none; }
+  .panel { position:absolute; top:0; bottom:0; display:flex; flex-direction:column;
+    justify-content:space-between; padding:56px 18px 14px; box-sizing:border-box; }
+  #hudE { left:0; }
+  #hudM { right:0; }
+  .name { font-size:18px; letter-spacing:.22em; font-weight:700; text-transform:uppercase; }
+  .keys { font-size:12px; letter-spacing:.06em; color:#e8dcb0; opacity:.85; margin-top:3px; }
+  .cap { font-size:14px; line-height:1.45; color:#f5c518; max-width:34em; min-height:3em; }
+  .cap b { color:#fff; font-weight:600; }
+  #divider { position:absolute; top:0; bottom:0; width:2px; background:#2a2a2a; }
+  #chips { position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    display:flex; gap:6px; pointer-events:auto; }
+  #chips button { background:rgba(10,10,10,.8); color:#f5c518; border:1px solid #3a3a3a;
+    padding:5px 12px; font:inherit; font-size:13px; cursor:pointer; border-radius:3px; }
+  #chips button:hover { border-color:#f5c518; }
+  #chips button.on { background:#f5c518; color:#000; border-color:#f5c518; font-weight:600; }
+  #err { position:absolute; inset:0; display:none; place-items:center; color:#ddd; font-size:16px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div class="panel" id="hudE">
+    <div><div class="name">Euclid</div><div class="keys">W A S D move &nbsp;·&nbsp; Space jump &nbsp;·&nbsp; R reset &nbsp;·&nbsp; 1 2 3 level</div></div>
+    <div class="cap" id="capE"></div>
+  </div>
+  <div id="divider"></div>
+  <div class="panel" id="hudM">
+    <div style="text-align:right"><div class="name">Möbius</div><div class="keys">Arrows move &nbsp;·&nbsp; Enter jump</div></div>
+    <div class="cap" id="capM" style="text-align:right;align-self:flex-end"></div>
+  </div>
+  <div id="chips"></div>
+</div>
+<div id="err">three.js failed to load — check the network connection.</div>
+
+<script src="three.r128.min.js"></script>
+<script>if (typeof THREE === 'undefined') document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+<script>
+if (typeof THREE === 'undefined') { document.getElementById('err').style.display = 'grid'; }
+else (function () {
+'use strict';
+const PI = Math.PI, TAU = 2 * Math.PI;
+
+// ------------------------------------------------ the notebook's world, verbatim
+const WIN  = 3 * PI / (2 * Math.SQRT2);   // winEuc: Euclid's square half-width
+const RMAX = 3 * PI / 2;                  // winMob = sqrt(2) * winEuc: the strip's half-height
+const TH_MIN = PI / 2 - RMAX, TH_MAX = PI / 2 + RMAX;   // three tiles: [-pi, 2pi]
+const MSTEP = 0.5;                        // the floor grid's mesh step
+const S = 1.5, XM0 = 500;                 // strip drawing scale; the strip lives far away
+const NSEG = 480;
+const PR = 0.25, PH = 1.0, W = 0.14;      // notebook player: rho = 1/4, h = 1
+const G = 30, JUMP_V = 8, SPEED = 3.5, STEP = 0.2;
+
+const euclid = { u: 0, v: 0, z: 0, vz: 0, grounded: true };
+const mobius = { u: 0, v: 0, z: 0, vz: 0, grounded: true };   // u = theta * S
+
+const sigma = (a, b, th) => a * Math.cos(th) + b * Math.sin(th);
+const parity = k => (((k % 2) + 2) % 2 === 0) ? 1 : -1;
+const distToSeg = (px, py, ax, ay, bx, by) => {
+  const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1e-9;
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / L2));
+  return Math.hypot(px - ax - t * dx, py - ay - t * dy);
+};
+
+// ------------------------------------------------------------ scene scaffolding
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setScissorTest(true);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000000);
+scene.add(new THREE.AmbientLight(0xffffff, 0.42));
+const sun = new THREE.DirectionalLight(0xffffff, 0.62); sun.position.set(20, 45, 30); scene.add(sun);
+const sun2 = new THREE.DirectionalLight(0xffffff, 0.62); sun2.position.set(XM0 + 20, 45, 30); sun2.target.position.set(XM0, 0, 0); scene.add(sun2); scene.add(sun2.target);
+const camE = new THREE.PerspectiveCamera(42, 1, 0.3, 200);
+const camM = new THREE.PerspectiveCamera(42, 1, 0.3, 200);
+
+const lambert = (color, extra) => new THREE.MeshLambertMaterial(Object.assign({ color, side: THREE.DoubleSide }, extra || {}));
+const lineMat = (color, opacity) => new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+const segsGeo = pts => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3)); return g; };
+const E2W = (a, b, y) => new THREE.Vector3(a, y, -b);
+const M2W = (th, r, y) => new THREE.Vector3(XM0 + th * S, y, -r);
+
+// Charts (not transformed): the square grid at mstep = 1/2, the strip's fibers.
+{
+  const pts = [];
+  for (let k = -Math.floor(WIN / MSTEP); k <= Math.floor(WIN / MSTEP); k++) {
+    const c = k * MSTEP;
+    pts.push(c, 0, -WIN, c, 0, WIN, -WIN, 0, -c, WIN, 0, -c);
+  }
+  scene.add(new THREE.LineSegments(segsGeo(pts), lineMat(0xdedede, 0.4)));
+  scene.add(new THREE.Line(segsGeo([-WIN, 0, -WIN, WIN, 0, -WIN, WIN, 0, WIN, -WIN, 0, WIN, -WIN, 0, -WIN]), lineMat(0xdedede, 0.9)));
+  const dashed = new THREE.LineDashedMaterial({ color: 0x9a9a9a, dashSize: 0.3, gapSize: 0.24, transparent: true, opacity: 0.7 });
+  for (let th = Math.ceil(TH_MIN / (PI / 6)) * PI / 6; th <= TH_MAX + 1e-9; th += PI / 6) {
+    const l = new THREE.Line(segsGeo([XM0 + th * S, 0, -RMAX, XM0 + th * S, 0, RMAX]), dashed); l.computeLineDistances(); scene.add(l);
+  }
+  scene.add(new THREE.LineSegments(segsGeo([XM0 + TH_MIN * S, 0, -RMAX, XM0 + TH_MAX * S, 0, -RMAX, XM0 + TH_MIN * S, 0, RMAX, XM0 + TH_MAX * S, 0, RMAX]), lineMat(0xdedede, 0.9)));
+}
+
+// The band mesh, as in the game: a wall on the strip between two theta->r curves.
+class Band {
+  constructor(material) {
+    this.geo = new THREE.BufferGeometry();
+    this.pos = new Float32Array(NSEG * 18 * 3);
+    this.geo.setAttribute('position', new THREE.BufferAttribute(this.pos, 3));
+    this.mesh = new THREE.Mesh(this.geo, material);
+    this.mesh.frustumCulled = false;
+  }
+  set(lo, hi, base, h) {
+    const p = this.pos; let j = 0;
+    const put = (x, y, z) => { p[j++] = x; p[j++] = y; p[j++] = z; };
+    const quad = (A, B, C, D) => { put(...A); put(...B); put(...C); put(...A); put(...C); put(...D); };
+    for (let i = 0; i < NSEG; i++) {
+      const t0 = TH_MIN + (TH_MAX - TH_MIN) * i / NSEG, t1 = TH_MIN + (TH_MAX - TH_MIN) * (i + 1) / NSEG;
+      const x0 = XM0 + t0 * S, x1 = XM0 + t1 * S;
+      const l0 = -lo(t0), l1 = -lo(t1), h0 = -hi(t0), h1 = -hi(t1);
+      const yb = base, yt = base + h;
+      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);
+      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);
+    }
+    this.geo.attributes.position.needsUpdate = true;
+    this.geo.computeVertexNormals();
+  }
+}
+
+// ---------- Level text, in both worlds (vector form of the notebook's floors)
+function makeText(str, flip) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128;
+  const ctx = cv.getContext('2d');
+  if (flip) { ctx.translate(0, 128); ctx.scale(1, -1); }
+  ctx.font = 'bold 84px "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#f5c518'; ctx.fillText(str, 256, 66);
+  const tex = new THREE.CanvasTexture(cv); tex.minFilter = THREE.LinearFilter;
+  return tex;
+}
+function textPoints(str, n) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128;
+  const ctx = cv.getContext('2d');
+  ctx.font = 'bold 84px "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.fillText(str, 256, 66);
+  const d = ctx.getImageData(0, 0, 512, 128).data, pts = [];
+  for (let y = 0; y < 128; y += 2) for (let x = 0; x < 512; x += 2) if (d[(y * 512 + x) * 4 + 3] > 128) pts.push([x / 512, y / 128]);
+  const out = [], stride = Math.max(1, pts.length / n);
+  for (let i = 0; i < pts.length; i += stride) out.push(pts[Math.floor(i)]);
+  return out;
+}
+const decalMat = tex => new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false });
+function decal(tex, w, pos) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, w / 4), decalMat(tex));
+  m.rotation.x = -PI / 2; m.position.copy(pos); return m;
+}
+
+/**
+ * The floor pair for one level, all in one group:
+ * Euclid: "Level n" decal at (0, 0.9 WIN), plus the line fan of the strip
+ * text's points (the notebook's InverseRadon layer, in vector form).
+ * Mobius: one decal per tile at r = -/+ 0.7 WIN, flipped on odd tiles (the
+ * notebook's levMob), plus the sinusoid bundle of the Euclid text's points
+ * (the notebook's Radon layer, in vector form).
+ */
+function buildFloor(levName) {
+  const group = new THREE.Group();
+  const YEL = 0xf5c518;
+  group.add(decal(makeText(levName, false), 0.5 * WIN * 2, E2W(0, 0.9 * WIN, 0.02)));
+  const texN = makeText(levName, false), texF = makeText(levName, true);
+  // Tiles at theta = -pi/2, pi/2, 3pi/2; notebook flips the outer two and
+  // alternates the sign of r.
+  for (const [k, tile] of [[-1, -PI / 2], [0, PI / 2], [1, 3 * PI / 2]]) {
+    const s = parity(k);
+    group.add(decal(s > 0 ? texN : texF, 2.6 * S, M2W(tile, s * -0.7 * WIN, 0.02)));
+  }
+  // Euclid's text, on the strip: a bundle of sections.
+  {
+    const tx = [];
+    for (const [px, py] of textPoints(levName, 30)) {
+      const a = (px - 0.5) * 0.9 * WIN, b = 0.9 * WIN + (0.5 - py) * 0.22 * WIN;
+      let prev = null;
+      for (let i = 0; i <= 240; i++) {
+        const th = TH_MIN + (TH_MAX - TH_MIN) * i / 240, p = [XM0 + th * S, 0.03, -sigma(a, b, th)];
+        if (prev) tx.push(...prev, ...p); prev = p;
+      }
+    }
+    group.add(new THREE.LineSegments(segsGeo(tx), lineMat(YEL, 0.18)));
+  }
+  // The canonical tile's text, on the plane: a fan of lines.
+  {
+    const tx = [];
+    for (const [px, py] of textPoints(levName, 30)) {
+      const th = PI / 2 + (px - 0.5) * 2.6, r = -0.7 * WIN + (0.5 - py) * 0.24 * WIN;
+      const fx = r * Math.cos(th), fy = r * Math.sin(th), dx = -Math.sin(th), dy = Math.cos(th);
+      tx.push(fx - 12 * dx, 0.03, -(fy - 12 * dy), fx + 12 * dx, 0.03, -(fy + 12 * dy));
+    }
+    group.add(new THREE.LineSegments(segsGeo(tx), lineMat(YEL, 0.28)));
+  }
+  return group;
+}
+
+// ------------------------------------------------ the notebook's object types
+// Each maker returns { group, solidE, solidM } — the meshes for both worlds and
+// the collision entry for each. Every record has a floating base f.
+
+/** "D": a cylinder for Euclid; the band |r - sigma| < rho for Mobius. */
+function makeD([x0, y0, rho, f0, h0, color]) {
+  const group = new THREE.Group();
+  const mat = lambert(color);
+  const cyl = new THREE.Mesh(new THREE.CylinderGeometry(rho, rho, h0, 40), mat);
+  cyl.position.copy(E2W(x0, y0, f0 + h0 / 2)); group.add(cyl);
+  const band = { lo: th => sigma(x0, y0, th) - rho, hi: th => sigma(x0, y0, th) + rho };
+  const b = new Band(mat); b.set(band.lo, band.hi, f0, h0); group.add(b.mesh);
+  return {
+    group,
+    solidE: { overlap: (u, v, rad) => Math.hypot(u - x0, v - y0) < rho + rad, base: () => f0, top: () => f0 + h0 },
+    solidM: { overlap: (u, v, rad) => bandOverlap(band, u, v, rad), base: () => f0, top: () => f0 + h0 },
+  };
+}
+
+/**
+ * "L": a wall segment from (x0, y0), direction th0, length s0 — for Euclid a
+ * thin wall; for Mobius the region between the two endpoint sections, since a
+ * point t of the segment has section sigma0 + t cos(theta - th0), linear in t.
+ */
+function makeL([x0, y0, th0, s0, f0, h0, color]) {
+  const group = new THREE.Group();
+  const mat = lambert(color);
+  const x1 = x0 + s0 * Math.cos(th0), y1 = y0 + s0 * Math.sin(th0);
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(s0, h0), mat);
+  wall.position.copy(E2W((x0 + x1) / 2, (y0 + y1) / 2, f0 + h0 / 2));
+  wall.rotation.y = th0; group.add(wall);
+  const band = {
+    lo: th => Math.min(sigma(x0, y0, th), sigma(x1, y1, th)),
+    hi: th => Math.max(sigma(x0, y0, th), sigma(x1, y1, th)),
+  };
+  const b = new Band(mat); b.set(band.lo, band.hi, f0, h0); group.add(b.mesh);
+  return {
+    group,
+    solidE: { overlap: (u, v, rad) => distToSeg(u, v, x0, y0, x1, y1) < rad + 0.02, base: () => f0, top: () => f0 + h0 },
+    solidM: { overlap: (u, v, rad) => bandOverlap(band, u, v, rad), base: () => f0, top: () => f0 + h0 },
+  };
+}
+
+const bandOverlap = (band, u, v, rad) => {
+  for (const du of [-rad, 0, rad]) {
+    const th = (u + du) / S;
+    if (v > band.lo(th) - rad && v < band.hi(th) + rad) return true;
+  }
+  return false;
+};
+
+// ------------------------------------------------ the three levels, verbatim
+// backlists and playlists from the notebook's In[205], in its own units.
+const LEVELS = [
+  {
+    name: 'Level 1',
+    back: [],
+    eHome: [0, 0],
+    mHome: [PI / 2, -0.8 * WIN],       // {"M", -0.8 winEuc, pi/2, ...}: r, theta
+  },
+  {
+    name: 'Level 2',
+    back: [['D', 1, 1, 0.5, 0, 2, 0x22cc22]],
+    eHome: [-1, 0],
+    mHome: [PI / 2, -0.8 * WIN],
+  },
+  {
+    name: 'Level 3',
+    back: [
+      ['D', 0, 0, 0.5, 0, 2, 0x22cc22],
+      ['L', -2, 1, -PI / 4, 3 * Math.SQRT2, 0, 3, 0x2244dd],
+    ],
+    eHome: [-0.8 * WIN, 0],
+    mHome: [PI / 2, -0.8 * WIN],
+  },
+];
+
+// ---- the two players (identity colours; ghosts at 50% per the notebook) ----
+const eMats = [lambert(0x8a5a3a), lambert(0xd8b090), lambert(0x6a4028)];
+const gMats = [lambert(0x5c2727), lambert(0xb07070), lambert(0x431c1c)];
+const ghostMats = gMats.map(m => { const g = m.clone(); g.transparent = true; g.opacity = 0.5; return g; });
+const playerGeo = new THREE.CylinderGeometry(PR, PR, PH, 28);
+const shadowGeo = new THREE.CircleGeometry(PR * 1.05, 24), shadowMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.55, depthWrite: false });
+const mkPlayer = mats => { const m = new THREE.Mesh(playerGeo, mats); const sh = new THREE.Mesh(shadowGeo, shadowMat); sh.rotation.x = -PI / 2; return { m, sh }; };
+const eMesh = mkPlayer(eMats); scene.add(eMesh.m, eMesh.sh);
+const mMeshes = [];
+for (let k = -3; k <= 3; k++) { const pm = mkPlayer(k === 0 ? gMats : ghostMats); scene.add(pm.m, pm.sh); mMeshes.push(pm); }
+const bar = new THREE.Mesh(new THREE.BoxGeometry(3 * WIN, PH, 2 * W), lambert(0x5c2727)); scene.add(bar);
+const tube = new Band(lambert(0x8a5a3a)); scene.add(tube.mesh);
+
+// ------------------------------------------------------------ level switching
+let solidsE = [], solidsM = [];
+let current = null, currentIndex = 0;
+const inArenaE = (u, v, rad) => Math.abs(u) < WIN - rad && Math.abs(v) < WIN - rad;
+const inArenaM = (u, v, rad) => Math.abs(v) < RMAX - rad;
+
+function loadLevel(i) {
+  currentIndex = i;
+  const spec = LEVELS[i];
+  if (current) { scene.remove(current); current.traverse(o => { o.geometry?.dispose?.(); }); }
+  current = new THREE.Group();
+  current.add(buildFloor(spec.name));
+  solidsE = []; solidsM = [];
+  for (const rec of spec.back) {
+    const made = rec[0] === 'D' ? makeD(rec.slice(1)) : makeL(rec.slice(1));
+    current.add(made.group);
+    solidsE.push(made.solidE); solidsM.push(made.solidM);
+  }
+  // Each player is a solid of the other's world, at whatever height he holds.
+  solidsE.push({ overlap: (u, v, rad) => Math.abs(sigma(u, v, mobius.u / S) - mobius.v) < W + rad,
+    base: () => mobius.z, top: () => mobius.z + PH });
+  solidsM.push({ overlap: (u, v, rad) => bandOverlap({ lo: th => sigma(euclid.u, euclid.v, th) - W, hi: th => sigma(euclid.u, euclid.v, th) + W }, u, v, rad),
+    base: () => euclid.z, top: () => euclid.z + PH });
+  scene.add(current);
+  Object.assign(euclid, { u: spec.eHome[0], v: spec.eHome[1], z: 0, vz: 0, grounded: true });
+  Object.assign(mobius, { u: spec.mHome[0] * S, v: spec.mHome[1], z: 0, vz: 0, grounded: true });
+  for (const b of chips.children) b.classList.toggle('on', +b.dataset.i === i);
+  document.getElementById('capE').innerHTML = `<b>${spec.name}</b> — ` + (i === 2
+    ? 'the pitch deck scene: the green cylinder, and the blue wall.'
+    : i === 1 ? 'one green cylinder.' : 'a bare floor.');
+  document.getElementById('capM').innerHTML = `<b>${spec.name}</b> — ` + (i === 2
+    ? 'the cylinder is a band; the wall is the region between its endpoints’ sections.'
+    : i === 1 ? 'the cylinder is a band.' : 'a bare strip.');
+}
+
+// ------------------------------------------------------------ physics
+function stepPlayer(P, solids, inArena, ctl, dt) {
+  const blocked = (u, v) => !inArena(u, v, PR) ||
+    solids.some(s => s.overlap(u, v, PR) && s.top() > P.z + STEP && s.base() < P.z + PH);
+  let du = (ctl.right - ctl.left) * SPEED * dt, dv = (ctl.up - ctl.down) * SPEED * dt;
+  if (du && dv) { du *= Math.SQRT1_2; dv *= Math.SQRT1_2; }
+  if (du && !blocked(P.u + du, P.v)) P.u += du;
+  if (dv && !blocked(P.u, P.v + dv)) P.v += dv;
+  if (ctl.jump && P.grounded) { P.vz = JUMP_V; P.grounded = false; }
+  P.vz -= G * dt;
+  let support = 0;
+  for (const s of solids) {
+    if (s.overlap(P.u, P.v, PR * 0.8) && s.top() <= P.z + STEP && s.base() < P.z + PH) {
+      support = Math.max(support, s.top());
+    }
+  }
+  const zn = P.z + P.vz * dt;
+  if (P.vz <= 0 && zn <= support) { P.z = support; P.vz = 0; P.grounded = true; }
+  else { P.z = zn; P.grounded = false; }
+}
+
+// ------------------------------------------------------------ input & chips
+const chips = document.getElementById('chips');
+LEVELS.forEach((spec, i) => {
+  const b = document.createElement('button');
+  b.textContent = spec.name; b.dataset.i = i;
+  b.onclick = () => loadLevel(i);
+  chips.appendChild(b);
+});
+const keys = {};
+addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.code)) e.preventDefault();
+  if (e.code === 'KeyR') loadLevel(currentIndex);
+  if (e.code === 'Digit1') loadLevel(0);
+  if (e.code === 'Digit2') loadLevel(1);
+  if (e.code === 'Digit3') loadLevel(2);
+});
+addEventListener('keyup', e => { keys[e.code] = false; });
+const ctlE = () => ({ left: keys.KeyA ? 1 : 0, right: keys.KeyD ? 1 : 0, up: keys.KeyW ? 1 : 0, down: keys.KeyS ? 1 : 0, jump: !!keys.Space });
+const ctlM = () => ({ left: keys.ArrowLeft ? 1 : 0, right: keys.ArrowRight ? 1 : 0, up: keys.ArrowUp ? 1 : 0, down: keys.ArrowDown ? 1 : 0, jump: !!keys.Enter });
+
+// ------------------------------------------------------------ frame
+window.levels = {
+  euclid, mobius, sigma, S, LEVELS, loadLevel,
+  get solidsE() { return solidsE; }, get solidsM() { return solidsM; },
+  step: (who, ctl, dt) => who === 'E' ? stepPlayer(euclid, solidsE, inArenaE, ctl, dt) : stepPlayer(mobius, solidsM, inArenaM, ctl, dt),
+};
+loadLevel(0);
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(1 / 30, (now - last) / 1000); last = now;
+  stepPlayer(euclid, solidsE, inArenaE, ctlE(), dt);
+  stepPlayer(mobius, solidsM, inArenaM, ctlM(), dt);
+  if (mobius.u / S >= TAU) mobius.u -= TAU * S;   // theta + 2pi is the same point
+  if (mobius.u / S < 0) mobius.u += TAU * S;      // keep him within [0, 2pi) x 3 tiles
+
+  const th = mobius.u / S, r = mobius.v;
+  eMesh.m.position.copy(E2W(euclid.u, euclid.v, euclid.z + PH / 2)); eMesh.sh.position.copy(E2W(euclid.u, euclid.v, 0.015));
+  bar.position.copy(E2W(r * Math.cos(th), r * Math.sin(th), mobius.z + PH / 2)); bar.rotation.y = th + PI / 2;
+  mMeshes.forEach((pm, i) => {
+    const k = i - 3, tk = th + k * PI, vis = tk > TH_MIN && tk < TH_MAX;
+    pm.m.visible = pm.sh.visible = vis; if (!vis) return;
+    pm.m.position.copy(M2W(tk, parity(k) * r, mobius.z + PH / 2)); pm.sh.position.copy(M2W(tk, parity(k) * r, 0.015));
+  });
+  tube.set(x => sigma(euclid.u, euclid.v, x) - W, x => sigma(euclid.u, euclid.v, x) + W, euclid.z, PH);
+
+  const Wd = renderer.domElement.clientWidth, Hd = renderer.domElement.clientHeight;
+  const wE = Math.round(Math.min(Wd * 0.42, Hd * 1.05)), wM = Wd - wE;
+  document.getElementById('divider').style.left = wE + 'px';
+  document.getElementById('hudE').style.width = wE + 'px'; document.getElementById('hudM').style.width = wM + 'px';
+  camE.aspect = wE / Hd; camE.updateProjectionMatrix();
+  camM.aspect = wM / Hd; camM.updateProjectionMatrix();
+  camE.position.set(0, 12.5, 4.2); camE.lookAt(0, 0, 0);
+  const m = M2W(th, 0, 0); camM.position.set(m.x, 13.5, 3.6); camM.lookAt(m.x, 0, 0);
+  renderer.setViewport(0, 0, wE, Hd); renderer.setScissor(0, 0, wE, Hd); renderer.render(scene, camE);
+  renderer.setViewport(wE, 0, wM, Hd); renderer.setScissor(wE, 0, wM, Hd); renderer.render(scene, camM);
+  requestAnimationFrame(frame);
+}
+function resize() { renderer.setSize(window.innerWidth, window.innerHeight, false); }
+addEventListener('resize', resize); resize();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
