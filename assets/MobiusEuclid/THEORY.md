@@ -9,6 +9,12 @@ possible. Every instant of motion is a choice of Lie group element; the
 calorie cost is the size of that element. Euclid's state is a coset `gH` with
 `H` the point stabiliser, Möbius's is `gK` with `K` the line stabiliser.
 
+**See also** `foraging-experiment-design-notes.md` in this folder — earlier
+working notes on the AI-side experiment, archived verbatim. §13 below
+reconciles the two documents; the reconciliation turned up three findings that
+matter for that experiment, and §10 here is superseded by the notes wherever
+they conflict.
+
 The short version of what follows: that framing does not merely permit a game,
 it **dictates** one, and it dictates a surprising one. Euclid's cost falls out
 canonically. Möbius's provably *cannot* — the symmetry group forbids him a
@@ -364,3 +370,202 @@ Neue Raumproblem paper describes, and it doubles as the fitness harness.
 4. **Wrap-around.** Möbius's shortest route may cross the seam `(θ+π, −r)`.
    Legible in play, or confusing? The existing games suggest the seam is the
    single hardest thing to teach.
+
+---
+
+# 13. Reconciliation with the foraging-experiment notes
+
+The archived notes and §§1–8 above were written independently and reach the
+same setup: `G = E(2)`, the two stabilisers, both quotients 2-dimensional, and
+— most tellingly — the same central lemma. The notes' §4.1 ("motions in
+`𝔥_self` cost calories and change nothing; training prunes them, handing each
+creature the tangent space of its own `G/H` for free") is the *learned* version
+of the quotient norm in §§3–4 here. Two routes, one result. I agree it deserves
+its own sentence in the paper.
+
+Three findings from putting them side by side, then the answer to the blocking
+open item.
+
+## 13.1 The navel theorem
+
+The notes' §3 settles on world frame + left multiplication, on the sound
+argument that right multiplication does not descend to `G/H` and that
+"depends on the representative is precisely what a navel is". The argument is
+correct **about the action**. But the *cost* need not share the action's frame,
+and separating them sharpens the result.
+
+Take the action to be left multiplication as the notes require, and cost the
+motion in the body frame: `cost(gH, ξ) = ‖Ad_{g⁻¹} ξ‖`. Under `g → gh` this
+becomes `‖Ad_{h⁻¹} Ad_{g⁻¹} ξ‖`, so it is well-defined on the coset — no navel
+— **iff the norm is `Ad(H)`-invariant**. Hence:
+
+> **A cost that is both navel-free and homogeneous exists iff the isotropy
+> representation of `H` on `𝔤/𝔥` has compact closure.**
+> `H_P ≅ O(2)`: yes, and the cost is then the Euclidean metric, uniquely up to
+> scale. `H_L`: no — the isotropy action is the unbounded shear
+> `(v₂, ω) ↦ (v₂ − sω, ω)`, which preserves no norm (§4).
+
+So Möbius must give up one or the other. Design A gives up homogeneity: the
+shared external origin of §2.3. Design B gives up navel-freedom. **The notes'
+§3.3 "no navel" is correct but the arbitrariness was relocated, not removed** —
+§12's item 3 half-sees this ("gauge, not navel, but still a choice"). It is
+stronger than a choice: for a line-stabilised creature it is *forced*.
+
+A consequence for Design B (§9.3), which describes its navel as "unobservable
+gauge — it never touches the reward". For Euclid that is true. **For Möbius it
+is false**: the cost `‖ξ‖` of a body-frame move depends on which representative
+he carries, so two Möbiuses in the same physical state with different navels get
+different calorie bills for physically identical moves. The navel is
+reward-bearing, hence not gauge. Design B needs repair before it can be the
+fallback.
+
+## 13.2 Design A hands Möbius exactly the right metric
+
+Compute what the notes' world-frame rule actually gives Möbius. For
+`ξ = (v, ω)` acting on the line `x·n(θ) = r`, carrying the foot point
+`r n(θ)` along and re-reading off the rotated normal, the cross terms drop
+(`Jn · n = 0`) and
+
+```
+δr = v · n(θ),      δθ = ω
+```
+
+Minimising `|v|² + λ²ω²` subject to `v·n = δr` gives `v ∥ n`, so
+
+```
+ds²_M = dr² + λ² dθ²
+```
+
+which is precisely the **foot-point gauge of §5(a)** — flat, rotation-invariant,
+area form equal to the invariant kinematic measure. The notes' shared external
+origin and my "closest approach to the centre" are the same gauge. Independent
+convergence on the one genuinely arbitrary choice in the design, which is about
+as much reassurance as this kind of thing ever offers.
+
+## 13.3 Design A hands *Euclid* a cigar, not a plane — and this one bites
+
+The notes' §4.2 correctly derives that the useless subspace is `Ad_g 𝔥_self`
+and rotates with position. What follows if you push that one step further, into
+the induced cost, is not benign.
+
+Euclid at `p` wanting point-velocity `u` must pick `(v, ω)` with
+`v + ωJp = u`. Minimising `|v|² + λ²ω²`:
+
+```
+cost² = |u|² − (u · Jp)² / (|p|² + λ²)
+```
+
+Radial motion costs full price; **tangential motion costs
+`|u|·λ/√(|p|²+λ²)`**, which decays like `1/|p|`. In polar coordinates the
+induced metric is
+
+```
+ds²_E = dρ² + λ²ρ²/(ρ² + λ²) dφ²
+```
+
+The circle of radius `ρ` has circumference `2πλρ/√(ρ²+λ²) → 2πλ`. Euclid's
+effort-geometry under Design A is not the plane: it is a **surface of
+revolution asymptotic to a cylinder of radius λ** — a cigar. Orbiting the gauge
+origin at large radius is nearly free.
+
+Why this is more than an aesthetic complaint: the whole Part 2 discriminator
+(§11 of the notes) is *Möbius has a `ℤ₂` loop, Euclid is contractible*. A cigar
+has a cylinder end, and a finite sample from a cylinder end is exactly what
+persistent homology reports as spurious `H₁`. **The Design A cost can
+manufacture, in Euclid's representation, the topological signature the
+experiment uses to identify Möbius.** That is the wrong confound to be carrying
+into the one measurement that matters.
+
+It also creates a parameter conflict. Euclid's geometry is flat only for
+`λ ≫ R` (arena radius), while the fairness calibration of §6 wants
+`λ ∈ [R/2, R]`, and Möbius's turning becomes prohibitive as `λ` grows. Three
+constraints, one knob.
+
+**Recommended repair, which preserves the §7.1 hard constraint.** State the
+cost rule once, identically for both creatures:
+
+> Cost of a motion = `inf { ‖Ad_{g⁻¹} ξ‖ : ξ realises the motion }`.
+
+For Euclid this is well-defined and yields exactly `ℝ²`. For Möbius it is
+*ill-defined* — and he falls back to the world-frame form, which by §13.2 is
+the flat strip. The rule is identical; `H_self` alone decides whether it
+succeeds. That is not a violation of §7.1 but an instance of it, and a rather
+pointed one: **the difference in the two creatures' cost structures is itself a
+consequence of the stabiliser**, which is the hypothesis under test.
+
+If that is too clever, the cheap mitigations are: keep episodes inside
+`ρ ≲ λ`, and centre constellations on the gauge origin.
+
+## 13.4 §10.1 (visiting predicates — "blocks running") is answerable
+
+The blocker is the `(L, L)` case: crossing lines always touch, parallel lines
+never do. §7 above dissolves it — **make every object a point.** Then:
+
+| self / object | predicate |
+|---|---|
+| point / point | distance `< ε` |
+| point / line | perpendicular distance `< ε` — incidence |
+| line / point | perpendicular distance `< ε` — incidence |
+| line / line | *does not arise* |
+
+One relation, incidence, scored two ways, no per-pairing stipulation. Three
+further consequences, all in the experiment's favour:
+
+1. **§8.3's line–line problem disappears entirely.** No parallel locus, so no
+   information created in the limit, so no surrogate-gradient pathology and no
+   need for the ES fallback on that channel.
+2. **It is the information-matched control §5.3 asks for.** A point-object
+   gives Euclid one unsigned scalar per timestep; it gives Möbius one unsigned
+   scalar per timestep. Same rank, same sign-blindness, same fold structure.
+   The "thin perception masquerading as failed map-formation" confound is
+   closed by construction rather than by a post-hoc control.
+3. Scene underdetermination survives (§6): ranges without bearings, so memory
+   is still forced and the map still has nowhere to hide but the recurrent
+   state.
+
+The cost is that Möbius no longer perceives lines, so his triangulation must
+run entirely on unsigned point-distances over a trajectory. I believe that is
+sufficient, but it is worth checking numerically before committing —
+identifiability of a constellation from unsigned Radon-type readings along a
+path is a concrete, small question, and it should be settled before the
+architecture work.
+
+I would also **bound the arena as a disk** (§6): lines meeting a disk of radius
+`R` are exactly `|r| ≤ R`, a compact Möbius band, so one bound bounds both
+worlds. Episode generation (§10.5) needs a bound anyway.
+
+## 13.5 The paper's hedge is asymmetric, and that is a result
+
+§10.7 proposes varying the norm and the visiting predicate to see whether the
+learned topology tracks the stabiliser or the cost structure, and calls it
+possibly the most valuable output. Agreed — with one reframing that I think
+strengthens the paper's footnote rather than merely defending it.
+
+The hedge concedes that the cost norm is constitution-laden, "not read off the
+bare geometry". §13.1 says this is **true of Möbius by necessity and of Euclid
+only by choice**: a point-stabilised creature *can* read its metric off the
+geometry (uniquely, up to scale), and a line-stabilised creature *provably
+cannot*. So the degree to which constitution must supply the metric is itself
+determined by the stabiliser.
+
+That converts the hedge from a limitation into a prediction of the
+self-quotient hypothesis. It also sets the ablation's expected shape: Euclid's
+learned topology should be **robust** across the norm sweep, Möbius's should be
+**more sensitive** to it. A flat, symmetric robustness result would actually be
+the surprising one.
+
+## 13.6 What each document does not cover
+
+The notes are about agents that receive no coordinates — only invariant
+self–object standings — which is the right regime for the representation-probing
+claim. §§7–9 here are about *humans*, who see their own world fully and whose
+interest is that they disagree with each other about cost. Different regimes,
+both legitimate; they share the world, the incidence rule, and the cost model,
+which is what §11's shared headless core is for.
+
+The one mechanic here with no counterpart in the notes is the co-op scoring of
+§7 — shared flags, shared calorie budget, Euclid profiting from clusters and
+Möbius from collinearity. It is not needed for the experiment. But it is worth
+noting that it is the same fact the experiment is probing, in a form a
+first-year can feel in thirty seconds, which makes it the demo that motivates
+the paper's figure.

@@ -79,7 +79,13 @@ travelling-salesman demo (the Neue Raumproblem experiment). Works out both
 players' calorie costs as quotient norms on `𝔢(2)`, proves that Möbius's world
 admits no invariant metric and picks the gauge that repairs it, shows the disk
 arena is self-dual, and derives the core mechanic — Euclid profits from flags
-that cluster, Möbius from flags that line up. Written before building.
+that cluster, Möbius from flags that line up. Written before building. Its
+§13 reconciles the whole thing with the foraging notes below.
+
+`foraging-experiment-design-notes.md` — earlier working notes (archived
+verbatim) on the AI-side self-quotient foraging experiment: observation space,
+architecture, training, the constitution-laden ledger, and the interpretability
+plan. Authoritative on the agent side wherever it and `THEORY.md` overlap.
 
 ## Milestones
 
