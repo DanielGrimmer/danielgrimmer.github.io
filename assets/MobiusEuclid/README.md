@@ -72,6 +72,15 @@ wifi. Known loose end: `floors.html` sets the strip scale `S = 3.4` while
 ("same world parameters as the game", 885-wide Möbius export) was written
 for 2.2.
 
+## Theory notes
+
+`THEORY.md` — the Kleinian derivation of the game mechanics for the 2D
+travelling-salesman demo (the Neue Raumproblem experiment). Works out both
+players' calorie costs as quotient norms on `𝔢(2)`, proves that Möbius's world
+admits no invariant metric and picks the gauge that repairs it, shows the disk
+arena is self-dual, and derives the core mechanic — Euclid profits from flags
+that cluster, Möbius from flags that line up. Written before building.
+
 ## Milestones
 
 0. **~Three weeks out: the game-club pitch** (that was last year's timing).
