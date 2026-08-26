@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  PARALLAX — Foraging (the travelling-salesman demo)
+
+  Two 2D scenes side by side. Euclid walks the disk; Mobius walks the space of
+  lines meeting that disk (a Mobius band). Both are rendered live in BOTH
+  views: each is a point in his own world and a curve in the other's.
+
+  The theory this implements is in THEORY.md, in this folder. The three
+  decisions it fixes:
+
+    - Arena is a DISK of radius R. Lines meeting it are exactly |r| <= R, a
+      compact Mobius band, so one bound bounds both worlds. Self-dual.
+    - Mobius's metric needs a CONNECTION (there is no E(2)-invariant one).
+      Showing him a (theta, r) rectangle *is* choosing one; we take the arena
+      centre, which gives the flat metric ds^2 = dr^2 + LAM^2 dtheta^2.
+    - VISITING IS INCIDENCE, and incidence is the double-coset orbit with
+      maximal stabiliser. That is frame-neutral -- no chart, no metric -- and
+      it yields all four predicates below without stipulation.
+
+  Flags come in both kinds, and the dictionary is dual:
+
+      flag      in Euclid's world     in Mobius's world
+      point p   a point               the section r = p.n(theta)
+      line  L   a line                a point
+
+  So each creature sees flags of his own kind as points and the other's as
+  curves. Claiming collects EVERYTHING you are currently incident with, which
+  is what makes concurrence free: stand where five line-flags meet and take
+  all five; align with five collinear point-flags and take all five.
+
+  Controls: Euclid W A S D + Space to claim. Mobius arrows + Enter to claim.
+  R resets, 1-4 pick a constellation.
+
+  No offsite requests; system fonts only.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax Foraging</title>
+<style>
+  :root {
+    --bg:      #08080b;
+    --panel:   #0d0d12;
+    --ink:     #efe6d8;
+    --dim:     #6d6a63;
+    --rule:    #23222a;
+    --euclid:  #e8c9a0;
+    --mobius:  #d3808c;
+    --pointfl: #46c96b;
+    --linefl:  #4f86e8;
+    --gone:    #34333c;
+    --gold:    #f0c246;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+    font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+  }
+  #app { display: flex; flex-direction: column; height: 100%; }
+
+  header {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 8px 14px; border-bottom: 1px solid var(--rule);
+  }
+  header h1 {
+    font-size: 13px; letter-spacing: .22em; text-transform: uppercase;
+    margin: 0; color: var(--gold); font-weight: 600;
+  }
+  .chips { display: flex; gap: 6px; }
+  button {
+    font: inherit; font-size: 12px; color: var(--ink); background: transparent;
+    border: 1px solid var(--rule); border-radius: 4px; padding: 3px 9px;
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--dim); }
+  button[aria-pressed="true"] {
+    background: var(--gold); border-color: var(--gold); color: #17140a;
+    font-weight: 600;
+  }
+  .spacer { flex: 1 1 auto; }
+  .readout { display: flex; gap: 16px; font-variant-numeric: tabular-nums; font-size: 12px; }
+  .readout b { font-weight: 600; }
+  .readout .k { color: var(--dim); }
+
+  #panels { flex: 1 1 auto; display: flex; min-height: 0; }
+  .panel { position: relative; flex: 1 1 50%; min-width: 0; }
+  .panel + .panel { border-left: 1px solid var(--rule); }
+  canvas { display: block; width: 100%; height: 100%; }
+  .tag {
+    position: absolute; top: 10px; left: 14px; pointer-events: none;
+    font-size: 12px; letter-spacing: .22em; text-transform: uppercase; font-weight: 600;
+  }
+  .tag small {
+    display: block; letter-spacing: .04em; text-transform: none;
+    font-weight: 400; color: var(--dim); margin-top: 2px;
+  }
+  .tag.right { left: auto; right: 14px; text-align: right; }
+  .note {
+    position: absolute; bottom: 10px; left: 14px; right: 14px;
+    font-size: 12px; color: var(--dim); pointer-events: none;
+  }
+  .note.right { text-align: right; }
+  .note em { color: var(--gold); font-style: normal; }
+
+  #banner {
+    position: absolute; inset: auto 0 44%; text-align: center;
+    pointer-events: none; opacity: 0; transition: opacity .25s;
+  }
+  #banner.on { opacity: 1; }
+  #banner span {
+    display: inline-block; background: rgba(8,8,11,.86); border: 1px solid var(--gold);
+    color: var(--gold); border-radius: 5px; padding: 9px 18px; font-size: 14px;
+  }
+</style>
+
+<div id="app">
+  <header>
+    <h1>Foraging</h1>
+    <div class="chips" id="levelChips"></div>
+    <div class="chips">
+      <button id="modeBtn" title="Co-op: one shared set of flags, one score. Solo: each player gets their own copy.">Co-op</button>
+      <button id="resetBtn" title="Restart this constellation (R)">Reset</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="readout" id="readout"></div>
+  </header>
+
+  <div id="panels">
+    <div class="panel">
+      <canvas id="cvE"></canvas>
+      <div class="tag">Euclid<small>W A S D &middot; Space claims</small></div>
+      <div class="note" id="noteE"></div>
+    </div>
+    <div class="panel">
+      <canvas id="cvM"></canvas>
+      <div class="tag right">M&ouml;bius<small>Arrows &middot; Enter claims</small></div>
+      <div class="note right" id="noteM"></div>
+    </div>
+    <div id="banner"><span></span></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+
+/* ---------------------------------------------------------------------------
+   World constants.  See THEORY.md sections 5 and 6.
+--------------------------------------------------------------------------- */
+
+const R    = 1;            // arena radius; the band is |r| <= R
+const LAM  = R / 2;        // lambda: cost of turning vs. offset. Area-matched.
+const SPD  = 0.85;         // metric units per second, the same for both players
+
+// Incidence tolerances.  Each is an E(2)-invariant quantity (see header).
+const EPS_PP = 0.055;      // point-point: distance
+const EPS_PL = 0.045;      // point-line: perpendicular distance (both directions)
+const EPS_LL = 0.075;      // line-line: Hausdorff gap of the chords, |dr| + R|dth|
+
+const cos = Math.cos, sin = Math.sin, hypot = Math.hypot, PI = Math.PI;
+
+/* ---------------------------------------------------------------------------
+   The four incidence predicates.
+
+   Incidence is the double-coset orbit with maximal stabiliser, which is why
+   these are exactly coincidence / lying-on / lying-on / coincidence, and why
+   the middle two are literally the same formula: the point-line invariant is
+   the perpendicular distance, and neither player owns it.
+--------------------------------------------------------------------------- */
+
+// perpendicular distance between the point (x,y) and the line (th, r)
+function perp(x, y, th, r) { return Math.abs(x * cos(th) + y * sin(th) - r); }
+
+// gap between two lines, measured as the Hausdorff distance of their chords
+// inside the arena, and seam-aware: (th + PI, -r) is the same line.
+function lineGap(th1, r1, th2, r2) {
+  let best = Infinity;
+  for (let k = -1; k <= 1; k++) {
+    const th = th2 + k * PI;
+    const r  = (k % 2 === 0) ? r2 : -r2;
+    const g  = Math.abs(r1 - r) + R * Math.abs(th1 - th);
+    if (g < best) best = g;
+  }
+  return best;
+}
+
+// Is `who` ('E' or 'M') incident with flag f, given the two players' states?
+function incident(who, f, e, m) {
+  if (who === 'E') {
+    return f.kind === 'point'
+      ? hypot(e.x - f.x, e.y - f.y) < EPS_PP        // coincidence
+      : perp(e.x, e.y, f.th, f.r) < EPS_PL;         // Euclid lies on the line
+  }
+  return f.kind === 'point'
+    ? perp(f.x, f.y, m.th, m.r) < EPS_PL            // Mobius's line passes through
+    : lineGap(m.th, m.r, f.th, f.r) < EPS_LL;       // coincidence in the band
+}
+
+/* ---------------------------------------------------------------------------
+   Constellations.  Each one is built to make a single fact undeniable.
+--------------------------------------------------------------------------- */
+
+// helper: the line through two points, as (th, r)
+function through(p, q) {
+  const th = Math.atan2(q.x - p.x, -(q.y - p.y));   // normal direction
+  const r  = p.x * cos(th) + p.y * sin(th);
+  return norm({ th, r });
+}
+// canonical form: th in [0, PI)
+function norm(L) {
+  let { th, r } = L;
+  while (th >= PI) { th -= PI; r = -r; }
+  while (th < 0)   { th += PI; r = -r; }
+  return { th, r };
+}
+function P(x, y) { return { kind: 'point', x, y }; }
+function L(th, r) { const n = norm({ th, r }); return { kind: 'line', th: n.th, r: n.r }; }
+
+// five points on a common line, spread right across the arena
+function collinear(x0, y0, x1, y1, n) {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const t = n === 1 ? 0 : i / (n - 1);
+    out.push(P(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t));
+  }
+  return out;
+}
+// n lines through a common point, evenly spread in direction
+function pencil(x, y, n, off) {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const th = off + (i * PI) / n;
+    out.push(L(th, x * cos(th) + y * sin(th)));
+  }
+  return out;
+}
+
+const LEVELS = [
+  {
+    name: 'Scatter',
+    hintE: 'Four points to stand on, three lines to step onto.',
+    hintM: 'Three points to become, four sections to cross.',
+    flags: [
+      P(0.42, 0.30), P(-0.55, 0.18), P(0.05, -0.62), P(-0.28, -0.20),
+      L(0.30, 0.42), L(1.35, -0.25), L(2.45, 0.10)
+    ],
+    e: { x: 0.0, y: 0.55 }, m: { th: 1.9, r: -0.55 }
+  },
+  {
+    name: 'The straight line',
+    hintE: 'Those five are a long walk for you. They are one stop for M&ouml;bius.',
+    hintM: 'Five of these sections meet at a single point. Go and stand on it.',
+    flags: [
+      ...collinear(-0.80, -0.46, 0.80, 0.46, 5),
+      P(-0.15, 0.72), P(0.62, -0.55),
+      L(0.85, 0.55)
+    ],
+    e: { x: 0.05, y: 0.80 }, m: { th: 2.6, r: 0.62 }
+  },
+  {
+    name: 'The pencil',
+    hintE: 'Six lines through one point. Stand there and take them all at once.',
+    hintM: 'Six of these are scattered across your band. They cost Euclid one stop.',
+    flags: [
+      ...pencil(-0.18, 0.22, 6, 0.18),
+      P(0.66, -0.40), P(-0.70, -0.42), P(0.20, 0.74)
+    ],
+    e: { x: 0.55, y: 0.60 }, m: { th: 0.4, r: -0.70 }
+  },
+  {
+    name: 'Both at once',
+    hintE: 'One family is free for you. The other is free for M&ouml;bius. Split them.',
+    hintM: 'One family is free for you. The other is free for Euclid. Split them.',
+    flags: [
+      ...collinear(-0.86, 0.30, 0.72, -0.52, 5),
+      ...pencil(0.30, 0.52, 5, 0.35),
+      P(-0.62, -0.62), L(1.10, -0.78)
+    ],
+    e: { x: -0.10, y: 0.86 }, m: { th: 1.55, r: -0.85 }
+  }
+];
+
+/* ---------------------------------------------------------------------------
+   State
+--------------------------------------------------------------------------- */
+
+const S = {
+  level: 0,
+  coop: true,
+  flags: [],
+  e: { x: 0, y: 0 },
+  m: { th: 0, r: 0 },
+  calE: 0, calM: 0,
+  par: 0,
+  cleared: false
+};
+
+function loadLevel(i) {
+  S.level = i;
+  const lv = LEVELS[i];
+  S.flags = lv.flags.map(f => ({ ...f, gotE: false, gotM: false, flash: 0 }));
+  S.e = { ...lv.e };
+  S.m = { ...lv.m };
+  S.calE = 0; S.calM = 0;
+  S.cleared = false;
+  S.par = greedyPar();
+  banner('');
+  paintChips();
+}
+
+// A flag is "done" (gone from the shared board) in co-op as soon as either
+// player has it.  In solo each player has their own copy.
+function doneFor(who, f) {
+  if (S.coop) return f.gotE || f.gotM;
+  return who === 'E' ? f.gotE : f.gotM;
+}
+function remaining(who) { return S.flags.filter(f => !doneFor(who, f)).length; }
+function allCleared() {
+  return S.coop
+    ? S.flags.every(f => f.gotE || f.gotM)
+    : S.flags.every(f => f.gotE) && S.flags.every(f => f.gotM);
+}
+
+/* ---------------------------------------------------------------------------
+   Motion.  Euclid pays |dx|; Mobius pays sqrt(dr^2 + LAM^2 dth^2).
+   No Ad-twisting appears here: the connection has already absorbed it.
+--------------------------------------------------------------------------- */
+
+const keys = Object.create(null);
+
+function stepEuclid(dt) {
+  let vx = (keys['d'] ? 1 : 0) - (keys['a'] ? 1 : 0);
+  let vy = (keys['w'] ? 1 : 0) - (keys['s'] ? 1 : 0);
+  if (!vx && !vy) return;
+  const n = hypot(vx, vy); vx /= n; vy /= n;
+  let nx = S.e.x + vx * SPD * dt;
+  let ny = S.e.y + vy * SPD * dt;
+  const d = hypot(nx, ny);
+  if (d > R) { nx = nx * R / d; ny = ny * R / d; }   // stay in the disk
+  S.calE += hypot(nx - S.e.x, ny - S.e.y);
+  S.e.x = nx; S.e.y = ny;
+}
+
+function stepMobius(dt) {
+  let dth = (keys['arrowright'] ? 1 : 0) - (keys['arrowleft'] ? 1 : 0);
+  let dr  = (keys['arrowup'] ? 1 : 0) - (keys['arrowdown'] ? 1 : 0);
+  if (!dth && !dr) return;
+  // normalise in HIS metric, so both players cost the same per second
+  const n = hypot(LAM * dth, dr);
+  const s = SPD * dt / n;
+  let nth = S.m.th + dth * s;
+  let nr  = S.m.r  + dr  * s;
+  if (nr >  R) nr =  R;                              // his line must meet the disk
+  if (nr < -R) nr = -R;
+  S.calM += hypot(nr - S.m.r, LAM * (nth - S.m.th));
+  S.m.th = nth; S.m.r = nr;
+  // the seam: (theta + PI, -r) is the same line
+  while (S.m.th >= PI) { S.m.th -= PI; S.m.r = -S.m.r; }
+  while (S.m.th <  0)  { S.m.th += PI; S.m.r = -S.m.r; }
+}
+
+/* ---------------------------------------------------------------------------
+   Claiming.  One press takes EVERYTHING you are incident with -- which is
+   what makes a concurrent family free.
+--------------------------------------------------------------------------- */
+
+function claim(who) {
+  if (S.cleared) return;
+  let n = 0;
+  for (const f of S.flags) {
+    if (doneFor(who, f)) continue;
+    if (!incident(who, f, S.e, S.m)) continue;
+    if (who === 'E') f.gotE = true; else f.gotM = true;
+    f.flash = 1; n++;
+  }
+  if (n > 1) banner(n + ' at once');
+  if (n && allCleared()) {
+    S.cleared = true;
+    const tot = (S.calE + S.calM);
+    banner('Cleared in ' + tot.toFixed(2) + ' calories · greedy par ' + S.par.toFixed(2));
+  }
+  return n;
+}
+
+let bannerT = 0;
+const bannerEl = document.getElementById('banner');
+function banner(msg) {
+  bannerEl.querySelector('span').textContent = msg;
+  bannerEl.classList.toggle('on', !!msg);
+  bannerT = msg ? 2.2 : 0;
+}
+
+/* ---------------------------------------------------------------------------
+   A greedy co-op baseline, for a "par" figure.  Honest label: greedy, not
+   optimal.  Repeatedly send whichever player can reach an uncollected flag
+   most cheaply, then collect everything free at the new configuration.
+--------------------------------------------------------------------------- */
+
+// cheapest cost for Euclid to become incident with f, and where that puts him
+function reachE(e, f) {
+  if (f.kind === 'point') return { cost: hypot(e.x - f.x, e.y - f.y), to: { x: f.x, y: f.y } };
+  const s = e.x * cos(f.th) + e.y * sin(f.th) - f.r;   // signed perpendicular
+  return { cost: Math.abs(s), to: { x: e.x - s * cos(f.th), y: e.y - s * sin(f.th) } };
+}
+// cheapest cost for Mobius, in his metric, seam-aware
+function reachM(m, f) {
+  if (f.kind === 'line') {
+    let best = { cost: Infinity, to: null };
+    for (let k = -1; k <= 1; k++) {
+      const th = f.th + k * PI, r = (k % 2 === 0) ? f.r : -f.r;
+      const c = hypot(r - m.r, LAM * (th - m.th));
+      if (c < best.cost) best = { cost: c, to: { th, r } };
+    }
+    return best;
+  }
+  // a point-flag is the section r = f.x cos th + f.y sin th; sample it
+  let best = { cost: Infinity, to: null };
+  for (let i = -180; i <= 180; i++) {
+    const th = m.th + (i / 180) * PI;
+    const r  = f.x * cos(th) + f.y * sin(th);
+    if (Math.abs(r) > R) continue;
+    const c = hypot(r - m.r, LAM * (th - m.th));
+    if (c < best.cost) best = { cost: c, to: { th, r } };
+  }
+  return best;
+}
+
+function greedyPar() {
+  const flags = S.flags.map(f => ({ ...f, done: false }));
+  const e = { ...LEVELS[S.level].e };
+  const m = { ...LEVELS[S.level].m };
+  let total = 0, guard = 0;
+
+  const sweep = () => {
+    for (const f of flags) {
+      if (f.done) continue;
+      if (incident('E', f, e, m) || incident('M', f, e, m)) f.done = true;
+    }
+  };
+  sweep();
+
+  while (flags.some(f => !f.done) && guard++ < 200) {
+    let pick = null;
+    for (const f of flags) {
+      if (f.done) continue;
+      const a = reachE(e, f), b = reachM(m, f);
+      if (!pick || a.cost < pick.cost) pick = { cost: a.cost, who: 'E', to: a.to };
+      if (b.to && b.cost < pick.cost)  pick = { cost: b.cost, who: 'M', to: b.to };
+    }
+    if (!pick) break;
+    total += pick.cost;
+    if (pick.who === 'E') { e.x = pick.to.x; e.y = pick.to.y; }
+    else { m.th = pick.to.th; m.r = pick.to.r; }
+    sweep();
+  }
+  return total;
+}
+
+/* ---------------------------------------------------------------------------
+   Rendering
+--------------------------------------------------------------------------- */
+
+const cvE = document.getElementById('cvE'), ctxE = cvE.getContext('2d');
+const cvM = document.getElementById('cvM'), ctxM = cvM.getContext('2d');
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue('--' + k).trim();
+
+let sizeE = { w: 0, h: 0 }, sizeM = { w: 0, h: 0 };
+function fit() {
+  for (const [cv, size] of [[cvE, sizeE], [cvM, sizeM]]) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = cv.clientWidth, h = cv.clientHeight;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    cv.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+    size.w = w; size.h = h;
+  }
+}
+
+// --- Euclid's panel: world (x, y) -> screen -------------------------------
+function eMap() {
+  const { w, h } = sizeE;
+  const s = Math.min(w, h) * 0.40 / R;
+  return { x: v => w / 2 + v * s, y: v => h / 2 - v * s, s };
+}
+// clip a line (th, r) to the disk, returning its chord endpoints
+function chord(th, r) {
+  if (Math.abs(r) >= R) return null;
+  const half = Math.sqrt(R * R - r * r);
+  const nx = cos(th), ny = sin(th);
+  const dx = -ny, dy = nx;
+  return [
+    { x: r * nx - half * dx, y: r * ny - half * dy },
+    { x: r * nx + half * dx, y: r * ny + half * dy }
+  ];
+}
+
+function drawEuclidPanel() {
+  const g = ctxE, { w, h } = sizeE, M = eMap();
+  g.clearRect(0, 0, w, h);
+
+  // the arena
+  g.strokeStyle = C('rule'); g.lineWidth = 1;
+  g.beginPath(); g.arc(M.x(0), M.y(0), M.s * R, 0, 2 * PI); g.stroke();
+
+  // line-flags: chords
+  for (const f of S.flags) {
+    if (f.kind !== 'line') continue;
+    const c = chord(f.th, f.r); if (!c) continue;
+    const done = doneFor('E', f);
+    g.strokeStyle = done ? C('gone') : C('linefl');
+    g.lineWidth = done ? 1 : (f.flash > 0 ? 4 : 2.2);
+    g.beginPath(); g.moveTo(M.x(c[0].x), M.y(c[0].y)); g.lineTo(M.x(c[1].x), M.y(c[1].y)); g.stroke();
+  }
+
+  // point-flags
+  for (const f of S.flags) {
+    if (f.kind !== 'point') continue;
+    const done = doneFor('E', f);
+    g.fillStyle = done ? C('gone') : C('pointfl');
+    g.beginPath(); g.arc(M.x(f.x), M.y(f.y), done ? 3 : (f.flash > 0 ? 8 : 5.5), 0, 2 * PI); g.fill();
+  }
+
+  // Mobius, seen here as a line sweeping the plane
+  const mc = chord(S.m.th, S.m.r);
+  if (mc) {
+    g.strokeStyle = C('mobius'); g.lineWidth = 2.6;
+    g.beginPath(); g.moveTo(M.x(mc[0].x), M.y(mc[0].y)); g.lineTo(M.x(mc[1].x), M.y(mc[1].y)); g.stroke();
+  }
+
+  // Euclid himself
+  g.fillStyle = C('euclid');
+  g.beginPath(); g.arc(M.x(S.e.x), M.y(S.e.y), 7, 0, 2 * PI); g.fill();
+  g.strokeStyle = C('bg'); g.lineWidth = 1.5; g.stroke();
+}
+
+// --- Mobius's panel: (theta, r) -> screen ---------------------------------
+// theta runs left to right over [0, PI); r runs bottom to top over [-R, R].
+// Faint margins on each side show the wrapped-and-flipped continuation, so
+// the seam is visible rather than asserted.
+const MARGIN = 0.17;                       // fraction of PI shown either side
+function mMap() {
+  const { w, h } = sizeM;
+  const padX = w * 0.07, padY = h * 0.13;
+  const innerW = w - 2 * padX, innerH = h - 2 * padY;
+  const span = PI * (1 + 2 * MARGIN);
+  return {
+    x: th => padX + ((th + PI * MARGIN) / span) * innerW,
+    y: r  => padY + ((R - r) / (2 * R)) * innerH,
+    x0: padX, y0: padY, iw: innerW, ih: innerH,
+    lo: -PI * MARGIN, hi: PI * (1 + MARGIN)
+  };
+}
+
+function drawMobiusPanel() {
+  const g = ctxM, { w, h } = sizeM, M = mMap();
+  g.clearRect(0, 0, w, h);
+
+  // the band, with the two seam edges picked out
+  g.strokeStyle = C('rule'); g.lineWidth = 1;
+  g.strokeRect(M.x(0), M.y(R), M.x(PI) - M.x(0), M.y(-R) - M.y(R));
+  g.save();
+  g.setLineDash([4, 4]); g.strokeStyle = C('gold'); g.globalAlpha = 0.5;
+  for (const th of [0, PI]) {
+    g.beginPath(); g.moveTo(M.x(th), M.y(R)); g.lineTo(M.x(th), M.y(-R)); g.stroke();
+  }
+  g.restore();
+  g.fillStyle = C('dim'); g.font = '11px ui-sans-serif, system-ui, sans-serif';
+  g.textAlign = 'center';
+  g.fillText('seam — glued with a flip', (M.x(0) + M.x(PI)) / 2, M.y(-R) + 16);
+
+  // point-flags: sections r = p.n(theta), drawn across the margins too
+  for (const f of S.flags) {
+    if (f.kind !== 'point') continue;
+    const done = doneFor('M', f);
+    g.strokeStyle = done ? C('gone') : C('pointfl');
+    g.lineWidth = done ? 1 : (f.flash > 0 ? 4 : 2.2);
+    g.beginPath();
+    for (let i = 0; i <= 160; i++) {
+      const th = M.lo + (M.hi - M.lo) * (i / 160);
+      const r  = f.x * cos(th) + f.y * sin(th);
+      const X = M.x(th), Y = M.y(r);
+      // the section leaves and re-enters the band; break the stroke there
+      if (Math.abs(r) > R) { g.stroke(); g.beginPath(); continue; }
+      if (i === 0) g.moveTo(X, Y); else g.lineTo(X, Y);
+    }
+    g.stroke();
+  }
+  // ghosts of the sections outside the home tile, dimmed
+  g.save(); g.globalAlpha = 0.30;
+  g.fillStyle = C('bg');
+  g.fillRect(0, 0, M.x(0), h); g.fillRect(M.x(PI), 0, w - M.x(PI), h);
+  g.restore();
+
+  // line-flags: points of the band, with their wrapped ghosts
+  for (const f of S.flags) {
+    if (f.kind !== 'line') continue;
+    const done = doneFor('M', f);
+    for (const k of [-1, 0, 1]) {
+      const th = f.th + k * PI, r = (k % 2 === 0) ? f.r : -f.r;
+      if (th < M.lo || th > M.hi) continue;
+      g.globalAlpha = k === 0 ? 1 : 0.32;
+      g.fillStyle = done ? C('gone') : C('linefl');
+      g.beginPath();
+      g.arc(M.x(th), M.y(r), done ? 3 : (f.flash > 0 ? 8 : 5.5), 0, 2 * PI);
+      g.fill();
+    }
+  }
+  g.globalAlpha = 1;
+
+  // Euclid, seen here as the section r = e.n(theta)
+  g.strokeStyle = C('euclid'); g.lineWidth = 2.6;
+  g.beginPath();
+  let started = false;
+  for (let i = 0; i <= 200; i++) {
+    const th = M.lo + (M.hi - M.lo) * (i / 200);
+    const r  = S.e.x * cos(th) + S.e.y * sin(th);
+    if (Math.abs(r) > R) { if (started) { g.stroke(); g.beginPath(); started = false; } continue; }
+    const X = M.x(th), Y = M.y(r);
+    if (!started) { g.moveTo(X, Y); started = true; } else g.lineTo(X, Y);
+  }
+  g.stroke();
+
+  // Mobius himself, plus his wrapped ghosts
+  for (const k of [-1, 0, 1]) {
+    const th = S.m.th + k * PI, r = (k % 2 === 0) ? S.m.r : -S.m.r;
+    if (th < M.lo || th > M.hi) continue;
+    g.globalAlpha = k === 0 ? 1 : 0.32;
+    g.fillStyle = C('mobius');
+    g.beginPath(); g.arc(M.x(th), M.y(r), 7, 0, 2 * PI); g.fill();
+    if (k === 0) { g.strokeStyle = C('bg'); g.lineWidth = 1.5; g.stroke(); }
+  }
+  g.globalAlpha = 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Chrome
+--------------------------------------------------------------------------- */
+
+const readout = document.getElementById('readout');
+const noteE = document.getElementById('noteE');
+const noteM = document.getElementById('noteM');
+const chipBox = document.getElementById('levelChips');
+const modeBtn = document.getElementById('modeBtn');
+
+function paintChips() {
+  chipBox.innerHTML = '';
+  LEVELS.forEach((lv, i) => {
+    const b = document.createElement('button');
+    b.textContent = lv.name;
+    b.setAttribute('aria-pressed', String(i === S.level));
+    b.addEventListener('click', () => loadLevel(i));
+    chipBox.appendChild(b);
+  });
+  modeBtn.textContent = S.coop ? 'Co-op' : 'Solo';
+  modeBtn.setAttribute('aria-pressed', String(S.coop));
+  const lv = LEVELS[S.level];
+  noteE.innerHTML = '<em>' + lv.name + '</em> &mdash; ' + lv.hintE;
+  noteM.innerHTML = '<em>' + lv.name + '</em> &mdash; ' + lv.hintM;
+}
+
+function paintReadout() {
+  const got = S.coop
+    ? S.flags.filter(f => f.gotE || f.gotM).length
+    : S.flags.filter(f => f.gotE).length + S.flags.filter(f => f.gotM).length;
+  const tot = S.coop ? S.flags.length : S.flags.length * 2;
+  const cal = S.calE + S.calM;
+  const score = Math.round(100 * got - 25 * cal);
+  readout.innerHTML =
+    '<span><span class="k">flags</span> <b>' + got + '/' + tot + '</b></span>' +
+    '<span><span class="k">Euclid</span> <b>' + S.calE.toFixed(2) + '</b></span>' +
+    '<span><span class="k">Möbius</span> <b>' + S.calM.toFixed(2) + '</b></span>' +
+    '<span><span class="k">calories</span> <b>' + cal.toFixed(2) + '</b></span>' +
+    '<span><span class="k">par</span> <b>' + S.par.toFixed(2) + '</b></span>' +
+    '<span><span class="k">score</span> <b>' + score + '</b></span>';
+}
+
+/* ---------------------------------------------------------------------------
+   Loop and input
+--------------------------------------------------------------------------- */
+
+let last = 0;
+function frame(t) {
+  const dt = Math.min((t - last) / 1000 || 0, 0.05);
+  last = t;
+  if (!S.cleared) { stepEuclid(dt); stepMobius(dt); }
+  for (const f of S.flags) if (f.flash > 0) f.flash = Math.max(0, f.flash - dt * 2);
+  if (bannerT > 0) { bannerT -= dt; if (bannerT <= 0 && !S.cleared) banner(''); }
+  drawEuclidPanel(); drawMobiusPanel(); paintReadout();
+  requestAnimationFrame(frame);
+}
+
+addEventListener('keydown', ev => {
+  const k = ev.key.toLowerCase();
+  if (k === ' ' || k === 'spacebar') { ev.preventDefault(); claim('E'); return; }
+  if (k === 'enter') { ev.preventDefault(); claim('M'); return; }
+  if (k === 'r') { loadLevel(S.level); return; }
+  if (k >= '1' && k <= String(LEVELS.length)) { loadLevel(+k - 1); return; }
+  if (k.startsWith('arrow')) ev.preventDefault();
+  keys[k] = true;
+});
+addEventListener('keyup', ev => { keys[ev.key.toLowerCase()] = false; });
+addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+addEventListener('resize', fit);
+
+modeBtn.addEventListener('click', () => { S.coop = !S.coop; loadLevel(S.level); });
+document.getElementById('resetBtn').addEventListener('click', () => loadLevel(S.level));
+
+fit();
+loadLevel(0);
+requestAnimationFrame(frame);
+
+/* Test / tuning surface. */
+window.foraging = {
+  S, LEVELS, R, LAM,
+  incident, perp, lineGap, greedyPar,
+  load: loadLevel,
+  claim,
+  setEuclid: (x, y) => { S.e.x = x; S.e.y = y; },
+  setMobius: (th, r) => { S.m.th = th; S.m.r = r; },
+  state: () => ({
+    level: LEVELS[S.level].name,
+    coop: S.coop,
+    flags: S.flags.length,
+    remainingE: remaining('E'),
+    remainingM: remaining('M'),
+    calE: S.calE, calM: S.calM, par: S.par, cleared: S.cleared
+  })
+};
+
+})();
+</script>
+</html>

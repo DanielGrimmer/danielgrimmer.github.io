@@ -436,18 +436,32 @@ Neue Raumproblem paper describes, and it doubles as the fitness harness.
 
 1. **Does Möbius's two-for-one make him strictly stronger?** §6's estimate
    says he beats Euclid by `√2` at equal areas, before crediting his freedom
-   to choose the pairing. If he is dominant at every `λ`, the balance knob has
-   to move elsewhere — the flag distribution, or an asymmetric budget.
-2. **Should the flag *stay* collected?** If Möbius's line passing over a flag
-   collects it, he sweeps up flags incidentally while travelling, which may
-   trivialise the tour. Options: flags must be collected while stationary; or
-   incidental collection is allowed and is precisely the skill.
-3. **Is the swept-area gauge the better game after all?** It kills the "line
-   near the rim is free" exploit differently and gives Möbius genuine
-   inertia.
+   to choose the pairing. Partly answered by 2 below; with both flag types the
+   two-for-one is symmetric (Euclid also takes line-flags two at a time), so
+   the estimate now cuts both ways. Still worth measuring.
+2. ~~**Should the flag stay collected — does Möbius sweep them up?**~~
+   **Answered by measurement** (`foraging.html`, four constellations, `λ = R/2`).
+   The worry was that Möbius could hold one key, sweep his line across the
+   whole disk, and harvest every point-flag. He can — but it costs him
+   **exactly `2R` = 2.00 calories every time**, because a pure `r`-sweep pays
+   `∫|dr|` with no `λ` discount, and it clears at most 8 of 13 flags. Greedy
+   co-op play clears the *whole* board for **1.32–2.45**. So the sweep is a
+   legitimate but non-dominant option, priced at roughly par for a partial
+   clear. The area-matched `λ = R/2` turns out to price it correctly on its
+   own, with no special rule needed. (Measured with perfect claim timing at
+   2000 sample positions, so that is an upper bound on what a human could
+   extract.) Claiming is still a deliberate keypress, which kills the
+   hold-one-key degeneracy; the deeper fix was not required.
+3. **Is the swept-area gauge the better game after all?** Less pressing now
+   that 2 is answered. Note a correction to §5(b): normalised to a length it
+   makes a full sweep *cheaper* (`πR/2 ≈ 1.57R`) than the flat metric does
+   (`2R`), because chords near the rim are short. It does not discipline
+   sweeping; the flat metric does that better.
 4. **Wrap-around.** Möbius's shortest route may cross the seam `(θ+π, −r)`.
    Legible in play, or confusing? The existing games suggest the seam is the
-   single hardest thing to teach.
+   single hardest thing to teach. `foraging.html` shows dimmed wrapped copies
+   in the margins rather than asserting the identification — untested on
+   readers.
 
 ---
 
@@ -732,3 +746,63 @@ Decisions, for the human demo, now fixed:
 
 Which means the implementation is now small and fully specified: two charts,
 two control maps, two cost integrals, one incidence test, one flag list.
+
+# 16. Incidence, derived rather than stipulated
+
+§7 and §13.4 treat the four visiting predicates as *obvious*. They are better
+than obvious: they are **forced**, by a criterion that never mentions a chart,
+a metric or a connection.
+
+Look at the `G`-orbits on pairs (object, object) — the double cosets. They are
+indexed by the invariants (a distance, an angle), and along that index the
+**symmetry profile is not constant**. One orbit has a strictly larger
+stabiliser than its neighbours:
+
+| pairing | generic orbit | the exceptional orbit |
+|---|---|---|
+| point–point | `ℤ₂` (reflection in the joining line) | `O(2)` — **dimension jumps** at distance 0 |
+| point–line | `ℤ₂` (reflection in the perpendicular through the point) | `ℤ₂ × ℤ₂` — the reflection in `ℓ` joins, order doubles |
+| line–line | `ℤ₂` crossing; dim 1 parallel | `H_L` — dim 1 with four components, at coincidence |
+
+> **Incidence = the orbit with maximal stabiliser.**
+
+That returns coincidence, lying-on, lying-on, coincidence — exactly the four
+predicates the design needs, with no per-pairing stipulation and nothing owed
+to either creature's point of view. Two consequences.
+
+**The visiting relation is not constitution-laden.** The notes' §12 ledger
+lists it as item 2, and the paper's footnote hedges on it alongside the cost
+norm. It can be **struck**: it is determined by `G` alone. What remains
+constitution-laden is the cost norm — and §13.1 shows *that* is mandatory for
+Möbius and optional for Euclid. So the hedge shrinks to one item, and the one
+item is itself a self-quotient result. Only the tolerance `ε` is a free
+parameter, and that is an artefact of continuous motion rather than of form.
+
+**The extra symmetry at point–line incidence is the reflection in `ℓ`** — the
+very `ℤ₂` that makes Möbius's distance-sense unsigned (notes §5.3). So the
+incidence locus is exactly his perceptual fold: **he feels incidence as the
+moment his sensor folds.** Euclid, whose stabiliser already contains
+reflections, feels nothing special. Worth a line in the paper — it is a case
+where the two creatures' phenomenologies of the *same invariant event* differ
+in a way you can derive.
+
+# 17. Built
+
+`foraging.html` in this folder implements all of the above: disk arena,
+arena-centre connection, flags of both kinds, the four incidence predicates,
+`√(dr² + λ²dθ²)` against `√(dx² + dy²)`, both players drawn live in both
+views, claiming that takes everything you are incident with, four teaching
+constellations, a greedy-co-op par, and a co-op/solo switch.
+
+**Co-op is the default**, and that is the answer to "same time, or separately?"
+Both players in one world at once, one shared flag pool, one score. The reason
+is that the allocation decision — *who takes which family* — is the only place
+the two cost geometries have to be compared out loud, and it exists only if
+the pool is shared. Solo mode (each player gets their own copy of the same
+constellation) is one click away, and is the right setting for a side-by-side
+efficiency comparison and for single-agent fitness episodes.
+
+Verified headless: the pencil yields six lines to one claim, the collinear
+family yields five points to one claim, the seam identification holds to
+machine precision, both players burn calories at a matched rate, and the page
+makes exactly one network request.
