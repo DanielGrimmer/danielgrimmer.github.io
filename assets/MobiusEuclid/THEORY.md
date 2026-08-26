@@ -131,29 +131,89 @@ my choice of `λ`: the space of lines carries an invariant *measure*
 `dr ∧ dθ` (the kinematic measure — the one Crofton's formula and the Radon
 transform are built on) but no invariant *metric*.
 
-It also has an entirely concrete reading. **Möbius is infinitely long.** Ask
-"how far did that line move?" and the answer depends on where along it you
-look: pivot a line about one of its points and the far end sweeps arbitrarily
-far while the pivot does not move at all. That *is* the shear. There is no
-frame-free answer, so effort cannot be read off the geometry.
-
 I think this is the most philosophically loaded result in this document, and
 it is worth a paragraph in the Raumproblem paper: a creature who is a line,
 and who insists on the full symmetry of its world, has no notion of distance —
-only of turning. Its world is not a metric space but a fibration over the
-circle of directions. Euclid gets a metric for free purely because his
-stabiliser is compact. **Effort is not given by the geometry; it is given by
-the body.**
+only of turning. Euclid gets a metric for free purely because his stabiliser
+is compact. **Effort is not given by the geometry; it is given by the body.**
+
+### 4.1 The same fact, said properly: a bundle with no connection
+
+The shear computation is the shadow of a cleaner structural statement, which
+is the right one to carry around.
+
+`𝕄` is a **fibre bundle over `ℝP¹`**, the circle of directions. Each fibre is
+a family of co-parallel lines. Both ends of the bundle carry canonical
+invariant structure:
+
+- **Along a fibre:** the perpendicular gap between two parallel lines is an
+  `E(2)`-invariant, so each fibre is a metric line — canonically affine, with
+  a canonical scale, but **no canonical zero** (a zero would be a marked line
+  in each direction).
+- **On the base:** the acute angle between two directions is invariant, so
+  `ℝP¹` is a circle of total length `π`.
+
+What is missing is the glue. **There is no `E(2)`-invariant connection**, so
+there is no canonical way to compare positions in different fibres. The only
+invariant notion of distance between two non-parallel lines is the distance
+between their *fibres* — the acute angle at which they cross. That is exactly
+the `|ω|` seminorm above, and it is why the seminorm is degenerate: it is the
+pullback of the base metric.
+
+**Algebraically** this is the failure of a short exact sequence to split
+canonically. `𝔢(2) = 𝔱 ⋊ 𝔰𝔬(2)` has `𝔱` as a canonical ideal but no canonical
+complement, and quotienting by `𝔥_L` (which meets `𝔱` in the along-self
+translations) leaves
+
+```
+0 → ℝ_transverse → 𝔤/𝔥_L → 𝔰𝔬(2) → 0
+        (fibre)                  (base)
+```
+
+— a direct sum with no canonical orthogonality. **The splittings are a torsor
+under `ℝ² = 𝔱`.** A splitting is precisely a choice of complement to the
+translation ideal, which is precisely a choice of *which point rotations are
+canonically about*. Contrast Euclid, for whom `𝔱 ∩ 𝔥_P = 0`, so
+`𝔤/𝔥_P ≅ 𝔱` canonically and an `SO(2)`-invariant norm on it is unique up to
+scale. **Euclid needs one number; Möbius needs a point.**
+
+### 4.2 The space of connections is a copy of Euclid's plane
+
+Pick a point `o` in Euclid's plane and declare rotation about `o` to be
+horizontal. That is a connection: it supplies a zero for every fibre at once
+(the line through `o` in each direction), so it trivialises the bundle as
+`(θ, r)` with `r` measured from `o`. Pick `o' = o + a` instead and
+
+```
+r' = r − a · n(θ)
+```
+
+— the fibres slide against each other by a **sinusoid**. So the admissible
+connections form a 2-parameter family, a torsor under translations, related by
+sinusoidal shifts: **the space of Möbius's connections *is* Euclid's plane.**
+Möbius cannot measure distance without borrowing a point — not a point he
+stands at, but a point he measures from. That is not a defect; it is the
+duality showing up as gauge freedom, and it is a better sentence for the paper
+than anything in §4.
+
+One refinement worth recording. *Any* anti-periodic section `s(θ)` gives a
+flat connection (`r̃ = r − s(θ)`), so the full family is infinite-dimensional;
+the point-sections `s = o·n(θ)` are just its first harmonic — and they are cut
+out exactly by the stipulation that cost be a norm on `𝔤`, since only those
+arise from a complement to `𝔱`. The higher harmonics are the same "thin range"
+condition that governs the Radon transform. Worth knowing for the constitution
+ledger: the choice is 2-dimensional *because* of the Lie-algebra stipulation,
+not for free.
 
 ## 5. Three repairs, and the one to use
 
-Möbius needs a cost function to play, so a gauge must be chosen. Three
+Möbius needs a connection to play, so a point must be chosen. Three
 candidates, each defensible:
 
-**(a) Foot-point gauge — recommended.** Declare that Möbius's body is centred
-at his *closest approach to the centre of the arena*, and measure his velocity
-there. The foot point of `(θ, r)` is `r·n(θ)`; its normal velocity is `ṙ`;
-his turning rate is `θ̇`. So
+**(a) Arena-centre connection — recommended.** Take `o` to be the centre of
+the arena. Equivalently: Möbius's body is centred at his *closest approach to
+that centre*. The foot point of `(θ, r)` is `r·n(θ)`; its normal velocity is
+`ṙ`; his turning rate is `θ̇`. So
 
 ```
 ds²_M = dr² + λ² dθ²
@@ -228,37 +288,55 @@ pairing, which the estimate does not credit him for.
 ## 7. Checkpoints: one rule, and the mechanic falls out
 
 Here is the design decision that makes this work. **Do not give the players
-separate target sets.** Scatter a single set of `m` **flags** — points in the
-arena — and let each player score a flag by *being incident with it*:
+separate target sets.** Scatter a single set of **flags**, of *both* kinds —
+points and lines of the arena — and let each player score a flag by *being
+incident with it*.
 
-- **Euclid** scores a flag by standing on it.
-- **Möbius** scores a flag by having his line pass through it.
+The rule is one sentence: **each creature is a point in its own world; visiting
+is incidence there.** A flag has an image in each world, and the images are
+dual:
 
-One relation, incidence, scored two ways. The consequences are immediate and
-all of them are teachable:
+| flag | in Euclid's world | in Möbius's world |
+|---|---|---|
+| **point** `p` | a point | the section `r = p·n(θ)` |
+| **line** `ℓ` | a line | a point |
 
-**In Euclid's world** the task is the classical Euclidean TSP: visit `m`
-points, minimise path length. Flags that **cluster** are cheap.
+So each creature sees flags **of its own kind as points**, and flags of the
+other kind as curves — a perfect exchange, and all four incidences are
+canonical (two coincidences, two lyings-on). Note this dissolves the old
+"how does a line visit a line?" worry: Möbius visits a line-flag by
+*coinciding* with it in `𝕄`, not by crossing it in the plane.
 
-**In Möbius's world** a flag `p` is the sinusoid `r = p·n(θ)` — the lines
-through `p` — and his task is to tour `m` sinusoids on a flat band. Now:
+The consequences are immediate, dual, and all teachable:
 
-- Any two distinct flags' sinusoids **cross exactly once**, at the point
-  representing the line joining them. (Solve `(p − q)·n(θ) = 0`: unique `θ`
-  mod π.) This is `index.html`'s existing punchline — *through any two points
-  there passes exactly one line* — promoted from a closing joke to the core
-  mechanic. **Möbius takes flags two at a time, always.**
-- Three sinusoids are concurrent **iff the three flags are collinear**. So `k`
-  **collinear** flags cost Möbius a single stop. Collinearity is his
-  clustering.
+**Clusters.** Flags of your own kind that sit close together are cheap: you
+walk a short way and collect them one by one. For Euclid that is a tight knot
+of point-flags; for Möbius it is a family of line-flags of similar direction
+and offset.
 
-That is the game in one sentence: **Euclid profits from proximity, Möbius from
-collinearity.** Both are looking at the same flags. Neither is wrong. Neither
-can evaluate the other's route without taking the other's form of intuition
-seriously — which is the thesis, made into a scoring rule.
+**Concurrences.** Flags of the *other* kind that share a common incidence are
+**free — you take the whole family at one stop**:
 
-Generic position gives Möbius a floor of `⌈m/2⌉` stops (a piercing-set bound);
-collinear structure drops it.
+- `k` line-flags through a common point cost **Euclid** a single stop: he
+  stands at the point.
+- `k` collinear point-flags cost **Möbius** a single stop: he becomes the
+  line. (Their sections are concurrent in `𝕄` iff the points are collinear.)
+
+And the two-at-a-time fact survives: any two point-flags' sections cross
+exactly once, at the line joining them — `index.html`'s punchline, *through
+any two points there passes exactly one line*, promoted from closing joke to
+core mechanic. Dually, any two line-flags meet at exactly one point, so Euclid
+also takes line-flags two at a time.
+
+That is the game in one sentence: **each player profits from proximity among
+their own kind and from concurrence among the other's.** Both are looking at
+the same scattering. Neither is wrong. Neither can evaluate the other's route
+without taking the other's form of intuition seriously — which is the thesis,
+made into a scoring rule.
+
+Mixing the two flag types is what makes it symmetric; an all-points board is
+the Euclid-friendly extreme and an all-lines board the Möbius-friendly one,
+which makes the flag mix a clean difficulty and teaching dial.
 
 ## 8. The optimisation layer
 
@@ -442,11 +520,16 @@ origin and my "closest approach to the centre" are the same gauge. Independent
 convergence on the one genuinely arbitrary choice in the design, which is about
 as much reassurance as this kind of thing ever offers.
 
-## 13.3 Design A hands *Euclid* a cigar, not a plane — and this one bites
+## 13.3 The cigar — an artefact of a mispriced cost, not a feature of Euclid
+
+**Corrected.** Euclid's effort-geometry *is* the plane. The cigar below is
+real, but it is a consequence of one particular cost function — the notes'
+world-frame norm — and that cost function is simply the wrong constitution.
+Recording the computation because the failure mode is instructive and because
+it decides which cost to ship.
 
 The notes' §4.2 correctly derives that the useless subspace is `Ad_g 𝔥_self`
-and rotates with position. What follows if you push that one step further, into
-the induced cost, is not benign.
+and rotates with position. Push that one step further, into the induced cost.
 
 Euclid at `p` wanting point-velocity `u` must pick `(v, ω)` with
 `v + ωJp = u`. Minimising `|v|² + λ²ω²`:
@@ -468,67 +551,88 @@ effort-geometry under Design A is not the plane: it is a **surface of
 revolution asymptotic to a cylinder of radius λ** — a cigar. Orbiting the gauge
 origin at large radius is nearly free.
 
-Why this is more than an aesthetic complaint: the whole Part 2 discriminator
-(§11 of the notes) is *Möbius has a `ℤ₂` loop, Euclid is contractible*. A cigar
-has a cylinder end, and a finite sample from a cylinder end is exactly what
-persistent homology reports as spurious `H₁`. **The Design A cost can
-manufacture, in Euclid's representation, the topological signature the
-experiment uses to identify Möbius.** That is the wrong confound to be carrying
-into the one measurement that matters.
+**Why this happens, and why it is wrong.** The world-frame norm charges
+`λ²ω²` for "rotate about the origin `o`" *at a flat rate, however far away `o`
+is*. But a tiny rotation about a distant `o` swings Euclid a long way, so it
+sells him tangential motion at `λ/|p|` per unit speed. He is not being clever;
+he is being **bribed by a mispriced control**. The objection "he will just not
+rotate" is right — under any sensible cost he wouldn't, and the reason he does
+here is that this cost does not charge him for *his own* spin, but for the
+world's spin about a point he may be nowhere near.
 
-It also creates a parameter conflict. Euclid's geometry is flat only for
-`λ ≫ R` (arena radius), while the fairness calibration of §6 wants
-`λ ∈ [R/2, R]`, and Möbius's turning becomes prohibitive as `λ` grows. Three
-constraints, one knob.
+Switch to the body frame and it evaporates. With `ξ_body = Ad_{g⁻¹}ξ`, a
+direct computation gives `‖ξ_body‖² = |u|² + λ²ω²` where `u` is Euclid's actual
+velocity and `ω` his own spin rate — so declining to spin is optimal, the
+minimum is `|u|`, and
 
-**Recommended repair, which preserves the §7.1 hard constraint.** State the
-cost rule once, identically for both creatures:
+```
+ds²_E = dx² + dy²      exactly, everywhere, with no choice of o
+```
+
+This is §3, and it is why Euclid needs no connection: `𝔤/𝔥_P ≅ 𝔱` canonically
+and `H_P` is compact, so the norm descends without a gauge (§4.1). **Euclid's
+metric is the plane; Möbius's requires a point. That asymmetry is the whole
+content of §13.1.**
+
+Two things still worth carrying away. First, if the notes' world-frame cost is
+kept, the confound is severe: the Part 2 discriminator (§11 of the notes) is
+*Möbius has a `ℤ₂` loop, Euclid is contractible*, and a finite sample from a
+cigar's cylinder end is exactly what persistent homology reports as spurious
+`H₁` — manufacturing, in Euclid, the signature used to identify Möbius.
+Second, it would create a three-way parameter conflict: flatness wants
+`λ ≫ R`, fairness (§6) wants `λ ∈ [R/2, R]`, and Möbius's mobility wants `λ`
+small. All of that is avoided by pricing effort in the body frame.
+
+**The rule to ship**, stated once and identically for both creatures:
 
 > Cost of a motion = `inf { ‖Ad_{g⁻¹} ξ‖ : ξ realises the motion }`.
 
 For Euclid this is well-defined and yields exactly `ℝ²`. For Möbius it is
-*ill-defined* — and he falls back to the world-frame form, which by §13.2 is
-the flat strip. The rule is identical; `H_self` alone decides whether it
-succeeds. That is not a violation of §7.1 but an instance of it, and a rather
-pointed one: **the difference in the two creatures' cost structures is itself a
-consequence of the stabiliser**, which is the hypothesis under test.
-
-If that is too clever, the cheap mitigations are: keep episodes inside
-`ρ ≲ λ`, and centre constellations on the gauge origin.
+*ill-defined* — his stabiliser shears the norm — so he must fix a connection,
+and with the arena centre that is by §13.2 the flat strip `dr² + λ²dθ²`. The
+rule is identical; `H_self` alone decides whether it needs a gauge. That is not
+a violation of the notes' §7.1 but an instance of it, and a pointed one:
+**the difference in the two creatures' cost structures is itself a consequence
+of the stabiliser**, which is the hypothesis under test.
 
 ## 13.4 §10.1 (visiting predicates — "blocks running") is answerable
 
-The blocker is the `(L, L)` case: crossing lines always touch, parallel lines
-never do. §7 above dissolves it — **make every object a point.** Then:
+The blocker is the `(L, L)` case: "crossing lines always touch, parallel lines
+never do." The blocker is an artefact of asking the question in the *plane*.
+Ask it in `𝕄`, where the visitor is a point, and it disappears: **Möbius
+visits a line-object by coinciding with it**, not by crossing it.
 
-| self / object | predicate |
-|---|---|
-| point / point | distance `< ε` |
-| point / line | perpendicular distance `< ε` — incidence |
-| line / point | perpendicular distance `< ε` — incidence |
-| line / line | *does not arise* |
+> **Visiting = incidence in the visitor's own world.** Every creature is a
+> point there; every object is a point or a curve there.
 
-One relation, incidence, scored two ways, no per-pairing stipulation. Three
-further consequences, all in the experiment's favour:
+| self / object | in the visitor's world | predicate |
+|---|---|---|
+| point / point | point vs point | coincidence |
+| point / line | point vs line | lies on |
+| line / point | point vs section `r = p·n(θ)` | lies on |
+| line / line | point vs point in `𝕄` | coincidence |
 
-1. **§8.3's line–line problem disappears entirely.** No parallel locus, so no
-   information created in the limit, so no surrogate-gradient pathology and no
-   need for the ES fallback on that channel.
-2. **It is the information-matched control §5.3 asks for.** A point-object
-   gives Euclid one unsigned scalar per timestep; it gives Möbius one unsigned
-   scalar per timestep. Same rank, same sign-blindness, same fold structure.
-   The "thin perception masquerading as failed map-formation" confound is
-   closed by construction rather than by a post-hoc control.
-3. Scene underdetermination survives (§6): ranges without bearings, so memory
-   is still forced and the map still has nowhere to hide but the recurrent
-   state.
+Four cases, all canonical, no per-pairing stipulation, and the two diagonal
+entries are the same relation seen from the two sides. `(L, L)` is not
+pathological; it was mis-posed.
 
-The cost is that Möbius no longer perceives lines, so his triangulation must
-run entirely on unsigned point-distances over a trajectory. I believe that is
-sufficient, but it is worth checking numerically before committing —
-identifiability of a constellation from unsigned Radon-type readings along a
-path is a concrete, small question, and it should be settled before the
-architecture work.
+*(An earlier draft of this section proposed dropping line-objects entirely to
+dodge `(L, L)`. That solved a non-problem and cost the design its symmetry;
+both object types are in — see §7.)*
+
+Two consequences for the experiment survive from that draft and still hold:
+
+1. **§8.3's line–line problem is a perception issue, not a visiting issue.**
+   The created-information discontinuity at the parallel locus is about what
+   Möbius can *see* of another line, and remains real. But it no longer
+   contaminates the visiting predicate, which is now a clean coincidence in
+   `𝕄` — so the surrogate-gradient worry is confined to the encoder.
+2. **Information matching (§5.3) needs measuring, not assuming.** With both
+   object types present the two creatures' per-timestep sensor ranks are not
+   obviously equal, so the notes' [OPEN] control is still open. The honest
+   move is to compute the rank of each pairing explicitly during §10.8's
+   formal write-up of the observation space, and match episode lengths if
+   they differ.
 
 I would also **bound the arena as a disk** (§6): lines meeting a disk of radius
 `R` are exactly `|r| ≤ R`, a compact Möbius band, so one bound bounds both
@@ -564,8 +668,67 @@ both legitimate; they share the world, the incidence rule, and the cost model,
 which is what §11's shared headless core is for.
 
 The one mechanic here with no counterpart in the notes is the co-op scoring of
-§7 — shared flags, shared calorie budget, Euclid profiting from clusters and
-Möbius from collinearity. It is not needed for the experiment. But it is worth
-noting that it is the same fact the experiment is probing, in a form a
-first-year can feel in thirty seconds, which makes it the demo that motivates
-the paper's figure.
+§7 — shared flags of both kinds, shared calorie budget, each player profiting
+from proximity among their own kind and concurrence among the other's. It is
+not needed for the experiment. But it is worth noting that it is the same fact
+the experiment is probing, in a form a first-year can feel in thirty seconds,
+which makes it the demo that motivates the paper's figure.
+
+---
+
+# 14. Left, right, and what rotates — the frame question settled
+
+Three different things in this design each have a left/right character, and
+conflating them is what made the notes' §3 feel unresolved. Separated:
+
+| Question | Answer | Why |
+|---|---|---|
+| What **is** a creature? | a left coset `gH` | `H` erases what it cannot tell about itself |
+| What is its **invariant standing** toward an object? | the double coset `H_obj (g_obj⁻¹ g_self) H_self` | both ambiguities quotiented; well-defined as the notes verify |
+| What **moves** it? | left multiplication `g ↦ exp(ξ)g` | only left multiplication descends to `G/H` — the notes' §3 is right |
+| In what frame is `ξ` **priced**? | body frame, `‖Ad_{g⁻¹}ξ‖` | see below |
+
+The last row is the one the notes did not separate out, and it is where the
+answer to "does the Lie algebra frame rotate with the body?" lives:
+
+**The frame rotates with the body; the state does not know the frame.** A
+creature's body frame is only defined up to `H_self`, so a body-frame *action*
+would need a representative — that is the navel, and it is correctly rejected.
+But a body-frame *cost* needs only that the norm be `H_self`-invariant, which
+is strictly weaker.
+
+- **Euclid**: his body frame is ambiguous by a rotation — he does not know
+  which way he is facing — but `|v|² + λ²ω²` is rotation-invariant, so his
+  *cost* is well-defined even though his *frame* is not. He prices effort in a
+  frame he cannot identify, and gets `ℝ²` exactly.
+- **Möbius**: his body frame is ambiguous by a slide along himself, and the
+  norm is *not* slide-invariant (the shear). His cost is genuinely undefined
+  until he fixes a connection — a point to measure from (§4.2).
+
+So: fixed world frame pinned at the identity (the notes' §2.3) and body frame
+that rotates with the creature are **both available**, they differ by `Ad_g`,
+and the choice matters only for the cost. Use the world frame for the action,
+the body frame for the price.
+
+# 15. What this settles for the build
+
+Decisions, for the human demo, now fixed:
+
+1. **Flags of both kinds**, points and lines (§7). All four incidences
+   canonical. Flag mix is the difficulty dial.
+2. **Disk arena**, radius `R` (§6). Self-dual: `|r| ≤ R` is a compact band.
+3. **Connection at the arena centre.** For a human player this is not an
+   imposition — showing Möbius his strip as a `(θ, r)` rectangle *is* choosing
+   a connection, and the arena centre is the only choice a player will read as
+   neutral. Worth a line in the paper: for a creature that is shown its world,
+   **the chart is the constitution**.
+4. **Controls map straight to the chart.** Euclid's WASD is `(dx, dy)`;
+   Möbius's is `(dθ, dr)`. Costs `√(dx² + dy²)` and `√(dr² + λ²dθ²)`
+   respectively — no `Ad`-twisting appears anywhere in the game loop, because
+   the connection has already absorbed it. The Kleinian derivation is what
+   justifies these two lines of code; it does not need to run inside them.
+5. **Humans see the whole scene.** The invariant-standings-only regime is for
+   the agents (§13.6); a player looks at the board.
+
+Which means the implementation is now small and fully specified: two charts,
+two control maps, two cost integrals, one incidence test, one flag list.
