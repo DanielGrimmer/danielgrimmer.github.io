@@ -778,6 +778,22 @@ Möbius and optional for Euclid. So the hedge shrinks to one item, and the one
 item is itself a self-quotient result. Only the tolerance `ε` is a free
 parameter, and that is an artefact of continuous motion rather than of form.
 
+**Meeting and containment are two different dualisations, and which one works
+depends on the region.** Found while porting the notebook's `H` and `V` types
+into `catalogue.html`. The obvious rule — *the Möbius-side object is the set of
+lines that **meet** the Euclid-side region* — is what makes a disk into a band
+and a segment into the band between its endpoints' sections. It **degenerates
+for a region that is unbounded and ruled**: almost every line meets an infinite
+slab, so "the lines meeting it" is nearly all of `𝕄` and carries no
+information. For those regions the notebook silently switches to the other
+incidence relation — *the set of lines **contained in** the region* — which
+gives a slab the segment of a single fibre, and a bowtie the arc of one
+section. Containment is the degenerate one for bounded regions (no line fits
+inside a disk), which is why the two rules partition the catalogue rather than
+competing. Consequence worth stating: **an object that is solid for Euclid can
+be thin for Möbius, and that is not a modelling failure but a fact about which
+incidence relation is non-degenerate for its shape.**
+
 **The extra symmetry at point–line incidence is the reflection in `ℓ`** — the
 very `ℤ₂` that makes Möbius's distance-sense unsigned (notes §5.3). So the
 incidence locus is exactly his perceptual fold: **he feels incidence as the

@@ -392,6 +392,197 @@ const bandOverlap = (band, u, v, rad) => {
   return false;
 };
 
+// ============================================================ the notebook types
+// H, V and B come from GameDemos.nb (see GameDemos.decoded.txt beside this
+// file). They are the three object types the Mathematica catalogue had that
+// the rest of this page, rebuilt from memory, did not.
+//
+// The four types above all dualise by MEETING: the Mobius-side object is the
+// set of lines that meet the Euclid-side region, which is a band. That rule
+// degenerates for a region that is unbounded and ruled -- almost every line
+// meets an infinite slab -- so H and V dualise by CONTAINMENT instead: the
+// Mobius-side object is the set of lines CONTAINED IN the region. Both are
+// incidence relations; which one is non-degenerate depends on the region.
+// That is why H and V are solid for Euclid but thin for Mobius.
+
+/** The repeating angular window: is th inside th0 +/- s/2, modulo pi? */
+const winDist = (th, th0, s) => {
+  let d = th - th0;
+  d -= PI * Math.round(d / PI);        // fold into [-pi/2, pi/2]
+  return Math.abs(d) - s / 2;          // <= 0 means inside
+};
+
+/** A sector of the arena disk, as a footprint polygon: apex plus the arc its
+    two bounding rays cut out of the rim. `sign` picks which of the two
+    opposite sectors of the bowtie. */
+function sectorFootprint(px, py, th0, s, sign) {
+  const pts = [[px, py]], N = 14;
+  for (let i = 0; i <= N; i++) {
+    const a = th0 - s / 2 + s * i / N;
+    const dx = sign * -Math.sin(a), dy = sign * Math.cos(a);   // the line direction d(a)
+    const pd = px * dx + py * dy;
+    const t = -pd + Math.sqrt(Math.max(0, pd * pd - (px * px + py * py) + RA * RA));
+    pts.push([px + t * dx, py + t * dy]);
+  }
+  return pts;
+}
+
+/** Like Band, but drawn only where theta falls inside a repeating window.
+    Built per tile rather than pinched to zero, so no degenerate triangles
+    reach computeVertexNormals. */
+function windowedBand(lo, hi, th0, s, base, h, material) {
+  const pos = [];
+  const put = (x, y, z) => pos.push(x, y, z);
+  const quad = (A, B, C, D) => { put(...A); put(...B); put(...C); put(...A); put(...C); put(...D); };
+  const N = 36;
+  for (let k = Math.ceil((TH_MIN - th0) / PI); k <= Math.floor((TH_MAX - th0) / PI); k++) {
+    const a = Math.max(TH_MIN, th0 + k * PI - s / 2), b = Math.min(TH_MAX, th0 + k * PI + s / 2);
+    if (b <= a) continue;
+    for (let i = 0; i < N; i++) {
+      const t0 = a + (b - a) * i / N, t1 = a + (b - a) * (i + 1) / N;
+      const x0 = XM0 + t0 * S, x1 = XM0 + t1 * S;
+      const l0 = -lo(t0), l1 = -lo(t1), h0 = -hi(t0), h1 = -hi(t1);
+      const yb = base, yt = base + h;
+      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);
+      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.computeVertexNormals();
+  const mesh = new THREE.Mesh(g, material);
+  mesh.frustumCulled = false;
+  return mesh;
+}
+
+// ---- H: the bowtie (notebook drawEucH / drawMobH) ------------------------
+// Every line through one point, for a window of directions. Euclid gets a
+// double wedge; Mobius gets an arc of that point's own section -- a thin
+// curtain, because a bundle of lines through a point is one-dimensional in
+// his world however solid it looks in Euclid's.
+{
+  const o = { id: 'bowtie', label: 'Bowtie (H)', color: 0x1fa8a8,
+              // Apex near the rim, opening along the empty corridor above the
+              // block; narrow, because a wide bowtie eats most of the arena.
+              p: [-5.0, 5.5], th0: PI / 2, s: PI / 12, h: 1.4, T: 0.13 };
+  const mat = lambert(o.color);
+  const meshes = [];
+  for (const sign of [1, -1]) {
+    const m = prism(sectorFootprint(o.p[0], o.p[1], o.th0, o.s, sign), o.h, mat);
+    scene.add(m); meshes.push(m);
+  }
+  const sig = th => sigma(o.p[0], o.p[1], th);
+  // sigma is pi-antiperiodic, so one curve already serves every tile correctly.
+  const curtain = windowedBand(th => sig(th) - o.T, th => sig(th) + o.T, o.th0, o.s, 0, o.h, mat);
+  scene.add(curtain); meshes.push(curtain);
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: (u, v, rad) => {
+      const dx = u - o.p[0], dy = v - o.p[1], rho = Math.hypot(dx, dy);
+      if (rho < 1e-9) return true;
+      const ex = winDist(Math.atan2(dy, dx) - PI / 2, o.th0, o.s);   // direction d(a) has angle a + pi/2
+      if (ex <= 0) return true;
+      return (ex >= PI / 2 ? rho : rho * Math.sin(ex)) < rad;
+    },
+    overlapM: (u, v, rad) => {
+      const th = u / S;
+      if (winDist(th, o.th0, o.s) > rad / S) return false;
+      return Math.abs(v - sig(th)) < o.T + rad;
+    },
+    base: () => 0, top: () => o.h,
+    capE: '<b>A bowtie</b> — every line through one point, but only for a window of directions.',
+    capM: '<b>An arc of one section</b> — a slice of a single sine thread, and nothing else.',
+  }, meshes);
+}
+
+// ---- V: the slab (notebook drawEucV / drawMobV) --------------------------
+// The lines between two parallel lines. In Mobius's world that is a segment
+// of a single FIBRE -- the bundle structure of his world, as a solid object.
+// Low enough to jump onto.
+{
+  const o = { id: 'slab', label: 'Slab (V)', color: 0xb0b8c4,
+              th0: 0, r: [-5.6, -4.8], h: 0.9, T: 0.09 };
+  const mid = (o.r[0] + o.r[1]) / 2, thick = o.r[1] - o.r[0];
+  const mat = lambert(o.color);
+  const meshes = [];
+  const len = 2 * Math.sqrt(Math.max(1, RA * RA - mid * mid));
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(len, o.h, thick), mat);
+  slab.position.copy(E2W(mid * Math.cos(o.th0), mid * Math.sin(o.th0), o.h / 2));
+  slab.rotation.y = o.th0 + PI / 2;             // local X along the line, local Z along n(th0)
+  scene.add(slab); meshes.push(slab);
+  const fibreGeo = new THREE.BoxGeometry(2 * o.T * S, o.h, thick);
+  for (let k = -6; k <= 6; k++) {
+    const th = o.th0 + k * PI;
+    if (th < TH_MIN || th > TH_MAX) continue;
+    const m = new THREE.Mesh(fibreGeo, mat);
+    m.position.copy(M2W(th, parity(k) * mid, o.h / 2));
+    scene.add(m); meshes.push(m);
+  }
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: (u, v, rad) => {
+      const s = sigma(u, v, o.th0);
+      return s > o.r[0] - rad && s < o.r[1] + rad;
+    },
+    overlapM: (u, v, rad) => {
+      const th = u / S;
+      if (winDist(th, o.th0, 2 * o.T) > rad / S) return false;
+      const lo = Math.min(mid - thick / 2, mid + thick / 2), hi = Math.max(mid - thick / 2, mid + thick / 2);
+      const k = Math.round((th - o.th0) / PI), sgn = parity(k);
+      return v > Math.min(sgn * lo, sgn * hi) - rad && v < Math.max(sgn * lo, sgn * hi) + rad;
+    },
+    base: () => 0, top: () => o.h,
+    capE: '<b>A slab</b> between two parallel lines — a wall right across the arena, but a low one.',
+    capM: '<b>A piece of one fibre</b> — co-parallel lines stacked in a column. Thin, because nothing else is parallel to them.',
+  }, meshes);
+}
+
+// ---- B: the clipped band (notebook drawEucB / drawMobB) ------------------
+// Every line SEPARATING two points, clipped to a window of directions: the
+// "wall between two points" of the L type, but only for some of its
+// directions. Euclid sees the sheaf of those lines; Mobius sees the band
+// between the two points' sections, cut off at the window's edges.
+{
+  const o = { id: 'cband', label: 'Clipped band (B)', color: 0xe0479e,
+              // Euclid spawns at (0.9, -2.2), and he is "between" P and Q for
+              // theta in (1.73, 2.09) -- so the window starts clear of that.
+              P: [-4.2, -3.0], Q: [-2.6, -4.2], th0: 2.6, s: PI / 6, h: 1.2 };
+  const lo = th => Math.min(sigma(o.P[0], o.P[1], th), sigma(o.Q[0], o.Q[1], th));
+  const hi = th => Math.max(sigma(o.P[0], o.P[1], th), sigma(o.Q[0], o.Q[1], th));
+  const samples = [];
+  for (let i = 0; i <= 7; i++) for (let j = 0; j <= 3; j++) {
+    const th = o.th0 - o.s / 2 + o.s * i / 7;
+    samples.push([th, lo(th) + (hi(th) - lo(th)) * j / 3]);
+  }
+  const sheaf = sheafVisual(samples, o.h, o.color); scene.add(sheaf.group);
+  sheaf.lines.material.userData.base = 0.4;
+  const mat = lambert(o.color);
+  const band = windowedBand(lo, hi, o.th0, o.s, 0, o.h, mat);
+  scene.add(band);
+  register({
+    id: o.id, label: o.label, color: o.color,
+    overlapE: (u, v, rad) => {
+      for (let i = 0; i <= 24; i++) {
+        const th = o.th0 - o.s / 2 + o.s * i / 24, sg = sigma(u, v, th);
+        if (sg > lo(th) - rad && sg < hi(th) + rad) return true;
+      }
+      return false;
+    },
+    overlapM: (u, v, rad) => {
+      for (const du of [-rad, 0, rad]) {
+        const th = (u + du) / S;
+        if (winDist(th, o.th0, o.s) > 0) continue;
+        if (v > lo(th) - rad && v < hi(th) + rad) return true;
+      }
+      return false;
+    },
+    base: () => 0, top: () => o.h,
+    capE: '<b>A sheaf</b> of every line that separates two points — but only those pointing within a window.',
+    capM: '<b>A band between two sections</b>, cut off at the edges of its angular window.',
+  }, [band], [sheaf.lines.material]);
+}
+
 // ---- the two players, who are also catalogue entries ---------------------
 // Separate material sets per player, so selecting one pulses only him — and
 // each player's proxy in the other world wears his own colour, so identity
