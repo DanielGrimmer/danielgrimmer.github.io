@@ -1,0 +1,334 @@
+============================================================================
+=== INPUT CELL 0
+============================================================================
+win=3π/2;mstep=1/2;levLoc=0.8*win;font=35;
+floorEuc0[lev_]:=ImageResize[DensityPlot[0,{x,-win,win},{y,-win,win},Mesh->{Range[-Ceiling[win],Ceiling[win],mstep],Range[-Ceiling[win],Ceiling[win],mstep]},MeshStyle->White,Frame->None,ColorFunction->GrayLevel,Background->Black,Epilog->Style[Text[StringJoin["Level ",ToString[lev]],{0,levLoc},Background->Black],{Yellow,font}],RegionFunction->Function[{x,y},x^2+y^2<win^2]],{500,500}];
+levMobSmall[lev_]:=ImageResize[DensityPlot[0,{θ,-π/2,π/2},{r,-Sqrt[2]win,Sqrt[2]win},AspectRatio->Sqrt[2],Frame->None,ColorFunction->GrayLevel,Background->Black,Epilog->Style[Text[StringJoin["Level ",ToString[lev]],{0,-levLoc},Background->Black],{Yellow,font}]],{500,Floor[500Sqrt[2]]}];
+floorEuc[lev_]:=ImageResize[ImageAdd[floorEuc0[lev],ImageResize[ImageRotate[InverseRadon[levMobSmall[lev]],π/2],{500,500}]],{500,500}];
+
+============================================================================
+=== INPUT CELL 1
+============================================================================
+floorMob0[lev_]:=ImageCrop[Radon[floorEuc0[lev],{1000,Floor[500Sqrt[2]]},{π/2-2win,π/2+2win},Method->"Hough"],{1000,500}];
+levMob[lev_]:=Module[{text,img0,bord,img},
+sign[k_]:=1-2Mod[k,2];
+text=Table[Scale[Style[Text[StringJoin["Level ",ToString[lev]],{π/2+k π,-sign[k]*levLoc},Background->Black],{Yellow,35}],{1,sign[k]}],{k,-3,3}];
+img0=DensityPlot[0,{θ,π/2-2win,π/2+2win},{r,-win,win},AspectRatio->1/2,Frame->None,Background->Blue,ColorFunction->GrayLevel,ImageSize->{1000,500}];
+bord=BorderDimensions[img0];
+img=DensityPlot[0,{θ,π/2-2win,π/2+2win},{r,-win,win},AspectRatio->1/2,Frame->None,ColorFunction->GrayLevel,Background->Blue,Epilog->text,ImageSize->{1000,500}];
+img=ImageResize[ImagePad[img, -bord],{1000,500}];
+img];
+floorMob[lev_]:=ImageResize[ImageAdd[floorMob0[lev],levMob[lev]],{1000,500}];
+
+============================================================================
+=== INPUT CELL 2
+============================================================================
+(*floorEucs=Table[floorEuc[i],{i,1,3}];
+CloudExport[floorEucs[[1]],"PNG","MobiusEuclidGame/floorEuc1.png"];
+CloudExport[floorEucs[[2]],"PNG","MobiusEuclidGame/floorEuc2.png"];
+CloudExport[floorEucs[[3]],"PNG","MobiusEuclidGame/floorEuc3.png"];
+
+============================================================================
+=== INPUT CELL 3
+============================================================================
+(*floorMobs=Table[floorMob[i],{i,1,3}];
+CloudExport[floorMobs[[1]],"PNG","MobiusEuclidGame/floorMob1.png"];
+CloudExport[floorMobs[[2]],"PNG","MobiusEuclidGame/floorMob2.png"];
+CloudExport[floorMobs[[3]],"PNG","MobiusEuclidGame/floorMob3.png"];
+
+============================================================================
+=== INPUT CELL 4
+============================================================================
+floorEucs=Table[Import[StringJoin["MobiusEuclidGame/floorEuc",ToString[i],".png"],"PNG"],{i,1,3}];
+floorMobs=Table[Import[StringJoin["MobiusEuclidGame/floorMob",ToString[i],".png"],"PNG"],{i,1,3}];
+
+============================================================================
+=== INPUT CELL 5
+============================================================================
+ImageCollage[{2->floorEucs[[2]],1->ImageCrop[Radon[floorEucs[[2]],{1000,Floor[500Sqrt[2]]},{π/2-2win,π/2+2win},Method->"Hough"],{1000,500}],1->floorMobs[[2]]}]
+
+============================================================================
+=== INPUT CELL 6
+============================================================================
+θview=0.2*π/2;
+vp={0,-100Sin[θview],100Cos[θview]};
+hview=1+(Sqrt[2]-1)Abs[Sin[2θview]];
+drawEucF[lev_]:=Plot3D[0,{x,-win,win},{y,-win,win},Axes->None,Boxed->False,BoxRatios->{1,1,1},ImageSize->{400,400*hview},Mesh->None,PlotRange->{Full,Full,{0,2win}},PlotStyle->Texture[floorEucs[[lev]]],ViewPoint->vp];
+drawMobF[lev_]:=Plot3D[0,{θ,π/2-2win,π/2+2win},{r,-win,win},Axes->None,Boxed->False,BoxRatios->{2,1,1},ImageSize->{800,400*hview},Mesh->None,PlotRange->{Full,Full,{0,2win}},PlotStyle->Texture[floorMobs[[lev]]],ViewPoint->vp];
+TimeFs=Transpose@{Timing@drawEucF[1],Timing@drawMobF[1]};
+Row[TimeFs[[1]]," and "]
+Row[TimeFs[[2]]]
+
+============================================================================
+=== INPUT CELL 7
+============================================================================
+drawEucD[x0_,y0_,ρ0_,f0_,h0_,color_]:=Graphics3D[{color,Cylinder[{{x0,y0,f0},{x0,y0,f0+h0}},ρ0]},Axes->None,BoxRatios->{1,1,1},ImageSize->{400,400*hview},PlotRange->{{-win,win},{-win,win},{0,2win}},ViewPoint->vp];
+drawMobD[x0_,y0_,ρ0_,f0_,h0_,color_]:=Module[{mm},
+mm=1.05*(Sqrt[x0^2+y0^2]+Abs[ρ0]);
+Plot3D[If[Abs[r-x0*Cos[θ]-y0*Sin[θ]]<ρ0,f0+h0,-1],{θ,π/2-2win,π/2+2win},{r,-mm,mm},Axes->None,BoxRatios->{2,1,1},ClippingStyle->None,Filling->f0,FillingStyle->color,ImageSize->{800,400*hview},Mesh->None,PlotRange->{Full,{-win,win},{0,2win}},PlotStyle->color,ViewPoint->vp]];
+TimeDs=Transpose@{Timing@drawEucD[1,1,1,1,2,Red],Timing@drawMobD[1,1,1,1,2,Red]};
+Row[TimeDs[[1]]," and "]
+Row[TimeDs[[2]]]
+
+============================================================================
+=== INPUT CELL 8
+============================================================================
+Bet[a_,x_,b_]:=If[a<=b,a<=x<=b,b<=x<=a];
+drawEucL[x0_,y0_,x1_,y1_,f0_,h0_,color_]:=Graphics3D[{color,Polygon[ConstantArray[{x0,y0,f0},4]+{{0,0,0},{0,0,h0},{x1-x0,y1-y0,h0},{x1-x0,y1-y0,0}}]},Axes->None,BoxRatios->{1,1,1},ImageSize->{400,400*hview},PlotRange->{{-win,win},{-win,win},{0,2win}},ViewPoint->vp];
+drawMobL[x0_,y0_,x1_,y1_,f0_,h0_,color_]:=Plot3D[If[Bet[x0*Cos[θ]+y0 *Sin[θ],r,x1*Cos[θ]+y1*Sin[θ]],f0+h0,-1],{θ,π/2-2win,π/2+2win},{r,-win,win},Axes->None,BoxRatios->{2,1,1},ClippingStyle->None,Filling->f0,FillingStyle->color,ImageSize->{800,400*hview},Mesh->None,PlotRange->{Full,Full,{0,2win}},PlotStyle->color,ViewPoint->vp];
+drawMobL[x0_,y0_,x1_,y1_,f0_,h0_,color_]:=Module[{mm},
+mm=1.05Sqrt[Max[x0^2+y0^2,x1^2+y1^2]];
+Plot3D[If[Bet[x0*Cos[θ]+y0 *Sin[θ],r,x1*Cos[θ]+y1*Sin[θ]],f0+h0,-1],{θ,π/2-2win,π/2+2win},{r,-mm,mm},Axes->None,BoxRatios->{2,1,1},ClippingStyle->None,Filling->f0,FillingStyle->color,ImageSize->{800,400*hview},Mesh->None,PlotRange->{Full,{-win,win},{0,2win}},PlotStyle->color,ViewPoint->vp]];
+TimeLs=Transpose@{Timing@drawEucL[-1,-1,π/6,2,1,2,Red],Timing@drawMobL[-1,-1,π/6,2,1,2,Red]};
+Row[TimeLs[[1]]," and "]
+Row[TimeLs[[2]]]
+
+============================================================================
+=== INPUT CELL 9
+============================================================================
+polyH[x0_,y0_,θ0_,s0_,f0_,h0_]:=Prism[ConstantArray[{x0,y0,f0},6]+{{0,0,0},{-100Sin[θ0-s0/2],100Cos[θ0-s0/2],0},{-100Sin[θ0+s0/2],100Cos[θ0+s0/2],0},{0,0,h0},{-100Sin[θ0-s0/2],100Cos[θ0-s0/2],h0},{-100Sin[θ0+s0/2],100Cos[θ0+s0/2],h0}}];
+drawEucH[x0_,y0_,θ0_,s0_,f0_,h0_,color_]:=Graphics3D[{color,polyH[x0,y0,θ0,s0,f0,h0],polyH[x0,y0,θ0+π,s0,f0,h0]},Axes->None,BoxRatios->{1,1,1},ImageSize->{400,400*hview},PlotRange->{{-win,win},{-win,win},{0,2win}},ViewPoint->vp];
+drawMobH[x0_,y0_,θ0_,s0_,f0_,h0_,color_]:=ParametricPlot3D[Table[{θ-k*π,(1-2Mod[k,2])*(x0*Cos[θ]+y0*Sin[θ]),z},{k,-4,4}],{θ,θ0-s0/2,θ0+s0/2},{z,f0,f0+h0},Axes->None,BoxRatios->{2,1,1},ImageSize->{800,400*hview},Mesh->None,PlotRange->{{π/2-2win,π/2+2win},{-win,win},{0,2win}},PlotStyle->color,ViewPoint->vp];
+TimeHs=Transpose@{Timing@drawEucH[0,-2,π/2,π/3,0,1,Red],Timing@drawMobH[0,-2,π/2,π/3,0,1,Red]};
+Row[TimeHs[[1]]," and "]
+Row[TimeHs[[2]]]
+
+============================================================================
+=== INPUT CELL 10
+============================================================================
+drawEucV[r0_,θ0_,s0_,f0_,h0_,color_]:=Graphics3D[{color,Rotate[Cuboid[{r0,-100,f0},{r0+s0,100,f0+h0}],θ0,{0,0,1},{0,0,0}]},Axes->None,BoxRatios->{1,1,1},ImageSize->{400,400*hview},PlotRange->{{-win,win},{-win,win},{0,2win}},ViewPoint->vp];
+polyV[r0_,θ0_,s0_,f0_,h0_]:=Polygon[ConstantArray[{θ0,r0,f0},4]+{{0,0,0},{0,0,h0},{0,s0,h0},{0,s0,0}}];
+drawMobV[r0_,θ0_,s0_,f0_,h0_,color_]:=Graphics3D[{color,Table[polyV[(1-2Mod[k,2])r0,θ0-k*π,(1-2Mod[k,2])s0,f0,h0],{k,-4,4}]},Axes->None,BoxRatios->{2,1,1},ImageSize->{800,400*hview},PlotRange->{{π/2-2win,π/2+2win},{-win,win},{0,2win}},ViewPoint->vp];
+TimeVs=Transpose@{Timing@drawEucV[-3,π/4,2,0,1,Red],Timing@drawMobV[-3,π/4,2,0,1,Red]};
+Row[TimeVs[[1]]," and "]
+Row[TimeVs[[2]]]
+
+============================================================================
+=== INPUT CELL 11
+============================================================================
+drawEucB[x0_,y0_,x1_,y1_,θ0_,s0_,f0_,h0_,color_]:=Graphics3D[{color,polyH[x0,y0,θ0,s0,f0,h0],polyH[x0,y0,π+θ0,s0,f0,h0],polyH[x1,y1,θ0,s0,f0,h0],polyH[x1,y1,π+θ0,s0,f0,h0],Rotate[Cuboid[{x0 *Cos[θ0]+y0*Sin[θ0],-100,f0},{x1 *Cos[θ0]+y1*Sin[θ0],100,f0+h0}],θ0,{0,0,1},{0,0,0}]},Axes->None,BoxRatios->{1,1,1},ImageSize->{400,400*hview},PlotRange->{{-win,win},{-win,win},{0,2win}},ViewPoint->vp];
+drawMobB[x0_,y0_,x1_,y1_,θ0_,s0_,f0_,h0_,color_]:=Show@Table[Plot3D[If[Bet[x0*Cos[θ]+y0*Sin[θ],r,x1*Cos[θ]+y1*Sin[θ]],f0+h0,-1],{θ,kk*π+θ0-s0/2,kk*π+θ0+s0/2},{r,-win,win},Axes->None,BoxRatios->{2,1,1},ClippingStyle->None,Filling->f0,FillingStyle->color,ImageSize->{800,400*hview},Mesh->None,PlotRange->{{π/2-2win,π/2+2win},{-win,win},{0,2win}},PlotStyle->color,ViewPoint->vp],{kk,-4,4}];
+TimeBs=Transpose@{Timing@drawEucB[0,2,0,1,π/2,π/4,0,1,Red],Timing@drawMobB[0,2,0,1,π/2,π/4,0,1,Red]};
+Row[TimeBs[[1]]," and "]
+Row[TimeBs[[2]]]
+
+============================================================================
+=== INPUT CELL 12
+============================================================================
+skin=RGBColor["#ddcba4"];
+drawEucE[x0_,y0_,f0_]:=Graphics3D[{skin,Cylinder[{{x0,y0,f0},{x0,y0,f0+1}},1/4]},Axes->None,BoxRatios->{1,1,1},ImageSize->{400,400*hview},PlotRange->{{-win,win},{-win,win},{0,2win}},ViewPoint->vp];
+drawMobE[x0_,y0_,f0_]:=ParametricPlot3D[{θ,x0*Cos[θ]+y0*Sin[θ],z},{θ,π/2-2win,π/2+2win},{z,f0,f0+1},Axes->None,BoxRatios->{2,1,1},Mesh->None,ImageSize->{800,400*hview},PlotPoints->{40, 15},PlotRange->{{π/2-2win,π/2+2win},{-win,win},{0,2win}},PlotStyle->skin,ViewPoint->vp];
+TimeEs=Transpose@{Timing@drawEucE[1,1,0],Timing@drawMobE[1,1,0]};
+Row[TimeEs[[1]]," and "]
+Row[TimeEs[[2]]]
+
+============================================================================
+=== INPUT CELL 13
+============================================================================
+drawEucM[r0_,θ0_,f0_]:=Graphics3D[{skin,Polygon[ConstantArray[{r0*Cos[θ0],r0*Sin[θ0],f0},4]+{{100Sin[θ0],-100Cos[θ0],0},{100Sin[θ0],-100Cos[θ0],1},{-100Sin[θ0],100Cos[θ0],1},{-100Sin[θ0],100Cos[θ0],0}}]},Axes->None,BoxRatios->{1,1,1},ImageSize->{400,400*hview},PlotRange->{{-win,win},{-win,win},{0,2win}},ViewPoint->vp];
+drawMobM[r0_,θ0_,f0_]:=Graphics3D[{skin,Cylinder[{{θ0,r0,f0},{θ0,r0,f0+1}},1/4],Opacity[0.5],Table[Cylinder[{{θ0-k*π,(1-2Mod[k,2])r0,f0},{θ0-k*π,(1-2Mod[k,2])r0,f0+1}},1/4],{k,{-6,-5,-4,-3,-2,-1,1,2,3,4,5,6}}]},Axes->None,BoxRatios->{2,1,1},ImageSize->{800,400*hview},PlotRange->{{π/2-2win,π/2+2win},{-win,win},{0,2win}},ViewPoint->vp];
+TimeMs=Transpose@{Timing@drawEucM[-2,π/2,0],Timing@drawMobM[-2,π/2,0]};
+Row[TimeMs[[1]]," and "]
+Row[TimeMs[[2]]]
+
+============================================================================
+=== INPUT CELL 14
+============================================================================
+drawEuc[objs_]:=Module[{plotlist={},k,ob,type,lev,x0,y0,x1,y1,r0,θ0,ρ0,s0,f0,h0,color},
+For[k=1,k<=Length[objs],k++,
+ob=objs[[k]];
+type=ob[[1]];
+If[type=="F",
+lev=ob[[2]];
+AppendTo[plotlist,drawEucF[lev]];Continue[]];
+If[type=="D",
+x0=ob[[2]];y0=ob[[3]];ρ0=ob[[4]];f0=ob[[5]];h0=ob[[6]];color=ob[[7]];
+AppendTo[plotlist,drawEucD[x0,y0,ρ0,f0,h0,color]];Continue[]];
+If[type=="L",
+x0=ob[[2]];y0=ob[[3]];x1=ob[[4]];y1=ob[[5]];f0=ob[[6]];h0=ob[[7]];color=ob[[8]];
+AppendTo[plotlist,drawEucL[x0,y0,x1,y1,f0,h0,color]];Continue[]];
+If[type=="H",
+x0=ob[[2]];y0=ob[[3]];θ0=ob[[4]];s0=ob[[5]];f0=ob[[6]];h0=ob[[7]];color=ob[[8]];
+AppendTo[plotlist,drawEucH[x0,y0,θ0,s0,f0,h0,color]];Continue[]];
+If[type=="V",
+r0=ob[[2]];θ0=ob[[3]];s0=ob[[4]];f0=ob[[5]];h0=ob[[6]];color=ob[[7]];
+AppendTo[plotlist,drawEucV[r0,θ0,s0,f0,h0,color]];Continue[]];
+If[type=="B",
+x0=ob[[2]];y0=ob[[3]];x1=ob[[4]];y1=ob[[5]];θ0=ob[[6]];s0=ob[[7]];f0=ob[[8]];h0=ob[[9]];color=ob[[10]];
+AppendTo[plotlist,drawEucB[x0,y0,x1,y1,θ0,s0,f0,h0,color]];Continue[]];
+If[type=="E",
+x0=ob[[2]];y0=ob[[3]];f0=ob[[4]];
+AppendTo[plotlist,drawEucE[x0,y0,f0]];Continue[]];
+If[type=="M",
+r0=ob[[2]];θ0=ob[[3]];f0=ob[[4]];
+AppendTo[plotlist,drawEucM[r0,θ0,f0]];Continue[]];
+];plotlist]
+
+============================================================================
+=== INPUT CELL 15
+============================================================================
+drawMob[objs_]:=Module[{plotlist={},k,ob,type,lev,x0,y0,x1,y1,r0,θ0,ρ0,s0,f0,h0,color},
+For[k=1,k<=Length[objs],k++,
+ob=objs[[k]];
+type=ob[[1]];
+If[type=="F",
+lev=ob[[2]];
+AppendTo[plotlist,drawMobF[lev]];Continue[]];
+If[type=="D",
+x0=ob[[2]];y0=ob[[3]];ρ0=ob[[4]];f0=ob[[5]];h0=ob[[6]];color=ob[[7]];
+AppendTo[plotlist,drawMobD[x0,y0,ρ0,f0,h0,color]];Continue[]];
+If[type=="L",
+x0=ob[[2]];y0=ob[[3]];x1=ob[[4]];y1=ob[[5]];f0=ob[[6]];h0=ob[[7]];color=ob[[8]];
+AppendTo[plotlist,drawMobL[x0,y0,x1,y1,f0,h0,color]];Continue[]];
+If[type=="H",
+x0=ob[[2]];y0=ob[[3]];θ0=ob[[4]];s0=ob[[5]];f0=ob[[6]];h0=ob[[7]];color=ob[[8]];
+AppendTo[plotlist,drawMobH[x0,y0,θ0,s0,f0,h0,color]];Continue[]];
+If[type=="V",
+r0=ob[[2]];θ0=ob[[3]];s0=ob[[4]];f0=ob[[5]];h0=ob[[6]];color=ob[[7]];
+AppendTo[plotlist,drawMobV[r0,θ0,s0,f0,h0,color]];Continue[]];
+If[type=="B",
+x0=ob[[2]];y0=ob[[3]];x1=ob[[4]];y1=ob[[5]];θ0=ob[[6]];s0=ob[[7]];f0=ob[[8]];h0=ob[[9]];color=ob[[10]];
+AppendTo[plotlist,drawMobB[x0,y0,x1,y1,θ0,s0,f0,h0,color]];Continue[]];
+If[type=="E",
+x0=ob[[2]];y0=ob[[3]];f0=ob[[4]];
+AppendTo[plotlist,drawMobE[x0,y0,f0]];Continue[]];
+If[type=="M",
+r0=ob[[2]];θ0=ob[[3]];f0=ob[[4]];
+AppendTo[plotlist,drawMobM[r0,θ0,f0]];Continue[]];
+];plotlist]
+
+============================================================================
+=== INPUT CELL 16
+============================================================================
+(*F: level;
+D:x,y,ρ,f,h,color;
+L:x0,y0,x1,y1,f,h,color;
+H:x,y,θ,s,f,h,color;
+V:r,θ,s,f,h,color;
+B:x0,y0,x1,y1,θ0,s0,f,h,color;
+E:x,y,f;
+M:r,θ,f;*)
+background1={{"F",1}};
+background2={{"F",2},
+{"D",0,0,1/2,0,2,Green},
+{"B",0,-2,0,-1,π/2,π/4,0,2,Blue}};
+background3={{"F",3},
+{"D",0,0,1/2,0,2,Green},
+{"V",-3,π/4,1,0,1,skin},
+{"L",-2,1,-3,-1,0,3,Blue}};
+backgrounds={background1,background2,background3};
+
+============================================================================
+=== INPUT CELL 17
+============================================================================
+lev=1;
+euc=drawEuc[backgrounds[[lev]]];
+mob=drawMob[backgrounds[[lev]]];
+Row[{Show@euc,Show@mob}]
+
+============================================================================
+=== INPUT CELL 18
+============================================================================
+(*Euclid Demo*)
+locE[t_]:=Piecewise[{
+{{Sin[π t],0,0},0<=t<=3},
+{{0,Sin[π t],0},3<t<=5.5},
+{{Cos[π t],Sin[π t],0},5.5<t<=7.5},
+{{0,-1,1.5Cos[π t]^2},7.5<t<=10.5}
+},{0,0,0}];
+Plot[{locE[t][[1]],locE[t][[2]],locE[t][[3]]},{t,0,10.5},PlotStyle->{Red,Green,Blue},PlotRange->Full]
+
+============================================================================
+=== INPUT CELL 19
+============================================================================
+fps=16;
+demoE[f_]:=GraphicsRow[{
+Show@Join[euc,drawEuc[{Flatten[{"E",locE[f/fps]}],{"M",-0.8win,π/2,0}}]],
+Show@Join[mob,drawMob[{Flatten[{"E",locE[f/fps]}],{"M",-0.8win,π/2,0}}]]
+},ImageSize->{1.25*640,1.25*255}];
+demoE[fps/2]
+
+============================================================================
+=== INPUT CELL 20
+============================================================================
+demoEframes=Table[demoE[t],{t,1,10.5*fps}];
+
+============================================================================
+=== INPUT CELL 21
+============================================================================
+CloudExport[demoEframes,"GIF","MobiusEuclidGame/EuclidMotionDemo.gif"]
+
+============================================================================
+=== INPUT CELL 22
+============================================================================
+(*Mobius Demo*)
+locM[t_]:=Piecewise[{
+{{-2+Sin[π t],π/2,0},0<=t<=3},
+{{-2,π/2+π/4Sin[π t],0},3<t<=6},
+{{-2,π/2,1.5Sin[π t]^2},6<t<=8},
+{{-2,Mod[π/2+4π (t-8)/6,6π,-5π/2],0},8<t<=14}
+},{-2,π/2,0}];
+Plot[{locM[t][[1]],locM[t][[2]],locM[t][[3]]},{t,0,14},PlotStyle->{Red,Green,Blue},PlotRange->Full]
+
+============================================================================
+=== INPUT CELL 23
+============================================================================
+fps=16;
+demoM[f_]:=GraphicsRow[{
+Show@Join[euc,drawEuc[{{"E",0,0,0},Flatten[{"M",locM[f/fps]}]}]],
+Show@Join[mob,drawMob[{{"E",0,0,0},Flatten[{"M",locM[f/fps]}]}]]
+},ImageSize->{1.25*640,1.25*255}];
+demoM[0]
+
+============================================================================
+=== INPUT CELL 24
+============================================================================
+demoMframes=Table[demoM[t],{t,1,14*fps}];
+
+============================================================================
+=== INPUT CELL 25
+============================================================================
+CloudExport[demoMframes,"GIF","MobiusEuclidGame/MobiusMotionDemo.gif"]
+
+============================================================================
+=== INPUT CELL 26
+============================================================================
+(*Level 1 Demo*)
+locE[t_]:=Piecewise[{
+{{0,-t,0},0<=t<=1},
+{{0,-1,0},1<=t<=6},
+{{-(t-6),-1+(t-6),0},6<=t<=7},
+{{-1+(t-7),-(t-7),Max[0,1.75Cos[π t]]},7<=t<=9},
+{{1-(t-9)/3,-2+2(t-9)/3,0},9<=t<=12}
+},{0,0,0}];
+locM[t_]:=Piecewise[{
+{{-0.8win+1.77t,π/2,0},0<=t<=1},
+{{-2Sin[π/2+0.85(t-1) π/2],π/2+0.85(t-1) π/2,0},1<=t<=2},
+{{-0.223445-Sin[Min[1.85π/2+(t-2)π/2,11π/4]],Min[1.85π/2+(t-2)π/2,11π/4],0},2<=t<=6},
+{{-0.9305517811865475+(-1+0.9305517811865475)(t-6),11π/4,0},6<=t<=7},
+{{-1,11π/4,0},7<=t<=9},
+{{-1+4.77Sin[π(t-9)/6],11π/4-5π(t-9)/12,0},9<=t<=12}
+},{-0.8win,π/2,0}];
+Row[{Plot[{locE[t][[1]],locE[t][[2]],locE[t][[3]]},{t,0,14},PlotStyle->{Red,Green,Blue},PlotRange->Full,ImageSize->Medium],
+Plot[{locM[t][[1]],locM[t][[2]],locM[t][[3]]},{t,0,14},PlotStyle->{Red,Green,Blue},PlotRange->Full,ImageSize->Medium]}]
+
+============================================================================
+=== INPUT CELL 27
+============================================================================
+fps=16;
+demo1[f_]:=GraphicsRow[{
+Show@Join[euc,drawEuc[{Flatten[{"E",locE[f/fps]}],Flatten[{"M",locM[f/fps]}]}]],
+Show@Join[mob,drawMob[{Flatten[{"E",locE[f/fps]}],Flatten[{"M",locM[f/fps]}]}]]
+},ImageSize->{1.25*640,1.25*255}];
+demo1[12fps]
+
+============================================================================
+=== INPUT CELL 28
+============================================================================
+demo1frames=Table[demo1[t],{t,1,12*fps}];
+
+============================================================================
+=== INPUT CELL 29
+============================================================================
+CloudExport[demo1frames,"GIF","MobiusEuclidGame/Level1Demo.gif"]
+
