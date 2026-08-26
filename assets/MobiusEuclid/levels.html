@@ -42,8 +42,12 @@
   And the two players keep this repo's identity colours (brown Euclid,
   maroon Mobius) rather than the notebook's both-brown.
 
-  Controls: Euclid W A S D + Space, Mobius arrows + Enter, R resets, keys
-  1/2/3 or the chips switch level.  window.levels exposes state for tests.
+  Levels 1-3 are GameDemos.nb's background1..3 verbatim.  Levels 4-8 are ours:
+  one per object type, with exactly one of that object in the scene, so each
+  type's dual pair can be looked at on its own.
+
+  Controls: Euclid W A S D + Space, Mobius arrows + Enter, R resets, keys 1-8
+  or Tab or the chips switch level.  window.levels exposes state for tests.
 -->
 <head>
 <meta charset="utf-8">
@@ -76,7 +80,7 @@
 <canvas id="c"></canvas>
 <div id="hud">
   <div class="panel" id="hudE">
-    <div><div class="name">Euclid</div><div class="keys">W A S D move &nbsp;·&nbsp; Space jump &nbsp;·&nbsp; R reset &nbsp;·&nbsp; 1 2 3 level</div></div>
+    <div><div class="name">Euclid</div><div class="keys">W A S D move &nbsp;·&nbsp; Space jump &nbsp;·&nbsp; R reset &nbsp;·&nbsp; 1–8 or Tab: level</div></div>
     <div class="cap" id="capE"></div>
   </div>
   <div id="divider"></div>
@@ -252,8 +256,121 @@ function buildFloor(levName) {
 }
 
 // ------------------------------------------------ the notebook's object types
+// The full declarative format from GameDemos.nb (its own comment, verbatim):
+//
+//     F: level;
+//     D: x, y, rho, f, h, color;
+//     L: x0, y0, x1, y1, f, h, color;
+//     H: x, y, theta, s, f, h, color;
+//     V: r, theta, s, f, h, color;
+//     B: x0, y0, x1, y1, theta0, s0, f, h, color;
+//     E: x, y, f;
+//     M: r, theta, f;
+//
 // Each maker returns { group, solidE, solidM } — the meshes for both worlds and
 // the collision entry for each. Every record has a floating base f.
+//
+// D, L and B dualise by MEETING: the Mobius object is the set of lines that
+// meet the Euclid region, which is a band. H and V dualise by CONTAINMENT —
+// the set of lines lying INSIDE the region — because their Euclid form is
+// unbounded and ruled, and almost every line meets an infinite slab. That is
+// why they are solid for Euclid but thin for Mobius. See THEORY.md 16.
+
+const LFAR = 2.4 * WIN * Math.SQRT2;   // long enough to cross the square from anywhere inside
+
+/** Sutherland–Hodgman clip to the square arena. The notebook let PlotRange do
+    this; nothing clips here, so unbounded footprints are cut to the floor. */
+function clipToArena(poly) {
+  const planes = [p => WIN - p[0], p => WIN + p[0], p => WIN - p[1], p => WIN + p[1]];
+  let out = poly;
+  for (const f of planes) {
+    const inp = out; out = [];
+    for (let i = 0; i < inp.length; i++) {
+      const A = inp[i], B = inp[(i + 1) % inp.length], fa = f(A), fb = f(B);
+      if (fa >= 0) out.push(A);
+      if ((fa >= 0) !== (fb >= 0)) {
+        const t = fa / (fa - fb);
+        out.push([A[0] + t * (B[0] - A[0]), A[1] + t * (B[1] - A[1])]);
+      }
+    }
+    if (!out.length) return [];
+  }
+  return out;
+}
+
+/** A footprint polygon extruded to height h, floating at f0. */
+function prism(verts, f0, h, material) {
+  if (verts.length < 3) return null;
+  const shape = new THREE.Shape(verts.map(([x, y]) => new THREE.Vector2(x, y)));
+  const mesh = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false }), material);
+  mesh.rotation.x = -PI / 2;          // local (x, y, depth) -> world (x, depth, -y)
+  mesh.position.y = f0;
+  return mesh;
+}
+
+/** One half of a bowtie: the sector at (px, py) spanning the line directions
+    d(a) = (-sin a, cos a) for a in the window, out to LFAR. */
+function sectorFootprint(px, py, th0, s, sign) {
+  const pts = [[px, py]];
+  for (let i = 0; i <= 8; i++) {
+    const a = th0 - s / 2 + s * i / 8;
+    pts.push([px + sign * -Math.sin(a) * LFAR, py + sign * Math.cos(a) * LFAR]);
+  }
+  return pts;
+}
+
+/** The slab between the parallel lines (th0, r0) and (th0, r1). */
+function slabFootprint(th0, r0, r1) {
+  const nx = Math.cos(th0), ny = Math.sin(th0), dx = -ny, dy = nx;
+  return [
+    [r0 * nx - LFAR * dx, r0 * ny - LFAR * dy], [r0 * nx + LFAR * dx, r0 * ny + LFAR * dy],
+    [r1 * nx + LFAR * dx, r1 * ny + LFAR * dy], [r1 * nx - LFAR * dx, r1 * ny - LFAR * dy],
+  ];
+}
+
+/** Signed distance into the repeating window th0 +/- s/2 (mod pi); <= 0 inside. */
+const winDist = (th, th0, s) => {
+  let d = th - th0;
+  d -= PI * Math.round(d / PI);
+  return Math.abs(d) - s / 2;
+};
+
+/** Distance from (u, v) to the bowtie at (px, py). */
+function bowtieDist(px, py, th0, s, u, v) {
+  const dx = u - px, dy = v - py, rho = Math.hypot(dx, dy);
+  if (rho < 1e-9) return 0;
+  const ex = winDist(Math.atan2(dy, dx) - PI / 2, th0, s);   // d(a) points at angle a + pi/2
+  if (ex <= 0) return 0;
+  return ex >= PI / 2 ? rho : rho * Math.sin(ex);
+}
+
+/** Like Band, but drawn only where theta falls inside a repeating window.
+    Built per tile, so no degenerate triangles reach computeVertexNormals. */
+function windowedBand(lo, hi, th0, s, f0, h, material) {
+  const pos = [];
+  const put = (x, y, z) => pos.push(x, y, z);
+  const quad = (A, B, C, D) => { put(...A); put(...B); put(...C); put(...A); put(...C); put(...D); };
+  const N = 40;
+  for (let k = Math.ceil((TH_MIN - th0) / PI); k <= Math.floor((TH_MAX - th0) / PI); k++) {
+    const a = Math.max(TH_MIN, th0 + k * PI - s / 2), b = Math.min(TH_MAX, th0 + k * PI + s / 2);
+    if (b <= a) continue;
+    for (let i = 0; i < N; i++) {
+      const t0 = a + (b - a) * i / N, t1 = a + (b - a) * (i + 1) / N;
+      const x0 = XM0 + t0 * S, x1 = XM0 + t1 * S;
+      const l0 = -lo(t0), l1 = -lo(t1), h0 = -hi(t0), h1 = -hi(t1);
+      const yb = f0, yt = f0 + h;
+      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);
+      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.computeVertexNormals();
+  const mesh = new THREE.Mesh(g, material);
+  mesh.frustumCulled = false;
+  return mesh;
+}
 
 /** "D": a cylinder for Euclid; the band |r - sigma| < rho for Mobius. */
 function makeD([x0, y0, rho, f0, h0, color]) {
@@ -271,17 +388,17 @@ function makeD([x0, y0, rho, f0, h0, color]) {
 }
 
 /**
- * "L": a wall segment from (x0, y0), direction th0, length s0 — for Euclid a
- * thin wall; for Mobius the region between the two endpoint sections, since a
- * point t of the segment has section sigma0 + t cos(theta - th0), linear in t.
+ * "L": a wall from (x0, y0) to (x1, y1) — for Euclid a thin wall; for Mobius
+ * the region between the two endpoint sections, since a point t along the
+ * segment has section sigma0 + t (sigma1 - sigma0), linear in t.
  */
-function makeL([x0, y0, th0, s0, f0, h0, color]) {
+function makeL([x0, y0, x1, y1, f0, h0, color]) {
   const group = new THREE.Group();
   const mat = lambert(color);
-  const x1 = x0 + s0 * Math.cos(th0), y1 = y0 + s0 * Math.sin(th0);
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(s0, h0), mat);
+  const len = Math.hypot(x1 - x0, y1 - y0);
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(len, h0), mat);
   wall.position.copy(E2W((x0 + x1) / 2, (y0 + y1) / 2, f0 + h0 / 2));
-  wall.rotation.y = th0; group.add(wall);
+  wall.rotation.y = Math.atan2(y1 - y0, x1 - x0); group.add(wall);
   const band = {
     lo: th => Math.min(sigma(x0, y0, th), sigma(x1, y1, th)),
     hi: th => Math.max(sigma(x0, y0, th), sigma(x1, y1, th)),
@@ -294,6 +411,120 @@ function makeL([x0, y0, th0, s0, f0, h0, color]) {
   };
 }
 
+/**
+ * "H": every line through (x0, y0) whose normal angle lies in the window —
+ * a bowtie for Euclid (the notebook draws polyH at theta and at theta + pi),
+ * and for Mobius an arc of that point's own section. Thin, because a bundle
+ * of lines through a point is one-dimensional in his world.
+ */
+function makeH([x0, y0, th0, s0, f0, h0, color]) {
+  const group = new THREE.Group();
+  const mat = lambert(color);
+  for (const sign of [1, -1]) {
+    const m = prism(clipToArena(sectorFootprint(x0, y0, th0, s0, sign)), f0, h0, mat);
+    if (m) group.add(m);
+  }
+  const T = 0.09;
+  const sig = th => sigma(x0, y0, th);
+  // sigma is pi-antiperiodic, so one curve already serves every tile correctly.
+  group.add(windowedBand(th => sig(th) - T, th => sig(th) + T, th0, s0, f0, h0, mat));
+  return {
+    group,
+    solidE: { overlap: (u, v, rad) => bowtieDist(x0, y0, th0, s0, u, v) < rad, base: () => f0, top: () => f0 + h0 },
+    solidM: {
+      overlap: (u, v, rad) => {
+        const th = u / S;
+        return winDist(th, th0, s0) <= rad / S && Math.abs(v - sig(th)) < T + rad;
+      },
+      base: () => f0, top: () => f0 + h0,
+    },
+  };
+}
+
+/**
+ * "V": the lines lying between the parallels (th0, r0) and (th0, r0 + s0) —
+ * an infinite slab for Euclid, and for Mobius a segment of a single FIBRE,
+ * repeated once per tile with the half-turn flip.
+ */
+function makeV([r0, th0, s0, f0, h0, color]) {
+  const group = new THREE.Group();
+  const mat = lambert(color);
+  const r1 = r0 + s0, lo = Math.min(r0, r1), hi = Math.max(r0, r1);
+  const m = prism(clipToArena(slabFootprint(th0, lo, hi)), f0, h0, mat);
+  if (m) group.add(m);
+  const TV = 0.06;                                        // half-width in theta
+  const geo = new THREE.BoxGeometry(2 * TV * S, h0, hi - lo);
+  for (let k = Math.ceil((TH_MIN - th0) / PI); k <= Math.floor((TH_MAX - th0) / PI); k++) {
+    const seg = new THREE.Mesh(geo, mat);
+    seg.position.copy(M2W(th0 + k * PI, parity(k) * (lo + hi) / 2, f0 + h0 / 2));
+    group.add(seg);
+  }
+  return {
+    group,
+    solidE: {
+      overlap: (u, v, rad) => { const s = sigma(u, v, th0); return s > lo - rad && s < hi + rad; },
+      base: () => f0, top: () => f0 + h0,
+    },
+    solidM: {
+      overlap: (u, v, rad) => {
+        const th = u / S;
+        if (winDist(th, th0, 2 * TV) > rad / S) return false;
+        const sgn = parity(Math.round((th - th0) / PI));
+        return v > Math.min(sgn * lo, sgn * hi) - rad && v < Math.max(sgn * lo, sgn * hi) + rad;
+      },
+      base: () => f0, top: () => f0 + h0,
+    },
+  };
+}
+
+/**
+ * "B": every line separating (x0, y0) from (x1, y1) whose normal angle lies in
+ * the window — for Mobius the L band clipped to that window. Euclid's side is
+ * drawn as the notebook draws it: a bowtie at each endpoint plus the slab
+ * between their projections on n(th0). That is a slight over-draw of the true
+ * union (whose middle piece is the intersection of the slabs across the
+ * window, not the slab at th0); collision matches what is drawn.
+ */
+function makeB([x0, y0, x1, y1, th0, s0, f0, h0, color]) {
+  const group = new THREE.Group();
+  const mat = lambert(color);
+  const ends = [[x0, y0], [x1, y1]];
+  for (const [px, py] of ends) for (const sign of [1, -1]) {
+    const m = prism(clipToArena(sectorFootprint(px, py, th0, s0, sign)), f0, h0, mat);
+    if (m) group.add(m);
+  }
+  const sa = sigma(x0, y0, th0), sb = sigma(x1, y1, th0);
+  const slab = prism(clipToArena(slabFootprint(th0, Math.min(sa, sb), Math.max(sa, sb))), f0, h0, mat);
+  if (slab) group.add(slab);
+  const lo = th => Math.min(sigma(x0, y0, th), sigma(x1, y1, th));
+  const hi = th => Math.max(sigma(x0, y0, th), sigma(x1, y1, th));
+  group.add(windowedBand(lo, hi, th0, s0, f0, h0, mat));
+  return {
+    group,
+    solidE: {
+      overlap: (u, v, rad) => {
+        if (ends.some(([px, py]) => bowtieDist(px, py, th0, s0, u, v) < rad)) return true;
+        const s = sigma(u, v, th0);
+        return s > Math.min(sa, sb) - rad && s < Math.max(sa, sb) + rad;
+      },
+      base: () => f0, top: () => f0 + h0,
+    },
+    solidM: {
+      overlap: (u, v, rad) => {
+        for (const du of [-rad, 0, rad]) {
+          const th = (u + du) / S;
+          if (winDist(th, th0, s0) > 0) continue;
+          if (v > lo(th) - rad && v < hi(th) + rad) return true;
+        }
+        return false;
+      },
+      base: () => f0, top: () => f0 + h0,
+    },
+  };
+}
+
+const MAKERS = { D: makeD, L: makeL, H: makeH, V: makeV, B: makeB };
+
 const bandOverlap = (band, u, v, rad) => {
   for (const du of [-rad, 0, rad]) {
     const th = (u + du) / S;
@@ -303,28 +534,67 @@ const bandOverlap = (band, u, v, rad) => {
 };
 
 // ------------------------------------------------ the three levels, verbatim
-// backlists and playlists from the notebook's In[205], in its own units.
+// background1..3 from GameDemos.nb, in its own units and colours (skin is the
+// notebook's RGBColor["#ddcba4"]). The notebook's scenes carry no E or M
+// record — those live in its playlists, as animation trajectories — so the
+// spawns below are ours, chosen clear of each scene's solids in both worlds.
+const GREEN = 0x22cc22, BLUE = 0x2244dd, SKIN = 0xddcba4, TEAL = 0x1fa8a8;
+const MHOME = ['M', -0.8 * WIN, PI / 2, 0];     // r, theta, f — clear in every scene below
+
 const LEVELS = [
   {
-    name: 'Level 1',
-    back: [],
-    eHome: [0, 0],
-    mHome: [PI / 2, -0.8 * WIN],       // {"M", -0.8 winEuc, pi/2, ...}: r, theta
+    back: [['F', 1], ['E', 0, 0, 0], MHOME],
+    capE: 'a bare floor.',
+    capM: 'a bare strip.',
   },
   {
-    name: 'Level 2',
-    back: [['D', 1, 1, 0.5, 0, 2, 0x22cc22]],
-    eHome: [-1, 0],
-    mHome: [PI / 2, -0.8 * WIN],
+    back: [['F', 2],
+           ['D', 0, 0, 1 / 2, 0, 2, GREEN],
+           ['B', 0, -2, 0, -1, PI / 2, PI / 4, 0, 2, BLUE],
+           ['E', -2.5, 1.5, 0], MHOME],
+    capE: 'a green cylinder, and a blue <b>B</b>: every line separating two points, within a window of directions.',
+    capM: 'the cylinder is a band; the blue one is a band too — but cut off at the edges of its angular window.',
   },
   {
-    name: 'Level 3',
-    back: [
-      ['D', 0, 0, 0.5, 0, 2, 0x22cc22],
-      ['L', -2, 1, -PI / 4, 3 * Math.SQRT2, 0, 3, 0x2244dd],
-    ],
-    eHome: [-0.8 * WIN, 0],
-    mHome: [PI / 2, -0.8 * WIN],
+    back: [['F', 3],
+           ['D', 0, 0, 1 / 2, 0, 2, GREEN],
+           ['V', -3, PI / 4, 1, 0, 1, SKIN],
+           ['L', -2, 1, -3, -1, 0, 3, BLUE],
+           ['E', 1.5, -1.5, 0], MHOME],
+    capE: 'the cylinder, a blue wall, and a pale <b>V</b> — a slab right across the floor.',
+    capM: 'the slab is a piece of one <b>fibre</b>: co-parallel lines in a column, thin because nothing else is parallel to them.',
+  },
+
+  // ---- one level per object type, with exactly one of that object ---------
+  {
+    name: 'Type D', chip: 'D · cylinder',
+    back: [['F', 4], ['D', 0, 0, 1 / 2, 0, 2, GREEN], ['E', -1.8, 0, 0], MHOME],
+    capE: '<b>D</b> — a cylinder: a disk of points, each one simple.',
+    capM: '<b>D</b> — the band between two section curves: every line that <i>meets</i> the disk.',
+  },
+  {
+    name: 'Type L', chip: 'L · wall',
+    back: [['F', 5], ['L', -1.5, -1.5, 1.5, 1.5, 0, 2, BLUE], ['E', -2.2, 1.6, 0], MHOME],
+    capE: '<b>L</b> — a wall running between two points.',
+    capM: '<b>L</b> — the band between the two endpoints’ sections: every line that separates them.',
+  },
+  {
+    name: 'Type H', chip: 'H · bowtie',
+    back: [['F', 6], ['H', 0, -1.6, PI / 2, PI / 4, 0, 2, TEAL], ['E', 0, 2.2, 0], MHOME],
+    capE: '<b>H</b> — a bowtie: every line through one point, for a window of directions.',
+    capM: '<b>H</b> — an arc of that point’s own section, and nothing else. Thin, because these are the lines <i>contained in</i> the bowtie, not the ones meeting it.',
+  },
+  {
+    name: 'Type V', chip: 'V · slab',
+    back: [['F', 7], ['V', -2, PI / 4, 1, 0, 1, SKIN], ['E', 1.5, 1.5, 0], MHOME],
+    capE: '<b>V</b> — a slab between two parallel lines, right across the floor. Low enough to jump onto.',
+    capM: '<b>V</b> — a piece of one <b>fibre</b>: co-parallel lines in a column, once per tile with the half-turn flip.',
+  },
+  {
+    name: 'Type B', chip: 'B · clipped band',
+    back: [['F', 8], ['B', 0, -2, 0, -1, PI / 2, PI / 4, 0, 2, BLUE], ['E', -2.5, 1.5, 0], MHOME],
+    capE: '<b>B</b> — every line separating two points, but only those pointing within a window.',
+    capM: '<b>B</b> — the <b>L</b> band, cut off at the edges of its angular window.',
   },
 ];
 
@@ -347,15 +617,24 @@ let current = null, currentIndex = 0;
 const inArenaE = (u, v, rad) => Math.abs(u) < WIN - rad && Math.abs(v) < WIN - rad;
 const inArenaM = (u, v, rad) => Math.abs(v) < RMAX - rad;
 
+/** The notebook's scene compiler: walk the record list and dispatch on the
+    type letter, exactly as drawEuc/drawMob do — but building both worlds and
+    both collision sets in one pass. F picks the floor; E and M set the spawns
+    (the notebook animates them instead). */
+const levelName = spec => spec.name ?? ('Level ' + (spec.back.find(r => r[0] === 'F')?.[1] ?? 1));
+
 function loadLevel(i) {
   currentIndex = i;
-  const spec = LEVELS[i];
+  const spec = LEVELS[i], name = levelName(spec);
   if (current) { scene.remove(current); current.traverse(o => { o.geometry?.dispose?.(); }); }
   current = new THREE.Group();
-  current.add(buildFloor(spec.name));
   solidsE = []; solidsM = [];
-  for (const rec of spec.back) {
-    const made = rec[0] === 'D' ? makeD(rec.slice(1)) : makeL(rec.slice(1));
+  let eHome = [0, 0, 0], mHome = [0, PI / 2, 0];
+  for (const [type, ...args] of spec.back) {
+    if (type === 'F') { current.add(buildFloor(name)); continue; }   // args[0] is the notebook's level number
+    if (type === 'E') { eHome = args; continue; }            // x, y, f
+    if (type === 'M') { mHome = args; continue; }            // r, theta, f
+    const made = MAKERS[type](args);
     current.add(made.group);
     solidsE.push(made.solidE); solidsM.push(made.solidM);
   }
@@ -365,15 +644,11 @@ function loadLevel(i) {
   solidsM.push({ overlap: (u, v, rad) => bandOverlap({ lo: th => sigma(euclid.u, euclid.v, th) - W, hi: th => sigma(euclid.u, euclid.v, th) + W }, u, v, rad),
     base: () => euclid.z, top: () => euclid.z + PH });
   scene.add(current);
-  Object.assign(euclid, { u: spec.eHome[0], v: spec.eHome[1], z: 0, vz: 0, grounded: true });
-  Object.assign(mobius, { u: spec.mHome[0] * S, v: spec.mHome[1], z: 0, vz: 0, grounded: true });
+  Object.assign(euclid, { u: eHome[0], v: eHome[1], z: eHome[2] || 0, vz: 0, grounded: true });
+  Object.assign(mobius, { u: mHome[1] * S, v: mHome[0], z: mHome[2] || 0, vz: 0, grounded: true });
   for (const b of chips.children) b.classList.toggle('on', +b.dataset.i === i);
-  document.getElementById('capE').innerHTML = `<b>${spec.name}</b> — ` + (i === 2
-    ? 'the pitch deck scene: the green cylinder, and the blue wall.'
-    : i === 1 ? 'one green cylinder.' : 'a bare floor.');
-  document.getElementById('capM').innerHTML = `<b>${spec.name}</b> — ` + (i === 2
-    ? 'the cylinder is a band; the wall is the region between its endpoints’ sections.'
-    : i === 1 ? 'the cylinder is a band.' : 'a bare strip.');
+  document.getElementById('capE').innerHTML = `<b>${name}</b> — ${spec.capE}`;
+  document.getElementById('capM').innerHTML = `<b>${name}</b> — ${spec.capM}`;
 }
 
 // ------------------------------------------------------------ physics
@@ -401,7 +676,7 @@ function stepPlayer(P, solids, inArena, ctl, dt) {
 const chips = document.getElementById('chips');
 LEVELS.forEach((spec, i) => {
   const b = document.createElement('button');
-  b.textContent = spec.name; b.dataset.i = i;
+  b.textContent = spec.chip ?? levelName(spec); b.dataset.i = i;
   b.onclick = () => loadLevel(i);
   chips.appendChild(b);
 });
@@ -410,9 +685,9 @@ addEventListener('keydown', e => {
   keys[e.code] = true;
   if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.code)) e.preventDefault();
   if (e.code === 'KeyR') loadLevel(currentIndex);
-  if (e.code === 'Digit1') loadLevel(0);
-  if (e.code === 'Digit2') loadLevel(1);
-  if (e.code === 'Digit3') loadLevel(2);
+  if (e.code === 'Tab') { e.preventDefault(); loadLevel((currentIndex + 1) % LEVELS.length); }
+  const d = /^Digit([1-8])$/.exec(e.code);          // 1-3 the notebook's scenes, 4-8 one per type
+  if (d && +d[1] <= LEVELS.length) loadLevel(+d[1] - 1);
 });
 addEventListener('keyup', e => { keys[e.code] = false; });
 const ctlE = () => ({ left: keys.KeyA ? 1 : 0, right: keys.KeyD ? 1 : 0, up: keys.KeyW ? 1 : 0, down: keys.KeyS ? 1 : 0, jump: !!keys.Space });
