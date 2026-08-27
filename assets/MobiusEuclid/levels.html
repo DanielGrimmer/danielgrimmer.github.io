@@ -3,31 +3,34 @@
 <!--
   PARALLAX — Level Viewer (the Mathematica notebook, reborn)
 
-  A direct port of MobiusEuclidGame.nb (in this folder): the notebook's
-  declarative level format, its three levels verbatim in its own units, and
-  its dual renderers — now walkable in real time instead of rendered frame by
-  frame.
+  A port of GameDemos.nb (its source is in GameDemos.decoded.txt beside this
+  file): the notebook's full declarative level format, its three scenes
+  verbatim in its own units, and its dual renderers — now walkable in real
+  time instead of rendered frame by frame.
 
-  The notebook's scene compiler takes a list of typed records and draws each
-  once per world:
+  The scene compiler takes a list of typed records and draws each once per
+  world. The signatures are the notebook's own, from its comment:
 
-      ["F", lev]                       the floor, with its Level text
-      ["D", x, y, rho, f, h, color]    a cylinder for Euclid; for Mobius the
-                                       band |r - sigma(x,y,theta)| < rho
-      ["L", x, y, th0, s, f, h, color] a wall segment from (x,y), direction
-                                       th0, length s; for Mobius the region
-                                       swept by its points' sections — at each
-                                       theta the interval between the two
-                                       endpoint sections
-      ["E", x, y, rho, f, h, color]    the Euclid player: cylinder at home,
-                                       section ribbon abroad
-      ["M", r, th0, rho, f, h, color]  the Mobius player: cylinder at home
-                                       (with half-turn ghost copies at 50%
-                                       opacity — the notebook's convention),
-                                       an endless wall abroad
+      ["F", lev]                              the floor, with its Level text
+      ["D", x, y, rho, f, h, color]           cylinder / the band |r - sigma| < rho
+      ["L", x0, y0, x1, y1, f, h, color]      wall / the band between the
+                                              endpoints' sections
+      ["H", x, y, th, s, f, h, color]         bowtie / an arc of that point's
+                                              own section
+      ["V", r, th, s, f, h, color]            slab / a segment of one fibre
+      ["B", x0,y0, x1,y1, th0, s0, f, h, col] clipped band / the L band, cut
+                                              off outside the window
+      ["E", x, y, f]                          Euclid's spawn
+      ["M", r, th, f]                         Mobius's spawn
 
   Every record carries a floating base f, so platforms can hover — the one
   mechanical feature the notebook had that index.html does not yet.
+
+  D, L and B dualise by MEETING (the Mobius object is the set of lines that
+  meet the Euclid region). H and V dualise by CONTAINMENT, because their
+  Euclid form is unbounded and ruled and almost every line meets an infinite
+  slab — which is why they are solid for Euclid but thin for Mobius. THEORY.md
+  section 16 works this out.
 
   World, verbatim from the notebook: num = 3; winMob = 3 pi/2; winEuc =
   winMob/sqrt(2).  Euclid's arena is the SQUARE [-winEuc, winEuc]^2 (not a
@@ -47,7 +50,14 @@
   type's dual pair can be looked at on its own.
 
   Controls: Euclid W A S D + Space, Mobius arrows + Enter, R resets, keys 1-8
-  or Tab or the chips switch level.  window.levels exposes state for tests.
+  or Tab or the chips switch level.
+
+  F (or the button) toggles FIRST PERSON: both panels drop to the players'
+  eyes. There is one mouse and two players, so it steers whichever is active
+  and Q swaps; the other keeps the overhead key mapping and simply turns to
+  face the way he walks. Click to take the pointer lock, Esc to release it.
+
+  window.levels exposes state for tests.
 -->
 <head>
 <meta charset="utf-8">
@@ -74,6 +84,18 @@
   #chips button:hover { border-color:#f5c518; }
   #chips button.on { background:#f5c518; color:#000; border-color:#f5c518; font-weight:600; }
   #err { position:absolute; inset:0; display:none; place-items:center; color:#ddd; font-size:16px; }
+  #viewbar { position:absolute; top:10px; right:14px; display:flex; align-items:center; gap:10px;
+    pointer-events:auto; }
+  #viewbar button { background:rgba(10,10,10,.8); color:#f5c518; border:1px solid #3a3a3a;
+    padding:5px 12px; font:inherit; font-size:13px; cursor:pointer; border-radius:3px; }
+  #viewbar button:hover { border-color:#f5c518; }
+  #viewbar button.on { background:#f5c518; color:#000; border-color:#f5c518; font-weight:600; }
+  #mouseTag { font-size:12px; letter-spacing:.06em; color:#e8dcb0; opacity:.85; }
+  .crosshair { position:absolute; width:14px; height:14px; margin:-7px 0 0 -7px; pointer-events:none;
+    display:none; }
+  .crosshair::before, .crosshair::after { content:""; position:absolute; background:#f5c518; opacity:.7; }
+  .crosshair::before { left:6px; top:0; width:2px; height:14px; }
+  .crosshair::after { top:6px; left:0; height:2px; width:14px; }
 </style>
 </head>
 <body>
@@ -88,7 +110,13 @@
     <div style="text-align:right"><div class="name">Möbius</div><div class="keys">Arrows move &nbsp;·&nbsp; Enter jump</div></div>
     <div class="cap" id="capM" style="text-align:right;align-self:flex-end"></div>
   </div>
+  <div class="crosshair" id="xhE"></div>
+  <div class="crosshair" id="xhM"></div>
   <div id="chips"></div>
+  <div id="viewbar">
+    <button id="fpBtn" title="Toggle first person (F)">First person</button>
+    <span id="mouseTag"></span>
+  </div>
 </div>
 <div id="err">three.js failed to load — check the network connection.</div>
 
@@ -110,8 +138,14 @@ const NSEG = 480;
 const PR = 0.25, PH = 1.0, W = 0.14;      // notebook player: rho = 1/4, h = 1
 const G = 30, JUMP_V = 8, SPEED = 3.5, STEP = 0.2;
 
-const euclid = { u: 0, v: 0, z: 0, vz: 0, grounded: true };
-const mobius = { u: 0, v: 0, z: 0, vz: 0, grounded: true };   // u = theta * S
+// yaw/pitch are the first-person look angles; yaw = 0 faces +v (into the screen
+// in the overhead view), and drives movement when first person is on.
+const euclid = { u: 0, v: 0, z: 0, vz: 0, grounded: true, yaw: 0, pitch: -0.12 };
+const mobius = { u: 0, v: 0, z: 0, vz: 0, grounded: true, yaw: 0, pitch: -0.12 };   // u = theta * S
+
+const EYE = 0.78;                  // eye height inside the PH = 1 body
+let firstPerson = false;
+let mouseOn = 'E';                 // which player the mouse is steering
 
 const sigma = (a, b, th) => a * Math.cos(th) + b * Math.sin(th);
 const parity = k => (((k % 2) + 2) % 2 === 0) ? 1 : -1;
@@ -130,8 +164,8 @@ const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000000);
 scene.add(new THREE.AmbientLight(0xffffff, 0.42));
 const sun = new THREE.DirectionalLight(0xffffff, 0.62); sun.position.set(20, 45, 30); scene.add(sun);
 const sun2 = new THREE.DirectionalLight(0xffffff, 0.62); sun2.position.set(XM0 + 20, 45, 30); sun2.target.position.set(XM0, 0, 0); scene.add(sun2); scene.add(sun2.target);
-const camE = new THREE.PerspectiveCamera(42, 1, 0.3, 200);
-const camM = new THREE.PerspectiveCamera(42, 1, 0.3, 200);
+const camE = new THREE.PerspectiveCamera(42, 1, 0.06, 200);
+const camM = new THREE.PerspectiveCamera(42, 1, 0.06, 200);
 
 const lambert = (color, extra) => new THREE.MeshLambertMaterial(Object.assign({ color, side: THREE.DoubleSide }, extra || {}));
 const lineMat = (color, opacity) => new THREE.LineBasicMaterial({ color, transparent: true, opacity });
@@ -141,6 +175,16 @@ const M2W = (th, r, y) => new THREE.Vector3(XM0 + th * S, y, -r);
 
 // Charts (not transformed): the square grid at mstep = 1/2, the strip's fibers.
 {
+  // A ground surface under each world. From above it barely registers; at eye
+  // level it is the difference between standing somewhere and floating in the
+  // dark, since the grid alone vanishes at grazing angles.
+  const groundMat = new THREE.MeshLambertMaterial({ color: 0x101018, side: THREE.DoubleSide });
+  const eGround = new THREE.Mesh(new THREE.PlaneGeometry(2 * WIN, 2 * WIN), groundMat);
+  eGround.rotation.x = -PI / 2; eGround.position.y = -0.02; scene.add(eGround);
+  const mGround = new THREE.Mesh(new THREE.PlaneGeometry((TH_MAX - TH_MIN) * S, 2 * RMAX), groundMat);
+  mGround.rotation.x = -PI / 2;
+  mGround.position.set(XM0 + (TH_MIN + TH_MAX) / 2 * S, -0.02, 0); scene.add(mGround);
+
   const pts = [];
   for (let k = -Math.floor(WIN / MSTEP); k <= Math.floor(WIN / MSTEP); k++) {
     const c = k * MSTEP;
@@ -655,8 +699,13 @@ function loadLevel(i) {
 function stepPlayer(P, solids, inArena, ctl, dt) {
   const blocked = (u, v) => !inArena(u, v, PR) ||
     solids.some(s => s.overlap(u, v, PR) && s.top() > P.z + STEP && s.base() < P.z + PH);
-  let du = (ctl.right - ctl.left) * SPEED * dt, dv = (ctl.up - ctl.down) * SPEED * dt;
-  if (du && dv) { du *= Math.SQRT1_2; dv *= Math.SQRT1_2; }
+  // Movement is relative to where you are looking. yaw = 0 gives the old
+  // behaviour exactly (strafe -> u, forward -> v), so the overhead view is
+  // unchanged; in first person W walks along the look direction.
+  let fwd = ctl.up - ctl.down, str = ctl.right - ctl.left;
+  const n = Math.hypot(fwd, str); if (n > 1) { fwd /= n; str /= n; }
+  const yaw = ctl.yaw || 0, c = Math.cos(yaw), s = Math.sin(yaw);
+  let du = (str * c - fwd * s) * SPEED * dt, dv = (str * s + fwd * c) * SPEED * dt;
   if (du && !blocked(P.u + du, P.v)) P.u += du;
   if (dv && !blocked(P.u, P.v + dv)) P.v += dv;
   if (ctl.jump && P.grounded) { P.vz = JUMP_V; P.grounded = false; }
@@ -686,25 +735,99 @@ addEventListener('keydown', e => {
   if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.code)) e.preventDefault();
   if (e.code === 'KeyR') loadLevel(currentIndex);
   if (e.code === 'Tab') { e.preventDefault(); loadLevel((currentIndex + 1) % LEVELS.length); }
+  if (e.code === 'KeyF') { setFirstPerson(!firstPerson); if (firstPerson) canvas.requestPointerLock(); }
+  if (e.code === 'KeyQ' && firstPerson) { mouseOn = mouseOn === 'E' ? 'M' : 'E'; paintView(); }
   const d = /^Digit([1-8])$/.exec(e.code);          // 1-3 the notebook's scenes, 4-8 one per type
   if (d && +d[1] <= LEVELS.length) loadLevel(+d[1] - 1);
 });
 addEventListener('keyup', e => { keys[e.code] = false; });
-const ctlE = () => ({ left: keys.KeyA ? 1 : 0, right: keys.KeyD ? 1 : 0, up: keys.KeyW ? 1 : 0, down: keys.KeyS ? 1 : 0, jump: !!keys.Space });
-const ctlM = () => ({ left: keys.ArrowLeft ? 1 : 0, right: keys.ArrowRight ? 1 : 0, up: keys.ArrowUp ? 1 : 0, down: keys.ArrowDown ? 1 : 0, jump: !!keys.Enter });
+// Only the mouse-steered player walks relative to his gaze; the other keeps the
+// overhead mapping (W = +v) so his keys stay predictable while he is not aimed.
+const ctlE = () => ({ left: keys.KeyA ? 1 : 0, right: keys.KeyD ? 1 : 0, up: keys.KeyW ? 1 : 0, down: keys.KeyS ? 1 : 0, jump: !!keys.Space, yaw: (firstPerson && mouseOn === 'E') ? euclid.yaw : 0 });
+const ctlM = () => ({ left: keys.ArrowLeft ? 1 : 0, right: keys.ArrowRight ? 1 : 0, up: keys.ArrowUp ? 1 : 0, down: keys.ArrowDown ? 1 : 0, jump: !!keys.Enter, yaw: (firstPerson && mouseOn === 'M') ? mobius.yaw : 0 });
+
+/** Turn a player to face the way he is walking (for whoever the mouse is not
+    steering). Camera forward in (u, v) is (-sin yaw, cos yaw). */
+function faceMotion(P, ctl, dt) {
+  const fwd = ctl.up - ctl.down, str = ctl.right - ctl.left;
+  if (!fwd && !str) return;
+  let d = Math.atan2(-str, fwd) - P.yaw;
+  d -= TAU * Math.round(d / TAU);
+  P.yaw += d * Math.min(1, 8 * dt);
+}
+
+/** Put a camera at a player's eye, looking along his yaw/pitch. */
+function placeEye(cam, pos, P) {
+  cam.position.copy(pos);
+  cam.rotation.order = 'YXZ';
+  cam.rotation.set(P.pitch, P.yaw, 0);
+}
+
+// ------------------------------------------------------- first person & mouse
+// One mouse, two players: it steers whichever player is active, and Q swaps.
+// The inactive one still walks, and turns to face the way he is going, so his
+// panel stays sensible while the other is being aimed.
+const fpBtn = document.getElementById('fpBtn'), mouseTag = document.getElementById('mouseTag');
+const xh = { E: document.getElementById('xhE'), M: document.getElementById('xhM') };
+const PITCH_MAX = 1.45, SENS = 0.0022;
+
+function paintView() {
+  fpBtn.classList.toggle('on', firstPerson);
+  fpBtn.textContent = firstPerson ? 'First person' : 'Overhead';
+  mouseTag.textContent = firstPerson
+    ? (document.pointerLockElement === canvas
+        ? `mouse: ${mouseOn === 'E' ? 'Euclid' : 'Möbius'} — Q swaps, Esc frees`
+        : 'click to look around')
+    : '';
+  xh.E.style.display = xh.M.style.display = firstPerson ? 'block' : 'none';
+  // In first person a player must not see his own body from the inside; his
+  // image in the OTHER world (tube / bar) is a different mesh and stays.
+  eMesh.m.visible = eMesh.sh.visible = !firstPerson;
+  mMeshes[3].m.visible = mMeshes[3].sh.visible = !firstPerson;   // k = 0 is his home copy
+}
+function setFirstPerson(on) {
+  firstPerson = on;
+  if (!on && document.pointerLockElement === canvas) document.exitPointerLock();
+  paintView();
+}
+fpBtn.addEventListener('click', () => {
+  setFirstPerson(!firstPerson);
+  if (firstPerson) canvas.requestPointerLock();
+});
+canvas.addEventListener('click', () => { if (firstPerson) canvas.requestPointerLock(); });
+document.addEventListener('pointerlockchange', paintView);
+addEventListener('mousemove', e => {
+  if (!firstPerson || document.pointerLockElement !== canvas) return;
+  const P = mouseOn === 'E' ? euclid : mobius;
+  P.yaw -= e.movementX * SENS;
+  P.pitch = Math.max(-PITCH_MAX, Math.min(PITCH_MAX, P.pitch - e.movementY * SENS));
+});
 
 // ------------------------------------------------------------ frame
 window.levels = {
   euclid, mobius, sigma, S, LEVELS, loadLevel,
   get solidsE() { return solidsE; }, get solidsM() { return solidsM; },
   step: (who, ctl, dt) => who === 'E' ? stepPlayer(euclid, solidsE, inArenaE, ctl, dt) : stepPlayer(mobius, solidsM, inArenaM, ctl, dt),
+  scene, camE, camM,
+  get firstPerson() { return firstPerson; },
+  setFirstPerson,
+  get mouseOn() { return mouseOn; },
+  setMouseOn: w => { mouseOn = w; paintView(); },
+  look: (who, yaw, pitch) => { const P = who === 'E' ? euclid : mobius; P.yaw = yaw; P.pitch = pitch; },
+  ctlE, ctlM,
 };
 loadLevel(0);
+paintView();
 let last = performance.now();
 function frame(now) {
   const dt = Math.min(1 / 30, (now - last) / 1000); last = now;
-  stepPlayer(euclid, solidsE, inArenaE, ctlE(), dt);
-  stepPlayer(mobius, solidsM, inArenaM, ctlM(), dt);
+  const cE = ctlE(), cM = ctlM();
+  stepPlayer(euclid, solidsE, inArenaE, cE, dt);
+  stepPlayer(mobius, solidsM, inArenaM, cM, dt);
+  if (firstPerson) {
+    if (mouseOn !== 'E') faceMotion(euclid, cE, dt);
+    if (mouseOn !== 'M') faceMotion(mobius, cM, dt);
+  }
   if (mobius.u / S >= TAU) mobius.u -= TAU * S;   // theta + 2pi is the same point
   if (mobius.u / S < 0) mobius.u += TAU * S;      // keep him within [0, 2pi) x 3 tiles
 
@@ -713,7 +836,8 @@ function frame(now) {
   bar.position.copy(E2W(r * Math.cos(th), r * Math.sin(th), mobius.z + PH / 2)); bar.rotation.y = th + PI / 2;
   mMeshes.forEach((pm, i) => {
     const k = i - 3, tk = th + k * PI, vis = tk > TH_MIN && tk < TH_MAX;
-    pm.m.visible = pm.sh.visible = vis; if (!vis) return;
+    pm.m.visible = pm.sh.visible = vis && !(firstPerson && k === 0);   // not his own body, from inside
+    if (!vis) return;
     pm.m.position.copy(M2W(tk, parity(k) * r, mobius.z + PH / 2)); pm.sh.position.copy(M2W(tk, parity(k) * r, 0.015));
   });
   tube.set(x => sigma(euclid.u, euclid.v, x) - W, x => sigma(euclid.u, euclid.v, x) + W, euclid.z, PH);
@@ -722,10 +846,21 @@ function frame(now) {
   const wE = Math.round(Math.min(Wd * 0.42, Hd * 1.05)), wM = Wd - wE;
   document.getElementById('divider').style.left = wE + 'px';
   document.getElementById('hudE').style.width = wE + 'px'; document.getElementById('hudM').style.width = wM + 'px';
+  camE.fov = camM.fov = firstPerson ? 72 : 42;          // a game-ish field of view up close
   camE.aspect = wE / Hd; camE.updateProjectionMatrix();
   camM.aspect = wM / Hd; camM.updateProjectionMatrix();
-  camE.position.set(0, 12.5, 4.2); camE.lookAt(0, 0, 0);
-  const m = M2W(th, 0, 0); camM.position.set(m.x, 13.5, 3.6); camM.lookAt(m.x, 0, 0);
+  if (firstPerson) {
+    placeEye(camE, E2W(euclid.u, euclid.v, euclid.z + EYE), euclid);
+    placeEye(camM, M2W(th, r, mobius.z + EYE), mobius);
+    xh.E.style.left = (wE / 2) + 'px'; xh.E.style.top = (Hd / 2) + 'px';
+    xh.M.style.left = (wE + wM / 2) + 'px'; xh.M.style.top = (Hd / 2) + 'px';
+  } else {
+    camE.rotation.set(0, 0, 0);
+    camE.position.set(0, 12.5, 4.2); camE.lookAt(0, 0, 0);
+    const m = M2W(th, 0, 0);
+    camM.rotation.set(0, 0, 0);
+    camM.position.set(m.x, 13.5, 3.6); camM.lookAt(m.x, 0, 0);
+  }
   renderer.setViewport(0, 0, wE, Hd); renderer.setScissor(0, 0, wE, Hd); renderer.render(scene, camE);
   renderer.setViewport(wE, 0, wM, Hd); renderer.setScissor(wE, 0, wM, Hd); renderer.render(scene, camM);
   requestAnimationFrame(frame);
