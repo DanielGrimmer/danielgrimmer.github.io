@@ -32,11 +32,12 @@
   slab — which is why they are solid for Euclid but thin for Mobius. THEORY.md
   section 16 works this out.
 
-  World, verbatim from the notebook: num = 3; winMob = 3 pi/2; winEuc =
-  winMob/sqrt(2).  Euclid's arena is the SQUARE [-winEuc, winEuc]^2 (not a
-  disk); the strip shows theta in [pi/2 - winMob, pi/2 + winMob] (three
-  tiles) with r in [-winMob, winMob] = sqrt(2) winEuc, the square's diagonal,
-  so every line that clips the square fits on the strip.
+  World: win = 3 pi/2, from the notebook.  Euclid's arena is the DISK of
+  radius win; the strip shows theta in [pi/2 - win, pi/2 + win] (three tiles)
+  with r in [-win, win].  Disk and band match exactly -- the lines meeting a
+  disk of radius R are precisely those with |r| <= R -- so neither player can
+  stand where the other cannot see him.  A square arena cannot do that, and an
+  earlier version of this file used one.
 
   One deliberate divergence: the notebook Radons the white grid into the
   Mobius floor (the woven background of the old renders).  Here, as in
@@ -138,8 +139,14 @@ else (function () {
 const PI = Math.PI, TAU = 2 * Math.PI;
 
 // ------------------------------------------------ the notebook's world, verbatim
-const WIN  = 3 * PI / (2 * Math.SQRT2);   // winEuc: Euclid's square half-width
-const RMAX = 3 * PI / 2;                  // winMob = sqrt(2) * winEuc: the strip's half-height
+// The arena is a DISK, and its radius is the strip's r half-range. That makes
+// the two worlds match exactly: the lines meeting a disk of radius RA are
+// PRECISELY those with |r| <= RA, so neither player can stand anywhere the
+// other cannot see him. A square cannot do this -- a line whose |r| falls
+// between the square's inradius and its circumradius misses the square
+// altogether, which let Mobius walk clean off Euclid's field. (THEORY.md 6.)
+const RA   = 3 * PI / 2;                  // the notebook's win, as a radius
+const RMAX = RA;                          // the strip's r half-range; also its theta half-range
 const TH_MIN = PI / 2 - RMAX, TH_MAX = PI / 2 + RMAX;   // three tiles: [-pi, 2pi]
 const MSTEP = 0.5;                        // the floor grid's mesh step
 const S = 1.5, XM0 = 500;                 // strip drawing scale; the strip lives far away
@@ -192,19 +199,22 @@ const M2W = (th, r, y) => new THREE.Vector3(XM0 + th * S, y, -r);
   // level it is the difference between standing somewhere and floating in the
   // dark, since the grid alone vanishes at grazing angles.
   const groundMat = new THREE.MeshLambertMaterial({ color: 0x101018, side: THREE.DoubleSide });
-  const eGround = new THREE.Mesh(new THREE.PlaneGeometry(2 * WIN, 2 * WIN), groundMat);
+  const eGround = new THREE.Mesh(new THREE.CircleGeometry(RA, 64), groundMat);
   eGround.rotation.x = -PI / 2; eGround.position.y = -0.02; scene.add(eGround);
   const mGround = new THREE.Mesh(new THREE.PlaneGeometry((TH_MAX - TH_MIN) * S, 2 * RMAX), groundMat);
   mGround.rotation.x = -PI / 2;
   mGround.position.set(XM0 + (TH_MIN + TH_MAX) / 2 * S, -0.02, 0); scene.add(mGround);
 
   const pts = [];
-  for (let k = -Math.floor(WIN / MSTEP); k <= Math.floor(WIN / MSTEP); k++) {
-    const c = k * MSTEP;
-    pts.push(c, 0, -WIN, c, 0, WIN, -WIN, 0, -c, WIN, 0, -c);
+  for (let k = -Math.floor(RA / MSTEP); k <= Math.floor(RA / MSTEP); k++) {
+    const c = k * MSTEP, half = Math.sqrt(Math.max(0, RA * RA - c * c));
+    if (half < 1e-6) continue;
+    pts.push(c, 0, -half, c, 0, half, -half, 0, -c, half, 0, -c);
   }
   scene.add(new THREE.LineSegments(segsGeo(pts), lineMat(0xdedede, 0.4)));
-  scene.add(new THREE.Line(segsGeo([-WIN, 0, -WIN, WIN, 0, -WIN, WIN, 0, WIN, -WIN, 0, WIN, -WIN, 0, -WIN]), lineMat(0xdedede, 0.9)));
+  const rim = [];
+  for (let i = 0; i <= 192; i++) { const t = i / 192 * TAU; rim.push(RA * Math.cos(t), 0, -RA * Math.sin(t)); }
+  scene.add(new THREE.Line(segsGeo(rim), lineMat(0xdedede, 0.9)));
   const dashed = new THREE.LineDashedMaterial({ color: 0x9a9a9a, dashSize: 0.3, gapSize: 0.24, transparent: true, opacity: 0.7 });
   for (let th = Math.ceil(TH_MIN / (PI / 6)) * PI / 6; th <= TH_MAX + 1e-9; th += PI / 6) {
     const l = new THREE.Line(segsGeo([XM0 + th * S, 0, -RMAX, XM0 + th * S, 0, RMAX]), dashed); l.computeLineDistances(); scene.add(l);
@@ -216,7 +226,7 @@ const M2W = (th, r, y) => new THREE.Vector3(XM0 + th * S, y, -r);
 class Band {
   constructor(material) {
     this.geo = new THREE.BufferGeometry();
-    this.pos = new Float32Array(NSEG * 18 * 3);
+    this.pos = new Float32Array(NSEG * 4 * 18 + 2 * 18);   // 4 quads a segment, plus two end caps
     this.geo.setAttribute('position', new THREE.BufferAttribute(this.pos, 3));
     this.mesh = new THREE.Mesh(this.geo, material);
     this.mesh.frustumCulled = false;
@@ -225,14 +235,19 @@ class Band {
     const p = this.pos; let j = 0;
     const put = (x, y, z) => { p[j++] = x; p[j++] = y; p[j++] = z; };
     const quad = (A, B, C, D) => { put(...A); put(...B); put(...C); put(...A); put(...C); put(...D); };
+    const yb = base, yt = base + h;
     for (let i = 0; i < NSEG; i++) {
       const t0 = TH_MIN + (TH_MAX - TH_MIN) * i / NSEG, t1 = TH_MIN + (TH_MAX - TH_MIN) * (i + 1) / NSEG;
       const x0 = XM0 + t0 * S, x1 = XM0 + t1 * S;
       const l0 = -lo(t0), l1 = -lo(t1), h0 = -hi(t0), h1 = -hi(t1);
-      const yb = base, yt = base + h;
-      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);
-      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);
-      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);
+      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);   // top
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yb, h1], [x0, yb, h0]);   // bottom
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);   // wall along lo
+      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);   // wall along hi
+    }
+    for (const t of [TH_MIN, TH_MAX]) {                               // end caps
+      const x = XM0 + t * S, l = -lo(t), hh = -hi(t);
+      quad([x, yb, l], [x, yb, hh], [x, yt, hh], [x, yt, l]);
     }
     this.geo.attributes.position.needsUpdate = true;
     this.geo.computeVertexNormals();
@@ -269,28 +284,28 @@ function decal(tex, w, pos) {
 
 /**
  * The floor pair for one level, all in one group:
- * Euclid: "Level n" decal at (0, 0.9 WIN), plus the line fan of the strip
+ * Euclid: "Level n" decal high on the disk, plus the line fan of the strip
  * text's points (the notebook's InverseRadon layer, in vector form).
- * Mobius: one decal per tile at r = -/+ 0.7 WIN, flipped on odd tiles (the
+ * Mobius: one decal per tile at r = -/+ 0.7 RA, flipped on odd tiles (the
  * notebook's levMob), plus the sinusoid bundle of the Euclid text's points
  * (the notebook's Radon layer, in vector form).
  */
 function buildFloor(levName) {
   const group = new THREE.Group();
   const YEL = 0xf5c518;
-  group.add(decal(makeText(levName, false), 0.5 * WIN * 2, E2W(0, 0.9 * WIN, 0.02)));
+  group.add(decal(makeText(levName, false), 0.8 * RA, E2W(0, 0.78 * RA, 0.02)));
   const texN = makeText(levName, false), texF = makeText(levName, true);
   // Tiles at theta = -pi/2, pi/2, 3pi/2; notebook flips the outer two and
   // alternates the sign of r.
   for (const [k, tile] of [[-1, -PI / 2], [0, PI / 2], [1, 3 * PI / 2]]) {
     const s = parity(k);
-    group.add(decal(s > 0 ? texN : texF, 2.6 * S, M2W(tile, s * -0.7 * WIN, 0.02)));
+    group.add(decal(s > 0 ? texN : texF, 2.6 * S, M2W(tile, s * -0.7 * RA, 0.02)));
   }
   // Euclid's text, on the strip: a bundle of sections.
   {
     const tx = [];
     for (const [px, py] of textPoints(levName, 30)) {
-      const a = (px - 0.5) * 0.9 * WIN, b = 0.9 * WIN + (0.5 - py) * 0.22 * WIN;
+      const a = (px - 0.5) * 0.8 * RA, b = 0.78 * RA + (0.5 - py) * 0.2 * RA;
       let prev = null;
       for (let i = 0; i <= 240; i++) {
         const th = TH_MIN + (TH_MAX - TH_MIN) * i / 240, p = [XM0 + th * S, 0.03, -sigma(a, b, th)];
@@ -303,9 +318,11 @@ function buildFloor(levName) {
   {
     const tx = [];
     for (const [px, py] of textPoints(levName, 30)) {
-      const th = PI / 2 + (px - 0.5) * 2.6, r = -0.7 * WIN + (0.5 - py) * 0.24 * WIN;
+      const th = PI / 2 + (px - 0.5) * 2.6, r = -0.7 * RA + (0.5 - py) * 0.24 * RA;
+      const half = Math.sqrt(Math.max(0, RA * RA - r * r));      // stop at the rim
+      if (half < 1e-6) continue;
       const fx = r * Math.cos(th), fy = r * Math.sin(th), dx = -Math.sin(th), dy = Math.cos(th);
-      tx.push(fx - 12 * dx, 0.03, -(fy - 12 * dy), fx + 12 * dx, 0.03, -(fy + 12 * dy));
+      tx.push(fx - half * dx, 0.03, -(fy - half * dy), fx + half * dx, 0.03, -(fy + half * dy));
     }
     group.add(new THREE.LineSegments(segsGeo(tx), lineMat(YEL, 0.28)));
   }
@@ -333,14 +350,17 @@ function buildFloor(levName) {
 // unbounded and ruled, and almost every line meets an infinite slab. That is
 // why they are solid for Euclid but thin for Mobius. See THEORY.md 16.
 
-const LFAR = 2.4 * WIN * Math.SQRT2;   // long enough to cross the square from anywhere inside
+const LFAR = 2.4 * RA;                 // long enough to cross the disk from anywhere inside
 
-/** Sutherland–Hodgman clip to the square arena. The notebook let PlotRange do
-    this; nothing clips here, so unbounded footprints are cut to the floor. */
+/** Sutherland–Hodgman clip to the arena, approximating the disk by the
+    half-planes of a circumscribed polygon. The notebook let PlotRange do this;
+    nothing clips here, so unbounded footprints would run off the floor. */
+const ARENA_SIDES = 64;
 function clipToArena(poly) {
-  const planes = [p => WIN - p[0], p => WIN + p[0], p => WIN - p[1], p => WIN + p[1]];
   let out = poly;
-  for (const f of planes) {
+  for (let i = 0; i < ARENA_SIDES; i++) {
+    const a = (i / ARENA_SIDES) * TAU, nx = Math.cos(a), ny = Math.sin(a);
+    const f = p => RA - (p[0] * nx + p[1] * ny);
     const inp = out; out = [];
     for (let i = 0; i < inp.length; i++) {
       const A = inp[i], B = inp[(i + 1) % inp.length], fa = f(A), fb = f(B);
@@ -407,7 +427,7 @@ function windowedBand(lo, hi, th0, s, f0, h, material) {
   const pos = [];
   const put = (x, y, z) => pos.push(x, y, z);
   const quad = (A, B, C, D) => { put(...A); put(...B); put(...C); put(...A); put(...C); put(...D); };
-  const N = 40;
+  const N = 40, yb = f0, yt = f0 + h;
   for (let k = Math.ceil((TH_MIN - th0) / PI); k <= Math.floor((TH_MAX - th0) / PI); k++) {
     const a = Math.max(TH_MIN, th0 + k * PI - s / 2), b = Math.min(TH_MAX, th0 + k * PI + s / 2);
     if (b <= a) continue;
@@ -415,10 +435,16 @@ function windowedBand(lo, hi, th0, s, f0, h, material) {
       const t0 = a + (b - a) * i / N, t1 = a + (b - a) * (i + 1) / N;
       const x0 = XM0 + t0 * S, x1 = XM0 + t1 * S;
       const l0 = -lo(t0), l1 = -lo(t1), h0 = -hi(t0), h1 = -hi(t1);
-      const yb = f0, yt = f0 + h;
-      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);
-      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);
-      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);
+      quad([x0, yt, l0], [x1, yt, l1], [x1, yt, h1], [x0, yt, h0]);   // top
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yb, h1], [x0, yb, h0]);   // bottom
+      quad([x0, yb, l0], [x1, yb, l1], [x1, yt, l1], [x0, yt, l0]);   // wall along lo
+      quad([x0, yb, h0], [x1, yb, h1], [x1, yt, h1], [x0, yt, h0]);   // wall along hi
+    }
+    // Caps at the window's two edges. Without these the band is an open tube
+    // and you can see straight into it -- which is what B looked like.
+    for (const t of [a, b]) {
+      const x = XM0 + t * S, l = -lo(t), hh = -hi(t);
+      quad([x, yb, l], [x, yb, hh], [x, yt, hh], [x, yt, l]);
     }
   }
   const g = new THREE.BufferGeometry();
@@ -596,7 +622,7 @@ const bandOverlap = (band, u, v, rad) => {
 // record — those live in its playlists, as animation trajectories — so the
 // spawns below are ours, chosen clear of each scene's solids in both worlds.
 const GREEN = 0x22cc22, BLUE = 0x2244dd, SKIN = 0xddcba4, TEAL = 0x1fa8a8;
-const MHOME = ['M', -0.8 * WIN, PI / 2, 0];     // r, theta, f — clear in every scene below
+const MHOME = ['M', -0.8 * RA, PI / 2, 0];      // r, theta, f — clear in every scene below
 
 const LEVELS = [
   {
@@ -665,13 +691,15 @@ const mkPlayer = mats => { const m = new THREE.Mesh(playerGeo, mats); const sh =
 const eMesh = mkPlayer(eMats); scene.add(eMesh.m, eMesh.sh);
 const mMeshes = [];
 for (let k = -3; k <= 3; k++) { const pm = mkPlayer(k === 0 ? gMats : ghostMats); scene.add(pm.m, pm.sh); mMeshes.push(pm); }
-const bar = new THREE.Mesh(new THREE.BoxGeometry(3 * WIN, PH, 2 * W), lambert(0x5c2727)); scene.add(bar);
+// Unit length, scaled to the chord each frame: the part of Mobius that is
+// actually in the arena. It shrinks to nothing as he approaches the rim.
+const bar = new THREE.Mesh(new THREE.BoxGeometry(1, PH, 2 * W), lambert(0x5c2727)); scene.add(bar);
 const tube = new Band(lambert(0x8a5a3a)); scene.add(tube.mesh);
 
 // ------------------------------------------------------------ level switching
 let solidsE = [], solidsM = [];
 let current = null, currentIndex = 0;
-const inArenaE = (u, v, rad) => Math.abs(u) < WIN - rad && Math.abs(v) < WIN - rad;
+const inArenaE = (u, v, rad) => Math.hypot(u, v) < RA - rad;   // the disk, matching |r| <= RA
 const inArenaM = (u, v, rad) => Math.abs(v) < RMAX - rad;
 
 /** The notebook's scene compiler: walk the record list and dispatch on the
@@ -879,6 +907,8 @@ function frame(now) {
 
   const th = mobius.u / S, r = mobius.v;
   eMesh.m.position.copy(E2W(euclid.u, euclid.v, euclid.z + PH / 2)); eMesh.sh.position.copy(E2W(euclid.u, euclid.v, 0.015));
+  const chord = 2 * Math.sqrt(Math.max(0, RA * RA - r * r));
+  bar.visible = chord > 1e-3; bar.scale.x = Math.max(chord, 1e-3);
   bar.position.copy(E2W(r * Math.cos(th), r * Math.sin(th), mobius.z + PH / 2)); bar.rotation.y = th + PI / 2;
   mMeshes.forEach((pm, i) => {
     const k = i - 3, tk = th + k * PI, vis = tk > TH_MIN && tk < TH_MAX;
@@ -906,7 +936,7 @@ function frame(now) {
     placeChase(camM, M2W(th, r, mobius.z + CHASE_AIM), mobius);
   } else {
     camE.rotation.set(0, 0, 0);
-    camE.position.set(0, 12.5, 4.2); camE.lookAt(0, 0, 0);
+    camE.position.set(0, 17.6, 5.9); camE.lookAt(0, 0, 0);
     const m = M2W(th, 0, 0);
     camM.rotation.set(0, 0, 0);
     camM.position.set(m.x, 13.5, 3.6); camM.lookAt(m.x, 0, 0);
