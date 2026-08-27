@@ -53,9 +53,11 @@
   or Tab or the chips switch level.
 
   F (or the button) toggles FIRST PERSON: both panels drop to the players'
-  eyes. There is one mouse and two players, so it steers whichever is active
-  and Q swaps; the other keeps the overhead key mapping and simply turns to
-  face the way he walks. Click to take the pointer lock, Esc to release it.
+  eyes. There is one mouse and two players, so it claims whichever panel you
+  CLICK ON, and takes the pointer lock at the same time; Esc releases it, and
+  clicking the other panel hands the mouse over. Q swaps without releasing.
+  The player who is not being aimed keeps the overhead key mapping and simply
+  turns to face the way he walks, so his panel stays sensible.
 
   window.levels exposes state for tests.
 -->
@@ -735,7 +737,7 @@ addEventListener('keydown', e => {
   if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.code)) e.preventDefault();
   if (e.code === 'KeyR') loadLevel(currentIndex);
   if (e.code === 'Tab') { e.preventDefault(); loadLevel((currentIndex + 1) % LEVELS.length); }
-  if (e.code === 'KeyF') { setFirstPerson(!firstPerson); if (firstPerson) canvas.requestPointerLock(); }
+  if (e.code === 'KeyF') setFirstPerson(!firstPerson);
   if (e.code === 'KeyQ' && firstPerson) { mouseOn = mouseOn === 'E' ? 'M' : 'E'; paintView(); }
   const d = /^Digit([1-8])$/.exec(e.code);          // 1-3 the notebook's scenes, 4-8 one per type
   if (d && +d[1] <= LEVELS.length) loadLevel(+d[1] - 1);
@@ -770,16 +772,21 @@ function placeEye(cam, pos, P) {
 const fpBtn = document.getElementById('fpBtn'), mouseTag = document.getElementById('mouseTag');
 const xh = { E: document.getElementById('xhE'), M: document.getElementById('xhM') };
 const PITCH_MAX = 1.45, SENS = 0.0022;
+let splitX = 0;                    // x of the divider, in CSS pixels; set each frame
 
 function paintView() {
   fpBtn.classList.toggle('on', firstPerson);
   fpBtn.textContent = firstPerson ? 'First person' : 'Overhead';
+  const who = mouseOn === 'E' ? 'Euclid' : 'Möbius';
   mouseTag.textContent = firstPerson
     ? (document.pointerLockElement === canvas
-        ? `mouse: ${mouseOn === 'E' ? 'Euclid' : 'Möbius'} — Q swaps, Esc frees`
-        : 'click to look around')
+        ? `looking through ${who} — Esc, then click the other panel (Q swaps)`
+        : 'click a panel to look through that player')
     : '';
-  xh.E.style.display = xh.M.style.display = firstPerson ? 'block' : 'none';
+  xh.E.style.display = firstPerson ? 'block' : 'none';
+  xh.M.style.display = firstPerson ? 'block' : 'none';
+  xh.E.style.opacity = mouseOn === 'E' ? '1' : '.35';     // the dim one is not being aimed
+  xh.M.style.opacity = mouseOn === 'M' ? '1' : '.35';
   // In first person a player must not see his own body from the inside; his
   // image in the OTHER world (tube / bar) is a different mesh and stays.
   eMesh.m.visible = eMesh.sh.visible = !firstPerson;
@@ -790,11 +797,17 @@ function setFirstPerson(on) {
   if (!on && document.pointerLockElement === canvas) document.exitPointerLock();
   paintView();
 }
-fpBtn.addEventListener('click', () => {
-  setFirstPerson(!firstPerson);
-  if (firstPerson) canvas.requestPointerLock();
+fpBtn.addEventListener('click', () => setFirstPerson(!firstPerson));
+
+// The mouse claims whichever panel you click on. Pointer lock hides the cursor,
+// so a click can only name a panel while the lock is off — hence Esc first, and
+// Q as the in-play shortcut.
+canvas.addEventListener('click', e => {
+  if (!firstPerson || document.pointerLockElement === canvas) return;
+  mouseOn = e.clientX < splitX ? 'E' : 'M';
+  paintView();
+  canvas.requestPointerLock();
 });
-canvas.addEventListener('click', () => { if (firstPerson) canvas.requestPointerLock(); });
 document.addEventListener('pointerlockchange', paintView);
 addEventListener('mousemove', e => {
   if (!firstPerson || document.pointerLockElement !== canvas) return;
@@ -844,6 +857,7 @@ function frame(now) {
 
   const Wd = renderer.domElement.clientWidth, Hd = renderer.domElement.clientHeight;
   const wE = Math.round(Math.min(Wd * 0.42, Hd * 1.05)), wM = Wd - wE;
+  splitX = wE;
   document.getElementById('divider').style.left = wE + 'px';
   document.getElementById('hudE').style.width = wE + 'px'; document.getElementById('hudM').style.width = wM + 'px';
   camE.fov = camM.fov = firstPerson ? 72 : 42;          // a game-ish field of view up close
