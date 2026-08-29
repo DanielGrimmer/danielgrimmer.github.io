@@ -168,17 +168,17 @@ PROOFS["bi-paradox-mis1"] = [
 
 # ------------------------------------------------------------------ Czech book
 PROOFS["czech-book"] = [
-    P(1, "v > l"),
-    P(2, "v > g"),
-    P(3, "l > o1"),
-    P(4, "g > o2"),
-    P(5, "~(o1 & o2)"),
+    P(1, "v > l_s"),
+    P(2, "v > g_s"),
+    P(3, "l_s > o"),
+    P(4, "g_s > o_n"),
+    P(5, "~(o & o_n)"),
     P(6, "v"),
-    _l(7, "l", "CondE", 0, [1, 6]),
-    _l(8, "g", "CondE", 0, [2, 6]),
-    _l(9, "o1", "CondE", 0, [3, 7]),
-    _l(10, "o2", "CondE", 0, [4, 8]),
-    _l(11, "o1 & o2", "ConjI", 0, [9, 10]),
+    _l(7, "l_s", "CondE", 0, [1, 6]),
+    _l(8, "g_s", "CondE", 0, [2, 6]),
+    _l(9, "o", "CondE", 0, [3, 7]),
+    _l(10, "o_n", "CondE", 0, [4, 8]),
+    _l(11, "o & o_n", "ConjI", 0, [9, 10]),
     _l(12, "!", "FalsumI", 0, [11, 5]),
 ]
 
@@ -236,14 +236,14 @@ PROOFS["distribution"] = [
 
 # ----------------------------------------------------------- Cleopatra recovery
 PROOFS["recovery-cleopatra"] = [
-    P(1, "(b1 > a1) & (b2 > a2)"),
-    P(2, "b1 & b2"),
-    P(3, "a3"),
-    P(4, "~a1 & ~a2"),
-    _l(5, "b1 > a1", "ConjE", 0, [1]),
-    _l(6, "b1", "ConjE", 0, [2]),
-    _l(7, "a1", "CondE", 0, [5, 6]),
-    _l(8, "~a1", "ConjE", 0, [4]),
+    P(1, "(b_S > a_S) & (b_D > a_D)"),
+    P(2, "b_S & b_D"),
+    P(3, "a_C"),
+    P(4, "~a_S & ~a_D"),
+    _l(5, "b_S > a_S", "ConjE", 0, [1]),
+    _l(6, "b_S", "ConjE", 0, [2]),
+    _l(7, "a_S", "CondE", 0, [5, 6]),
+    _l(8, "~a_S", "ConjE", 0, [4]),
     _l(9, "!", "FalsumI", 0, [7, 8]),
 ]
 
@@ -266,14 +266,14 @@ PROOFS["lecture8-chain"] = [
 # ----------------------------------------------------------- Dutch book, repaired
 # The added premise is ls ⊃ o -- the normative bridge. Line 9 is where it fires.
 PROOFS["dutch-book-repaired"] = [
-    P(1, "b"),
+    P(1, "b_l"),
     P(2, "v > k"),
-    P(3, "(b & k) > l"),
-    P(4, "l > o"),
+    P(3, "(b_l & k) > l_s"),
+    P(4, "l_s > o"),
     _l(5, "v", "As", 1),
     _l(6, "k", "CondE", 1, [2, 5]),
-    _l(7, "b & k", "ConjI", 1, [1, 6]),
-    _l(8, "l", "CondE", 1, [3, 7]),
+    _l(7, "b_l & k", "ConjI", 1, [1, 6]),
+    _l(8, "l_s", "CondE", 1, [3, 7]),
     _l(9, "o", "CondE", 1, [4, 8]),
     _l(10, "v > o", "CondI", 0, subs=[[5, 9]]),
 ]

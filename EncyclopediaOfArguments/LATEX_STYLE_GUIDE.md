@@ -1,17 +1,24 @@
-# LaTeX Style Guide for the Argument-Form Encyclopedia
+# Style Guide for the Argument-Form Encyclopedia
 
-**Purpose.** Every entry in `argument-db.json` is to carry, in addition to its
-structured data, a LaTeX block for each method it has been worked in — the truth
-table, the truth tree, and the natural deduction. This document fixes exactly
-what those blocks look like, so that a reader who arrives at the encyclopedia
-from the course sees the same notation they saw in lecture, down to the spacing.
+**Purpose.** An entry in `argument-db.json` is two things: a LaTeX block for
+each method it has been worked in — the truth table, the truth tree, the
+natural deduction — and the prose that says why anyone should care. This
+document fixes both, so that a reader arriving from the course sees the same
+notation they saw in lecture, down to the spacing, and reads something worth the
+trip.
 
-**Authority.** Everything here is derived from `notation.sty`, `Notation Guide
-(Author Reference).tex`, and Lecture Handouts 1–10 — and, where the three left
-anything open, from compiling it and looking at the result (§0.1). Where this guide and a handout
-disagree, the handout wins and this guide is wrong — tell me and I will fix it.
-Where the handouts disagree *with each other*, §10 records the conflict and
-picks one.
+**How it is arranged.** §§1–6 are the blocks: symbols, formulas, and one section
+per method. §7 is the JSON schema, §8 two worked entries, §9 the checklist.
+**§13 is the prose** — the names, the gloss, the appearances, the commentary —
+and it is the half that a new entry lives or dies by, since the blocks are
+generated and the prose is not.
+
+**Authority.** Everything about notation is derived from `notation.sty`,
+`Notation Guide (Author Reference).tex`, and Lecture Handouts 1–10 — and, where
+the three left anything open, from compiling it and looking at the result
+(§0.1). Where this guide and a handout disagree, the handout wins and this guide
+is wrong — tell me and I will fix it. Where the handouts disagree *with each
+other*, §10 records the conflict and picks one.
 
 **Scope.** Propositional logic only (Lectures 1–13). The quantifier and identity
 macros are listed in §2 for completeness, because the substitution notation is
@@ -225,24 +232,24 @@ footnote makes the point sharply: `A` is not an expression of the language at
 all, because the language contains no upper-case letters. A rule *schema* is
 written in `A`/`B`; a concrete entry is written in `p`/`q`/`r`.
 
-**An atom is a lower-case letter with an optional numeric subscript, and
-nothing else.** Lecture 2 gives the alphabet and it is short: "lower case
-letters (e.g. `p`, `q`, `r`, etc.) potentially with subscripts (e.g. `p_2`,
-`q_3`, `r_5`)". `bl`, `ls`, `aS` and `bpq` are not names of propositions,
-however mnemonic — `bl` is two letters, and the language has no way to read a
-string of them as one name.
+**An atom is a lower-case letter with an optional subscript, and nothing
+else.** Lecture 2 gives the alphabet: "lower case letters (e.g. `p`, `q`, `r`,
+etc.) potentially with subscripts (e.g. `p_2`, `q_3`, `r_5`)". `bl`, `ls`, `aS`
+and `bpq` are not names of propositions, however mnemonic — `bl` is two
+letters, and the language has no rule that reads a run of letters as one name.
 
-The subscript is stored inline and typeset as a subscript: `o1` in the JSON,
-`o_{1}` in the LaTeX, `o<sub>1</sub>` on the page. So a formula that needs more
-than twenty-six names still has them.
+**The subscript is not restricted to digits.** The lecture's examples are
+numeric but the rule is not, and `a_D`, `g_S`, `b_pq` are names as good as
+`p_2`. This is what lets a mnemonic atom stay mnemonic while still being one
+letter with a subscript. It is stored with the underscore inline — `a_D` in the
+JSON, `a_{D}` in the LaTeX, `a<sub>D</sub>` on the page.
 
-`build.py` legalises on every build, and the rule keeps as much of the mnemonic
-as the language allows: **each atom keeps its initial**, and takes a subscript
-only when it would collide with another atom in the same entry, numbered by
-order of first appearance. The Cleopatra entry's `bS, aS, bD, aD, aC` become
-`b1, a1, b2, a2, a3` — which still pairs each `b` with its `a`. The Dutch book's
-`bl, v, k, ls, o` become `b, v, k, l, o`, all distinct initials, no subscripts
-needed.
+`build.py` legalises on every build, by the obvious rule: **the first letter
+stays the name, and everything after it becomes the subscript.** So `bS`
+becomes `b_S`, `ls` becomes `l_s`, `bpq` becomes `b_pq`, and the Cleopatra
+entry's `bS, aS, bD, aD, aC` become `b_S, a_S, b_D, a_D, a_C` — which is what
+those atoms meant all along. A numeric tail is disambiguation of last resort,
+used only if two atoms would otherwise collide.
 
 Two consequences for authoring:
 
@@ -754,30 +761,29 @@ written out in full every time:
 \end{align*}
 ```
 
-### 6.6 Inconsistency entries (`⊥` as conclusion)
+### 6.6 Contradiction entries (`⊥` as conclusion)
 
-Three entries conclude `⊥`, and they are **not arguments for a sentence**. The
-claim is that the premises cannot all be true, and every part of the entry
-should say so rather than pretending there is a conclusion.
+Three entries conclude `⊥`: they argue that their premises cannot all be true.
+`⊥` after `∴` is licensed, on a par with `⊨ ⊥` and `⊢ ⊥` — the lecture notes
+are being adjusted to introduce falsum early enough for that. So the stacked
+display reads `∴ ⊥` like any other conclusion, and the entry is an argument
+like any other, valid or invalid.
 
-`⊥` is a formula of the language and `X \ProvesND \Falsum` is exactly what the
-derivation establishes, so falsum is at home **on the right of a turnstile**.
-What it must never do is sit **after `∴`**: nobody concludes falsum, and the
-other two methods do not treat it as a conclusion either.
+**What has not changed is that falsum is never part of a formula.** The
+Notation Guide is unconditional: "no formation rule admits it, no truth table
+has a column for it, no tree branch closes on it… If you find `\Falsum` nested
+inside a formula anywhere else, it is an error." Two consequences for the
+blocks, and they hold whatever the turnstile does:
 
-| Where | What it shows |
+| Block | Why it runs one-sided |
 | --- | --- |
-| Stacked display | the sentences, numbered, **no `∴` line** |
-| Turnstile line | `X ⊨ ⊥`, `X ⊢ ⊥`, `X ⊢ND` — falsum on the right is fine |
-| Truth table | **one-sided**: atoms and premises, no conclusion column. A falsum column would read F on every row and say nothing; the question is whether any row makes the premises true |
-| Truth tree | the premises alone at the root, **no `\Neg A`** and no negated conclusion. The set is consistent exactly when some branch stays open |
+| Truth table | No falsum column. There is nothing to evaluate — it would read F on every row — so the table is atoms and premises, and the argument is valid exactly when no row makes them all true |
+| Truth tree | The premises alone at the root, no `\Neg A` label. Negating the conclusion would put `\Falsum` inside a `\Neg`, which is not a formula; the argument is valid exactly when every branch closes |
 | Derivation | `\Falsum` alone on the final line, cited `\FalsumI,n,m`, and the proof ends there — no `\NegI` follows |
-| The question asked | "are these sentences consistent?", not "is this argument valid?" |
 
-Per the Notation Guide the **one-sided turnstile is the house form** in the ND
-heading: write `X \ProvesND`, not `X \ProvesND \Falsum`. Lecture 10 *defines*
-the former by the latter, and that definition is the only place the two-sided
-form belongs.
+In the ND heading the **one-sided turnstile remains the house form**: write
+`X \ProvesND`, not `X \ProvesND \Falsum`. Lecture 10 *defines* the former by
+the latter, and that definition is the only place the two-sided form belongs.
 
 ### 6.7 Accessibility
 
@@ -945,15 +951,14 @@ Per block, before it goes in the database:
 **All blocks**
 - [ ] Every symbol is a macro, not a raw glyph (§1)
 - [ ] `\Conj` between operands, `\ConjTight` when naming the symbol (§2.1)
-- [ ] Every atom is a lower-case letter with an optional numeric subscript —
-      no `bl`, no `aS` (§2.4)
+- [ ] Every atom is a lower-case letter with an optional subscript — `a_D`,
+      not `aD`; `l_s`, not `ls` (§2.4)
 - [ ] Every binary application carries its own parentheses, outermost pair
       dropped only when the main connective is not `\Neg` (§3.1) — **not**
       taken from `display.*` (§3.2)
 - [ ] No `\Falsum` inside any formula (§2.2)
-- [ ] If the conclusion is `⊥`, the entry is an inconsistency claim throughout:
-      no `∴` line, no conclusion column, no negated conclusion at the root
-      (§6.6)
+- [ ] If the conclusion is `⊥`, the table has no falsum column and the tree no
+      negated conclusion at its root — falsum is never inside a formula (§6.6)
 
 **Table**
 - [ ] Right layout for the entry: argument if it has premises, single-formula if
@@ -1067,7 +1072,7 @@ reaching the site — and what it **repairs**, which the author can leave alone.
 
 | | |
 | --- | --- |
-| Atom names | Legalised per §2.4: each keeps its initial, subscripted only on collision |
+| Atom names | Legalised per §2.4: the first letter is the name, the rest becomes the subscript |
 | Parentheses | Every binary application parenthesised, outermost pair dropped per §3.1 |
 | `display.*` | Rebuilt from the ASCII, so the two cannot drift |
 | `truth_table.columns` | Rebuilt from the premises and conclusion |
@@ -1079,7 +1084,7 @@ reaching the site — and what it **repairs**, which the author can leave alone.
 
 | Check | The error says |
 | --- | --- |
-| Atom names legal after renaming | *`bl` is not a name of a proposition* |
+| Atom names legal after renaming | *… is not a name of a proposition* |
 | A tree node is a subformula of the entry's own formulas | *tree node … is not a subformula* |
 | No stored display string is ambiguous between two subformulas | *… is ambiguous between …* |
 | A valid entry has a proof | *valid but no proof written* |
@@ -1135,3 +1140,135 @@ showing last week's proof; `svg.py --check` and the test suite both catch it.
 A build step should fold `.tex` files into the JSON rather than anyone hand-
 escaping backslashes into it (§7). Worth setting up before entry 3, not after
 entry 30.
+
+---
+
+## 13. The prose
+
+The blocks are generated; the prose is not, and it is what makes an entry worth
+reading. A form with a correct table and nothing else is a row in a lookup
+table. The encyclopedia's whole claim is that these forms were *used* — by
+somebody, somewhere, about something — and that claim lives entirely in the
+words.
+
+### 13.1 The inclusion criterion, which is a prose criterion
+
+**A form with no `appearances` entry does not belong here.** Not "is
+instructive in the abstract", not "is a nice tree" — somebody actually used it,
+argued about it, or got caught out by it. If the inventory row gives no source,
+the entry is not ready; leave it out rather than inventing provenance.
+
+### 13.2 The fields, and what each is for
+
+| Field | Length | What it does |
+| --- | --- | --- |
+| `names[]` | 2–8 words | The first is the display title and the page heading. Later ones are aliases the search should find — "consequentia mirabilis", "the Lecture 8 chain". Name the *form*, not the paper it came from |
+| `english[].gloss` | 1–3 sentences | The argument in ordinary English, in the order the premises are given, ending in the conclusion. No symbols. It should read like something a person would say |
+| `english[].faithful` | boolean | `true` if the gloss is what the source argued; `false` if we have straightened it for exposition. Never omit it — an unfaithful gloss presented as faithful is the one lie the format allows |
+| `interest` | 3–6 sentences | Why this form is worth a student's time. The most-read field on the page, and the hardest to write |
+| `appearances[]` | one per episode | Who, where, and in what words. See §13.4 |
+| `countermodel_gloss` | 1–2 sentences | What the countermodel *means* — not that `p = T, q = F`, which the table already says, but what it is a picture of |
+| `nd.note` | 1–3 sentences | Only on invalid entries: where the attempt at a derivation breaks down. "No derivation" alone is a wasted field; say which rule you reach for and why it will not come |
+| `course.note` | any | **Instructor-facing.** Never rendered as body copy. Scheduling, pairings, things to say in lecture |
+| `tags.topic` / `.figure` | 1–3 each | Facets, and shown before the answer — so they must not name the verdict |
+| `tags.defect` / `.nonclassical` | 0–3 each | Facets, and **withheld** before the answer, because "affirming a disjunct" is the answer |
+
+### 13.3 `interest`: what a good one does
+
+Look at what the strong entries have in common. Each says something the table
+cannot:
+
+- **What turns on it.** *"This is the form on which the whole relevance-logic
+  dispute turns, and the informational reading disagrees with the truth table
+  here for a stateable reason."*
+- **What is surprising about the numbers.** *"One countermodel in sixty-four
+  rows, and that row is the entire point of the entry."*
+- **What the form is a near-miss of.** *"Move one letter and validity
+  evaporates."* Pair entries — `X` and `X-repaired`, `X` and `X-without-Y` —
+  earn their keep here, and the relation fields (`repairs_to`, `looks_like`)
+  should agree with what the prose says.
+- **What the student is meant to do with it.** *"A good 'find the premise whose
+  removal reopens the tree' exercise."*
+
+What it should not do: restate the verdict, narrate the table row by row, or
+praise the argument. Assume the reader has the table in front of them.
+
+### 13.4 `appearances`: the provenance format
+
+One entry per episode, not per author.
+
+| Key | |
+| --- | --- |
+| `who` | The person or body. `"Immanuel Kant"`, `"PHIL 1115"`, `"SEP"` |
+| `work`, `locus` | Enough to find it: the work, then the section, page, or paragraph |
+| `url` | Where a reader can check it, or `null`. Prefer a stable one — SEP, PhilPapers, a DOI |
+| `type` | `used` \| `discussed` \| `diagnosed`. **`diagnosed` means "diagnosed the form", not "diagnosed a fallacy"** — it sits on valid entries too |
+| `fidelity` | `verbatim` \| `paraphrase` \| `our reconstruction`. Getting this wrong is the worst error in the file: it puts words in someone's mouth |
+| `quote` | The passage. Verbatim means verbatim, typos and all |
+
+**Never reword a source to make it fit.** If the passage does not show the form,
+either the reconstruction is `our reconstruction` and says so, or the appearance
+does not belong.
+
+### 13.5 The spoiler discipline
+
+The practice page today shows the sequent and nothing else — no title, no
+gloss, no tags — so nothing in the prose can currently leak. But the entry
+renderer keeps a **spoiler mode** that shows an entry with the answer withheld,
+which is what the practice page would use if it ever offered more than the bare
+form, and the prose should be written so that mode works. In it the head, the
+sequent, `english`, `appearances` and the `topic`/`figure` tags are visible
+before the reader has worked the problem. So:
+
+- **`english[].gloss` and the `topic`/`figure` tags must not state or imply the
+  verdict.** No "the fallacy of…", no "this invalid form", no "as Kant
+  correctly argued".
+- `interest`, `countermodel_gloss`, `defect` and `nonclassical` are withheld
+  automatically, so they may say anything.
+- **Quotes are the exception that proves the rule.** A source may perfectly well
+  say "show that this argument is tree-invalid", and rewriting it is not an
+  option — so under spoilers the attribution stays visible and the quoted text
+  sits behind a one-click reveal. Write the quote faithfully and let the page
+  handle it.
+- Verdict-bearing words in a *name* are fine (`affirming-a-disjunct` is a name,
+  and the reader has to be able to search for it), but a name is a heading, so
+  prefer the traditional label to a description of the mistake.
+- **One existing tag breaks the rule:** `affirming-a-disjunct` carries the topic
+  `informal fallacies`, which announces the verdict. It is harmless while the
+  practice page shows only the sequent; if spoiler mode ever goes back into use,
+  rename it (`informal logic` says the same thing about the subject area and
+  nothing about this entry) rather than special-casing the renderer.
+
+### 13.6 House voice
+
+- **Say the thing.** Short sentences, concrete nouns, no throat-clearing. The
+  entries that read well open on the claim, not on the topic.
+- **British spelling**, en dashes for ranges, ` -- ` for an em dash (the
+  renderer converts it).
+- **Markdown is a small subset:** `**bold**`, `*italic*`, and `` `code` ``.
+  No headings, no lists, no links — a link belongs in `appearances[].url`.
+- **Formulas and atom names go in backticks**, in the house glyphs: `` `p ⊃ q` ``,
+  not `p -> q`. The build renames atoms inside backticked spans when it
+  legalises them (§2.4), so a formula in prose stays in step with the entry.
+- **Name people in full on first mention**, then by surname.
+- **Do not address the student.** No "you will notice"; the encyclopedia is a
+  reference, and the practice page is where the second person belongs.
+
+### 13.7 What is checked, and what is not
+
+The build validates the logic and the shape; nobody but the author validates the
+prose. `_tests/argument-forms.test.mjs` catches:
+
+- an entry with no `appearances`, or an appearance with no `who` or `work`, or
+  a `url` that is not an `https://` link;
+- a `fidelity` or `type` outside the allowed set;
+- an entry with no display name;
+- a `gloss` carrying a turnstile or the word *valid* / *invalid* / *fallacy*,
+  or one that does not say whether it is `faithful`;
+- a missing `nd.note` on an invalid entry;
+- a dangling `repairs_to` or `looks_like`.
+
+What it cannot catch is everything that matters most: a gloss that misdescribes
+its argument, an `interest` that says nothing, a quote that does not show the
+form it is cited for, or a `fidelity` that is a shade too generous. Those are
+the author's, every time.

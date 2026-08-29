@@ -65,19 +65,24 @@ ASCII_TO_GLYPH = {"~": "∼", "&": "&", "|": "∨", ">": "⊃", "=": "≡", "!":
 # renamed there too. Only spans made entirely of formula characters are
 # touched, so `argument-db.json` is left alone.
 FORMULA_SPAN = re.compile(r"`([^`]+)`")
-FORMULA_CHARS = re.compile(r"^[A-Za-z0-9 ()~&|>=!∼∨⊃≡⊥⊨⊭⊢⊬,.∴]+$")
+FORMULA_CHARS = re.compile(r"^[A-Za-z0-9_ ()~&|>=!∼∨⊃≡⊥⊨⊭⊢⊬,.∴]+$")
 
 
 def legalise_atoms(entry: dict) -> dict[str, str]:
     """Rename the entry's atoms to names the language allows.
 
-    Lecture 2 admits "lower case letters ... potentially with subscripts" and
-    nothing else, so `bl`, `ls`, `aS` and `bpq` are not names of propositions.
-    Each atom keeps its initial -- which is where its mnemonic value lives --
-    and takes a subscript only when it would otherwise collide with another
-    atom in the same entry, numbered by order of first appearance. So the
-    Cleopatra entry's `bS, aS, bD, aD, aC` become `b1, a1, b2, a2, a3`, which
-    still pairs each `b` with its `a`.
+    Lecture 2 admits a lower-case letter with an optional subscript, and
+    nothing else, so `bl`, `ls`, `aS` and `bpq` are not names of propositions:
+    they are runs of letters, and the language has no rule that reads a run as
+    one name. The subscript is not restricted to digits, which is what makes
+    the repair painless -- **the first letter stays the name and everything
+    after it becomes the subscript**. So `bS` becomes `b_S`, `ls` becomes
+    `l_s`, `bpq` becomes `b_pq`, and the Cleopatra entry's `bS, aS, bD, aD, aC`
+    become `b_S, a_S, b_D, a_D, a_C`, which is what those atoms meant all
+    along.
+
+    A numeric tail is disambiguation of last resort, used only if two atoms
+    would otherwise end up with the same name.
 
     Deterministic and idempotent: an entry already legalised renames to itself.
     """
@@ -90,18 +95,25 @@ def legalise_atoms(entry: dict) -> dict[str, str]:
             if tok.kind == "atom" and tok.text not in order:
                 order.append(tok.text)
 
-    base = {}
-    for name in order:
-        head = name[0].lower()
-        base.setdefault(head, []).append(name)
+    def legalise(name: str) -> str:
+        if legal_atom(name):
+            return name
+        head, _, sub = name.partition("_")
+        sub = (head[1:] + sub) if len(head) > 1 else sub
+        head = head[0].lower()
+        return f"{head}_{sub}" if sub else head
 
     rename: dict[str, str] = {}
-    for head, names in base.items():
-        if len(names) == 1:
-            rename[names[0]] = head
-        else:
-            for i, name in enumerate(names, 1):
-                rename[name] = f"{head}{i}"
+    taken: set[str] = set()
+    for name in order:
+        want = legalise(name)
+        if want in taken:
+            n = 2
+            while f"{want}{n}" in taken:
+                n += 1
+            want = f"{want}{n}"
+        taken.add(want)
+        rename[name] = want
     return {k: v for k, v in rename.items() if k != v}
 
 
@@ -110,7 +122,9 @@ def rename_atoms(text: str, rename: dict[str, str]) -> str:
     if not rename:
         return text
     pattern = re.compile(
-        r"(?<![A-Za-z0-9])(" + "|".join(sorted(map(re.escape, rename), key=len, reverse=True)) + r")(?![A-Za-z0-9])"
+        r"(?<![A-Za-z0-9_])("
+        + "|".join(sorted(map(re.escape, rename), key=len, reverse=True))
+        + r")(?![A-Za-z0-9_])"
     )
     return pattern.sub(lambda m: rename[m.group(1)], text)
 

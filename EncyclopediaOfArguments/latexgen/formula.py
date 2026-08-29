@@ -30,10 +30,13 @@ GLYPH = {
 NEG, AND, OR, IMP, IFF, BOT = "~", "&", "|", ">", "=", "!"
 BINARY = (AND, OR, IMP, IFF)
 
-# What may name a proposition. Lecture 2: "lower case letters (e.g., p, q, r,
-# etc.) potentially with subscripts (e.g., p_2, q_3, r_5)". Nothing else -- no
-# `bl`, no `aS`. The digits are stored inline (`p1`) and typeset as a subscript.
-ATOM = re.compile(r"^[a-z][0-9]*$")
+# What may name a proposition. Lecture 2: a lower-case letter, optionally
+# subscripted. The subscript is not restricted to digits -- `a_D` and `g_S` are
+# names as good as `p_2` -- which is what lets a mnemonic atom stay mnemonic
+# while still being one letter with a subscript rather than a string of letters.
+# `bl` and `aS` are not names: they are two letters, and the language has no
+# rule that reads a run of them as one.
+ATOM = re.compile(r"^[a-z](_[A-Za-z0-9]+)?$")
 
 
 def legal_atom(name: str) -> bool:
@@ -41,10 +44,9 @@ def legal_atom(name: str) -> bool:
 
 
 def atom_latex(name: str) -> str:
-    """`o2` as `o_{2}`."""
-    head = name.rstrip("0123456789")
-    tail = name[len(head):]
-    return f"{head}_{{{tail}}}" if tail else head
+    """`a_D` as `a_{D}`."""
+    head, _, sub = name.partition("_")
+    return f"{head}_{{{sub}}}" if sub else head
 
 
 @dataclass
@@ -80,7 +82,11 @@ def tokenize(src: str) -> list[Tok]:
         elif c in BINARY:
             out.append(Tok("op", c))
         else:
-            m = re.match(r"[A-Za-z][A-Za-z0-9]*", src[i:])
+            # Permissive on purpose: it has to read the names an entry
+            # arrives with (`bl`, `aS`) as well as the ones it leaves with
+            # (`a_D`). `legal_atom` is what enforces the alphabet, after
+            # `build.py` has had its chance to repair the name.
+            m = re.match(r"[A-Za-z][A-Za-z0-9]*(_[A-Za-z0-9]+)?", src[i:])
             if not m:
                 raise ValueError(f"unexpected {c!r} in {src!r}")
             out.append(Tok("atom", m.group(0)))

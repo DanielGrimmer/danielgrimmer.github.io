@@ -109,16 +109,17 @@ export function hydrateSvgs(root) {
  * ordinary argument, and its answer is valid or invalid.
  */
 /*
- * An entry whose conclusion is falsum is not an argument for a sentence. It is
- * the claim that its premises are inconsistent, and that is how it should read.
+ * An entry whose conclusion is falsum argues that its premises are
+ * inconsistent. `⊥` sits after `∴` exactly as it sits after `⊨` and `⊢`.
  *
- * `⊥` is a perfectly good formula of this language and `X ⊢ ⊥` is exactly what
- * the derivation establishes, so falsum stays wherever a turnstile makes it a
- * claim *about* the set. What it cannot do is sit after `∴`: nobody concludes
- * falsum, and the truth table and the tree do not treat it as a conclusion
- * either — the table has no conclusion column and the tree stacks no negated
- * conclusion. So the stacked display drops the `∴` line and asks the question
- * the two methods are actually answering.
+ * What it still never does is appear *inside* a formula. That is the Notation
+ * Guide's standing rule — "no formation rule admits it, no truth table has a
+ * column for it, no tree branch closes on it" — and it is why the two
+ * non-derivation methods run one-sided here: the table has no falsum column,
+ * which would read F on every row and say nothing, and the tree stacks the
+ * premises alone rather than a `∼⊥` that would nest falsum inside a negation.
+ * The typeset blocks have always done this; the flag keeps the HTML fallbacks
+ * matching them.
  */
 export function claimsInconsistency(entry) {
   return entry.conclusion === "!";
@@ -136,8 +137,8 @@ export function answerLine(entry) {
       : `<strong>Invalid</strong> — the conclusion is <strong>not</strong> a tautology.`;
   } else if (claimsContradiction) {
     text = valid
-      ? `<strong>Inconsistent.</strong> No assignment makes all of these sentences true.`
-      : `<strong>Consistent.</strong> Some assignment makes all of these sentences true.`;
+      ? `<strong>Valid</strong> — the premises are <strong>inconsistent</strong>: nothing satisfies them all.`
+      : `<strong>Invalid</strong> — the premises are <strong>consistent</strong>, so they do not entail a contradiction.`;
   } else {
     text = valid ? `<strong>Valid.</strong>` : `<strong>Invalid.</strong>`;
   }
@@ -513,7 +514,7 @@ export function md(text) {
     // its atoms get their subscripts. Anything that is not made only of
     // formula characters — `argument-db.json`, a file name — is left alone.
     .replace(/`([^`]+)`/g, (whole, span) =>
-      /^[A-Za-z0-9 ()~&amp;|>=!∼∨⊃≡⊥⊨⊭⊢⊬,.∴]+$/.test(span)
+      /^[A-Za-z0-9_ ()~&amp;|>=!∼∨⊃≡⊥⊨⊭⊢⊬,.∴]+$/.test(span)
         ? `<code>${subscripts(span)}</code>`
         : `<code>${span}</code>`,
     )
@@ -536,16 +537,18 @@ function f(formula) {
 }
 
 /*
- * Digits after a letter are a subscript, not a suffix.
+ * What follows an underscore is a subscript.
  *
- * Lecture 2 gives the whole alphabet of propositional names: "lower case
- * letters (e.g. p, q, r) potentially with subscripts (e.g. p_2, q_3, r_5)".
- * The database stores those inline as `p1`, `o2`, since one token is easier to
- * parse and to search than a token plus markup, and they are set as real
- * subscripts here and as `p_{1}` in the LaTeX.
+ * Lecture 2 gives the whole alphabet of propositional names: a lower-case
+ * letter, optionally subscripted. The subscript is not restricted to digits —
+ * `a_D` and `l_s` are names as good as `p_2` — which is what lets a mnemonic
+ * atom stay mnemonic while still being one letter with a subscript rather than
+ * a run of letters. The database stores the underscore inline, since one token
+ * is easier to parse and to search than a token plus markup, and it is set as
+ * a real subscript here and as `a_{D}` in the LaTeX.
  */
 function subscripts(escaped) {
-  return escaped.replace(/([a-z])([0-9]+)/g, "$1<sub>$2</sub>");
+  return escaped.replace(/([a-z])_([A-Za-z0-9]+)/g, "$1<sub>$2</sub>");
 }
 
 export { subscripts };
@@ -695,28 +698,19 @@ function renderSequent(entry, spoilers = false) {
       `<div class="ae-seq-prem"><span class="ae-seq-num">${i + 1}.</span>${f(p)}</div>`,
   );
 
-  const inconsistency = claimsInconsistency(entry);
-
-  const body = inconsistency
-    ? // No `∴ ⊥`. See claimsInconsistency: the claim is about the set.
-      rows.join("")
-    : prems.length
-      ? rows.join("") +
-        `<div class="ae-seq-bar"></div>` +
-        `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(concl)}</div>`
-      : // Not `⊢`: a no-premise entry is a *claimed* theorem, not a proved one,
-        // and four of them are invalid. `∴` asserts nothing either way.
-        `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(concl)}</div>`;
+  const body = prems.length
+    ? rows.join("") +
+      `<div class="ae-seq-bar"></div>` +
+      `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(concl)}</div>`
+    : // Not `⊢`: a no-premise entry is a *claimed* theorem, not a proved one,
+      // and four of them are invalid. `∴` asserts nothing either way.
+      `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(concl)}</div>`;
 
   const atoms = entry.metrics?.atom_count;
   const scale = atoms ? `${atoms} atom${atoms === 1 ? "" : "s"}` : "";
 
   let note;
-  if (inconsistency) {
-    note = spoilers
-      ? `${prems.length} sentences · are they consistent?`
-      : `${prems.length} sentences · ${f(sequentText(entry, turnstile))}`;
-  } else if (spoilers) {
+  if (spoilers) {
     note = prems.length
       ? [`${prems.length} premise${prems.length === 1 ? "" : "s"}`, scale]
           .filter(Boolean)
@@ -764,16 +758,7 @@ function renderVerdictBanner(entry, bare = false) {
   const valid = !!v.valid;
 
   let text;
-  if (claimsInconsistency(entry)) {
-    // Not "valid, but vacuously": there is no conclusion here, and calling it
-    // vacuous invites the reader to look for one. See claimsInconsistency.
-    text = valid
-      ? `<strong>Inconsistent.</strong> Of ${v.rows} rows, <strong>none</strong> ` +
-        `makes all of these sentences true, so together they entail anything at ` +
-        `all — which is the same as saying they say nothing.`
-      : `<strong>Consistent.</strong> Some of the ${v.rows} rows make all of ` +
-        `these sentences true, so they do not entail a contradiction.`;
-  } else if (valid) {
+  if (valid) {
     if (v.premises_satisfiable === false) {
       text =
         `<strong>Valid</strong> — but vacuously. Of ${v.rows} rows, ` +
@@ -1161,11 +1146,12 @@ function buildTree(entry, spoilers = false) {
     hint,
     html:
       (claimsInconsistency(entry)
-        ? `<p class="ae-tree-key">The sentences themselves, stacked — there is no ` +
-          `conclusion to negate. A branch closes (<strong>x</strong>) when it holds a ` +
-          `sentence and its negation; a branch still open when the rules run out ` +
-          `(<strong>o</strong>) satisfies them all, so the set is consistent exactly ` +
-          `when some branch stays open.</p>`
+        ? `<p class="ae-tree-key">The premises alone: the conclusion is <strong>⊥</strong>, ` +
+          `and falsum never goes inside a formula, so there is nothing to negate and ` +
+          `stack. A branch closes (<strong>x</strong>) when it holds a sentence and its ` +
+          `negation; a branch still open when the rules run out (<strong>o</strong>) ` +
+          `satisfies every premise, so the argument is valid exactly when every branch ` +
+          `closes.</p>`
         : `<p class="ae-tree-key">The premises and the <em>negated</em> conclusion, ` +
           `stacked. A branch closes (<strong>x</strong>) when it holds a sentence and ` +
           `its negation; a branch still open when the rules run out (<strong>o</strong>) ` +
@@ -1603,12 +1589,9 @@ export function problemStatement(entry) {
     )
     .join("");
   const concl = `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(entry._conclusion)}</div>`;
-  // An inconsistency claim has no conclusion to state; see claimsInconsistency.
-  const stack = claimsInconsistency(entry)
-    ? rows
-    : prems.length
-      ? rows + `<div class="ae-seq-bar"></div>` + concl
-      : concl;
+  const stack = prems.length
+    ? rows + `<div class="ae-seq-bar"></div>` + concl
+    : concl;
   return `<div class="ae-sequent"><div class="ae-seq-stack">${stack}</div></div>`;
 }
 

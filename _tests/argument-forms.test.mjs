@@ -24,7 +24,8 @@ function parse(source, alphabet) {
     const ch = source[i];
     if (/\s/.test(ch)) { i += 1; continue; }
     if ([NEG, AND, OR, IMP, IFF, BOT, '(', ')'].includes(ch)) { tokens.push(ch); i += 1; continue; }
-    const name = /^[A-Za-z][A-Za-z0-9]*/.exec(source.slice(i));
+    // An atom is a letter with an optional subscript: `p`, `p_1`, `a_D`.
+    const name = /^[A-Za-z][A-Za-z0-9]*(_[A-Za-z0-9]+)?/.exec(source.slice(i));
     if (!name) throw new Error(`unexpected ${ch} in ${source}`);
     tokens.push(name[0]);
     i += name[0].length;
@@ -277,6 +278,34 @@ test('the database holds together', async (t) => {
       for (const a of e.appearances) {
         assert.ok(['verbatim', 'paraphrase', 'our reconstruction'].includes(a.fidelity), `${e.id}: ${a.fidelity}`);
         assert.ok(['used', 'discussed', 'diagnosed'].includes(a.type), `${e.id}: ${a.type}`);
+        // An appearance that cannot be followed up is not provenance.
+        assert.ok(a.who, `${e.id}: an appearance with no one attached to it`);
+        assert.ok(a.work, `${e.id}: ${a.who}'s appearance names no work`);
+        if (a.url) assert.match(a.url, /^https:\/\//, `${e.id}: ${a.url} is not a link a reader can follow`);
+      }
+    }
+  });
+
+  await t.test('every entry has a name to be known by', () => {
+    for (const e of entries) {
+      const names = Array.isArray(e.names) ? e.names : [e.names];
+      assert.ok(names[0] && names[0].trim(), `${e.id} has no display name`);
+    }
+  });
+
+  await t.test('the English gloss states the argument, not the answer', () => {
+    // The gloss is what a reader meets before they have worked the problem, so
+    // it says what is being argued and stops there. A turnstile in it is the
+    // verdict; so is the word. Quotes are exempt — a source may say anything,
+    // and the renderer puts quotes behind a reveal for exactly that reason.
+    for (const e of entries) {
+      for (const item of e.english ?? []) {
+        if (!item?.gloss) continue;
+        assert.ok(!/[⊨⊭⊢⊬]/.test(item.gloss), `${e.id}: the gloss carries a turnstile`);
+        assert.ok(!/\b(in)?valid(ity)?\b|\bfallac/i.test(item.gloss),
+          `${e.id}: the gloss states the verdict`);
+        assert.equal(typeof item.faithful, 'boolean',
+          `${e.id}: the gloss does not say whether it is faithful`);
       }
     }
   });
@@ -570,7 +599,7 @@ test('every entry has an answer the reveal can lead with', () => {
  * would otherwise collide with another atom in the same entry.
  */
 test('every atom is a name the language allows', async (t) => {
-  const legal = /^[a-z][0-9]*$/;
+  const legal = /^[a-z](_[A-Za-z0-9]+)?$/;
 
   await t.test('the atom lists are legal', () => {
     for (const e of entries) {
@@ -584,7 +613,7 @@ test('every atom is a name the language allows', async (t) => {
     for (const e of entries) {
       const known = new Set(e.truth_table.atoms);
       for (const src of [...e.premises, e.conclusion, ...(e.nd.proof ?? []).map((l) => l.f)]) {
-        for (const [, name] of src.matchAll(/([A-Za-z][A-Za-z0-9]*)/g)) {
+        for (const [, name] of src.matchAll(/([A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)?)/g)) {
           assert.ok(known.has(name), `${e.id}: ${name} is not one of its atoms`);
         }
       }
@@ -593,11 +622,17 @@ test('every atom is a name the language allows', async (t) => {
 
   await t.test('a subscripted atom is typeset as one', () => {
     for (const e of entries) {
-      if (!e.truth_table.atoms.some((a) => /[0-9]/.test(a))) continue;
+      const subscripted = e.truth_table.atoms.filter((a) => a.includes('_'));
+      if (!subscripted.length) continue;
       for (const block of [e.truth_table.latex, e.tree.latex, e.nd.latex].filter(Boolean)) {
-        // `o1` must never reach the page as two characters.
-        assert.ok(!/[a-z][0-9]/.test(block.replace(/_\{[0-9]+\}/g, '')),
-          `${e.id}: an atom is printed without its subscript`);
+        // `a_D` must reach the page as `a_{D}`, never as a bare `a_D`.
+        assert.ok(!/[a-z]_(?!\{)/.test(block),
+          `${e.id}: an atom is printed without braces around its subscript`);
+        for (const atom of subscripted) {
+          const [head, tail] = atom.split('_');
+          assert.ok(block.includes(`${head}_{${tail}}`) || !block.includes(head),
+            `${e.id}: ${atom} is not typeset as a subscript`);
+        }
       }
     }
   });
