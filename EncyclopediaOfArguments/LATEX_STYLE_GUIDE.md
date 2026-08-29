@@ -36,7 +36,7 @@ and §5.7 are all results of that.
 
 **Every LaTeX sample in this document compiles.** All eleven complete blocks
 were extracted and built together against the preamble below: zero errors. The
-one fragment (the row-elision sample in §4.5) is marked as such.
+every fragment is marked as such.
 
 The block preamble that was used, and that any consumer of these blocks needs:
 
@@ -270,8 +270,17 @@ parentheses, never inner ones."
 
 So the house policy for every block in the database is:
 
-> **Reproduce the parenthesisation of the entry's ASCII source exactly, with the
-> outermost pair dropped when the main connective is not `\Neg`.**
+> **Every binary application carries its own parentheses, with the outermost
+> pair dropped when the main connective is not `\Neg`.**
+
+This is now enforced rather than asked for. `latexgen/build.py` runs a
+normalisation pass over the whole database on every build: each formula is
+parsed and reprinted in that spelling, so a source that dropped an inner pair
+gets it back and one that already has it is left alone. The pass is idempotent
+and `_tests/argument-forms.test.mjs` fails if any stored formula drifts out of
+it. Two entries needed it: `finite-choice-2x2`, whose conclusion ran four
+disjuncts together, and `simpson-amalgamation`, whose third premise ran three
+conjuncts together.
 
 Square brackets are permitted as poorly-drawn parentheses for readability in
 deeply nested formulas — `s \Bicond [p \Cond (q \Conj r)]` — and are worth using
@@ -279,21 +288,31 @@ once nesting reaches three deep.
 
 ### 3.2 Why this matters here, concretely
 
-The `display.*` fields already in `argument-db.json` were generated with
+The `display.*` fields `argument-db.json` arrived with were generated with
 *minimal* parentheses, and for a left-nested conditional that is not terse but
-**wrong**. The conditional is right-associative, so Peirce's Law — source
-`((p > q) > p) > p` — was emitted as `p ⊃ q ⊃ p ⊃ p`, which re-parses as
-`p ⊃ (q ⊃ (p ⊃ p))`: a different formula, and a tautology in every logic, when
-the whole interest of Peirce's Law is that it is not.
+**wrong**. Peirce's Law — source `((p > q) > p) > p` — was emitted as
+`p ⊃ q ⊃ p ⊃ p`, which reads as `p ⊃ (q ⊃ (p ⊃ p))`: a different formula, and a
+tautology in every logic, when the whole interest of Peirce's Law is that it is
+not. Seven entries were affected that way.
 
-Seven entries are affected: `peirce-law`, `contraction-w`, `curry-complete`,
-`curry-contraction-only`, `abelian-axiom`, `fixed-point-type`, `assertion-t`.
-The website now works around this by rebuilding from the ASCII.
+The same elision reached the formulas stored on tree nodes, and there it was
+worse than wrong — it was unreadable as an exercise. A tree decomposes a formula
+by its **main connective**, so a node that says
+`∼(p & r ∨ p & s ∨ q & r ∨ q & s)` and is then resolved into
+`∼(p & r ∨ p & s ∨ q & r)` and `∼(q & s)` is asking the student to guess that
+the disjunction groups to the left. Written out —
+`∼((((p & r) ∨ (p & s)) ∨ (q & r)) ∨ (q & s))` — the main connective is the
+last `∨` and the step reads itself.
 
-**Do not build the LaTeX blocks from `display.*`.** Build them from `premises`
-and `conclusion` — the ASCII source, which carries the author's own
-parentheses — and translate `~ & | > =` to `\Neg \Conj \Disj \Cond \Bicond`.
-`_tests/argument-forms.test.mjs` guards this.
+Both are fixed at the source. `build.py`'s normalisation pass rewrites the
+display strings from the ASCII, and recovers the tree nodes by matching each
+against the entry's **own subformulas** printed the same lossy way, rather than
+by re-parsing a string that no longer determines a formula. If a stored string
+could name two different subformulas the build stops.
+
+**Blocks are still built from `premises` and `conclusion`, never from
+`display.*`** — the ASCII is the source and the display strings are derived from
+it, so they can no longer drift apart.
 
 ### 3.3 Precedence, for reading only
 
@@ -354,7 +373,18 @@ identifies them in prose ("Row 3 is a *counterexample*…"). Follow the course:
 **no marker column.** The website already highlights countermodel rows in HTML,
 and the entry's `countermodel_gloss` says it in words.
 
-### 4.5 Templates
+### 4.5 Every row, always
+
+Tables are listed in full, however many rows they have. Long ones were briefly
+elided to the first row, the countermodels and the last with a `\vdots`
+between; that saves paper and loses the point. A truth table is an *exhaustive*
+check, and a reader who cannot see the rows cannot see that it is one. The
+sixty-four-row Dutch book form is exactly the case that matters: what makes it
+worth showing is that sixty-three rows behave and one does not. At eleven point
+a sixty-four-row table is about eighty lines tall on the page, which is a
+perfectly ordinary thing for a figure to be.
+
+### 4.6 Templates
 
 **Single-formula (no premises).** Peirce's Law:
 
@@ -845,7 +875,7 @@ $\Neg A:\quad \Neg(p\Cond s)$\quad\checkmark \\ $\vert$ \\ $p$ \\ $\Neg s$}
 \end{center}
 ```
 
-**Table**: 16 rows, so elide per §4.5, showing the countermodel row
+**Table**: 16 rows, all listed (§4.5)
 `p=T, q=T, r=T, s=F` explicitly.
 
 **ND**: none. `nd.note` carries the explanation.
@@ -870,7 +900,7 @@ Per block, before it goes in the database:
       not (§4.1)
 - [ ] Values under connectives only — count them (§4.2)
 - [ ] All-true row first (§4.3)
-- [ ] Elided if over 16 rows, with the countermodel row shown (§4.5)
+- [ ] Every row listed, none elided (§4.5)
 - [ ] Values agree with the entry's stored `truth_table.rows`
 
 **Tree**

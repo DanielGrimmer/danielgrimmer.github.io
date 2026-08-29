@@ -17,27 +17,13 @@ Three things that are easy to get wrong and are handled here:
     and both were confirmed by compiling.
 
 The formulas stored in the tree are the generator's display strings, which drop
-parentheses that right-associativity needs (style guide §3.2). They are repaired
-here through the same map the website uses, built from the ASCII source.
+fully parenthesised spelling by `build.py`'s normalisation pass, so the strings
+quoted here are already the ones to print.
 """
 
 from __future__ import annotations
 
 from formula import latex, parse, render
-
-
-def build_repair(entry: dict) -> dict[str, str]:
-    """Map the stored display strings onto correctly parenthesised ones."""
-    repair: dict[str, str] = {}
-    pairs = list(zip(entry["display"]["premises"], entry["premises"]))
-    pairs.append((entry["display"]["conclusion"], entry["conclusion"]))
-    for shown, ascii_src in pairs:
-        fixed = latex(ascii_src)
-        repair[shown] = fixed
-        # The tree stacks the negated conclusion, so the negated forms too.
-        repair[f"∼{shown}"] = f"\\Neg {fixed}"
-        repair[f"∼({shown})"] = f"\\Neg ({fixed})"
-    return repair
 
 
 # The display alphabet the database stores tree formulas in.
@@ -51,17 +37,20 @@ _GLYPH_TO_MACRO = {
 }
 
 
-def to_macros(shown: str, repair: dict[str, str]) -> str:
-    """House-glyph LaTeX for a formula quoted from the stored tree."""
-    if shown in repair:
-        return repair[shown]
+def to_macros(shown: str) -> str:
+    """House-glyph LaTeX for a formula quoted from the stored tree.
+
+    A straight transliteration, because `build.py`'s normalisation pass has
+    already put every stored formula into the fully parenthesised spelling --
+    there is nothing left to repair here.
+    """
     out = []
     for ch in shown:
         out.append(_GLYPH_TO_MACRO.get(ch, ch))
     return "".join(out).replace("  ", " ").strip()
 
 
-def _node(node: dict, repair: dict, resolved: set, root_lines=None) -> str:
+def _node(node: dict, resolved: set, root_lines=None) -> str:
     """One qtree node, with its children.
 
     `$\\vert$` is a typographic spacer, not a logical mark: inside a node
@@ -76,7 +65,7 @@ def _node(node: dict, repair: dict, resolved: set, root_lines=None) -> str:
         lines.append("$\\vert$")
 
     for add in added:
-        f = to_macros(add["formula"], repair)
+        f = to_macros(add["formula"])
         if add["formula"] in resolved:
             lines.append(f"\\ckpad ${f}$\\quad\\checkmark")
         else:
@@ -94,7 +83,7 @@ def _node(node: dict, repair: dict, resolved: set, root_lines=None) -> str:
 
     parts = ["[.{" + body + "}"]
     for k in kids:
-        parts.append(_node(k, repair, resolved))
+        parts.append(_node(k, resolved))
     parts.append("]")
     return " ".join(parts)
 
@@ -117,7 +106,6 @@ def _resolved_here(node: dict) -> set[str]:
 def tree_block(entry: dict) -> str:
     """The whole tree, rooted at the premises and the negated conclusion."""
     t = entry["tree"]
-    repair = build_repair(entry)
     n_prem = len(entry["premises"])
     # An entry concluding falsum is a contradiction claim, X ⊢, so its tree is
     # rooted at the premises alone. The stored roots carry a `∼⊥`, which is not
@@ -131,7 +119,7 @@ def tree_block(entry: dict) -> str:
 
     root_lines = []
     for i, r in enumerate(roots):
-        f = to_macros(r, repair)
+        f = to_macros(r)
         tick = "\\quad\\checkmark" if r in resolved else ""
         pad = "\\ckpad " if tick else ""
         if n_prem and i == 0:
@@ -144,7 +132,7 @@ def tree_block(entry: dict) -> str:
             label = "\\qquad "
         root_lines.append(f"{pad}${label}{f}${tick}")
 
-    body = _node(t["tree"], repair, resolved, root_lines=root_lines)
+    body = _node(t["tree"], resolved, root_lines=root_lines)
     if contradiction:
         start = "\\text{Start from $X$:}"
     elif n_prem:

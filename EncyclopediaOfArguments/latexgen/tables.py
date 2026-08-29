@@ -34,10 +34,6 @@ from formula import (
     render,
 )
 
-# Rows beyond this and the table is elided (style guide §4.5).
-ELIDE_ABOVE = 16
-
-
 def _fit(tabular_lines: list[str]) -> list[str]:
     """Scale a tabular down if it is wider than the text, and not otherwise.
 
@@ -184,39 +180,18 @@ def argument_table(premises: list[str], conclusion: str) -> str:
         "        \\hline",
     ]
 
-    if len(all_models) <= ELIDE_ABOVE:
-        lines += [row(m) for m in all_models]
-    else:
-        lines += _elided(all_models, row, parsed, croot, atoms)
+    # Every row, however many there are. Long tables used to be elided down to
+    # the first row, the countermodels and the last -- but a truth table is a
+    # exhaustive check, and a reader who cannot see the rows cannot see that it
+    # is one. The sixty-four-row Dutch book form is exactly the case that
+    # matters: what makes it worth showing is that sixty-three rows behave and
+    # one does not.
+    lines += [row(m) for m in all_models]
 
     lines += ["    \\end{tabular}"]
     return "\n".join(
         ["\\begin{table}[h!]", "    \\centering"] + _fit(lines[2:]) + ["\\end{table}"]
     )
-
-
-def _elided(all_models, row, parsed, croot, atoms) -> list[str]:
-    """First row, the countermodels, the last row -- with \\vdots between.
-
-    Style guide §4.5: elide above 16 rows, but never elide away a countermodel.
-    The Dutch book form has one countermodel in sixty-four rows and that row is
-    the entire point of the entry.
-    """
-    keep = {0, len(all_models) - 1}
-    for i, m in enumerate(all_models):
-        if all(evaluate(r, m) for r, _ in parsed) and not evaluate(croot, m):
-            keep.add(i)
-
-    out, last = [], None
-    for i in sorted(keep):
-        if last is not None and i > last + 1:
-            gap = " & ".join(
-                ["$\\vdots$", "$\\vdots$", "$\\vdots$"]
-            )
-            out.append(f"        {gap} \\\\")
-        out.append(row(all_models[i]))
-        last = i
-    return out
 
 
 def models(atoms: list[str]) -> list[dict[str, bool]]:

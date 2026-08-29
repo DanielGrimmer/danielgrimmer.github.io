@@ -276,29 +276,31 @@ function toGlyphs(src, map) {
  * headers and the tree — which quote `display` strings rather than the ASCII —
  * be corrected too, by exact match within this entry only.
  */
+/*
+ * The formulas, in the house glyphs.
+ *
+ * The ASCII in `premises` / `conclusion` is the source, and it is fully
+ * parenthesised: this course's language officially puts a parenthesis around
+ * every binary application, and Lecture 2 licenses dropping only the
+ * *outermost* pair, never an inner one. So there is no precedence convention
+ * to apply and nothing to reconstruct -- transliterating the source character
+ * by character gives the formula exactly as the handouts write it.
+ *
+ * That is a recent guarantee. The database used to store display strings with
+ * every parenthesis precedence could justify dropped, which is lossy for the
+ * conditional -- `p ⊃ q ⊃ p` names nothing in particular -- and this function
+ * carried a repair map to undo it. `latexgen/build.py` now normalises the
+ * database itself, so the repair is gone and the test suite fails if any
+ * stored formula drifts back.
+ */
 function attachFormulas(e, map) {
   e._premises = asArray(e.premises).map((x) => toGlyphs(x, map));
   e._conclusion = toGlyphs(e.conclusion, map);
-
-  const repair = new Map();
-  const pairs = asArray(e.display?.premises).map((d, i) => [d, e._premises[i]]);
-  if (e.display?.conclusion) pairs.push([e.display.conclusion, e._conclusion]);
-
-  for (const [from, to] of pairs) {
-    if (!from || !to || from === to) continue;
-    repair.set(from, to);
-    // The tree stacks the *negated* conclusion, so its root needs repairing in
-    // negated form as well.
-    repair.set(`∼${from}`, `∼${to}`);
-    repair.set(`∼(${from})`, `∼(${to})`);
-  }
-  e._repair = repair;
 }
 
-/** Correct one formula quoted from the generator's display strings. */
+/** A formula quoted from the database's own display strings. */
 function fixFormula(entry, s) {
-  if (!s) return s;
-  return entry._repair?.get(s) ?? s;
+  return s;
 }
 
 /** The sequent, assembled from the corrected parts rather than read whole. */

@@ -95,56 +95,154 @@ test('what the site renders means what the source means', async (t) => {
 });
 
 /*
- * The reason the renderer does not simply print `display`. These assertions
- * describe a bug in the upstream generator, so they are written to fail loudly
- * when it is FIXED as well as if it gets worse — a green suite here is the
- * signal that `assets/arguments/encyclopedia.js` can drop `attachFormulas()`
- * and read `display` directly again.
+ * Full parenthesisation.
+ *
+ * Lecture 2 settles this: the language is officially fully parenthesised, and
+ * the only licence is to drop the *outermost* pair -- "we'll only ever drop
+ * outermost parentheses, never inner ones" -- and not even those when the main
+ * connective is a negation. So there is no precedence convention in this
+ * course, and `p & q ∨ r` and `p ⊃ q ⊃ p` are not formulas at all.
+ *
+ * The database used to store display strings with every parenthesis precedence
+ * could justify dropped, which is lossy: seven entries re-parsed as different
+ * formulas, and a tree that peeled `q & s` off the end of
+ * `∼(p & r ∨ p & s ∨ q & r ∨ q & s)` was asking the reader to guess how the
+ * disjunction grouped. `latexgen/build.py` now normalises every stored formula,
+ * and this is what holds it there.
  */
-const BROKEN = [
-  'peirce-law',
-  'contraction-w',
-  'curry-complete',
-  'abelian-axiom',
-  'fixed-point-type',
-  'curry-contraction-only',
-  'assertion-t',
-];
 
-test('the display fields drop parentheses the precedence needs', async (t) => {
-  const mismatched = [];
-  for (const e of entries) {
-    for (const [ascii, display] of formulasOf(e)) {
-      if (show(parse(ascii, ASCII)) !== show(parse(display, GLYPH))) mismatched.push(e.id);
+/** A formula printed the way the course writes it. */
+function canon(node, outermost = false) {
+  if (node[0] === 'atom') return node[1];
+  if (node[0] === 'falsum') return '!';
+  if (node[0] === '~') return `~${canon(node[1])}`;
+  const inner = `${canon(node[1])} ${node[0]} ${canon(node[2])}`;
+  return outermost ? inner : `(${inner})`;
+}
+
+const printed = (src, alphabet) => {
+  const tree = parse(src, alphabet);
+  return canon(tree, tree[0] !== '~');
+};
+
+test('every stored formula is fully parenthesised', async (t) => {
+  const collapse = (s) => s.replace(/\s+/g, ' ').trim();
+  const fromGlyph = { '∼': '~', '∨': '|', '⊃': '>', '≡': '=', '⊥': '!' };
+  const toAscii = (s) => [...s].map((c) => fromGlyph[c] ?? c).join('');
+
+  await t.test('the ASCII sources are already canonical', () => {
+    for (const e of entries) {
+      for (const src of [...e.premises, e.conclusion]) {
+        if (src === '!') continue;
+        assert.equal(collapse(src), collapse(printed(src, ASCII)), `${e.id}: ${src}`);
+      }
     }
-  }
+  });
 
-  await t.test('exactly the known substructural entries are affected', () => {
-    assert.deepEqual(
-      [...new Set(mismatched)].sort(),
-      [...BROKEN].sort(),
-      'the set of entries whose display strings re-parse wrongly has changed — if build.py now ' +
-        'emits full parentheses, delete attachFormulas()/fixFormula() and read display directly'
-    );
+  await t.test('display is exactly the source, transliterated', () => {
+    for (const e of entries) {
+      for (const [ascii, display] of formulasOf(e)) {
+        assert.equal(display, toGlyphs(ascii), `${e.id}: display drifted from the source`);
+      }
+    }
+  });
+
+  await t.test('every tree node names a formula, not a chain', () => {
+    const walk = (node, out) => {
+      for (const a of node.added ?? []) {
+        if (a.formula) out.push(a.formula);
+        if (a.from) out.push(a.from);
+      }
+      if (node.branched_on) out.push(node.branched_on);
+      for (const k of node.children ?? []) walk(k, out);
+      return out;
+    };
+    for (const e of entries) {
+      const shown = [...(e.tree.roots ?? [])];
+      if (e.tree.tree) walk(e.tree.tree, shown);
+      for (const s of shown) {
+        const ascii = toAscii(s);
+        if (ascii === '!' || ascii === '~!') continue;
+        assert.equal(collapse(ascii), collapse(printed(ascii, ASCII)), `${e.id}: tree node ${s}`);
+      }
+    }
+  });
+
+  await t.test('every derivation line is canonical too', () => {
+    for (const e of entries) {
+      for (const line of e.nd.proof ?? []) {
+        if (line.f === '!') continue;
+        assert.equal(collapse(line.f), collapse(printed(line.f, ASCII)), `${e.id} line ${line.n}`);
+      }
+    }
+  });
+
+  await t.test('no group holds two binary connectives', () => {
+    // The direct statement of the rule: inside any one pair of parentheses
+    // (and at the top level) there is exactly one binary connective, because
+    // every application has its own pair. This is what makes associativity
+    // unobservable — the Python generator groups & and ∨ to the left and this
+    // file's parser groups them to the right, and neither is ever asked to
+    // choose.
+    const groups = (src) => {
+      const counts = [0];
+      for (const ch of src) {
+        if (ch === '(') counts.push(0);
+        else if (ch === ')') counts.pop();
+        else if ('&|>='.includes(ch)) counts[counts.length - 1] += 1;
+      }
+      return counts[0];
+    };
+    const worst = (src) => {
+      // Re-run per group and keep the largest, by scanning each nesting level.
+      let max = 0;
+      const stack = [0];
+      for (const ch of src) {
+        if (ch === '(') stack.push(0);
+        else if (ch === ')') max = Math.max(max, stack.pop());
+        else if ('&|>='.includes(ch)) stack[stack.length - 1] += 1;
+      }
+      return Math.max(max, ...stack);
+    };
+    for (const e of entries) {
+      for (const src of [...e.premises, e.conclusion]) {
+        assert.ok(worst(src) <= 1, `${e.id}: ${src} runs connectives together`);
+        assert.ok(groups(src) <= 1, `${e.id}: ${src} runs connectives together at the top level`);
+      }
+    }
   });
 
   await t.test("Peirce's Law is the clearest case", () => {
     const peirce = entries.find((e) => e.id === 'peirce-law');
     assert.equal(peirce.conclusion, '((p > q) > p) > p');
-    assert.equal(peirce.display.conclusion, 'p ⊃ q ⊃ p ⊃ p');
-    // Right-associativity re-reads the display string as a different formula.
-    assert.equal(show(parse(peirce.display.conclusion, GLYPH)), '(p > (q > (p > p)))');
-    // What the site actually shows keeps the source's own nesting.
-    assert.equal(show(parse(toGlyphs(peirce.conclusion), GLYPH)), '(((p > q) > p) > p)');
+    // It used to be stored as `p ⊃ q ⊃ p ⊃ p`, which right-associativity
+    // re-reads as `p ⊃ (q ⊃ (p ⊃ p))` — a different, and valid, formula.
+    assert.equal(peirce.display.conclusion, '((p ⊃ q) ⊃ p) ⊃ p');
+    assert.equal(show(parse(peirce.display.conclusion, GLYPH)), '(((p > q) > p) > p)');
   });
+});
 
-  await t.test('the corrected rendering carries visible parentheses', () => {
-    for (const id of BROKEN) {
-      const e = entries.find((x) => x.id === id);
-      const rendered = [...e.premises, e.conclusion].map(toGlyphs).join('  ');
-      assert.match(rendered, /\(/, `${id} should render with parentheses`);
-    }
-  });
+/*
+ * Complete tables.
+ *
+ * Long tables used to be elided down to the first row, the countermodels and
+ * the last, with a \vdots between. That saves paper and loses the point: a
+ * truth table is an exhaustive check, and the sixty-four-row Dutch book form
+ * is worth showing precisely because sixty-three rows behave and one does not.
+ */
+test('every truth table is listed in full', () => {
+  for (const e of entries) {
+    const block = e.truth_table.latex;
+    assert.ok(!block.includes('\\vdots'), `${e.id}: table is elided`);
+    // One \\ per row, plus the header. A premise-less entry is a claim that
+    // its one formula is a tautology, so its table is the single-formula
+    // layout and carries an extra row marking the main connective.
+    const chrome = e.premises.length ? 1 : 2;
+    const breaks = (block.match(/\\\\/g) ?? []).length;
+    assert.equal(breaks, e.verdict.rows + chrome,
+      `${e.id}: ${breaks - chrome} rows typeset, ${e.verdict.rows} in the data`);
+    assert.equal(e.truth_table.rows.length, e.verdict.rows, `${e.id}: stored rows`);
+  }
 });
 
 test('the database holds together', async (t) => {

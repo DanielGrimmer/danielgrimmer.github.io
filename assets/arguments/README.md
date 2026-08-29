@@ -97,6 +97,13 @@ Two caveats:
   on a valid entry with no proof, a proof whose citations don't check, a
   duplicate id, or a dangling relation). Direct edits are destroyed on the next
   build.
+- **Formulas are fully parenthesised, and `build.py` enforces it.** This
+  course's language puts a parenthesis around every binary application and lets
+  you drop only the outermost pair, so `p & q ∨ r` and `p ⊃ q ⊃ p` are not
+  formulas. A normalisation pass reprints every stored formula that way — the
+  ASCII sources, the display strings, the formulas on tree nodes and the lines
+  of each derivation — on every build, idempotently. New entries can be written
+  with whatever parentheses come naturally; the build settles the spelling.
 - **The file used to sit at the repo root.** It moved here when the
   encyclopedia was packaged into one folder. If you regenerate it, drop it at
   `assets/arguments/argument-db.json` — a copy left at the root is served but

@@ -143,6 +143,127 @@ def parse(src: str) -> tuple[Node, list[Tok]]:
     return tree, toks
 
 
+# The reverse of GLYPH, for reading the display strings the database stores for
+# tree nodes. Two-character atoms (`bl`, `aS`) survive untouched.
+FROM_GLYPH = {"∼": "~", "∨": "|", "⊃": ">", "≡": "=", "⊥": "!"}
+
+
+def to_ascii(src: str) -> str:
+    """Glyph spelling into the ASCII the parser reads. ASCII passes through."""
+    return "".join(FROM_GLYPH.get(c, c) for c in src)
+
+
+def unparse(node: Node, outermost: bool = False) -> str:
+    """Print a formula with a parenthesis around every binary application.
+
+    This course's language is officially fully parenthesised, and the only
+    licence it grants is Lecture 2's: *outermost* parentheses may be dropped,
+    never inner ones, and not even the outermost when the main connective is a
+    negation. So there is no precedence convention to lean on -- `p & q | r`
+    is not a formula at all, and neither is `p | q | r`.
+
+    That matters beyond tidiness. A tree decomposes a formula by its main
+    connective, so what the reader is shown has to say which connective that
+    is. Printing `∼(p & r ∨ p & s ∨ q & r ∨ q & s)` and then peeling
+    `q & s` off the end asks them to guess that the disjunction groups to the
+    left; printing the parentheses tells them.
+    """
+    if node.op is None:
+        return node.name
+    if node.op == "!":
+        return "!"
+    if node.op == "~":
+        return "~" + unparse(node.kids[0])
+    inner = f"{unparse(node.kids[0])} {node.op} {unparse(node.kids[1])}"
+    return inner if outermost else f"({inner})"
+
+
+def canonical(src: str) -> str:
+    """One formula, in ASCII, with every binary application parenthesised.
+
+    Takes either spelling. The reading is the parser's -- conjunction and
+    disjunction group to the left, the conditional and biconditional to the
+    right -- so a source that dropped inner parentheses is restored to the
+    formula it was already being evaluated as, never to a different one.
+    """
+    root, _ = parse(to_ascii(src))
+    return unparse(root, outermost=root.op not in ("~",))
+
+
+# Precedence, loosest first. Only ever used to *read* the display strings the
+# database inherited from its upstream generator -- never to print.
+PREC = {"=": 1, ">": 2, "|": 3, "&": 4}
+
+
+def flat(node: Node) -> str:
+    """Reproduce the elided spelling the stored display strings use.
+
+    The upstream generator printed a formula with every parenthesis dropped
+    that precedence alone could justify, on both sides and in both directions:
+    `((p > q) > p) > p` came out as `p > q > p > p`. That is lossy -- the
+    conditional is not associative, so the string does not determine the
+    formula -- which is why nothing here ever *parses* one. It is computed only
+    as a lookup key: print each of an entry's own subformulas this way, and a
+    stored string identifies which subformula it was. See `subformula_index`.
+    """
+    if node.op is None:
+        return node.name
+    if node.op == "!":
+        return "!"
+    if node.op == "~":
+        inner = flat(node.kids[0])
+        return "~" + (f"({inner})" if node.kids[0].op in PREC else inner)
+    a, b = node.kids
+    sa, sb = flat(a), flat(b)
+    if a.op in PREC and PREC[a.op] < PREC[node.op]:
+        sa = f"({sa})"
+    if b.op in PREC and PREC[b.op] < PREC[node.op]:
+        sb = f"({sb})"
+    return f"{sa} {node.op} {sb}"
+
+
+def subformulas(node: Node, out: list | None = None) -> list:
+    out = [] if out is None else out
+    out.append(node)
+    for k in node.kids:
+        subformulas(k, out)
+    return out
+
+
+def subformula_index(sources: list[str]) -> dict[str, str]:
+    """Elided spelling -> canonical spelling, over one entry's own formulas.
+
+    A tree node never holds a formula from nowhere: it holds a subformula of a
+    premise or of the negated conclusion, or the negation of one. So the
+    entry's own formulas are the whole universe of what a stored display string
+    could mean, and matching against them recovers the parenthesisation the
+    string threw away -- without guessing an associativity the language does
+    not have.
+
+    Raises if a key is ambiguous, which would mean two genuinely different
+    subformulas print identically and the stored string cannot be resolved.
+    """
+    index: dict[str, set] = {}
+    pool: list[Node] = []
+    for src in sources:
+        pool.extend(subformulas(parse(canonical(src))[0]))
+    pool.extend(Node("~", kids=[n]) for n in list(pool))
+    pool.extend([Node("!"), Node("~", kids=[Node("!")])])
+    for n in pool:
+        printed = unparse(n, outermost=n.op != "~")
+        # Keyed by both spellings, so the pass is idempotent: a database that
+        # has already been normalised presents the canonical string, and one
+        # that has not presents the elided one.
+        index.setdefault(flat(n), set()).add(printed)
+        index.setdefault(printed, set()).add(printed)
+    out = {}
+    for key, values in index.items():
+        if len(values) > 1:
+            raise ValueError(f"{key!r} is ambiguous between {sorted(values)}")
+        out[key] = values.pop()
+    return out
+
+
 def render(toks: list[Tok]) -> str:
     """House-glyph LaTeX for a token list, preserving the source parentheses."""
     out = []
@@ -157,8 +278,12 @@ def render(toks: list[Tok]) -> str:
 
 
 def latex(src: str) -> str:
-    """House-glyph LaTeX for one ASCII formula."""
-    return render(parse(src)[1])
+    """House-glyph LaTeX for one formula, fully parenthesised.
+
+    The source is canonicalised first, so a formula written with inner
+    parentheses dropped is printed with them back. See `unparse`.
+    """
+    return render(parse(canonical(src))[1])
 
 
 def evaluate(node: Node, model: dict[str, bool]) -> bool:
