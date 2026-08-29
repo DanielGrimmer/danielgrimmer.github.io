@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 30,
+ "count": 35,
  "entries": [
   {
    "id": "ex-falso",
@@ -479,7 +479,8 @@
     "degenerate": true,
     "distinguishes": "premise order and multiplicity, renaming of atoms, and classical equivalence of each sentence (so double-negation variants share an ID)",
     "shares_canon_with": [
-     "contraction-w"
+     "contraction-w",
+     "assertion-t"
     ]
    },
    "premise_analysis": [],
@@ -719,7 +720,8 @@
     "degenerate": true,
     "distinguishes": "premise order and multiplicity, renaming of atoms, and classical equivalence of each sentence (so double-negation variants share an ID)",
     "shares_canon_with": [
-     "peirce-law"
+     "peirce-law",
+     "assertion-t"
     ]
    },
    "premise_analysis": [],
@@ -6802,12 +6804,9 @@
     "nonclassical": []
    },
    "course": {
-    "used_in": [
-     "Lecture 7 (V2.0)",
-     "Lecture 8 (V2.0)"
-    ],
+    "used_in": [],
     "quarantined": false,
-    "note": "**The shared Lecture 7/8 worked example as of V2.0**, replacing the ad hoc incumbent. Re-lettered there as `b, v > k, (b&k) > l |- v > o`. Lecture 7 runs it forward (open branch to countermodel, completeness); Lecture 8 runs the *same* argument backward (countermodel to open branch, soundness) -- keeping one argument across both lectures is the load-bearing design feature, since it makes soundness and completeness two directions of one fact. Tree: 1 open, 3 closed, depth 3, opening with a non-branching negated-conditional step that seeds two literals. The unique countermodel determines all five atoms, so nothing is left unconstrained. The hint after they finish is syntactic: `o` occurs in no premise.",
+    "note": "The form exactly as SEP states it. **The classroom version is `dutch-book-lecture-form`**, which strengthens the third premise to `(b&k) > (l&d)` -- see that entry for why.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
@@ -7587,6 +7586,1477 @@
     "tree": "easy",
     "nd": null,
     "search_sharpness": 0.0312
+   }
+  },
+  {
+   "id": "dutch-book-lecture-form",
+   "cli_ref": "DB1 (§5.10g), classroom variant",
+   "names": [
+    "The Dutch book argument, Lecture 7/8 form"
+   ],
+   "premises": [
+    "b",
+    "v > k",
+    "(b & k) > (l & d)"
+   ],
+   "conclusion": "v > o",
+   "interest": "**The shared Lecture 7/8 worked example**, and a good illustration of tuning a form to a teaching job without damaging it. It strengthens `dutch-book-is-ought`'s third premise from `(b&k) ⊃ l` to `(b&k) ⊃ (l & d)`, where `d` = you are also in for a difficult conversation. Three things follow. The premise is now strictly **stronger** (verified: it entails the original), so the argument failing is more striking, not less. The countermodel is still **unique**, now one row in sixty-four rather than one in thirty-two. And the open branch now carries a **conjunction** to resolve, so the walk up that branch in Lecture 7 illustrates four tree rules rather than three, and its lowest complex formula is a *descendant* rather than a root -- which is the shape the handout's induction wants.",
+   "countermodel_gloss": "The single open branch is an agent who violates the probability axioms, whose odds really are fixed by her degrees of belief, against whom a bookie really can make book, who really is open to a sure loss **and** a difficult conversation --- and who is nonetheless under no obligation to change her mind. Every descriptive premise holds; the normative conclusion fails. Adding `l ⊃ o` closes the tree (verified).",
+   "english": [
+    {
+     "gloss": "Your degrees of belief fix which betting odds you find acceptable. If your betting odds violate the probability axioms, a cunning bettor can make a Dutch book against those odds. If your degrees of belief fix your odds and a bettor can make book against them, then you are open to a sure loss and a difficult conversation. Therefore, if your degrees of belief violate the probability axioms, you ought to change them.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "our reconstruction",
+     "who": "Ramsey and de Finetti, after SEP's numbering",
+     "work": "Dutch Book Arguments",
+     "locus": "SEP, §1.2",
+     "url": "https://plato.stanford.edu/entries/dutch-book/",
+     "quote": "(1) for an agent with degree of belief q in M a bet on or against M at corresponding odds will be acceptable... (2) by the Dutch Book theorem a cunning bettor could assure himself a profit from someone who violates the probability axioms... it is concluded that (4) one ought to satisfy the probability axioms."
+    },
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 7 and 8 Handouts (V2.0)",
+     "locus": "L7 §1 and §3; L8 §3",
+     "url": null,
+     "quote": "Exercise: Consider the argument with premises X: b and v ⊃ k and (b & k) ⊃ (l & d), and with conclusion A: v ⊃ o. Use a tree to show that this argument is tree-invalid."
+    }
+   ],
+   "tags": {
+    "topic": [
+     "probability",
+     "epistemology",
+     "metaethics",
+     "decision theory",
+     "course apparatus"
+    ],
+    "defect": [
+     "missing bridge premise",
+     "is/ought gap"
+    ],
+    "figure": [
+     "Ramsey",
+     "de Finetti",
+     "Hájek",
+     "Vineberg"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [
+     "Lecture 7 (V2.0)",
+     "Lecture 8 (V2.0)"
+    ],
+    "quarantined": false,
+    "note": "**The shared invalid argument for Lectures 7 and 8, and it must stay shared**: L7 runs it forward (open branch to countermodel) for completeness, L8 runs the *same* argument backward (countermodel to open branch) for soundness. Two different arguments would break the point that these are two directions of one fact. Tree: 1 open, 3 closed, depth 3; opens with a non-branching negated-conditional step seeding two literals; the open branch resolves a conjunction and determines all six atoms, so no atom is left unconstrained. Rules exercised on the tracked branch: negated conditional, conditional (twice), conjunction --- plus negated conjunction off it, which illustrates the easy clause in the Lemma 3 proof. The syntactic hint to give after they finish: `o` occurs in no premise.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": null,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": false,
+    "note": "No derivation exists, and the reason is worth teaching: `o` occurs in no premise, so no rule can ever introduce it. That is arguably the cleanest formal statement of Hume's gap this course can offer.",
+    "verified": true
+   },
+   "looks_like": "dutch-book-is-ought",
+   "repairs_to": "dutch-book-lecture-form-repaired",
+   "display": {
+    "premises": [
+     "b",
+     "v ⊃ k",
+     "b & k ⊃ l & d"
+    ],
+    "conclusion": "v ⊃ o",
+    "sequent": "b, v ⊃ k, b & k ⊃ l & d  ⊭ v ⊃ o",
+    "turnstiles": {
+     "table": "⊭",
+     "tree": "⊬",
+     "nd": "⊬ND"
+    }
+   },
+   "verdict": {
+    "valid": false,
+    "rows": 64,
+    "premise_true_rows": 12,
+    "countermodel_count": 1,
+    "countermodels": [
+     {
+      "b": "T",
+      "d": "T",
+      "k": "T",
+      "l": "T",
+      "o": "F",
+      "v": "T"
+     }
+    ],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "b",
+     "d",
+     "k",
+     "l",
+     "o",
+     "v"
+    ],
+    "columns": [
+     "b",
+     "v ⊃ k",
+     "b & k ⊃ l & d",
+     "v ⊃ o"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": true,
+      "countermodel": true
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ]
+   },
+   "tree": {
+    "roots": [
+     "b",
+     "v ⊃ k",
+     "b & k ⊃ l & d",
+     "∼(v ⊃ o)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "v",
+       "from": "∼(v ⊃ o)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼o",
+       "from": "∼(v ⊃ o)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼v",
+         "from": "v ⊃ k",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "k",
+         "from": "v ⊃ k",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼(b & k)",
+           "from": "b & k ⊃ l & d",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼b",
+             "from": "∼(b & k)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "∼k",
+             "from": "∼(b & k)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "∼(b & k)",
+         "branch_rule": "∼&"
+        },
+        {
+         "added": [
+          {
+           "formula": "l & d",
+           "from": "b & k ⊃ l & d",
+           "rule": "⊃"
+          },
+          {
+           "formula": "l",
+           "from": "l & d",
+           "rule": "&"
+          },
+          {
+           "formula": "d",
+           "from": "l & d",
+           "rule": "&"
+          }
+         ],
+         "children": [],
+         "status": "open",
+         "model": {
+          "b": "T",
+          "v": "T",
+          "o": "F",
+          "k": "T",
+          "l": "T",
+          "d": "T"
+         },
+         "unconstrained": []
+        }
+       ],
+       "status": null,
+       "branched_on": "b & k ⊃ l & d",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "v ⊃ k",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 1,
+    "closed_branches": 3,
+    "branch_depth": 3,
+    "branch_models": [
+     {
+      "model": {
+       "b": "T",
+       "v": "T",
+       "o": "F",
+       "k": "T",
+       "l": "T",
+       "d": "T"
+      },
+      "unconstrained": []
+     }
+    ]
+   },
+   "canonical": {
+    "atoms": 6,
+    "premise_classes": 3,
+    "bits": "1000100010001000111111111111111111111111111111111111111111111111111111111111111100000000000000001111111111111111000000000000000011111111111111111111111111111111000000001111111100000000111111111111000011111111111100001111111111110000111111111111000011111111",
+    "canon": "P6-8888ffffffffffffffff0000ffff0000ffffffff00ff00fff0fff0fff0fff0ff",
+    "degenerate": false,
+    "distinguishes": "premise order and multiplicity, renaming of atoms, and classical equivalence of each sentence (so double-negation variants share an ID)"
+   },
+   "premise_analysis": [
+    {
+     "premise": "b",
+     "index": 0,
+     "load_bearing": false,
+     "idle": false,
+     "countermodels_without_it": 5
+    },
+    {
+     "premise": "v > k",
+     "index": 1,
+     "load_bearing": false,
+     "idle": false,
+     "countermodels_without_it": 5
+    },
+    {
+     "premise": "(b & k) > (l & d)",
+     "index": 2,
+     "load_bearing": false,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 6,
+    "premise_count": 3,
+    "connectives": [
+     "conditional",
+     "conjunction"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 14,
+    "table_rows": 64,
+    "tree_open_branches": 1,
+    "tree_closed_branches": 3,
+    "tree_branch_depth": 3,
+    "countermodel_count": 1,
+    "premise_true_rows": 12,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "table": "hard",
+    "tree": "easy",
+    "nd": null,
+    "search_sharpness": 0.0156
    }
   },
   {
@@ -16351,6 +17821,3079 @@
     "tree": "easy",
     "nd": null,
     "search_sharpness": 0.125
+   }
+  },
+  {
+   "id": "dutch-book-repaired",
+   "cli_ref": "DB1b (§5.10g)",
+   "names": [
+    "The Dutch book argument, repaired"
+   ],
+   "premises": [
+    "bl",
+    "v > k",
+    "(bl & k) > ls",
+    "ls > o"
+   ],
+   "conclusion": "v > o",
+   "interest": "`dutch-book-is-ought` with its one missing premise supplied: **`ls ⊃ o`, one ought not be open to a sure loss.** That premise is normative, it appears nowhere in SEP's numbered premises (1)–(3), and adding it is the whole difference between an invalid argument and a valid one. Every one of the four premises is load-bearing here (verified by deletion). **This is the is/ought gap as a single conditional**, and the pair is the exercise: run the invalid version first, find the one open branch in thirty-two rows, then ask what would have to be added.",
+   "english": [
+    {
+     "gloss": "…and one ought not leave oneself open to a guaranteed loss.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "verbatim",
+     "who": "Susan Vineberg",
+     "work": "Dutch Book Arguments",
+     "locus": "SEP, §1.4",
+     "url": "https://plato.stanford.edu/entries/dutch-book/",
+     "quote": "If the threat of such a loss is seen as unlikely... then it is hard to see why the mere potential of a sure loss should demand coherence."
+    }
+   ],
+   "tags": {
+    "topic": [
+     "probability",
+     "epistemology",
+     "metaethics"
+    ],
+    "defect": [],
+    "figure": [
+     "Ramsey",
+     "de Finetti",
+     "Vineberg"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "quarantined": false,
+    "note": "The repair target for dutch-book-is-ought.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 11,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "lines": 11,
+    "max_subproof_depth": 1,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI",
+     "ConjI",
+     "Reit"
+    ],
+    "subproof_count": 1,
+    "uses_indirect_proof": false,
+    "assumption_count": 1,
+    "verified": true
+   },
+   "looks_like": "dutch-book-is-ought",
+   "display": {
+    "premises": [
+     "bl",
+     "v ⊃ k",
+     "bl & k ⊃ ls",
+     "ls ⊃ o"
+    ],
+    "conclusion": "v ⊃ o",
+    "sequent": "bl, v ⊃ k, bl & k ⊃ ls, ls ⊃ o  ⊨ v ⊃ o",
+    "turnstiles": {
+     "table": "⊨",
+     "tree": "⊢",
+     "nd": "⊢ND"
+    }
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 32,
+    "premise_true_rows": 5,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "bl",
+     "k",
+     "ls",
+     "o",
+     "v"
+    ],
+    "columns": [
+     "bl",
+     "v ⊃ k",
+     "bl & k ⊃ ls",
+     "ls ⊃ o",
+     "v ⊃ o"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "T",
+       "ls": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "T",
+       "ls": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "T",
+       "ls": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "T",
+       "ls": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "T",
+       "ls": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "T",
+       "ls": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "T",
+       "ls": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "T",
+       "ls": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "F",
+       "ls": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "F",
+       "ls": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "F",
+       "ls": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "F",
+       "ls": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "F",
+       "ls": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "F",
+       "ls": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "F",
+       "ls": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "T",
+       "k": "F",
+       "ls": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "T",
+       "ls": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "T",
+       "ls": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "T",
+       "ls": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "T",
+       "ls": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "T",
+       "ls": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "T",
+       "ls": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "T",
+       "ls": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "T",
+       "ls": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "F",
+       "ls": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "F",
+       "ls": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "F",
+       "ls": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "F",
+       "ls": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "F",
+       "ls": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "F",
+       "ls": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "F",
+       "ls": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "bl": "F",
+       "k": "F",
+       "ls": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ]
+   },
+   "tree": {
+    "roots": [
+     "bl",
+     "v ⊃ k",
+     "bl & k ⊃ ls",
+     "ls ⊃ o",
+     "∼(v ⊃ o)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "v",
+       "from": "∼(v ⊃ o)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼o",
+       "from": "∼(v ⊃ o)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼v",
+         "from": "v ⊃ k",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "k",
+         "from": "v ⊃ k",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼(bl & k)",
+           "from": "bl & k ⊃ ls",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼ls",
+             "from": "ls ⊃ o",
+             "rule": "⊃"
+            }
+           ],
+           "children": [
+            {
+             "added": [
+              {
+               "formula": "∼bl",
+               "from": "∼(bl & k)",
+               "rule": "∼&"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            },
+            {
+             "added": [
+              {
+               "formula": "∼k",
+               "from": "∼(bl & k)",
+               "rule": "∼&"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            }
+           ],
+           "status": null,
+           "branched_on": "∼(bl & k)",
+           "branch_rule": "∼&"
+          },
+          {
+           "added": [
+            {
+             "formula": "o",
+             "from": "ls ⊃ o",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "ls ⊃ o",
+         "branch_rule": "⊃"
+        },
+        {
+         "added": [
+          {
+           "formula": "ls",
+           "from": "bl & k ⊃ ls",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼ls",
+             "from": "ls ⊃ o",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "o",
+             "from": "ls ⊃ o",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "ls ⊃ o",
+         "branch_rule": "⊃"
+        }
+       ],
+       "status": null,
+       "branched_on": "bl & k ⊃ ls",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "v ⊃ k",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 6,
+    "branch_depth": 4,
+    "branch_models": []
+   },
+   "canonical": {
+    "atoms": 5,
+    "premise_classes": 4,
+    "bits": "1010101010101010101010101010101011001100110011001111111111111111111100001111111111110000111111111111111101110111111111110111011111110000111100001111111111111111",
+    "canon": "P5-aaaaaaaaccccfffff0fff0ffff77ff77f0f0ffff",
+    "degenerate": false,
+    "distinguishes": "premise order and multiplicity, renaming of atoms, and classical equivalence of each sentence (so double-negation variants share an ID)"
+   },
+   "premise_analysis": [
+    {
+     "premise": "bl",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "v > k",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "(bl & k) > ls",
+     "index": 2,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "ls > o",
+     "index": 3,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 5,
+    "premise_count": 4,
+    "connectives": [
+     "conditional",
+     "conjunction"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 15,
+    "table_rows": 32,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 6,
+    "tree_branch_depth": 4,
+    "countermodel_count": 0,
+    "premise_true_rows": 5,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "table": "medium",
+    "tree": "medium",
+    "nd": "medium",
+    "search_sharpness": null
+   }
+  },
+  {
+   "id": "dutch-book-lecture-form-repaired",
+   "cli_ref": "—",
+   "names": [
+    "The Dutch book, Lecture 7/8 form, repaired"
+   ],
+   "premises": [
+    "b",
+    "v > k",
+    "(b & k) > (l & d)",
+    "l > o"
+   ],
+   "conclusion": "v > o",
+   "interest": "The classroom form with the normative bridge `l ⊃ o` supplied. **Lecture 7 sets this as the follow-up exercise** --- \"Add that as a fourth premise, `l ⊃ o`, and the tree closes. (Try it.)\" All four premises are load-bearing, and note that `d` is carried through the derivation without ever being used: the difficult conversation is real but idle, which is worth a remark when the tree closes.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 7 Handout (V2.0)",
+     "locus": "§1",
+     "url": null,
+     "quote": "Add that as a fourth premise, l ⊃ o, and the tree closes. (Try it.)"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "probability",
+     "epistemology",
+     "metaethics",
+     "course apparatus"
+    ],
+    "defect": [],
+    "figure": [
+     "Ramsey",
+     "de Finetti"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [
+     "Lecture 7 (V2.0), as the follow-up exercise"
+    ],
+    "quarantined": false,
+    "note": "The repair target for dutch-book-lecture-form. Setting it as homework closes the loop on the is/ought point.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 11,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "lines": 12,
+    "max_subproof_depth": 1,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI",
+     "ConjE",
+     "ConjI",
+     "Reit"
+    ],
+    "subproof_count": 1,
+    "uses_indirect_proof": false,
+    "assumption_count": 1,
+    "verified": true
+   },
+   "looks_like": "dutch-book-lecture-form",
+   "display": {
+    "premises": [
+     "b",
+     "v ⊃ k",
+     "b & k ⊃ l & d",
+     "l ⊃ o"
+    ],
+    "conclusion": "v ⊃ o",
+    "sequent": "b, v ⊃ k, b & k ⊃ l & d, l ⊃ o  ⊨ v ⊃ o",
+    "turnstiles": {
+     "table": "⊨",
+     "tree": "⊢",
+     "nd": "⊢ND"
+    }
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 64,
+    "premise_true_rows": 8,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "b",
+     "d",
+     "k",
+     "l",
+     "o",
+     "v"
+    ],
+    "columns": [
+     "b",
+     "v ⊃ k",
+     "b & k ⊃ l & d",
+     "l ⊃ o",
+     "v ⊃ o"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "T",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "T",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "T",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "T",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "T",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "b": "F",
+       "d": "F",
+       "k": "F",
+       "l": "F",
+       "o": "F",
+       "v": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ]
+   },
+   "tree": {
+    "roots": [
+     "b",
+     "v ⊃ k",
+     "b & k ⊃ l & d",
+     "l ⊃ o",
+     "∼(v ⊃ o)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "v",
+       "from": "∼(v ⊃ o)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼o",
+       "from": "∼(v ⊃ o)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼v",
+         "from": "v ⊃ k",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "k",
+         "from": "v ⊃ k",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼(b & k)",
+           "from": "b & k ⊃ l & d",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼l",
+             "from": "l ⊃ o",
+             "rule": "⊃"
+            }
+           ],
+           "children": [
+            {
+             "added": [
+              {
+               "formula": "∼b",
+               "from": "∼(b & k)",
+               "rule": "∼&"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            },
+            {
+             "added": [
+              {
+               "formula": "∼k",
+               "from": "∼(b & k)",
+               "rule": "∼&"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            }
+           ],
+           "status": null,
+           "branched_on": "∼(b & k)",
+           "branch_rule": "∼&"
+          },
+          {
+           "added": [
+            {
+             "formula": "o",
+             "from": "l ⊃ o",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "l ⊃ o",
+         "branch_rule": "⊃"
+        },
+        {
+         "added": [
+          {
+           "formula": "l & d",
+           "from": "b & k ⊃ l & d",
+           "rule": "⊃"
+          },
+          {
+           "formula": "l",
+           "from": "l & d",
+           "rule": "&"
+          },
+          {
+           "formula": "d",
+           "from": "l & d",
+           "rule": "&"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼l",
+             "from": "l ⊃ o",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "o",
+             "from": "l ⊃ o",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "l ⊃ o",
+         "branch_rule": "⊃"
+        }
+       ],
+       "status": null,
+       "branched_on": "b & k ⊃ l & d",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "v ⊃ k",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 6,
+    "branch_depth": 4,
+    "branch_models": []
+   },
+   "canonical": {
+    "atoms": 6,
+    "premise_classes": 4,
+    "bits": "10001000100010001111111111111111111111111111111111111111111111111111001111110011111100111111001111110011111100111111001111110011111111111111111100000000000000001111111111111111000000000000000011111111111111111111111111111111000000001111111100000000111111111111000011111111111100001111111111110000111111111111000011111111",
+    "canon": "P6-8888fffffffffffff3f3f3f3f3f3f3f3ffff0000ffff0000ffffffff00ff00fff0fff0fff0fff0ff",
+    "degenerate": false,
+    "distinguishes": "premise order and multiplicity, renaming of atoms, and classical equivalence of each sentence (so double-negation variants share an ID)"
+   },
+   "premise_analysis": [
+    {
+     "premise": "b",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 2
+    },
+    {
+     "premise": "v > k",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 2
+    },
+    {
+     "premise": "(b & k) > (l & d)",
+     "index": 2,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "l > o",
+     "index": 3,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 6,
+    "premise_count": 4,
+    "connectives": [
+     "conditional",
+     "conjunction"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 17,
+    "table_rows": 64,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 6,
+    "tree_branch_depth": 4,
+    "countermodel_count": 0,
+    "premise_true_rows": 8,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "table": "hard",
+    "tree": "medium",
+    "nd": "medium",
+    "search_sharpness": null
+   }
+  },
+  {
+   "id": "distributed-knowledge-repaired",
+   "cli_ref": "CLI-123, repaired",
+   "names": [
+    "Distributed knowledge, with the invisible premise supplied"
+   ],
+   "premises": [
+    "h | w",
+    "w | c",
+    "~(h & c)"
+   ],
+   "conclusion": "w",
+   "interest": "The two-witness argument becomes valid the moment you add the premise every reader supplied without noticing: **a person is in one place at a time.** Three atoms, and the whole point is the contrast with the invalid original --- the open branch there set `h = T` and `c = T`, which is absurd about people and perfectly fine about sentence letters. **The cleanest \"invisible premise made visible\" pair in the catalogue.** The ND proof is a good `∨E` workout with a reductio nested inside it.",
+   "english": [
+    {
+     "gloss": "Ann knows Bea is at home or at work; Cal knows she is at work or at the cafe; and nobody is in two places at once. So she is at work.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "our reconstruction",
+     "who": "Rendsvig & Symons",
+     "work": "Epistemic Logic",
+     "locus": "SEP, on distributed knowledge",
+     "url": "https://plato.stanford.edu/entries/logic-epistemic/",
+     "quote": "The entry gives the two-agent case as an illustration of distributed knowledge; the exclusivity premise is left tacit."
+    }
+   ],
+   "tags": {
+    "topic": [
+     "epistemology",
+     "epistemic logic"
+    ],
+    "defect": [],
+    "figure": [
+     "Hintikka",
+     "Fagin",
+     "Halpern"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "quarantined": false,
+    "note": "The repair target for distributed-knowledge. Teach the invalid one first; the open branch names the missing premise.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 11,
+     "note": "falsum appears, so no earlier than Lecture 10"
+    }
+   },
+   "nd": {
+    "exists": true,
+    "lines": 19,
+    "max_subproof_depth": 3,
+    "rules_used": [
+     "As",
+     "ConjI",
+     "DisjE",
+     "FalsumI",
+     "NegE",
+     "NegI",
+     "Reit"
+    ],
+    "subproof_count": 5,
+    "uses_indirect_proof": true,
+    "assumption_count": 5,
+    "verified": true
+   },
+   "looks_like": "distributed-knowledge",
+   "display": {
+    "premises": [
+     "h ∨ w",
+     "w ∨ c",
+     "∼(h & c)"
+    ],
+    "conclusion": "w",
+    "sequent": "h ∨ w, w ∨ c, ∼(h & c)  ⊨ w",
+    "turnstiles": {
+     "table": "⊨",
+     "tree": "⊢",
+     "nd": "⊢ND"
+    }
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 8,
+    "premise_true_rows": 3,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "c",
+     "h",
+     "w"
+    ],
+    "columns": [
+     "h ∨ w",
+     "w ∨ c",
+     "∼(h & c)",
+     "w"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "c": "T",
+       "h": "T",
+       "w": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "c": "T",
+       "h": "T",
+       "w": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "c": "T",
+       "h": "F",
+       "w": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "c": "T",
+       "h": "F",
+       "w": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "c": "F",
+       "h": "T",
+       "w": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "c": "F",
+       "h": "T",
+       "w": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "c": "F",
+       "h": "F",
+       "w": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "c": "F",
+       "h": "F",
+       "w": "F"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ]
+   },
+   "tree": {
+    "roots": [
+     "h ∨ w",
+     "w ∨ c",
+     "∼(h & c)",
+     "∼w"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "h",
+         "from": "h ∨ w",
+         "rule": "∨"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "w",
+           "from": "w ∨ c",
+           "rule": "∨"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "c",
+           "from": "w ∨ c",
+           "rule": "∨"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼h",
+             "from": "∼(h & c)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "∼c",
+             "from": "∼(h & c)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "∼(h & c)",
+         "branch_rule": "∼&"
+        }
+       ],
+       "status": null,
+       "branched_on": "w ∨ c",
+       "branch_rule": "∨"
+      },
+      {
+       "added": [
+        {
+         "formula": "w",
+         "from": "h ∨ w",
+         "rule": "∨"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "h ∨ w",
+     "branch_rule": "∨"
+    },
+    "open_branches": 0,
+    "closed_branches": 4,
+    "branch_depth": 3,
+    "branch_models": []
+   },
+   "canonical": {
+    "atoms": 3,
+    "premise_classes": 3,
+    "bits": "00111111111011101111101010101010",
+    "canon": "P3-3feefaaa",
+    "degenerate": false,
+    "distinguishes": "premise order and multiplicity, renaming of atoms, and classical equivalence of each sentence (so double-negation variants share an ID)"
+   },
+   "premise_analysis": [
+    {
+     "premise": "h | w",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "w | c",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "~(h & c)",
+     "index": 2,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 3,
+    "premise_count": 3,
+    "connectives": [
+     "conjunction",
+     "disjunction",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 11,
+    "table_rows": 8,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 4,
+    "tree_branch_depth": 3,
+    "countermodel_count": 0,
+    "premise_true_rows": 3,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "table": "easy",
+    "tree": "easy",
+    "nd": "medium",
+    "search_sharpness": null
+   }
+  },
+  {
+   "id": "assertion-t",
+   "cli_ref": "T (§2.17a)",
+   "names": [
+    "Assertion",
+    "The combinator T"
+   ],
+   "premises": [],
+   "conclusion": "p > ((p > q) > q)",
+   "interest": "The combinator **T**, `Txy ▷ yx`, and a classical tautology. It is worth having beside `abelian-axiom`, which is its **converse** `((p ⊃ q) ⊃ q) ⊃ p` and is invalid in a single row. Adopting the converse as a schema is what makes a logic Abelian; keeping only this direction is what everyone else does. A clean two-atom demonstration that a plausible-looking converse can fail while its original is a theorem.",
+   "english": [
+    {
+     "gloss": "If it is raining, then if it's true that rain implies wet streets, the streets are wet.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "discussed",
+     "fidelity": "verbatim",
+     "who": "Katalin Bimbó",
+     "work": "Combinatory Logic",
+     "locus": "SEP",
+     "url": "https://plato.stanford.edu/entries/logic-combinatory/",
+     "quote": "Fitch's basic logic K contains exactly the combinators T, B and W."
+    }
+   ],
+   "tags": {
+    "topic": [
+     "philosophy of logic",
+     "substructural"
+    ],
+    "defect": [],
+    "figure": [
+     "Curry",
+     "Fitch",
+     "Bimbó"
+    ],
+    "nonclassical": [
+     "abelian-converse"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "quarantined": false,
+    "note": "Set with abelian-axiom as a valid/invalid converse pair.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 11,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "lines": 6,
+    "max_subproof_depth": 2,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI",
+     "Reit"
+    ],
+    "subproof_count": 2,
+    "uses_indirect_proof": false,
+    "assumption_count": 2,
+    "verified": true
+   },
+   "looks_like": "abelian-axiom",
+   "display": {
+    "premises": [],
+    "conclusion": "p ⊃ p ⊃ q ⊃ q",
+    "sequent": "⊨ p ⊃ p ⊃ q ⊃ q",
+    "turnstiles": {
+     "table": "⊨",
+     "tree": "⊢",
+     "nd": "⊢ND"
+    }
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p ⊃ p ⊃ q ⊃ q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ]
+   },
+   "tree": {
+    "roots": [
+     "∼(p ⊃ p ⊃ q ⊃ q)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "p",
+       "from": "∼(p ⊃ p ⊃ q ⊃ q)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼(p ⊃ q ⊃ q)",
+       "from": "∼(p ⊃ p ⊃ q ⊃ q)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "p ⊃ q",
+       "from": "∼(p ⊃ q ⊃ q)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼q",
+       "from": "∼(p ⊃ q ⊃ q)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "p ⊃ q",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "q",
+         "from": "p ⊃ q",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ⊃ q",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": []
+   },
+   "canonical": {
+    "atoms": 2,
+    "premise_classes": 0,
+    "bits": "1111",
+    "canon": "P2-f",
+    "degenerate": true,
+    "distinguishes": "premise order and multiplicity, renaming of atoms, and classical equivalence of each sentence (so double-negation variants share an ID)",
+    "shares_canon_with": [
+     "peirce-law",
+     "contraction-w"
+    ]
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "conditional"
+    ],
+    "max_formula_depth": 3,
+    "total_formula_size": 7,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 2,
+    "tree_branch_depth": 1,
+    "countermodel_count": 0,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "table": "easy",
+    "tree": "easy",
+    "nd": "easy",
+    "search_sharpness": null
    }
   }
  ]
