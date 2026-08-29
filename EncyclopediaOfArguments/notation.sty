@@ -1,0 +1,156 @@
+% =====================================================================
+%  notation.sty -- Standard notation for FOL @ Yale
+% ---------------------------------------------------------------------
+%  Shared semantic macros so every lecture, problem set, and exam uses
+%  one notation. Call MEANING (\Cond, \Neg, ...), not the glyph, so a
+%  single edit here re-skins the whole course.
+%
+%  Usage:  \usepackage{notation}        % if on the TeX path
+%     or:  \input{notation.sty}          % from the same folder
+%
+%  The canonical glyphs are documented in "Notation Guide.tex".
+%  House style is Quine-flavoured: \sim \supset \& \vee \equiv.
+% =====================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{notation}[2026/06/28 FOL @ Yale standard notation]
+
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{stmaryrd}   % \llbracket \rrbracket
+
+% ---------------------------------------------------------------------
+%  1. Truth-functional connectives
+% ---------------------------------------------------------------------
+\newcommand{\Neg}{\mathord{\sim}}        % negation        : \Neg p
+% Falsum. NOT a connective and NOT part of the object language: no formation
+% rule admits it, no truth table has a column for it, no tree branch closes on
+% it. It is a proof-level marker, standing alone on a line of a natural
+% deduction from Lecture 10 onwards, meaning ``a contradiction has been
+% reached.'' It therefore never appears inside a formula. The single exception
+% is Lecture 11, where the constructive reading of negation as $A \Cond
+% \Falsum$ is written out in order to be discussed.
+\newcommand{\Falsum}{\bot}              % falsum          : \Falsum
+\newcommand{\Cond}{\mathbin{\supset}}    % conditional     : p \Cond q
+% Conjunction carries its own padding. The ampersand is a wide, busy glyph and
+% ``$p\mathbin{\&}q$'' sets too tight against its conjuncts, so the handouts had
+% been padding it by hand as ``p \ \Conj \ q'' since before this macro existed.
+% That left the course split (207 padded against 384 bare as of 2026-08-25), often
+% within one file. Building the spacing in settles it: write \Conj and never pad.
+% \ConjTight is the unpadded glyph, for the rule labels below, where \ConjI must
+% set as a single tight ``&I'' and any spacing inside it would show.
+\newcommand{\ConjTight}{\mathbin{\&}}
+\newcommand{\Conj}{\ \ConjTight \ }      % conjunction     : p \Conj q
+\newcommand{\Disj}{\mathbin{\vee}}       % disjunction     : p \Disj q
+\newcommand{\Bicond}{\mathbin{\equiv}}   % biconditional   : p \Bicond q
+
+% ---------------------------------------------------------------------
+%  2. Quantifiers  (house style parenthesises them: (\forall x))
+% ---------------------------------------------------------------------
+\newcommand{\Univ}{\forall}
+\newcommand{\Exist}{\exists}
+\newcommand{\all}[1]{(\forall #1)}       % \all{x}  -> (\forall x)
+\newcommand{\some}[1]{(\exists #1)}      % \some{x} -> (\exists x)
+
+% ---------------------------------------------------------------------
+%  3. Identity
+% ---------------------------------------------------------------------
+\newcommand{\Ident}{=}
+\newcommand{\Nident}{\neq}
+
+% ---------------------------------------------------------------------
+%  4. Proof-theoretic and semantic relations
+% ---------------------------------------------------------------------
+\newcommand{\Proves}{\vdash}             % tree derivability : X \Proves A
+\newcommand{\ProvesND}{\vdash_{\mathrm{ND}}} % natural-deduction derivability : X \ProvesND A
+\newcommand{\notProves}{\nvdash}
+\newcommand{\Entails}{\vDash}            % consequence  : X \Entails A
+\newcommand{\notEntails}{\nvDash}
+
+% ---------------------------------------------------------------------
+%  3a. Tree typesetting helper
+%      A qtree root label carrying a trailing "\quad\checkmark" hangs right of
+%      its own fork, and the whole diagram right of centre, because qtree
+%      centres the node box. \ckpad balances it with an invisible copy of the
+%      trailing material on the left:
+%          \Tree[.{\ckpad $\Neg(A \Conj B)$\quad\checkmark} {$\Neg A$} {$\Neg B$} ]
+%      Note also that a bare \Tree does not respond to \centering; box it first.
+% ---------------------------------------------------------------------
+\newcommand{\ckpad}{\phantom{\quad\checkmark}}
+
+% ---------------------------------------------------------------------
+%  4a. Fitch/tree rule-name labels (e.g. \ConjI,1,2  ->  &I,1,2)
+%      Two-directional rules (\BicondE, \IdentE) keep a single label;
+%      use a trailing subscript (\BicondE_1 / \BicondE_2) only where a
+%      document already distinguishes the two directions explicitly.
+%
+%      \ndlabel wraps the symbol in \mathord. A rule label is a NAME, not a
+%      formula, so the symbol in it must not carry the spacing its own class
+%      would earn inside a formula. \Cond and friends are \mathbin, so
+%      \Cond\text{E} set "\supset E" with a binary operator's space either
+%      side, while \Univ (an ordinary symbol) set "\forall E" tight -- two
+%      spellings of the same kind of label, side by side in one justification
+%      column. \Ident is worse still, being a relation. \mathord levels them.
+% ---------------------------------------------------------------------
+\newcommand{\ndlabel}[2]{\mathord{#1}\text{#2}}
+\newcommand{\ConjI}{\ndlabel{\ConjTight}{I}}
+\newcommand{\ConjE}{\ndlabel{\ConjTight}{E}}
+\newcommand{\DisjI}{\ndlabel{\Disj}{I}}
+\newcommand{\DisjE}{\ndlabel{\Disj}{E}}
+\newcommand{\CondI}{\ndlabel{\Cond}{I}}
+\newcommand{\CondE}{\ndlabel{\Cond}{E}}
+\newcommand{\NegI}{\ndlabel{\Neg}{I}}
+\newcommand{\NegE}{\ndlabel{\Neg}{E}}
+% \NegE is the elimination rule for negation, and from Lecture 10 it IS double
+% negation elimination (from \Neg\Neg A infer A). The label is unchanged
+% because the rule is still negation's elimination rule and still pairs with
+% \NegI; only its shape changed. Prose may call it DNE.
+\newcommand{\FalsumI}{\ndlabel{\Falsum}{I}}
+\newcommand{\BicondI}{\ndlabel{\Bicond}{I}}
+\newcommand{\BicondE}{\ndlabel{\Bicond}{E}}
+\newcommand{\AllI}{\ndlabel{\Univ}{I}}
+\newcommand{\AllE}{\ndlabel{\Univ}{E}}
+\newcommand{\SomeI}{\ndlabel{\Exist}{I}}
+\newcommand{\SomeE}{\ndlabel{\Exist}{E}}
+\newcommand{\IdentI}{\ndlabel{\Ident}{I}}
+\newcommand{\IdentE}{\ndlabel{\Ident}{E}}
+\newcommand{\Reit}{\text{R}}
+% Reiteration is cited \Reit,1 and picks up math commas: ``R, 1''. This used to
+% be split: \RCite{1} set ``R,1'' with the reference in text mode, and the two
+% spellings coexisted from the day the ND lectures were written. Unified on the
+% \Reit,n spelling 2026-08-28 (instructor), so every justification column sets
+% its line numbers the same way. \RCite is retired and left undefined, so a
+% straggler fails to compile rather than setting a second style.
+% Derived-rule label: quantifier De Morgan (Lecture 20), cited \DM,n
+\newcommand{\DM}{\text{DM}}
+% RETIRED 2026-08-28: \Exp (explosion / ex falso quodlibet) is gone. The course
+% has no citable derived rule for it: every site that used to write \Exp,n now
+% writes the reductio out in full. Left undefined on purpose, so that anything
+% still citing it fails to compile rather than quietly reintroducing a
+% thirteenth rule.
+
+% ---------------------------------------------------------------------
+%  5. Semantics: denotation / valuation brackets
+%     \Den{e}      -> [[e]]
+%     \Den[M]{e}   -> [[e]]^{M}
+%  (\ev is the legacy name used in existing handouts; kept as an alias.)
+% ---------------------------------------------------------------------
+\newcommand{\Den}[2][]{\ensuremath{\llbracket #2\rrbracket^{#1}}}
+\providecommand{\ev}[2][]{\ensuremath{\llbracket #2\rrbracket^{#1}}}
+
+% ---------------------------------------------------------------------
+%  6. Metavariable conventions (documented in "Notation Guide.tex" S4;
+%     helpers, not enforced -- these are the actual course conventions)
+%     - Object-language atomic formulas: lowercase italic  p, q, r
+%       (subscripted p_1, p_2, ...); typeset directly, no macro needed.
+%     - Formula metavariables:           uppercase italic  A, B, C
+%       (lowercase Greek \phi,\psi,\chi in metatheoretic material).
+%     - Sets of formulas / premises:     X, Y, Z  (upright capitals).
+%
+%  \Atom below is a DEPRECATED legacy helper (bold roman); it matches
+%  none of the conventions above (atoms are lowercase italic) and is
+%  unused course-wide. Kept defined only so any stray reference still
+%  compiles -- do not use it in new material.
+% ---------------------------------------------------------------------
+\newcommand{\Atom}[1]{\mathbf{#1}}
+
+\endinput
