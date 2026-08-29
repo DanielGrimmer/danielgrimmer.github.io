@@ -36,6 +36,115 @@
 // /arguments/practice/, which are different directory depths.
 const DB_URL = "/assets/arguments/argument-db.json";
 
+/*
+ * The typeset blocks.
+ *
+ * Every entry carries the LaTeX for its table, its tree and its derivation, in
+ * exactly the notation the course uses -- and that LaTeX is what the reader
+ * should see, not an HTML approximation of it. No browser maths engine can
+ * help: KaTeX and MathJax typeset formulas, and a Fitch derivation and a
+ * tableau are neither. So `EncyclopediaOfArguments/latexgen/svg.py` runs the
+ * blocks through LaTeX and commits the SVG output here, one file per
+ * (form, method), and the page fetches the picture on demand.
+ *
+ * The HTML renderers below are not dead: each one stays in place underneath as
+ * the fallback, so an entry whose SVG has not been generated yet, or a reader
+ * behind something that blocks the fetch, still gets a readable table, tree and
+ * proof. `svgFigure` puts the fallback in the slot and `hydrateSvgs` replaces
+ * it if -- and only if -- the real thing arrives.
+ */
+const SVG_BASE = "/assets/arguments/svg/";
+const svgCache = new Map();
+
+function svgFigure(entry, method, fallback) {
+  if (!fallback) return "";
+  return (
+    `<div class="ae-svg-scroll" data-ae-svg="${escapeHtml(entry.id)}-${method}">` +
+    `<div class="ae-svg-fallback">${fallback}</div></div>`
+  );
+}
+
+/**
+ * Swap every SVG slot under `root` for its typeset picture.
+ *
+ * Failure is deliberately silent: the fallback is already on the page and is
+ * correct, so a missing or unreachable SVG costs the reader nothing.
+ */
+export function hydrateSvgs(root) {
+  const slots = root.querySelectorAll("[data-ae-svg]:not([data-ae-svg-done])");
+  return Promise.all(
+    [...slots].map(async (el) => {
+      const name = el.dataset.aeSvg;
+      let pending = svgCache.get(name);
+      if (!pending) {
+        pending = fetch(`${SVG_BASE}${encodeURIComponent(name)}.svg`).then((r) =>
+          r.ok ? r.text() : Promise.reject(new Error(String(r.status))),
+        );
+        svgCache.set(name, pending);
+      }
+      try {
+        const text = await pending;
+        const at = text.indexOf("<svg");
+        if (at < 0) return;
+        el.innerHTML = text.slice(at);
+        el.dataset.aeSvgDone = "1";
+      } catch {
+        // Keep the fallback.
+      }
+    }),
+  );
+}
+
+/*
+ * The headline answer.
+ *
+ * Whatever method the reader worked, the first thing they want on opening the
+ * answer is whether they got it right -- so this goes at the top of every
+ * revealed panel, ahead of the table or the tree or the proof.
+ *
+ * Three shapes, because the database holds three kinds of claim. A form with no
+ * premises asserts a *theorem*, so its answer is whether the conclusion is a
+ * tautology. A form whose conclusion is falsum asserts that its premises are
+ * *inconsistent*, so its answer is whether they are. Everything else is an
+ * ordinary argument, and its answer is valid or invalid.
+ */
+export function answerLine(entry) {
+  const valid = !!entry.verdict?.valid;
+  const noPremises = !asArray(entry._premises).length;
+  const claimsContradiction = entry.conclusion === "!";
+
+  let text;
+  if (noPremises) {
+    text = valid
+      ? `<strong>Valid</strong> — the conclusion is a <strong>tautology</strong>.`
+      : `<strong>Invalid</strong> — the conclusion is <strong>not</strong> a tautology.`;
+  } else if (claimsContradiction) {
+    text = valid
+      ? `<strong>Valid</strong> — the premises are <strong>inconsistent</strong>: nothing satisfies them all.`
+      : `<strong>Invalid</strong> — the premises are <strong>consistent</strong>, so they do not entail a contradiction.`;
+  } else {
+    text = valid ? `<strong>Valid.</strong>` : `<strong>Invalid.</strong>`;
+  }
+
+  return (
+    `<p class="ae-answer ${valid ? "ae-answer-valid" : "ae-answer-invalid"}">` +
+    text +
+    `</p>`
+  );
+}
+
+/** One correct answer, not the only one. */
+const ALTERNATIVES = {
+  tree:
+    `<p class="ae-alt">The order in which the rules are applied is up to you, so ` +
+    `a correct tree need not look like this one. What is fixed is the outcome: ` +
+    `every completed tree for this form closes on the same branches.</p>`,
+  nd:
+    `<p class="ae-alt">This is <em>a</em> proof, not <em>the</em> proof. A ` +
+    `derivation that reaches the conclusion from the premises by the rules is ` +
+    `correct however different it looks from this one.</p>`,
+};
+
 /* ------------------------------------------------------------------ data */
 
 let dbPromise = null;
@@ -919,29 +1028,50 @@ function buildTruthTable(entry) {
   return {
     hint: `${tt.rows.length} rows, ${atoms.length} atom${atoms.length === 1 ? "" : "s"}`,
     html:
-      `<div class="ae-table-wrap"><table class="ae-tt"><thead>${head}</thead><tbody>${body}</tbody></table></div>` +
-      legend,
+      // The legend explains the row shading, and the shading is a feature of
+      // the HTML table only -- the typeset table marks nothing, exactly as it
+      // does in the handout. So the legend goes inside the fallback and leaves
+      // with it. The countermodels themselves are named in the verdict.
+      svgFigure(
+        entry,
+        "table",
+        `<div class="ae-table-wrap"><table class="ae-tt"><thead>${head}</thead><tbody>${body}</tbody></table></div>` +
+          legend,
+      ),
   };
 }
 
 /* ------------------------------------------------------------- the tree */
 
+/*
+ * The tableau, drawn as a branching diagram.
+ *
+ * It used to be a nested list, which is not what a truth tree is: the whole
+ * point of the notation is that a branch point is a *fork*, and two sibling
+ * branches are alternatives rather than a sequence. So the nodes are laid out
+ * as a real tree, with the connectors drawn in CSS -- a stub down from the
+ * parent, a horizontal rule spanning the children, a stub down into each.
+ *
+ * Every tree in the database is strictly binary: a node has either no children
+ * or exactly two, because the branching rules all split in two and the
+ * non-branching rules add to the node they are already in. The layout below
+ * assumes nothing stronger than "zero or more", but that is why it stays
+ * narrow enough to read.
+ *
+ * The `from` annotations the data carries are not printed. The handouts do not
+ * annotate their trees, and at eighteen branches the labels would triple the
+ * width; they are attached as tooltips instead, so the information is there for
+ * anyone who wants it and costs nothing to anyone who does not.
+ */
 function buildTree(entry, spoilers = false) {
   const t = entry.tree;
   if (!t || !t.tree) return null;
 
-  const roots =
-    `<div class="ae-tree-roots">` +
-    asArray(t.roots)
-      .map(
-        (r, i) =>
-          `<div class="ae-tree-root"><span class="ae-seq-num">${i + 1}.</span>${f(fixFormula(entry, r))}</div>`,
-      )
-      .join("") +
-    `</div>`;
+  const resolved = collectResolved(t.tree);
+  const roots = asArray(t.roots)
+    .map((r, i) => treeFormula(entry, r, resolved, i + 1))
+    .join("");
 
-  // "2 open branches" is the verdict in other words, so under spoilers the
-  // hint reports only the size of the job, not how it comes out.
   const branches = (t.closed_branches || 0) + (t.open_branches || 0);
   const hint = spoilers
     ? `${branches} branch${branches === 1 ? "" : "es"}, depth ${t.branch_depth}`
@@ -952,54 +1082,84 @@ function buildTree(entry, spoilers = false) {
   return {
     hint,
     html:
-      `<p style="font-size:.84rem;color:var(--ae-muted);margin:0 0 .5rem">` +
-      `The premises and the <em>negated</em> conclusion, stacked. A branch closes (<strong>×</strong>) ` +
-      `when it holds a sentence and its negation; a branch that runs out of rules while still open (<strong>○</strong>) ` +
+      `<p class="ae-tree-key">The premises and the <em>negated</em> conclusion, ` +
+      `stacked. A branch closes (<strong>x</strong>) when it holds a sentence and ` +
+      `its negation; a branch still open when the rules run out (<strong>o</strong>) ` +
       `is a countermodel.</p>` +
-      roots +
-      `<div class="ae-tree">${treeNode(t.tree, entry)}</div>`,
+      svgFigure(
+        entry,
+        "tree",
+        `<div class="ae-t-scroll"><div class="ae-t">` +
+          `<div class="ae-t-node"><div class="ae-t-box ae-t-root">${roots}</div>` +
+          treeKids(t.tree, entry, resolved) +
+          `</div></div></div>`,
+      ) +
+      ALTERNATIVES.tree,
   };
 }
 
-function treeNode(node, entry) {
-  const parts = [];
-
-  for (const a of asArray(node.added)) {
-    parts.push(
-      `<div class="ae-tree-line">${f(fixFormula(entry, a.formula))}` +
-        `<span class="ae-tree-from">${escapeHtml(a.rule || "")} from ${escapeHtml(fixFormula(entry, a.from) || "")}</span></div>`,
-    );
+/** Every formula some rule application consumed, so it takes a checkmark. */
+function collectResolved(node, out) {
+  out = out || new Set();
+  for (const k of asArray(node.children)) {
+    for (const a of asArray(k.added)) if (a.from) out.add(a.from);
+    collectResolved(k, out);
   }
+  for (const a of asArray(node.added)) if (a.from) out.add(a.from);
+  if (node.branched_on) out.add(node.branched_on);
+  return out;
+}
 
-  if (node.status === "closed") {
-    parts.push(`<div class="ae-tree-status ae-tree-closed">× closed</div>`);
-  } else if (node.status === "open") {
-    parts.push(`<div class="ae-tree-status ae-tree-open">○ open</div>`);
-    if (node.model) {
-      parts.push(
-        `<div class="ae-tree-model">${escapeHtml(assignmentText(node.model))}` +
-          (asArray(node.unconstrained).length
-            ? ` &nbsp;(${escapeHtml(asArray(node.unconstrained).join(", "))} unconstrained)`
-            : "") +
-          `</div>`,
-      );
-    }
-  }
+function treeFormula(entry, shown, resolved, num) {
+  const fixed = fixFormula(entry, shown);
+  const tick = resolved.has(shown)
+    ? `<span class="ae-t-tick">✓</span>`
+    : "";
+  const n = num ? `<span class="ae-t-n">${num}.</span>` : "";
+  return `<div class="ae-t-line">${n}${f(fixed)}${tick}</div>`;
+}
 
+function treeKids(node, entry, resolved) {
   const kids = asArray(node.children);
-  if (kids.length) {
-    if (node.branched_on) {
-      parts.push(
-        `<div class="ae-tree-branch">branches on ${escapeHtml(node.branch_rule || "")} ` +
-          `applied to <span class="ae-f">${escapeHtml(fixFormula(entry, node.branched_on))}</span></div>`,
-      );
-    }
-    parts.push(
-      `<ul>${kids.map((k) => `<li>${treeNode(k, entry)}</li>`).join("")}</ul>`,
-    );
-  }
+  if (!kids.length) return "";
+  return (
+    `<div class="ae-t-kids">` +
+    kids
+      .map(
+        (k) =>
+          `<div class="ae-t-kid"><div class="ae-t-node">` +
+          treeBox(k, entry, resolved) +
+          treeKids(k, entry, resolved) +
+          `</div></div>`,
+      )
+      .join("") +
+    `</div>`
+  );
+}
 
-  return parts.join("");
+function treeBox(node, entry, resolved) {
+  const rows = asArray(node.added)
+    .map((a) => {
+      const fixed = fixFormula(entry, a.formula);
+      const tick = resolved.has(a.formula) ? `<span class="ae-t-tick">✓</span>` : "";
+      // The rule and its source ride along as a tooltip rather than as print.
+      const why = a.rule
+        ? ` title="${escapeHtml(`${a.rule} from ${a.from || ""}`.trim())}"`
+        : "";
+      return `<div class="ae-t-line"${why}>${f(fixed)}${tick}</div>`;
+    })
+    .join("");
+
+  let mark = "";
+  if (node.status === "closed") {
+    mark = `<div class="ae-t-mark ae-t-closed">x</div>`;
+  } else if (node.status === "open") {
+    mark = `<div class="ae-t-mark ae-t-open">o</div>`;
+    if (node.model) {
+      mark += `<div class="ae-t-model">${escapeHtml(assignmentText(node.model))}</div>`;
+    }
+  }
+  return `<div class="ae-t-box">${rows}${mark}</div>`;
 }
 
 /* --------------------------------------------------------------- the ND */
@@ -1045,7 +1205,7 @@ function buildNd(entry, spoilers = false) {
   // is being withheld as a spoiler.
   const lines = asArray(nd.proof);
   const proof = lines.length
-    ? renderFitch(lines)
+    ? svgFigure(entry, "nd", renderFitch(lines)) + ALTERNATIVES.nd
     : `<div class="ae-missing">This entry has a machine-checked proof, but its ` +
       `lines are not in <code>argument-db.json</code> — only the profile above.</div>`;
 
@@ -1304,7 +1464,10 @@ function renderInstructor(entry) {
 export function methodPanel(entry, method) {
   const build = { table: buildTruthTable, tree: buildTree, nd: buildNd }[method];
   const built = build ? build(entry, false) : null;
-  return built ? built.html : "";
+  if (!built) return "";
+  // The verdict leads. A reader who has just worked a table wants to know
+  // whether they got it right before they start comparing rows.
+  return answerLine(entry) + built.html;
 }
 
 /** The premises over the conclusion, with no turnstile — see below. */

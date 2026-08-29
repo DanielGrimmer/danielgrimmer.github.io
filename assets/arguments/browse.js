@@ -15,6 +15,7 @@ import {
   filterEntries,
   renderCard,
   renderEntry,
+  hydrateSvgs,
   escapeHtml,
   asArray,
 } from "./encyclopedia.js";
@@ -96,6 +97,10 @@ async function start() {
       backLabel: "all argument forms",
       onTag: true,
     });
+    // The typeset table, tree and proof arrive after the markup; until they
+    // do the HTML fallbacks are already readable, so there is nothing to wait
+    // for and nothing to show a spinner over.
+    hydrateSvgs(els.detail);
     document.title = `${asArray(entry.names)[0] || entry.id} · argument forms`;
     window.scrollTo({ top: 0, behavior: "instant" });
   }

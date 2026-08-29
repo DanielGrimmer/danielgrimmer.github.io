@@ -724,93 +724,153 @@ button.ae-chip:hover {
 
 /* ------------------------------------------------------------------ tree */
 
-/* The tableau is drawn as nested lists rather than as an SVG diagram. A tree
-   six branch-points deep is wider than any phone; nesting turns depth into
-   indentation, which scrolls in the one direction a page can afford to. */
-.ae-tree {
-  font-family: var(--ae-mono);
-  font-size: 0.86rem;
+/*
+ * The tableau is a branching diagram, not a list: a fork means two
+ * alternatives, and a list cannot say that. Nodes are laid out with flexbox --
+ * each subtree centred over its own children -- and the connectors are drawn
+ * with borders: a stub down out of the parent, a rule spanning the children,
+ * and a stub down into each child. No SVG, so the formulas stay selectable and
+ * the whole thing reflows and recolours like ordinary text.
+ */
+.ae-t-scroll {
   overflow-x: auto;
+  padding: 0.5rem 0 0.75rem;
 }
 
-.ae-tree ul {
-  list-style: none;
-  margin: 0;
-  padding: 0 0 0 1.15rem;
-  border-left: 1px solid var(--ae-rule-2);
-}
-
-.ae-tree > ul {
-  border-left: none;
-  padding-left: 0;
-}
-
-.ae-tree li {
-  margin: 0;
-  padding: 0.15rem 0 0.15rem 0.15rem;
-}
-
-.ae-tree-roots {
-  border: 1px solid var(--ae-rule);
-  border-radius: 6px;
-  background: var(--ae-desk);
-  padding: 0.6rem 0.8rem;
-  margin-bottom: 0.8rem;
-}
-
-.ae-tree-root {
+.ae-t {
   display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  padding: 0.1rem 0;
+  justify-content: center;
+  min-width: min-content;
+  font-family: var(--ae-mono);
+  font-size: 0.84rem;
 }
 
-.ae-tree-line {
+.ae-t-node {
   display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
 }
 
-.ae-tree-from {
-  font-family: var(--ae-sans);
-  font-size: 0.72rem;
-  color: var(--ae-faint);
+.ae-t-box {
+  padding: 0.3rem 0.55rem;
+  text-align: center;
   white-space: nowrap;
 }
 
-.ae-tree-branch {
-  font-family: var(--ae-sans);
-  font-size: 0.74rem;
-  color: var(--ae-accent-ink);
-  padding: 0.25rem 0 0.1rem;
-  font-style: italic;
+.ae-t-root {
+  border: 1px solid var(--ae-rule);
+  border-radius: 6px;
+  background: var(--ae-desk);
+  text-align: left;
+  padding: 0.55rem 0.8rem;
 }
 
-.ae-tree-status {
+.ae-t-line {
+  padding: 0.08rem 0;
+  color: var(--ae-ink);
+}
+
+.ae-t-n {
+  color: var(--ae-faint);
+  font-size: 0.78em;
+  margin-right: 0.4rem;
+}
+
+.ae-t-tick {
+  color: var(--ae-valid);
+  margin-left: 0.45rem;
+  font-family: var(--ae-sans);
+}
+
+.ae-t-mark {
   font-family: var(--ae-sans);
   font-weight: 700;
-  font-size: 0.86rem;
-  padding: 0.2rem 0;
+  padding-top: 0.15rem;
 }
 
-.ae-tree-closed {
+.ae-t-closed {
   color: var(--ae-valid);
 }
 
-.ae-tree-open {
+.ae-t-open {
   color: var(--ae-invalid);
 }
 
-.ae-tree-model {
-  font-family: var(--ae-mono);
-  font-size: 0.8rem;
+.ae-t-model {
+  font-size: 0.78rem;
   color: var(--ae-invalid);
   background: var(--ae-invalid-bg);
   border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  display: inline-block;
-  margin-top: 0.2rem;
+  padding: 0.15rem 0.4rem;
+  margin-top: 0.25rem;
+  white-space: nowrap;
+}
+
+/* --- the connectors --- */
+
+.ae-t-kids {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  padding-top: 1.4rem;
+}
+
+/* The stub dropping out of the parent node. */
+.ae-t-kids::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 0.7rem;
+  background: var(--ae-rule-2);
+}
+
+.ae-t-kid {
+  position: relative;
+  padding: 0 0.6rem;
+}
+
+/* The stub dropping into each child. */
+.ae-t-kid::before {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  left: 50%;
+  width: 1px;
+  height: 0.7rem;
+  background: var(--ae-rule-2);
+}
+
+/* The rule spanning the children: half from the first, half from the last, so
+   it reaches exactly between the two stubs however wide the subtrees are. */
+.ae-t-kid::after {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  height: 1px;
+  background: var(--ae-rule-2);
+}
+
+.ae-t-kid:first-child::after {
+  left: 50%;
+  right: 0;
+}
+
+.ae-t-kid:last-child::after {
+  left: 0;
+  right: 50%;
+}
+
+.ae-t-kid:only-child::after {
+  display: none;
+}
+
+.ae-tree-key {
+  font-size: 0.84rem;
+  color: var(--ae-muted);
+  margin: 0 0 0.5rem;
 }
 
 /* ------------------------------------------------------------------- ND */
@@ -1250,4 +1310,72 @@ button.ae-chip:hover {
   .ae-scope * {
     transition: none !important;
   }
+}
+
+/* ---------------------------------------------------------- typeset LaTeX
+ *
+ * The table, the tree and the derivation are shown as the LaTeX output itself,
+ * compiled by `EncyclopediaOfArguments/latexgen/svg.py` and inlined into the
+ * page. Inlined rather than an `<img>`, because an `<img>` cannot see the
+ * page's colour and this site has a dark mode: every glyph and rule in the SVG
+ * is painted `currentColor`, so the diagram simply follows the surrounding
+ * text.
+ *
+ * The generator writes the width in `em`, taken from the block's real width at
+ * 11pt, so a table sits at the same size relative to the prose as it does in
+ * the course notes. A block too wide for the column scrolls rather than
+ * shrinking: a truth table at 40% scale is not a truth table anyone can read.
+ */
+.ae-svg-scroll {
+  overflow-x: auto;
+  padding: 0.6rem 0 0.4rem;
+}
+
+.ae-svg-scroll .ae-svg {
+  display: block;
+  /* The width is set inline, per block, in `em` taken from the block's real
+     typeset width -- so the LaTeX comes out at the same size relative to the
+     prose as it has in the handouts.
+
+     Deliberately *not* capped at the container. A six-premise truth table is
+     about 44em wide, and squeezing that into a phone would put it at 40% scale,
+     which is not a truth table anyone can read. It scrolls instead, which is
+     what the HTML tables and trees beside it have always done. */
+  max-width: none;
+}
+
+/* Until (or unless) the SVG arrives, the HTML rendering stands in. */
+.ae-svg-fallback {
+  min-width: 0;
+}
+
+/* The verdict, at the top of a revealed answer. Whatever the student worked,
+   the first thing they want is whether they got it right. */
+.ae-answer {
+  margin: 0 0 1rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 4px;
+  border-left: 3px solid;
+  font-family: var(--ae-sans);
+  font-size: 1.02rem;
+}
+
+.ae-answer-valid {
+  border-left-color: var(--ae-valid);
+  background: var(--ae-valid-bg);
+  color: var(--ae-valid);
+}
+
+.ae-answer-invalid {
+  border-left-color: var(--ae-invalid);
+  background: var(--ae-invalid-bg);
+  color: var(--ae-invalid);
+}
+
+/* "One correct answer, not the only one" — trees and derivations both. */
+.ae-alt {
+  margin: 0.5rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--ae-muted);
 }

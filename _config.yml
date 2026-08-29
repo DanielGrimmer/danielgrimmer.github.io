@@ -242,6 +242,13 @@ exclude:
   - purgecss.config.js
   - README.md
   - readme_preview/
+  # Source for the argument-forms encyclopedia: lecture handouts, the notation
+  # package, the LaTeX generator, and the working inventories. The site is
+  # built from it, not out of it -- the generated blocks live in
+  # assets/arguments/argument-db.json and assets/arguments/svg/. The
+  # inventories in particular are instructor notes that name candidate exam
+  # questions, so they must not be served.
+  - EncyclopediaOfArguments/
   - gems/
   - migrations/
   - vendor

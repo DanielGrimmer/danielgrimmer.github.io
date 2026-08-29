@@ -364,3 +364,96 @@ test('the practice page has a well-formed problem set', async (t) => {
     }
   });
 });
+
+/*
+ * The typeset blocks.
+ *
+ * Each entry's LaTeX is compiled to an SVG by
+ * `EncyclopediaOfArguments/latexgen/svg.py` and committed under
+ * `assets/arguments/svg/`, because GitHub Pages builds with Jekyll alone and
+ * has no LaTeX. That makes the SVGs a build artifact living in the repo, and
+ * the one failure mode of such a thing is silent staleness: the database gets
+ * regenerated, the pictures do not, and the site shows last week's proof.
+ * `index.json` records the hash of the block each SVG came from, so the drift
+ * is detectable, and this is where it is detected.
+ */
+test('every LaTeX block has a current SVG', async (t) => {
+  const svgDir = new URL('../assets/arguments/svg/', import.meta.url);
+  const index = JSON.parse(readFileSync(new URL('index.json', svgDir)));
+  const holder = { table: 'truth_table', tree: 'tree', nd: 'nd' };
+
+  const blocks = [];
+  for (const e of entries) {
+    for (const m of ['table', 'tree', 'nd']) {
+      const latex = e[holder[m]]?.latex;
+      if (latex) blocks.push([e.id, m, latex]);
+    }
+  }
+
+  await t.test('there is one block per practice problem', () => {
+    assert.equal(blocks.length, 88);
+  });
+
+  await t.test('the SVG matches the block it was made from', async () => {
+    const { createHash } = await import('node:crypto');
+    for (const [id, m, latex] of blocks) {
+      const digest = createHash('sha256').update(latex).digest('hex').slice(0, 16);
+      assert.equal(index[`${id}|${m}`], digest, `${id}/${m}: SVG is stale — rerun latexgen/svg.py`);
+    }
+  });
+
+  await t.test('the index has nothing the database no longer has', () => {
+    const live = new Set(blocks.map(([id, m]) => `${id}|${m}`));
+    for (const key of Object.keys(index)) {
+      assert.ok(live.has(key), `${key}: SVG left over from a block that is gone`);
+    }
+  });
+
+  await t.test('each SVG is inlinable: themed, fluid, and id-safe', () => {
+    for (const [id, m] of blocks) {
+      const svg = readFileSync(new URL(`${id}-${m}.svg`, svgDir), 'utf8');
+
+      // The page has a dark mode and the SVG is inlined, not <img>-ed, so the
+      // ink has to inherit from the surrounding text.
+      assert.match(svg, /fill='currentColor'/, `${id}/${m}: no currentColor fill`);
+      assert.ok(!/stroke='#0{3,6}'/.test(svg), `${id}/${m}: a stroke is still hard black`);
+
+      // Absolute width and height would pin the block to one size; the
+      // generator replaces them with an em width taken from the real one.
+      assert.ok(!/<svg[^>]*\sheight='/.test(svg), `${id}/${m}: still carries an absolute height`);
+      assert.match(svg, /style='width:[\d.]+em;height:auto'/, `${id}/${m}: no em width`);
+
+      // Several of these go into one page. Unprefixed ids would collide and a
+      // tree would be drawn with a truth table's glyphs.
+      for (const [, ident] of svg.matchAll(/id='([^']+)'/g)) {
+        assert.ok(ident.startsWith(`${id}-${m}-`), `${id}/${m}: unprefixed id ${ident}`);
+      }
+      for (const [, ref] of svg.matchAll(/xlink:href='#([^']+)'/g)) {
+        assert.ok(ref.startsWith(`${id}-${m}-`), `${id}/${m}: unprefixed reference ${ref}`);
+      }
+    }
+  });
+});
+
+/*
+ * The headline answer that opens every revealed panel. Three claim shapes: a
+ * form with no premises asserts a theorem, a form concluding falsum asserts
+ * that its premises are inconsistent, and everything else is an argument.
+ */
+test('every entry has an answer the reveal can lead with', () => {
+  for (const e of entries) {
+    const shape = !e.premises.length ? 'theorem' : e.conclusion === '!' ? 'inconsistency' : 'argument';
+    assert.equal(typeof e.verdict.valid, 'boolean', `${e.id}: no verdict`);
+    if (shape === 'theorem') {
+      // A theorem claim's answer is "the conclusion is a tautology" — so the
+      // table had better agree.
+      const allTrue = e.truth_table.rows.every((r) => r.conclusion === 'T');
+      assert.equal(allTrue, e.verdict.valid, `${e.id}: tautology claim disagrees with its table`);
+    }
+    if (shape === 'inconsistency') {
+      // A falsum conclusion is only valid if nothing satisfies the premises.
+      assert.equal(e.verdict.premises_satisfiable, !e.verdict.valid,
+        `${e.id}: inconsistency claim disagrees with its premise rows`);
+    }
+  }
+});

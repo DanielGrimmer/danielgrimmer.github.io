@@ -33,9 +33,55 @@ metrics are computed from the formulas; nothing is asserted on authority.
 | `browse.js` | The catalogue controller: search, facets, and the `#/<id>` routes |
 | `practice.js` | The random draw and its shuffled bag |
 | `encyclopedia.css` | All styles, scoped to `.ae-scope` |
+| `svg/` | The typeset LaTeX, one SVG per (form, method), plus `index.json` — a build artifact, see below |
 
 The pages are `_pages/arguments.md` (the overview, and the navbar dropdown parent),
 `_pages/argumentsbrowse.md` and `_pages/argumentspractice.md`.
+
+## The typeset blocks in `svg/`
+
+Each entry carries the LaTeX for its truth table, its tree and its derivation,
+in exactly the notation the course uses — and that LaTeX is what the reader
+sees. It cannot be rendered in the browser: KaTeX and MathJax typeset formulas,
+and a Fitch derivation and a tableau are neither. So the blocks are compiled by
+LaTeX and the output is committed here, one file per (form, method):
+
+```
+cd EncyclopediaOfArguments/latexgen
+python3 svg.py              # regenerate all 88
+python3 svg.py --only peirce-law
+python3 svg.py --check      # is anything stale?
+```
+
+It needs a TeX installation with `qtree` and `fitch`, plus `dvisvgm`. The route
+is `latex` → DVI → `dvisvgm`, deliberately: DVI is dvisvgm's native input, its
+PDF path wants a Ghostscript older than most machines have, and a generic
+PDF-to-SVG converter scrambles qtree and fitch — both draw with subsetted
+Type-1 fonts whose glyph mapping does not survive.
+
+Three things happen to each SVG on the way out, and all three are load-bearing:
+
+- **Every id is prefixed with `<id>-<method>`.** Several of these end up inlined
+  in one page, and dvisvgm names its glyphs `g0-88`, `g1-24`, … — unprefixed,
+  a tree would be drawn with a truth table's glyphs.
+- **The ink becomes `currentColor`.** This is why the page inlines the SVG
+  rather than using `<img>`: an `<img>` cannot see the host page's colour, and
+  the site has a dark mode.
+- **The absolute width and height become an `em` width**, taken from the real
+  typeset width at 11pt. So a table sits at the same size relative to the prose
+  as it does in the handout, at whatever text size the reader has chosen. A
+  block wider than the column scrolls rather than shrinking.
+
+Because GitHub Pages builds with Jekyll alone and has no LaTeX, these are a
+build artifact that lives in the repo — which means the one thing that can go
+wrong is silent staleness. `index.json` records the hash of the block each SVG
+came from; `svg.py --check` reports drift, and `_tests/argument-forms.test.mjs`
+fails on it.
+
+The HTML renderers in `encyclopedia.js` (`buildTruthTable`, `buildTree`,
+`renderFitch`) are not dead code. Each stays in place underneath as the
+fallback, so a form whose SVG has not been generated yet, or a reader behind
+something that blocks the fetch, still gets a readable table, tree and proof.
 
 ## Growing it
 

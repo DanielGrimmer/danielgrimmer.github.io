@@ -24,11 +24,12 @@ import {
   loadDatabase,
   methodPanel,
   problemStatement,
+  hydrateSvgs,
   escapeHtml,
   asArray,
 } from "./encyclopedia.js";
 
-const STORE = "phil1115.practice.v2";
+const STORE = "phil1115.practice.v3";
 
 const METHODS = [
   { key: "table", label: "Truth tables", verb: "truth table" },
@@ -51,13 +52,15 @@ async function start() {
     return;
   }
 
-  // Everything on by default, so the button works on the first click. A
-  // student who wants only hard trees can say so; one who just wants a problem
-  // does not have to choose anything.
+  // Nothing is chosen to begin with, and the button stays dark until both
+  // questions have an answer. A default set of chips would be a set of answers
+  // the student did not give: it looks like a filter they chose, and the first
+  // problem then arrives from a pool they never picked. Better that the page
+  // asks, and waits.
   const saved = load();
   const state = {
-    methods: new Set(saved.methods ?? METHODS.map((m) => m.key)),
-    levels: new Set(saved.levels ?? LEVELS),
+    methods: new Set(saved.methods ?? []),
+    levels: new Set(saved.levels ?? []),
   };
   let bag = saved.bag ?? [];
   let seen = new Set(saved.seen ?? []);
@@ -106,11 +109,16 @@ async function start() {
   }
 
   function refresh() {
-    const n = pool().length;
-    els.count.textContent = n
-      ? `${n} problem${n === 1 ? "" : "s"} match`
-      : "no problems match those choices";
-    els.draw.disabled = n === 0;
+    const ready = state.methods.size > 0 && state.levels.size > 0;
+    const n = ready ? pool().length : 0;
+    // Three messages, because the button is dark for three different reasons
+    // and "0 problems" would explain none of them.
+    els.count.textContent = !ready
+      ? "Choose at least one method and one difficulty."
+      : n
+        ? `${n} problem${n === 1 ? "" : "s"} match`
+        : "No problems match those choices.";
+    els.draw.disabled = !ready || n === 0;
     for (const b of els.chips.querySelectorAll("button[data-group]")) {
       const on =
         b.dataset.group === "method"
@@ -166,6 +174,9 @@ async function start() {
       `<a href="/arguments/browse/#/${encodeURIComponent(id)}">` +
       `Open the encyclopedia entry for this form →</a></p>` +
       `</div>`;
+    // Fetch the typeset answer now rather than on reveal: it is behind a
+    // <details>, so by the time the student clicks it is already there.
+    hydrateSvgs(els.stage);
     els.stage.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
@@ -176,8 +187,6 @@ async function start() {
     const v = b.dataset.value;
     if (set.has(v)) set.delete(v);
     else set.add(v);
-    // Never leave both questions unanswerable: the last chip in a group stays.
-    if (!set.size) set.add(v);
     bag = [];
     persist();
     refresh();
@@ -193,7 +202,7 @@ function shell() {
       .map(
         (i) =>
           `<button type="button" class="ae-chip ae-chip-toggle" ` +
-          `data-group="${name}" data-value="${i.key}" aria-pressed="true">` +
+          `data-group="${name}" data-value="${i.key}" aria-pressed="false">` +
           `${escapeHtml(i.label)}</button>`,
       )
       .join("");

@@ -922,6 +922,48 @@ inconsistent blocks depending on which handout was open at the time.
    `fitch` syntax, the ND blocks can be checked in CI the way the formulas
    already are. Without it, §9's accessibility check is done by eye.
 
+## 11a. The blocks on the website
+
+Every block in this guide ends up in two places: a handout, typeset by
+`pdflatex` against a 6.5in measure, and the encyclopedia at
+[/arguments/](https://danielgrimmer.github.io/arguments/), where the *same*
+LaTeX is compiled to an SVG by `latexgen/svg.py` and inlined into the page.
+Nothing in this guide changes for the web — that is the point of writing the
+blocks once — but three consequences are worth knowing while authoring.
+
+**The measure is 9in on the web, not 6.5in.** The `\ifdim\wd\aetreebox>\linewidth
+… \resizebox` guards in §5 and §4 exist so a wide block fits a printed page.
+The browser already fits the block to the reader's column, so at 6.5in the two
+shrinks would compound and a truth tree would come out at half the size of the
+prose beside it. `svg.py` therefore compiles against a 9in measure and lets CSS
+do the fitting. Blocks must still carry their guards: the handout needs them,
+and a block wide enough to trip even 9in is a block worth reconsidering.
+
+**11pt is the reference size.** The generator converts the block's typeset width
+into `em` by dividing by 11, so one em of the page is 11pt of TeX and the LaTeX
+renders at the same size as the prose around it. A block that sets its own font
+size — `\small`, `\footnotesize` — will look small on the web too, and for the
+same reason it looks small on paper. Prefer letting the fit guard scale a wide
+block down over choosing a smaller font by hand.
+
+**The output must survive being drawn as paths.** `dvisvgm --no-fonts` turns
+every glyph into an outline, so anything that renders as a character renders on
+the web. What does *not* survive is anything the DVI route cannot express:
+`\special`s aimed at a PDF backend, `\href`, PDF-only packages. None of the
+constructions in this guide use them, and new ones should not either.
+
+Regenerate after any change to a block:
+
+```
+cd EncyclopediaOfArguments/latexgen
+python3 build.py            # blocks into argument-db.json
+python3 svg.py              # blocks into assets/arguments/svg/
+python3 svg.py --check      # is anything stale?
+```
+
+The test suite fails if the SVGs and the database have drifted apart, so a
+forgotten `svg.py` is caught rather than shipped.
+
 ## 12. Suggested order of work
 
 1. **Templates first, on `lecture8-chain`.** Kant's argument is the only entry
