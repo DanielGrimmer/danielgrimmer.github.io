@@ -121,7 +121,72 @@
     "subproof_count": 1,
     "uses_indirect_proof": true,
     "assumption_count": 1,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p & ~p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 4,
+      "f": "~p",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       3,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        5
+       ]
+      ]
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       6
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Conj \\Neg p}\n\\open\n\\hypo{2}{\\Neg q}\n\\have{3}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{p}\\quad \\ConjE,1}\n\\have{4}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{\\Neg p}\\quad \\ConjE,1}\n\\have{5}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{\\Falsum}\\quad \\FalsumI,3,4}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{\\Neg \\Neg q}\\quad \\NegI,2\\text{--}5}\n\\have{7}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{q}\\quad \\NegE,6}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [
@@ -201,7 +266,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Conj \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Conj \\Neg p}{F} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Conj \\Neg p}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Conj \\Neg p}{F} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Conj \\Neg p}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -227,7 +293,8 @@
     "open_branches": 0,
     "closed_branches": 1,
     "branch_depth": 0,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Conj \\Neg p$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg q$ \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 2,
@@ -326,21 +393,144 @@
    },
    "nd": {
     "exists": true,
-    "lines": 19,
-    "max_subproof_depth": 3,
+    "lines": 13,
+    "max_subproof_depth": 4,
     "rules_used": [
      "As",
      "CondE",
      "CondI",
      "FalsumI",
      "NegE",
-     "NegI",
-     "Reit"
+     "NegI"
     ],
-    "subproof_count": 6,
+    "subproof_count": 4,
     "uses_indirect_proof": true,
-    "assumption_count": 6,
-    "verified": true
+    "assumption_count": 4,
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "(p > q) > p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "~p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 4,
+      "f": "~q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       3,
+       2
+      ]
+     },
+     {
+      "n": 6,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        4,
+        5
+       ]
+      ]
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 3,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 2,
+      "subs": [
+       [
+        3,
+        7
+       ]
+      ]
+     },
+     {
+      "n": 9,
+      "f": "p",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       1,
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       9,
+       2
+      ]
+     },
+     {
+      "n": 11,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        10
+       ]
+      ]
+     },
+     {
+      "n": 12,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       11
+      ]
+     },
+     {
+      "n": 13,
+      "f": "((p > q) > p) > p",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        12
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Cond q)\\Cond p}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Falsum}\\quad \\FalsumI,3,2}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg \\Neg q}\\quad \\NegI,4\\text{--}5}\n\\have{7}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{q}\\quad \\NegE,6}\n\\close\n\\have{8}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p\\Cond q}\\quad \\CondI,3\\text{--}7}\n\\have{9}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p}\\quad \\CondE,1,8}\n\\have{10}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Falsum}\\quad \\FalsumI,9,2}\n\\close\n\\have{11}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg \\Neg p}\\quad \\NegI,2\\text{--}10}\n\\have{12}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p}\\quad \\NegE,11}\n\\close\n\\have{13}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{((p\\Cond q)\\Cond p)\\Cond p}\\quad \\CondI,1\\text{--}12}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [],
@@ -409,7 +599,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $((p\\Cond q)\\Cond p)\\Cond p$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        T & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        F & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{F}\\phantom{p}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        F & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{F}\\phantom{p}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{.}\\phantom{p}\\phantom{)}\\uv{\\Cond}{M}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -469,7 +660,8 @@
     "open_branches": 0,
     "closed_branches": 2,
     "branch_depth": 1,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (((p\\Cond q)\\Cond p)\\Cond p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p \\Cond q \\Cond p$\\quad\\checkmark \\\\ $\\Neg p$} [.{\\ckpad $\\Neg (p \\Cond q)$\\quad\\checkmark \\\\ $p$ \\\\ $\\Neg q$ \\\\ x} ] [.{$p$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 2,
@@ -581,7 +773,67 @@
     "subproof_count": 2,
     "uses_indirect_proof": false,
     "assumption_count": 2,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p > (p > q)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p > q",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       3,
+       2
+      ]
+     },
+     {
+      "n": 5,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "(p > (p > q)) > (p > q)",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        5
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond (p\\Cond q)}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\mathmakebox[\\widthof{$(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$}][l]{p\\Cond q}\\quad \\CondE,1,2}\n\\have{4}{\\mathmakebox[\\widthof{$(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$}][l]{q}\\quad \\CondE,3,2}\n\\close\n\\have{5}{\\mathmakebox[\\widthof{$(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$}][l]{p\\Cond q}\\quad \\CondI,2\\text{--}4}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$}][l]{(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)}\\quad \\CondI,1\\text{--}5}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [],
@@ -650,7 +902,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        T & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}$ \\\\\n        F & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -710,7 +963,8 @@
     "open_branches": 0,
     "closed_branches": 2,
     "branch_depth": 1,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((p\\Cond (p\\Cond q))\\Cond (p\\Cond q))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p \\Cond p \\Cond q$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Cond q)$\\quad\\checkmark \\\\ $p$ \\\\ $\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$p \\Cond q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 2,
@@ -803,7 +1057,7 @@
    },
    "nd": {
     "exists": true,
-    "lines": 16,
+    "lines": 15,
     "max_subproof_depth": 3,
     "rules_used": [
      "As",
@@ -811,13 +1065,156 @@
      "CondE",
      "CondI",
      "ConjE",
-     "ConjI",
-     "Reit"
+     "ConjI"
     ],
     "subproof_count": 5,
     "uses_indirect_proof": false,
     "assumption_count": 5,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p > (q > r)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p & q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "q",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 5,
+      "f": "q > r",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       1,
+       3
+      ]
+     },
+     {
+      "n": 6,
+      "f": "r",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       5,
+       4
+      ]
+     },
+     {
+      "n": 7,
+      "f": "(p & q) > r",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        6
+       ]
+      ]
+     },
+     {
+      "n": 8,
+      "f": "(p & q) > r",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 9,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 10,
+      "f": "q",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 11,
+      "f": "p & q",
+      "rule": "ConjI",
+      "depth": 3,
+      "cites": [
+       9,
+       10
+      ]
+     },
+     {
+      "n": 12,
+      "f": "r",
+      "rule": "CondE",
+      "depth": 3,
+      "cites": [
+       8,
+       11
+      ]
+     },
+     {
+      "n": 13,
+      "f": "q > r",
+      "rule": "CondI",
+      "depth": 2,
+      "subs": [
+       [
+        10,
+        12
+       ]
+      ]
+     },
+     {
+      "n": 14,
+      "f": "p > (q > r)",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        9,
+        13
+       ]
+      ]
+     },
+     {
+      "n": 15,
+      "f": "(p > (q > r)) = ((p & q) > r)",
+      "rule": "BicondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        7
+       ],
+       [
+        8,
+        14
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond (q\\Cond r)}\n\\open\n\\hypo{2}{p\\Conj q}\n\\have{3}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{p}\\quad \\ConjE,2}\n\\have{4}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{q}\\quad \\ConjE,2}\n\\have{5}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{q\\Cond r}\\quad \\CondE,1,3}\n\\have{6}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{r}\\quad \\CondE,5,4}\n\\close\n\\have{7}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{(p\\Conj q)\\Cond r}\\quad \\CondI,2\\text{--}6}\n\\hypo{8}{(p\\Conj q)\\Cond r}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{q}\n\\have{11}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{p\\Conj q}\\quad \\ConjI,9,10}\n\\have{12}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{r}\\quad \\CondE,8,11}\n\\close\n\\have{13}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{q\\Cond r}\\quad \\CondI,10\\text{--}12}\n\\close\n\\have{14}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{p\\Cond (q\\Cond r)}\\quad \\CondI,9\\text{--}13}\n\\close\n\\have{15}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)}\\quad \\BicondI,1\\text{--}7,8\\text{--}14}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [],
@@ -935,7 +1332,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $p$ & $q$ & $r$ & $(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}$ \\\\\n        T & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{(}\\phantom{q}\\uv{\\Cond}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{F}\\phantom{r}\\phantom{)}$ \\\\\n        T & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}$ \\\\\n        T & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}$ \\\\\n        F & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}$ \\\\\n        F & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}$ \\\\\n        F & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{(}\\phantom{q}\\uv{\\Cond}{.}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{.}\\phantom{r}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -1124,7 +1522,8 @@
     "open_branches": 0,
     "closed_branches": 6,
     "branch_depth": 3,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r))$\\quad\\checkmark} [.{\\ckpad $p \\Cond q \\Cond r$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj q \\Cond r)$\\quad\\checkmark \\\\ \\ckpad $p \\Conj q$\\quad\\checkmark \\\\ $\\Neg r$ \\\\ $p$ \\\\ $q$} [.{$\\Neg p$ \\\\ x} ] [.{\\ckpad $q \\Cond r$\\quad\\checkmark} [.{$\\Neg q$ \\\\ x} ] [.{$r$ \\\\ x} ] ] ] [.{\\ckpad $\\Neg (p \\Cond q \\Cond r)$\\quad\\checkmark \\\\ \\ckpad $p \\Conj q \\Cond r$\\quad\\checkmark \\\\ $p$ \\\\ \\ckpad $\\Neg (q \\Cond r)$\\quad\\checkmark \\\\ $q$ \\\\ $\\Neg r$} [.{\\ckpad $\\Neg (p \\Conj q)$\\quad\\checkmark} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg q$ \\\\ x} ] ] [.{$r$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 3,
@@ -1249,7 +1648,93 @@
     "subproof_count": 1,
     "uses_indirect_proof": true,
     "assumption_count": 1,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "c",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "n",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "(c & n) > ~s",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "i > s",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "i",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 6,
+      "f": "s",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       4,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "c & n",
+      "rule": "ConjI",
+      "depth": 1,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~s",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       3,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       6,
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~i",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        5,
+        9
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{c}\n\\hypo{2}{n}\n\\hypo{3}{(c\\Conj n)\\Cond \\Neg s}\n\\hypo{4}{i\\Cond s}\n\\open\n\\hypo{5}{i}\n\\have{6}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{s}\\quad \\CondE,4,5}\n\\have{7}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{c\\Conj n}\\quad \\ConjI,1,2}\n\\have{8}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{\\Neg s}\\quad \\CondE,3,7}\n\\have{9}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{\\Falsum}\\quad \\FalsumI,6,8}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{\\Neg i}\\quad \\NegI,5\\text{--}9}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [
@@ -1561,7 +2046,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad c \\qquad n \\qquad s \\qquad i \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad c \\qquad n \\qquad (c\\Conj n)\\Cond \\Neg s \\qquad i\\Cond s \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg i \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{c}{T} \\qquad \\uv{n}{T} \\qquad \\uv{s}{T} \\qquad \\uv{i}{T} \\quad$ & $\\quad \\uv{c}{T} \\qquad \\uv{n}{T} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{F} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{n}{T} \\qquad \\uv{s}{T} \\qquad \\uv{i}{F} \\quad$ & $\\quad \\uv{c}{T} \\qquad \\uv{n}{T} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{F} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{n}{T} \\qquad \\uv{s}{F} \\qquad \\uv{i}{T} \\quad$ & $\\quad \\uv{c}{T} \\qquad \\uv{n}{T} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{F} \\quad$ & $\\quad \\uv{\\Neg i}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{n}{T} \\qquad \\uv{s}{F} \\qquad \\uv{i}{F} \\quad$ & $\\quad \\uv{c}{T} \\qquad \\uv{n}{T} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{n}{F} \\qquad \\uv{s}{T} \\qquad \\uv{i}{T} \\quad$ & $\\quad \\uv{c}{T} \\qquad \\uv{n}{F} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{n}{F} \\qquad \\uv{s}{T} \\qquad \\uv{i}{F} \\quad$ & $\\quad \\uv{c}{T} \\qquad \\uv{n}{F} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{n}{F} \\qquad \\uv{s}{F} \\qquad \\uv{i}{T} \\quad$ & $\\quad \\uv{c}{T} \\qquad \\uv{n}{F} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{F} \\quad$ & $\\quad \\uv{\\Neg i}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{n}{F} \\qquad \\uv{s}{F} \\qquad \\uv{i}{F} \\quad$ & $\\quad \\uv{c}{T} \\qquad \\uv{n}{F} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{n}{T} \\qquad \\uv{s}{T} \\qquad \\uv{i}{T} \\quad$ & $\\quad \\uv{c}{F} \\qquad \\uv{n}{T} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{n}{T} \\qquad \\uv{s}{T} \\qquad \\uv{i}{F} \\quad$ & $\\quad \\uv{c}{F} \\qquad \\uv{n}{T} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{n}{T} \\qquad \\uv{s}{F} \\qquad \\uv{i}{T} \\quad$ & $\\quad \\uv{c}{F} \\qquad \\uv{n}{T} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{F} \\quad$ & $\\quad \\uv{\\Neg i}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{n}{T} \\qquad \\uv{s}{F} \\qquad \\uv{i}{F} \\quad$ & $\\quad \\uv{c}{F} \\qquad \\uv{n}{T} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{n}{F} \\qquad \\uv{s}{T} \\qquad \\uv{i}{T} \\quad$ & $\\quad \\uv{c}{F} \\qquad \\uv{n}{F} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{n}{F} \\qquad \\uv{s}{T} \\qquad \\uv{i}{F} \\quad$ & $\\quad \\uv{c}{F} \\qquad \\uv{n}{F} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{n}{F} \\qquad \\uv{s}{F} \\qquad \\uv{i}{T} \\quad$ & $\\quad \\uv{c}{F} \\qquad \\uv{n}{F} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{F} \\quad$ & $\\quad \\uv{\\Neg i}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{n}{F} \\qquad \\uv{s}{F} \\qquad \\uv{i}{F} \\quad$ & $\\quad \\uv{c}{F} \\qquad \\uv{n}{F} \\qquad \\uv{(c\\Conj n)\\Cond \\Neg s}{T} \\qquad \\uv{i\\Cond s}{T} \\quad$ & $\\quad \\uv{\\Neg i}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -1685,7 +2171,8 @@
     "open_branches": 0,
     "closed_branches": 5,
     "branch_depth": 3,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad c$ \\\\ $\\qquad n$ \\\\ \\ckpad $\\qquad (c\\Conj n)\\Cond \\Neg s$\\quad\\checkmark \\\\ \\ckpad $\\qquad i\\Cond s$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg i$\\quad\\checkmark \\\\ $\\vert$ \\\\ $i$} [.{\\ckpad $\\Neg (c \\Conj n)$\\quad\\checkmark} [.{$\\Neg i$ \\\\ x} ] [.{$s$} [.{$\\Neg c$ \\\\ x} ] [.{$\\Neg n$ \\\\ x} ] ] ] [.{$\\Neg s$} [.{$\\Neg i$ \\\\ x} ] [.{$s$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 4,
@@ -1822,7 +2309,97 @@
     "subproof_count": 1,
     "uses_indirect_proof": false,
     "assumption_count": 1,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "c > (c > p)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "(c > p) > c",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "p > q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "c",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 5,
+      "f": "c > p",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       5,
+       4
+      ]
+     },
+     {
+      "n": 7,
+      "f": "c > p",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        4,
+        6
+       ]
+      ]
+     },
+     {
+      "n": 8,
+      "f": "c",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       2,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "p",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       7,
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       3,
+       9
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{c\\Cond (c\\Cond p)}\n\\hypo{2}{(c\\Cond p)\\Cond c}\n\\hypo{3}{p\\Cond q}\n\\open\n\\hypo{4}{c}\n\\have{5}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{c\\Cond p}\\quad \\CondE,1,4}\n\\have{6}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{p}\\quad \\CondE,5,4}\n\\close\n\\have{7}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{c\\Cond p}\\quad \\CondI,4\\text{--}6}\n\\have{8}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{c}\\quad \\CondE,2,7}\n\\have{9}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{p}\\quad \\CondE,7,8}\n\\have{10}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{q}\\quad \\CondE,3,9}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [
@@ -1979,7 +2556,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad c \\qquad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad c\\Cond (c\\Cond p) \\qquad (c\\Cond p)\\Cond c \\qquad p\\Cond q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{c}{T} \\qquad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond p)\\Cond c}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond p)\\Cond c}{T} \\qquad \\uv{p\\Cond q}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{F} \\qquad \\uv{(c\\Cond p)\\Cond c}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{F} \\qquad \\uv{(c\\Cond p)\\Cond c}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond p)\\Cond c}{F} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond p)\\Cond c}{F} \\qquad \\uv{p\\Cond q}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond p)\\Cond c}{F} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond p)\\Cond c}{F} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -2131,7 +2709,8 @@
     "open_branches": 0,
     "closed_branches": 6,
     "branch_depth": 4,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad c\\Cond (c\\Cond p)$\\quad\\checkmark \\\\ \\ckpad $\\qquad (c\\Cond p)\\Cond c$\\quad\\checkmark \\\\ \\ckpad $\\qquad p\\Cond q$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg q$} [.{$\\Neg c$} [.{\\ckpad $\\Neg (c \\Cond p)$\\quad\\checkmark \\\\ $c$ \\\\ $\\Neg p$ \\\\ x} ] [.{$c$ \\\\ x} ] ] [.{\\ckpad $c \\Cond p$\\quad\\checkmark} [.{\\ckpad $\\Neg (c \\Cond p)$\\quad\\checkmark \\\\ x} ] [.{$c$} [.{$\\Neg p$} [.{$\\Neg c$ \\\\ x} ] [.{$p$ \\\\ x} ] ] [.{$q$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 3,
@@ -2263,7 +2842,87 @@
     "subproof_count": 2,
     "uses_indirect_proof": true,
     "assumption_count": 2,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p = ~p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "~p",
+      "rule": "BicondE",
+      "depth": 2,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       2,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 1,
+      "cites": [
+       1,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       6,
+       5
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~(p = ~p)",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        7
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond \\Neg p}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg p}\\quad \\BicondE,1,2}\n\\have{4}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,2,3}\n\\close\n\\have{5}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg p}\\quad \\NegI,2\\text{--}4}\n\\have{6}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{p}\\quad \\BicondE,1,5}\n\\have{7}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,6,5}\n\\close\n\\have{8}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg (p\\Bicond \\Neg p)}\\quad \\NegI,1\\text{--}7}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [],
@@ -2309,7 +2968,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $\\Neg (p\\Bicond \\Neg p)$ \\\\\n        \\hline\n        T & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{p}\\uv{\\Bicond}{F}\\uv{\\Neg}{F}\\phantom{p}\\phantom{)}$ \\\\\n        F & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{p}\\uv{\\Bicond}{F}\\uv{\\Neg}{T}\\phantom{p}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $\\uv{\\Neg}{M}\\phantom{(}\\phantom{p}\\uv{\\Bicond}{.}\\uv{\\Neg}{.}\\phantom{p}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -2364,7 +3024,8 @@
     "open_branches": 0,
     "closed_branches": 2,
     "branch_depth": 1,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg \\Neg (p\\Bicond \\Neg p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p \\Bicond \\Neg p$\\quad\\checkmark} [.{$p$ \\\\ $\\Neg p$ \\\\ x} ] [.{$\\Neg p$ \\\\ $\\Neg \\Neg p$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 1,
@@ -2470,7 +3131,93 @@
     "subproof_count": 1,
     "uses_indirect_proof": true,
     "assumption_count": 1,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "r > ~q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "r",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "(s & p) > q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "s",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 6,
+      "f": "s & p",
+      "rule": "ConjI",
+      "depth": 1,
+      "cites": [
+       5,
+       3
+      ]
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       4,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 9,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       7,
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~s",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        5,
+        9
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{r\\Cond \\Neg q}\n\\hypo{2}{r}\n\\hypo{3}{p}\n\\hypo{4}{(s\\Conj p)\\Cond q}\n\\open\n\\hypo{5}{s}\n\\have{6}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{s\\Conj p}\\quad \\ConjI,5,3}\n\\have{7}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{q}\\quad \\CondE,4,6}\n\\have{8}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{\\Neg q}\\quad \\CondE,1,2}\n\\have{9}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{\\Falsum}\\quad \\FalsumI,7,8}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{\\Neg s}\\quad \\NegI,5\\text{--}9}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [
@@ -2782,7 +3529,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad r \\qquad q \\qquad p \\qquad s \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad r\\Cond \\Neg q \\qquad r \\qquad p \\qquad (s\\Conj p)\\Cond q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg s \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{r}{T} \\qquad \\uv{q}{T} \\qquad \\uv{p}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{F} \\quad$ \\\\\n        $\\quad \\uv{r}{T} \\qquad \\uv{q}{T} \\qquad \\uv{p}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{T} \\quad$ \\\\\n        $\\quad \\uv{r}{T} \\qquad \\uv{q}{T} \\qquad \\uv{p}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{F} \\quad$ \\\\\n        $\\quad \\uv{r}{T} \\qquad \\uv{q}{T} \\qquad \\uv{p}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{T} \\quad$ \\\\\n        $\\quad \\uv{r}{T} \\qquad \\uv{q}{F} \\qquad \\uv{p}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{F} \\quad$ & $\\quad \\uv{\\Neg s}{F} \\quad$ \\\\\n        $\\quad \\uv{r}{T} \\qquad \\uv{q}{F} \\qquad \\uv{p}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{T} \\quad$ \\\\\n        $\\quad \\uv{r}{T} \\qquad \\uv{q}{F} \\qquad \\uv{p}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{F} \\quad$ \\\\\n        $\\quad \\uv{r}{T} \\qquad \\uv{q}{F} \\qquad \\uv{p}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{T} \\quad$ \\\\\n        $\\quad \\uv{r}{F} \\qquad \\uv{q}{T} \\qquad \\uv{p}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{F} \\quad$ \\\\\n        $\\quad \\uv{r}{F} \\qquad \\uv{q}{T} \\qquad \\uv{p}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{T} \\quad$ \\\\\n        $\\quad \\uv{r}{F} \\qquad \\uv{q}{T} \\qquad \\uv{p}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{F} \\quad$ \\\\\n        $\\quad \\uv{r}{F} \\qquad \\uv{q}{T} \\qquad \\uv{p}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{T} \\quad$ \\\\\n        $\\quad \\uv{r}{F} \\qquad \\uv{q}{F} \\qquad \\uv{p}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{F} \\quad$ & $\\quad \\uv{\\Neg s}{F} \\quad$ \\\\\n        $\\quad \\uv{r}{F} \\qquad \\uv{q}{F} \\qquad \\uv{p}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{T} \\quad$ \\\\\n        $\\quad \\uv{r}{F} \\qquad \\uv{q}{F} \\qquad \\uv{p}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{F} \\quad$ \\\\\n        $\\quad \\uv{r}{F} \\qquad \\uv{q}{F} \\qquad \\uv{p}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{r\\Cond \\Neg q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\quad$ & $\\quad \\uv{\\Neg s}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -2881,7 +3629,8 @@
     "open_branches": 0,
     "closed_branches": 4,
     "branch_depth": 3,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad r\\Cond \\Neg q$\\quad\\checkmark \\\\ $\\qquad r$ \\\\ $\\qquad p$ \\\\ \\ckpad $\\qquad (s\\Conj p)\\Cond q$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg s$\\quad\\checkmark \\\\ $\\vert$ \\\\ $s$} [.{$\\Neg r$ \\\\ x} ] [.{$\\Neg q$} [.{\\ckpad $\\Neg (s \\Conj p)$\\quad\\checkmark} [.{$\\Neg s$ \\\\ x} ] [.{$\\Neg p$ \\\\ x} ] ] [.{$q$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 4,
@@ -3017,7 +3766,75 @@
     "subproof_count": 0,
     "uses_indirect_proof": false,
     "assumption_count": 0,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "d",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "d > k",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "k > p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "d > ~p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "k",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       2,
+       1
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       3,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "~p",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       4,
+       1
+      ]
+     },
+     {
+      "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 0,
+      "cites": [
+       6,
+       7
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{d}\n\\hypo{2}{d\\Cond k}\n\\hypo{3}{k\\Cond p}\n\\hypo{4}{d\\Cond \\Neg p}\n\\have{5}{\\mathmakebox[\\widthof{$d\\Cond \\Neg p$}][l]{k}\\quad \\CondE,2,1}\n\\have{6}{\\mathmakebox[\\widthof{$d\\Cond \\Neg p$}][l]{p}\\quad \\CondE,3,5}\n\\have{7}{\\mathmakebox[\\widthof{$d\\Cond \\Neg p$}][l]{\\Neg p}\\quad \\CondE,4,1}\n\\have{8}{\\mathmakebox[\\widthof{$d\\Cond \\Neg p$}][l]{\\Falsum}\\quad \\FalsumI,6,7}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [
@@ -3184,7 +4001,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c}\n        $\\overbrace{\\quad d \\qquad k \\qquad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad d \\qquad d\\Cond k \\qquad k\\Cond p \\qquad d\\Cond \\Neg p \\quad}^\\text{Premises}$ \\\\\n        \\hline\n        $\\quad \\uv{d}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{d}{T} \\qquad \\uv{d\\Cond k}{T} \\qquad \\uv{k\\Cond p}{T} \\qquad \\uv{d\\Cond \\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{d}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{d}{T} \\qquad \\uv{d\\Cond k}{T} \\qquad \\uv{k\\Cond p}{F} \\qquad \\uv{d\\Cond \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{d}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{d}{T} \\qquad \\uv{d\\Cond k}{F} \\qquad \\uv{k\\Cond p}{T} \\qquad \\uv{d\\Cond \\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{d}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{d}{T} \\qquad \\uv{d\\Cond k}{F} \\qquad \\uv{k\\Cond p}{T} \\qquad \\uv{d\\Cond \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{d}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{d}{F} \\qquad \\uv{d\\Cond k}{T} \\qquad \\uv{k\\Cond p}{T} \\qquad \\uv{d\\Cond \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{d}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{d}{F} \\qquad \\uv{d\\Cond k}{T} \\qquad \\uv{k\\Cond p}{F} \\qquad \\uv{d\\Cond \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{d}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{d}{F} \\qquad \\uv{d\\Cond k}{T} \\qquad \\uv{k\\Cond p}{T} \\qquad \\uv{d\\Cond \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{d}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{d}{F} \\qquad \\uv{d\\Cond k}{T} \\qquad \\uv{k\\Cond p}{T} \\qquad \\uv{d\\Cond \\Neg p}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -3277,7 +4095,8 @@
     "open_branches": 0,
     "closed_branches": 4,
     "branch_depth": 3,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad d$ \\\\ \\ckpad $\\qquad d\\Cond k$\\quad\\checkmark \\\\ \\ckpad $\\qquad k\\Cond p$\\quad\\checkmark \\\\ \\ckpad $\\qquad d\\Cond \\Neg p$\\quad\\checkmark} [.{$\\Neg d$ \\\\ x} ] [.{$k$} [.{$\\Neg k$ \\\\ x} ] [.{$p$} [.{$\\Neg d$ \\\\ x} ] [.{$\\Neg p$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 3,
@@ -3411,7 +4230,107 @@
     "subproof_count": 0,
     "uses_indirect_proof": false,
     "assumption_count": 0,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "v > ls",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "v > gs",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "ls > o",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "gs > on",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "~(o & on)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 6,
+      "f": "v",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 7,
+      "f": "ls",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       1,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "gs",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       2,
+       6
+      ]
+     },
+     {
+      "n": 9,
+      "f": "o",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       3,
+       7
+      ]
+     },
+     {
+      "n": 10,
+      "f": "on",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       4,
+       8
+      ]
+     },
+     {
+      "n": 11,
+      "f": "o & on",
+      "rule": "ConjI",
+      "depth": 0,
+      "cites": [
+       9,
+       10
+      ]
+     },
+     {
+      "n": 12,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 0,
+      "cites": [
+       11,
+       5
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{v\\Cond ls}\n\\hypo{2}{v\\Cond gs}\n\\hypo{3}{ls\\Cond o}\n\\hypo{4}{gs\\Cond on}\n\\hypo{5}{\\Neg (o\\Conj on)}\n\\hypo{6}{v}\n\\have{7}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj on)$}][l]{ls}\\quad \\CondE,1,6}\n\\have{8}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj on)$}][l]{gs}\\quad \\CondE,2,6}\n\\have{9}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj on)$}][l]{o}\\quad \\CondE,3,7}\n\\have{10}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj on)$}][l]{on}\\quad \\CondE,4,8}\n\\have{11}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj on)$}][l]{o\\Conj on}\\quad \\ConjI,9,10}\n\\have{12}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj on)$}][l]{\\Falsum}\\quad \\FalsumI,11,5}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [
@@ -4096,7 +5015,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c}\n        $\\overbrace{\\quad v \\qquad ls \\qquad gs \\qquad o \\qquad on \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad v\\Cond ls \\qquad v\\Cond gs \\qquad ls\\Cond o \\qquad gs\\Cond on \\qquad \\Neg (o\\Conj on) \\qquad v \\quad}^\\text{Premises}$ \\\\\n        \\hline\n        $\\quad \\uv{v}{T} \\qquad \\uv{ls}{T} \\qquad \\uv{gs}{T} \\qquad \\uv{o}{T} \\qquad \\uv{on}{T} \\quad$ & $\\quad \\uv{v\\Cond ls}{T} \\qquad \\uv{v\\Cond gs}{T} \\qquad \\uv{ls\\Cond o}{T} \\qquad \\uv{gs\\Cond on}{T} \\qquad \\uv{\\Neg (o\\Conj on)}{F} \\qquad \\uv{v}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{v}{F} \\qquad \\uv{ls}{F} \\qquad \\uv{gs}{F} \\qquad \\uv{o}{F} \\qquad \\uv{on}{F} \\quad$ & $\\quad \\uv{v\\Cond ls}{T} \\qquad \\uv{v\\Cond gs}{T} \\qquad \\uv{ls\\Cond o}{T} \\qquad \\uv{gs\\Cond on}{T} \\qquad \\uv{\\Neg (o\\Conj on)}{T} \\qquad \\uv{v}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -4241,7 +5161,8 @@
     "open_branches": 0,
     "closed_branches": 6,
     "branch_depth": 5,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad v\\Cond ls$\\quad\\checkmark \\\\ \\ckpad $\\qquad v\\Cond gs$\\quad\\checkmark \\\\ \\ckpad $\\qquad ls\\Cond o$\\quad\\checkmark \\\\ \\ckpad $\\qquad gs\\Cond on$\\quad\\checkmark \\\\ \\ckpad $\\qquad \\Neg (o\\Conj on)$\\quad\\checkmark \\\\ $\\qquad v$} [.{$\\Neg v$ \\\\ x} ] [.{$ls$} [.{$\\Neg v$ \\\\ x} ] [.{$gs$} [.{$\\Neg ls$ \\\\ x} ] [.{$o$} [.{$\\Neg gs$ \\\\ x} ] [.{$on$} [.{$\\Neg o$ \\\\ x} ] [.{$\\Neg on$ \\\\ x} ] ] ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 5,
@@ -4384,7 +5305,7 @@
    },
    "nd": {
     "exists": true,
-    "lines": 30,
+    "lines": 26,
     "max_subproof_depth": 3,
     "rules_used": [
      "As",
@@ -4392,13 +5313,266 @@
      "ConjE",
      "ConjI",
      "DisjE",
-     "DisjI",
-     "Reit"
+     "DisjI"
     ],
     "subproof_count": 7,
     "uses_indirect_proof": false,
     "assumption_count": 7,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "(p | q) & (r | s)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p | q",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 3,
+      "f": "r | s",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 4,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 5,
+      "f": "r",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 6,
+      "f": "p & r",
+      "rule": "ConjI",
+      "depth": 3,
+      "cites": [
+       4,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "(p & r) | (p & s)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "(p & r) | (p & s) | (q & r)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "(p & r) | (p & s) | (q & r) | (q & s)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "s",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 11,
+      "f": "p & s",
+      "rule": "ConjI",
+      "depth": 3,
+      "cites": [
+       4,
+       10
+      ]
+     },
+     {
+      "n": 12,
+      "f": "(p & r) | (p & s)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       11
+      ]
+     },
+     {
+      "n": 13,
+      "f": "(p & r) | (p & s) | (q & r)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       12
+      ]
+     },
+     {
+      "n": 14,
+      "f": "(p & r) | (p & s) | (q & r) | (q & s)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       13
+      ]
+     },
+     {
+      "n": 15,
+      "f": "(p & r) | (p & s) | (q & r) | (q & s)",
+      "rule": "DisjE",
+      "depth": 2,
+      "cites": [
+       3
+      ],
+      "subs": [
+       [
+        5,
+        9
+       ],
+       [
+        10,
+        14
+       ]
+      ]
+     },
+     {
+      "n": 16,
+      "f": "q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 17,
+      "f": "r",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 18,
+      "f": "q & r",
+      "rule": "ConjI",
+      "depth": 3,
+      "cites": [
+       16,
+       17
+      ]
+     },
+     {
+      "n": 19,
+      "f": "(p & r) | (p & s) | (q & r)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       18
+      ]
+     },
+     {
+      "n": 20,
+      "f": "(p & r) | (p & s) | (q & r) | (q & s)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       19
+      ]
+     },
+     {
+      "n": 21,
+      "f": "s",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 22,
+      "f": "q & s",
+      "rule": "ConjI",
+      "depth": 3,
+      "cites": [
+       16,
+       21
+      ]
+     },
+     {
+      "n": 23,
+      "f": "(p & r) | (p & s) | (q & r) | (q & s)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       22
+      ]
+     },
+     {
+      "n": 24,
+      "f": "(p & r) | (p & s) | (q & r) | (q & s)",
+      "rule": "DisjE",
+      "depth": 2,
+      "cites": [
+       3
+      ],
+      "subs": [
+       [
+        17,
+        20
+       ],
+       [
+        21,
+        23
+       ]
+      ]
+     },
+     {
+      "n": 25,
+      "f": "(p & r) | (p & s) | (q & r) | (q & s)",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       2
+      ],
+      "subs": [
+       [
+        4,
+        15
+       ],
+       [
+        16,
+        24
+       ]
+      ]
+     },
+     {
+      "n": 26,
+      "f": "((p | q) & (r | s)) > ((p & r) | (p & s) | (q & r) | (q & s))",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        25
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Disj q)\\Conj (r\\Disj s)}\n\\have{2}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{p\\Disj q}\\quad \\ConjE,1}\n\\have{3}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{r\\Disj s}\\quad \\ConjE,1}\n\\open\n\\hypo{4}{p}\n\\open\n\\hypo{5}{r}\n\\have{6}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{p\\Conj r}\\quad \\ConjI,4,5}\n\\have{7}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)}\\quad \\DisjI,6}\n\\have{8}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)}\\quad \\DisjI,7}\n\\have{9}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s)}\\quad \\DisjI,8}\n\\hypo{10}{s}\n\\have{11}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{p\\Conj s}\\quad \\ConjI,4,10}\n\\have{12}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)}\\quad \\DisjI,11}\n\\have{13}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)}\\quad \\DisjI,12}\n\\have{14}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s)}\\quad \\DisjI,13}\n\\close\n\\have{15}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s)}\\quad \\DisjE,3,5\\text{--}9,10\\text{--}14}\n\\hypo{16}{q}\n\\open\n\\hypo{17}{r}\n\\have{18}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{q\\Conj r}\\quad \\ConjI,16,17}\n\\have{19}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)}\\quad \\DisjI,18}\n\\have{20}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s)}\\quad \\DisjI,19}\n\\hypo{21}{s}\n\\have{22}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{q\\Conj s}\\quad \\ConjI,16,21}\n\\have{23}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s)}\\quad \\DisjI,22}\n\\close\n\\have{24}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s)}\\quad \\DisjE,3,17\\text{--}20,21\\text{--}23}\n\\close\n\\have{25}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s)}\\quad \\DisjE,2,4\\text{--}15,16\\text{--}24}\n\\close\n\\have{26}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$}][l]{((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))}\\quad \\CondI,1\\text{--}25}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [],
@@ -4621,7 +5795,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c c| c}\n        $p$ & $q$ & $r$ & $s$ & $((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s))$ \\\\\n        \\hline\n        T & T & T & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{s}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        T & T & T & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        T & T & F & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{s}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        T & T & F & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{r}\\uv{\\Disj}{F}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & T & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{s}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & T & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & F & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{s}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & F & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{r}\\uv{\\Disj}{F}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & T & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & T & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & F & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & F & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{r}\\uv{\\Disj}{F}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & T & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & T & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & F & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{r}\\uv{\\Disj}{T}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & F & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{r}\\uv{\\Disj}{F}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}\\uv{\\Conj}{.}\\phantom{(}\\phantom{r}\\uv{\\Disj}{.}\\phantom{s}\\phantom{)}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{r}\\phantom{)}\\uv{\\Disj}{.}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{s}\\phantom{)}\\uv{\\Disj}{.}\\phantom{(}\\phantom{q}\\uv{\\Conj}{.}\\phantom{r}\\phantom{)}\\uv{\\Disj}{.}\\phantom{(}\\phantom{q}\\uv{\\Conj}{.}\\phantom{s}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -5111,7 +6286,8 @@
     "open_branches": 0,
     "closed_branches": 18,
     "branch_depth": 6,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((p\\Conj r)\\Disj (p\\Conj s)\\Disj (q\\Conj r)\\Disj (q\\Conj s)))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $(p \\Disj q) \\Conj (r \\Disj s)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj r \\Disj p \\Conj s \\Disj q \\Conj r \\Disj q \\Conj s)$\\quad\\checkmark \\\\ \\ckpad $p \\Disj q$\\quad\\checkmark \\\\ \\ckpad $r \\Disj s$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj r \\Disj p \\Conj s \\Disj q \\Conj r)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (q \\Conj s)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj r \\Disj p \\Conj s)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (q \\Conj r)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj r)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj s)$\\quad\\checkmark} [.{$p$} [.{$r$} [.{$\\Neg q$} [.{$\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg r$ \\\\ x} ] ] [.{$\\Neg r$ \\\\ x} ] ] [.{$\\Neg s$} [.{$\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg r$ \\\\ x} ] ] [.{$\\Neg r$ \\\\ x} ] ] ] [.{$s$} [.{$\\Neg q$} [.{$\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg r$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg s$ \\\\ x} ] ] ] [.{$\\Neg r$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg r$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg s$ \\\\ x} ] ] ] ] [.{$\\Neg s$ \\\\ x} ] ] ] [.{$q$} [.{$r$} [.{$\\Neg q$ \\\\ x} ] [.{$\\Neg s$} [.{$\\Neg q$ \\\\ x} ] [.{$\\Neg r$ \\\\ x} ] ] ] [.{$s$} [.{$\\Neg q$ \\\\ x} ] [.{$\\Neg s$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 4,
@@ -5223,7 +6399,7 @@
    },
    "nd": {
     "exists": true,
-    "lines": 13,
+    "lines": 11,
     "max_subproof_depth": 2,
     "rules_used": [
      "As",
@@ -5231,13 +6407,121 @@
      "ConjE",
      "ConjI",
      "DisjE",
-     "DisjI",
-     "Reit"
+     "DisjI"
     ],
     "subproof_count": 3,
     "uses_indirect_proof": false,
     "assumption_count": 3,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p & (q | r)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 3,
+      "f": "q | r",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 4,
+      "f": "q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 5,
+      "f": "p & q",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       2,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "(p & q) | (p & r)",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "r",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 8,
+      "f": "p & r",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       2,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "(p & q) | (p & r)",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "(p & q) | (p & r)",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       3
+      ],
+      "subs": [
+       [
+        4,
+        6
+       ],
+       [
+        7,
+        9
+       ]
+      ]
+     },
+     {
+      "n": 11,
+      "f": "(p & (q | r)) > ((p & q) | (p & r))",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        10
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Conj (q\\Disj r)}\n\\have{2}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{p}\\quad \\ConjE,1}\n\\have{3}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{q\\Disj r}\\quad \\ConjE,1}\n\\open\n\\hypo{4}{q}\n\\have{5}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{p\\Conj q}\\quad \\ConjI,2,4}\n\\have{6}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{(p\\Conj q)\\Disj (p\\Conj r)}\\quad \\DisjI,5}\n\\hypo{7}{r}\n\\have{8}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{p\\Conj r}\\quad \\ConjI,2,7}\n\\have{9}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{(p\\Conj q)\\Disj (p\\Conj r)}\\quad \\DisjI,8}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{(p\\Conj q)\\Disj (p\\Conj r)}\\quad \\DisjE,3,4\\text{--}6,7\\text{--}9}\n\\close\n\\have{11}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))}\\quad \\CondI,1\\text{--}10}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [],
@@ -5355,7 +6639,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $p$ & $q$ & $r$ & $(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{q}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{q}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{(}\\phantom{q}\\uv{\\Disj}{.}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{q}\\phantom{)}\\uv{\\Disj}{.}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -5500,7 +6785,8 @@
     "open_branches": 0,
     "closed_branches": 5,
     "branch_depth": 3,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r)))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p \\Conj (q \\Disj r)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj q \\Disj p \\Conj r)$\\quad\\checkmark \\\\ $p$ \\\\ \\ckpad $q \\Disj r$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj q)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p \\Conj r)$\\quad\\checkmark} [.{$q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg q$ \\\\ x} ] ] [.{$r$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg r$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 3,
@@ -5605,7 +6891,82 @@
     "subproof_count": 0,
     "uses_indirect_proof": false,
     "assumption_count": 0,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "(bS > aS) & (bD > aD)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "bS & bD",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "aC",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "~aS & ~aD",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "bS > aS",
+      "rule": "ConjE",
+      "depth": 0,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 6,
+      "f": "bS",
+      "rule": "ConjE",
+      "depth": 0,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 7,
+      "f": "aS",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       5,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~aS",
+      "rule": "ConjE",
+      "depth": 0,
+      "cites": [
+       4
+      ]
+     },
+     {
+      "n": 9,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 0,
+      "cites": [
+       7,
+       8
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{(bS\\Cond aS)\\Conj (bD\\Cond aD)}\n\\hypo{2}{bS\\Conj bD}\n\\hypo{3}{aC}\n\\hypo{4}{\\Neg aS\\Conj \\Neg aD}\n\\have{5}{\\mathmakebox[\\widthof{$(bS\\Cond aS)\\Conj (bD\\Cond aD)$}][l]{bS\\Cond aS}\\quad \\ConjE,1}\n\\have{6}{\\mathmakebox[\\widthof{$(bS\\Cond aS)\\Conj (bD\\Cond aD)$}][l]{bS}\\quad \\ConjE,2}\n\\have{7}{\\mathmakebox[\\widthof{$(bS\\Cond aS)\\Conj (bD\\Cond aD)$}][l]{aS}\\quad \\CondE,5,6}\n\\have{8}{\\mathmakebox[\\widthof{$(bS\\Cond aS)\\Conj (bD\\Cond aD)$}][l]{\\Neg aS}\\quad \\ConjE,4}\n\\have{9}{\\mathmakebox[\\widthof{$(bS\\Cond aS)\\Conj (bD\\Cond aD)$}][l]{\\Falsum}\\quad \\FalsumI,7,8}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [
@@ -6222,7 +7583,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c}\n        $\\overbrace{\\quad bS \\qquad aS \\qquad bD \\qquad aD \\qquad aC \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad (bS\\Cond aS)\\Conj (bD\\Cond aD) \\qquad bS\\Conj bD \\qquad aC \\qquad \\Neg aS\\Conj \\Neg aD \\quad}^\\text{Premises}$ \\\\\n        \\hline\n        $\\quad \\uv{bS}{T} \\qquad \\uv{aS}{T} \\qquad \\uv{bD}{T} \\qquad \\uv{aD}{T} \\qquad \\uv{aC}{T} \\quad$ & $\\quad \\uv{(bS\\Cond aS)\\Conj (bD\\Cond aD)}{T} \\qquad \\uv{bS\\Conj bD}{T} \\qquad \\uv{aC}{T} \\qquad \\uv{\\Neg aS\\Conj \\Neg aD}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{bS}{F} \\qquad \\uv{aS}{F} \\qquad \\uv{bD}{F} \\qquad \\uv{aD}{F} \\qquad \\uv{aC}{F} \\quad$ & $\\quad \\uv{(bS\\Cond aS)\\Conj (bD\\Cond aD)}{T} \\qquad \\uv{bS\\Conj bD}{F} \\qquad \\uv{aC}{F} \\qquad \\uv{\\Neg aS\\Conj \\Neg aD}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -6296,7 +7658,8 @@
     "open_branches": 0,
     "closed_branches": 2,
     "branch_depth": 1,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad (bS\\Cond aS)\\Conj (bD\\Cond aD)$\\quad\\checkmark \\\\ \\ckpad $\\qquad bS\\Conj bD$\\quad\\checkmark \\\\ $\\qquad aC$ \\\\ \\ckpad $\\qquad \\Neg aS\\Conj \\Neg aD$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $bS \\Cond aS$\\quad\\checkmark \\\\ $bD \\Cond aD$ \\\\ $bS$ \\\\ $bD$ \\\\ $\\Neg aS$ \\\\ $\\Neg aD$} [.{$\\Neg bS$ \\\\ x} ] [.{$aS$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 5,
@@ -6368,6 +7731,7 @@
    "id": "lecture8-chain",
    "cli_ref": "—",
    "names": [
+    "Kant's argument against empirical moral theory",
     "The Lecture 8 chain",
     "Consequentia mirabilis, chained form"
    ],
@@ -6377,7 +7741,7 @@
     "r > ~p"
    ],
    "conclusion": "~p",
-   "interest": "The course's incumbent **valid** worked example in Lecture 8. A three-link chain whose end negates its own start, so the tree closes on all four branches and the ND proof is a clean reductio with no nesting beyond depth one. Structurally this is consequentia mirabilis wearing a chain: anything that entails its own negation is false.",
+   "interest": "**Kant's argument, and the course's spine.** It is the one form worked by all three methods in the handouts themselves: the truth table in Lecture 4, the tree in Lecture 8, the natural deduction in Lecture 10. A three-link chain whose end negates its own start, so the tree closes on all four branches and the proof is a clean reductio with no nesting beyond depth one. Structurally this is *consequentia mirabilis* wearing a chain: anything that implies its own negation is false. ",
    "english": [
     {
      "gloss": "If I trust the memo I act on it; if I act on it I go public; if I go public I should not have trusted the memo. So I should not trust the memo.",
@@ -6385,6 +7749,14 @@
     }
    ],
    "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Immanuel Kant",
+     "work": "PHIL 1115, Lecture 4 Handout",
+     "locus": "§1, Challenge Question",
+     "quote": "If a moral theory is studied empirically then examples of conduct will be considered. And if examples of conduct are considered, principles for selecting examples will be used. But if principles for selecting examples are used, then moral theory is not being studied empirically. Therefore, moral theory is not studied empirically."
+    },
     {
      "type": "used",
      "fidelity": "our reconstruction",
@@ -6397,17 +7769,21 @@
    ],
    "tags": {
     "topic": [
+     "ethics",
      "course apparatus"
     ],
     "defect": [],
     "figure": [
+     "Kant",
      "Clavius"
     ],
     "nonclassical": []
    },
    "course": {
     "used_in": [
-     "Lecture 8"
+     "Lecture 4",
+     "Lecture 8",
+     "Lecture 10"
     ],
     "quarantined": false,
     "note": "Incumbent. Keep: it is the valid counterpart to whatever invalid argument Lectures 7–8 share.",
@@ -6420,18 +7796,108 @@
    },
    "nd": {
     "exists": true,
-    "lines": 9,
+    "lines": 10,
     "max_subproof_depth": 1,
     "rules_used": [
      "As",
      "CondE",
      "FalsumI",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "subproof_count": 1,
     "uses_indirect_proof": true,
     "assumption_count": 1,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p > q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "q > r",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "r > ~p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 5,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "r",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "~p",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       3,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "p",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       4
+      ]
+     },
+     {
+      "n": 9,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       8,
+       7
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        4,
+        9
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{q\\Cond r}\n\\hypo{3}{r\\Cond \\Neg p}\n\\open\n\\hypo{4}{p}\n\\have{5}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{q}\\quad \\CondE,1,4}\n\\have{6}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{r}\\quad \\CondE,2,5}\n\\have{7}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{\\Neg p}\\quad \\CondE,3,6}\n\\have{8}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{p}\\quad \\Reit,4}\n\\have{9}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{\\Falsum}\\quad \\FalsumI,8,7}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{\\Neg p}\\quad \\NegI,4\\text{--}9}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "display": {
     "premises": [
@@ -6588,7 +8054,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\qquad r \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Cond q \\qquad q\\Cond r \\qquad r\\Cond \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond \\Neg p}{F} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{F} \\qquad \\uv{r\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond \\Neg p}{F} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{F} \\qquad \\uv{r\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -6686,7 +8153,8 @@
     "open_branches": 0,
     "closed_branches": 4,
     "branch_depth": 3,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Cond q$\\quad\\checkmark \\\\ \\ckpad $\\qquad q\\Cond r$\\quad\\checkmark \\\\ \\ckpad $\\qquad r\\Cond \\Neg p$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg p$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$} [.{$\\Neg p$ \\\\ x} ] [.{$q$} [.{$\\Neg q$ \\\\ x} ] [.{$r$} [.{$\\Neg r$ \\\\ x} ] [.{$\\Neg p$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 3,
@@ -7409,7 +8877,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad bl \\qquad v \\qquad k \\qquad ls \\qquad o \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad bl \\qquad v\\Cond k \\qquad (bl\\Conj k)\\Cond ls \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad v\\Cond o \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{bl}{T} \\qquad \\uv{v}{T} \\qquad \\uv{k}{T} \\qquad \\uv{ls}{T} \\qquad \\uv{o}{T} \\quad$ & $\\quad \\uv{bl}{T} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(bl\\Conj k)\\Cond ls}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{T} \\quad$ \\\\\n        $\\quad \\uv{bl}{T} \\qquad \\uv{v}{T} \\qquad \\uv{k}{T} \\qquad \\uv{ls}{T} \\qquad \\uv{o}{F} \\quad$ & $\\quad \\uv{bl}{T} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(bl\\Conj k)\\Cond ls}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{bl}{F} \\qquad \\uv{v}{F} \\qquad \\uv{k}{F} \\qquad \\uv{ls}{F} \\qquad \\uv{o}{F} \\quad$ & $\\quad \\uv{bl}{F} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(bl\\Conj k)\\Cond ls}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -7531,7 +9000,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad bl$ \\\\ \\ckpad $\\qquad v\\Cond k$\\quad\\checkmark \\\\ \\ckpad $\\qquad (bl\\Conj k)\\Cond ls$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (v\\Cond o)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $v$ \\\\ $\\Neg o$} [.{$\\Neg v$ \\\\ x} ] [.{$k$} [.{\\ckpad $\\Neg (bl \\Conj k)$\\quad\\checkmark} [.{$\\Neg bl$ \\\\ x} ] [.{$\\Neg k$ \\\\ x} ] ] [.{$ls$ \\\\ o} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 5,
@@ -8868,7 +10338,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad b \\qquad v \\qquad k \\qquad l \\qquad d \\qquad o \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad b \\qquad v\\Cond k \\qquad (b\\Conj k)\\Cond (l\\Conj d) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad v\\Cond o \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{b}{T} \\qquad \\uv{v}{T} \\qquad \\uv{k}{T} \\qquad \\uv{l}{T} \\qquad \\uv{d}{T} \\qquad \\uv{o}{T} \\quad$ & $\\quad \\uv{b}{T} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(b\\Conj k)\\Cond (l\\Conj d)}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{T} \\quad$ \\\\\n        $\\quad \\uv{b}{T} \\qquad \\uv{v}{T} \\qquad \\uv{k}{T} \\qquad \\uv{l}{T} \\qquad \\uv{d}{T} \\qquad \\uv{o}{F} \\quad$ & $\\quad \\uv{b}{T} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(b\\Conj k)\\Cond (l\\Conj d)}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{b}{F} \\qquad \\uv{v}{F} \\qquad \\uv{k}{F} \\qquad \\uv{l}{F} \\qquad \\uv{d}{F} \\qquad \\uv{o}{F} \\quad$ & $\\quad \\uv{b}{F} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(b\\Conj k)\\Cond (l\\Conj d)}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -9002,7 +10473,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad b$ \\\\ \\ckpad $\\qquad v\\Cond k$\\quad\\checkmark \\\\ \\ckpad $\\qquad (b\\Conj k)\\Cond (l\\Conj d)$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (v\\Cond o)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $v$ \\\\ $\\Neg o$} [.{$\\Neg v$ \\\\ x} ] [.{$k$} [.{\\ckpad $\\Neg (b \\Conj k)$\\quad\\checkmark} [.{$\\Neg b$ \\\\ x} ] [.{$\\Neg k$ \\\\ x} ] ] [.{\\ckpad $l \\Conj d$\\quad\\checkmark \\\\ $l$ \\\\ $d$ \\\\ o} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 6,
@@ -9750,7 +11222,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad v \\qquad k \\qquad a \\qquad ls \\qquad o \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad v\\Cond k \\qquad (k\\Conj a)\\Cond ls \\qquad ls\\Cond o \\qquad v \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad o \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{v}{T} \\qquad \\uv{k}{T} \\qquad \\uv{a}{T} \\qquad \\uv{ls}{T} \\qquad \\uv{o}{T} \\quad$ & $\\quad \\uv{v\\Cond k}{T} \\qquad \\uv{(k\\Conj a)\\Cond ls}{T} \\qquad \\uv{ls\\Cond o}{T} \\qquad \\uv{v}{T} \\quad$ & $\\quad \\uv{o}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{v}{T} \\qquad \\uv{k}{T} \\qquad \\uv{a}{F} \\qquad \\uv{ls}{F} \\qquad \\uv{o}{F} \\quad$ & $\\quad \\uv{v\\Cond k}{T} \\qquad \\uv{(k\\Conj a)\\Cond ls}{T} \\qquad \\uv{ls\\Cond o}{T} \\qquad \\uv{v}{T} \\quad$ & $\\quad \\uv{o}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{v}{F} \\qquad \\uv{k}{F} \\qquad \\uv{a}{F} \\qquad \\uv{ls}{F} \\qquad \\uv{o}{F} \\quad$ & $\\quad \\uv{v\\Cond k}{T} \\qquad \\uv{(k\\Conj a)\\Cond ls}{T} \\qquad \\uv{ls\\Cond o}{T} \\qquad \\uv{v}{F} \\quad$ & $\\quad \\uv{o}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -9912,7 +11385,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad v\\Cond k$\\quad\\checkmark \\\\ \\ckpad $\\qquad (k\\Conj a)\\Cond ls$\\quad\\checkmark \\\\ \\ckpad $\\qquad ls\\Cond o$\\quad\\checkmark \\\\ $\\qquad v$ \\\\ $\\Neg A:\\quad \\Neg o$} [.{$\\Neg v$ \\\\ x} ] [.{$k$} [.{\\ckpad $\\Neg (k \\Conj a)$\\quad\\checkmark} [.{$\\Neg ls$} [.{$\\Neg k$ \\\\ x} ] [.{$\\Neg a$ \\\\ o} ] ] [.{$o$ \\\\ x} ] ] [.{$ls$} [.{$\\Neg ls$ \\\\ x} ] [.{$o$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 5,
@@ -10366,7 +11840,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad l \\qquad s \\qquad p \\qquad u \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad l \\qquad (s\\Conj l)\\Cond p \\qquad p\\Cond u \\qquad u\\Cond \\Neg s \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{T} \\qquad \\uv{p}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{T} \\qquad \\uv{p}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{T} \\qquad \\uv{p}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{F} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{T} \\qquad \\uv{p}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{F} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{F} \\qquad \\uv{p}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{F} \\qquad \\uv{p}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{F} \\qquad \\uv{p}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{F} \\qquad \\uv{p}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{T} \\qquad \\uv{p}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{T} \\qquad \\uv{p}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{T} \\qquad \\uv{p}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{T} \\qquad \\uv{p}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{F} \\qquad \\uv{p}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{F} \\qquad \\uv{p}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{F} \\qquad \\uv{p}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{F} \\qquad \\uv{p}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -10610,7 +12085,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad l$ \\\\ \\ckpad $\\qquad (s\\Conj l)\\Cond p$\\quad\\checkmark \\\\ \\ckpad $\\qquad p\\Cond u$\\quad\\checkmark \\\\ \\ckpad $\\qquad u\\Cond \\Neg s$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg p$} [.{\\ckpad $\\Neg (s \\Conj l)$\\quad\\checkmark} [.{$\\Neg p$} [.{$\\Neg u$} [.{$\\Neg s$ \\\\ o} ] [.{$\\Neg l$ \\\\ x} ] ] [.{$\\Neg s$} [.{$\\Neg s$ \\\\ o} ] [.{$\\Neg l$ \\\\ x} ] ] ] [.{$u$} [.{$\\Neg u$ \\\\ x} ] [.{$\\Neg s$} [.{$\\Neg s$ \\\\ o} ] [.{$\\Neg l$ \\\\ x} ] ] ] ] [.{$p$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 4,
@@ -11051,7 +12527,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad l \\qquad s \\qquad p \\qquad u \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad l \\qquad (s\\Conj l)\\Cond p \\qquad p\\Cond u \\qquad u\\Cond \\Neg s \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{T} \\qquad \\uv{p}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{T} \\qquad \\uv{p}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{T} \\qquad \\uv{p}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{F} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{T} \\qquad \\uv{p}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{F} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{F} \\qquad \\uv{p}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{F} \\qquad \\uv{p}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{F} \\qquad \\uv{p}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{s}{F} \\qquad \\uv{p}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{T} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{T} \\qquad \\uv{p}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{T} \\qquad \\uv{p}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{T} \\qquad \\uv{p}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{T} \\qquad \\uv{p}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{F} \\qquad \\uv{p}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{F} \\qquad \\uv{p}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{F} \\qquad \\uv{p}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{s}{F} \\qquad \\uv{p}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{l}{F} \\qquad \\uv{(s\\Conj l)\\Cond p}{T} \\qquad \\uv{p\\Cond u}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\quad$ & $\\quad \\uv{\\Neg p}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -11258,7 +12735,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad l$ \\\\ \\ckpad $\\qquad (s\\Conj l)\\Cond p$\\quad\\checkmark \\\\ \\ckpad $\\qquad p\\Cond u$\\quad\\checkmark \\\\ \\ckpad $\\qquad u\\Cond \\Neg s$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg p$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$} [.{\\ckpad $\\Neg (s \\Conj l)$\\quad\\checkmark} [.{$\\Neg p$ \\\\ x} ] [.{$u$} [.{$\\Neg u$ \\\\ x} ] [.{$\\Neg s$} [.{$\\Neg s$ \\\\ o} ] [.{$\\Neg l$ \\\\ x} ] ] ] ] [.{$p$} [.{$\\Neg p$ \\\\ x} ] [.{$u$} [.{$\\Neg u$ \\\\ x} ] [.{$\\Neg s$ \\\\ o} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 4,
@@ -12087,7 +13565,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad bd \\qquad nd \\qquad sd \\qquad cd \\qquad od \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad bd\\Bicond nd \\qquad sd \\qquad cd \\qquad cd\\Cond sd \\qquad nd\\Disj od \\qquad od\\Cond \\Neg bd \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad bd \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{bd}{T} \\qquad \\uv{nd}{T} \\qquad \\uv{sd}{T} \\qquad \\uv{cd}{T} \\qquad \\uv{od}{T} \\quad$ & $\\quad \\uv{bd\\Bicond nd}{T} \\qquad \\uv{sd}{T} \\qquad \\uv{cd}{T} \\qquad \\uv{cd\\Cond sd}{T} \\qquad \\uv{nd\\Disj od}{T} \\qquad \\uv{od\\Cond \\Neg bd}{F} \\quad$ & $\\quad \\uv{bd}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{bd}{F} \\qquad \\uv{nd}{F} \\qquad \\uv{sd}{T} \\qquad \\uv{cd}{T} \\qquad \\uv{od}{T} \\quad$ & $\\quad \\uv{bd\\Bicond nd}{T} \\qquad \\uv{sd}{T} \\qquad \\uv{cd}{T} \\qquad \\uv{cd\\Cond sd}{T} \\qquad \\uv{nd\\Disj od}{T} \\qquad \\uv{od\\Cond \\Neg bd}{T} \\quad$ & $\\quad \\uv{bd}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{bd}{F} \\qquad \\uv{nd}{F} \\qquad \\uv{sd}{F} \\qquad \\uv{cd}{F} \\qquad \\uv{od}{F} \\quad$ & $\\quad \\uv{bd\\Bicond nd}{T} \\qquad \\uv{sd}{F} \\qquad \\uv{cd}{F} \\qquad \\uv{cd\\Cond sd}{T} \\qquad \\uv{nd\\Disj od}{F} \\qquad \\uv{od\\Cond \\Neg bd}{T} \\quad$ & $\\quad \\uv{bd}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -12236,7 +13715,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad bd\\Bicond nd$\\quad\\checkmark \\\\ $\\qquad sd$ \\\\ $\\qquad cd$ \\\\ \\ckpad $\\qquad cd\\Cond sd$\\quad\\checkmark \\\\ \\ckpad $\\qquad nd\\Disj od$\\quad\\checkmark \\\\ \\ckpad $\\qquad od\\Cond \\Neg bd$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg bd$} [.{$bd$ \\\\ $nd$ \\\\ x} ] [.{$\\Neg bd$ \\\\ $\\Neg nd$} [.{$\\Neg cd$ \\\\ x} ] [.{$sd$} [.{$nd$ \\\\ x} ] [.{$od$} [.{$\\Neg od$ \\\\ x} ] [.{$\\Neg bd$ \\\\ o} ] ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 5,
@@ -13025,7 +14505,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad am \\qquad aw \\qquad m \\qquad h \\qquad ap \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad am \\qquad aw \\qquad m\\Disj \\Neg m \\qquad (am\\Conj aw\\Conj h)\\Cond ap \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad ap \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{am}{T} \\qquad \\uv{aw}{T} \\qquad \\uv{m}{T} \\qquad \\uv{h}{T} \\qquad \\uv{ap}{T} \\quad$ & $\\quad \\uv{am}{T} \\qquad \\uv{aw}{T} \\qquad \\uv{m\\Disj \\Neg m}{T} \\qquad \\uv{(am\\Conj aw\\Conj h)\\Cond ap}{T} \\quad$ & $\\quad \\uv{ap}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{am}{T} \\qquad \\uv{aw}{T} \\qquad \\uv{m}{T} \\qquad \\uv{h}{F} \\qquad \\uv{ap}{F} \\quad$ & $\\quad \\uv{am}{T} \\qquad \\uv{aw}{T} \\qquad \\uv{m\\Disj \\Neg m}{T} \\qquad \\uv{(am\\Conj aw\\Conj h)\\Cond ap}{T} \\quad$ & $\\quad \\uv{ap}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{am}{T} \\qquad \\uv{aw}{T} \\qquad \\uv{m}{F} \\qquad \\uv{h}{F} \\qquad \\uv{ap}{F} \\quad$ & $\\quad \\uv{am}{T} \\qquad \\uv{aw}{T} \\qquad \\uv{m\\Disj \\Neg m}{T} \\qquad \\uv{(am\\Conj aw\\Conj h)\\Cond ap}{T} \\quad$ & $\\quad \\uv{ap}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{am}{F} \\qquad \\uv{aw}{F} \\qquad \\uv{m}{F} \\qquad \\uv{h}{F} \\qquad \\uv{ap}{F} \\quad$ & $\\quad \\uv{am}{F} \\qquad \\uv{aw}{F} \\qquad \\uv{m\\Disj \\Neg m}{T} \\qquad \\uv{(am\\Conj aw\\Conj h)\\Cond ap}{T} \\quad$ & $\\quad \\uv{ap}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -13255,7 +14736,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad am$ \\\\ $\\qquad aw$ \\\\ \\ckpad $\\qquad m\\Disj \\Neg m$\\quad\\checkmark \\\\ \\ckpad $\\qquad (am\\Conj aw\\Conj h)\\Cond ap$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg ap$} [.{$m$} [.{\\ckpad $\\Neg (am \\Conj aw \\Conj h)$\\quad\\checkmark} [.{\\ckpad $\\Neg (am \\Conj aw)$\\quad\\checkmark} [.{$\\Neg am$ \\\\ x} ] [.{$\\Neg aw$ \\\\ x} ] ] [.{$\\Neg h$ \\\\ o} ] ] [.{$ap$ \\\\ x} ] ] [.{$\\Neg m$} [.{\\ckpad $\\Neg (am \\Conj aw \\Conj h)$\\quad\\checkmark} [.{\\ckpad $\\Neg (am \\Conj aw)$\\quad\\checkmark} [.{$\\Neg am$ \\\\ x} ] [.{$\\Neg aw$ \\\\ x} ] ] [.{$\\Neg h$ \\\\ o} ] ] [.{$ap$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 5,
@@ -13701,7 +15183,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad s \\qquad q \\qquad u \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\qquad (s\\Conj p)\\Cond q \\qquad u\\Cond \\Neg s \\qquad u \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{s}{T} \\qquad \\uv{q}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{\\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{s}{T} \\qquad \\uv{q}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{\\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{s}{T} \\qquad \\uv{q}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{F} \\qquad \\uv{u\\Cond \\Neg s}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{\\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{s}{T} \\qquad \\uv{q}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{F} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{\\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{s}{F} \\qquad \\uv{q}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{\\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{s}{F} \\qquad \\uv{q}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{\\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{s}{F} \\qquad \\uv{q}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{\\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{s}{F} \\qquad \\uv{q}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{\\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{s}{T} \\qquad \\uv{q}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{\\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{s}{T} \\qquad \\uv{q}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{\\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{s}{T} \\qquad \\uv{q}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{\\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{s}{T} \\qquad \\uv{q}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{\\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{s}{F} \\qquad \\uv{q}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{\\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{s}{F} \\qquad \\uv{q}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{\\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{s}{F} \\qquad \\uv{q}{F} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{T} \\quad$ & $\\quad \\uv{\\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{s}{F} \\qquad \\uv{q}{F} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{(s\\Conj p)\\Cond q}{T} \\qquad \\uv{u\\Cond \\Neg s}{T} \\qquad \\uv{u}{F} \\quad$ & $\\quad \\uv{\\Neg q}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -13858,7 +15341,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad p$ \\\\ \\ckpad $\\qquad (s\\Conj p)\\Cond q$\\quad\\checkmark \\\\ \\ckpad $\\qquad u\\Cond \\Neg s$\\quad\\checkmark \\\\ $\\qquad u$ \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg q$\\quad\\checkmark \\\\ $\\vert$ \\\\ $q$} [.{\\ckpad $\\Neg (s \\Conj p)$\\quad\\checkmark} [.{$\\Neg u$ \\\\ x} ] [.{$\\Neg s$} [.{$\\Neg s$ \\\\ o} ] [.{$\\Neg p$ \\\\ x} ] ] ] [.{$q$} [.{$\\Neg u$ \\\\ x} ] [.{$\\Neg s$ \\\\ o} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 4,
@@ -14137,7 +15621,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad h \\qquad w \\qquad c \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad h\\Disj w \\qquad w\\Disj c \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad w \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{h}{T} \\qquad \\uv{w}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\quad$ & $\\quad \\uv{w}{T} \\quad$ \\\\\n        $\\quad \\uv{h}{T} \\qquad \\uv{w}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\quad$ & $\\quad \\uv{w}{T} \\quad$ \\\\\n        $\\quad \\uv{h}{T} \\qquad \\uv{w}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\quad$ & $\\quad \\uv{w}{F} \\quad$ \\\\\n        $\\quad \\uv{h}{T} \\qquad \\uv{w}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{F} \\quad$ & $\\quad \\uv{w}{F} \\quad$ \\\\\n        $\\quad \\uv{h}{F} \\qquad \\uv{w}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\quad$ & $\\quad \\uv{w}{T} \\quad$ \\\\\n        $\\quad \\uv{h}{F} \\qquad \\uv{w}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\quad$ & $\\quad \\uv{w}{T} \\quad$ \\\\\n        $\\quad \\uv{h}{F} \\qquad \\uv{w}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{h\\Disj w}{F} \\qquad \\uv{w\\Disj c}{T} \\quad$ & $\\quad \\uv{w}{F} \\quad$ \\\\\n        $\\quad \\uv{h}{F} \\qquad \\uv{w}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{h\\Disj w}{F} \\qquad \\uv{w\\Disj c}{F} \\quad$ & $\\quad \\uv{w}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -14218,7 +15703,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad h\\Disj w$\\quad\\checkmark \\\\ \\ckpad $\\qquad w\\Disj c$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg w$} [.{$h$} [.{$w$ \\\\ x} ] [.{$c$ \\\\ o} ] ] [.{$w$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 3,
@@ -14945,7 +16431,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad bp \\qquad bpq \\qquad p \\qquad q \\qquad bq \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad bp \\qquad bpq \\qquad p\\Cond q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad bq \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{bp}{T} \\qquad \\uv{bpq}{T} \\qquad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{bq}{T} \\quad$ & $\\quad \\uv{bp}{T} \\qquad \\uv{bpq}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{bq}{T} \\quad$ \\\\\n        $\\quad \\uv{bp}{T} \\qquad \\uv{bpq}{T} \\qquad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{bq}{F} \\quad$ & $\\quad \\uv{bp}{T} \\qquad \\uv{bpq}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{bq}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{bp}{T} \\qquad \\uv{bpq}{T} \\qquad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{bq}{F} \\quad$ & $\\quad \\uv{bp}{T} \\qquad \\uv{bpq}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{bq}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{bp}{T} \\qquad \\uv{bpq}{T} \\qquad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{bq}{F} \\quad$ & $\\quad \\uv{bp}{T} \\qquad \\uv{bpq}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{bq}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{bp}{F} \\qquad \\uv{bpq}{F} \\qquad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{bq}{F} \\quad$ & $\\quad \\uv{bp}{F} \\qquad \\uv{bpq}{F} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{bq}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -15028,7 +16515,8 @@
        "p"
       ]
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad bp$ \\\\ $\\qquad bpq$ \\\\ \\ckpad $\\qquad p\\Cond q$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg bq$} [.{$\\Neg p$ \\\\ o} ] [.{$q$ \\\\ o} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 5,
@@ -15214,7 +16702,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $((p\\Cond q)\\Cond q)\\Cond p$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        T & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        F & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{F}\\phantom{p}$ \\\\\n        F & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{M}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -15287,7 +16776,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (((p\\Cond q)\\Cond q)\\Cond p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p \\Cond q \\Cond q$\\quad\\checkmark \\\\ $\\Neg p$} [.{\\ckpad $\\Neg (p \\Cond q)$\\quad\\checkmark \\\\ $p$ \\\\ $\\Neg q$ \\\\ x} ] [.{$q$ \\\\ o} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 2,
@@ -15424,7 +16914,8 @@
       "premises_all_true": true,
       "countermodel": true
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $(p\\Cond p)\\Cond p$ \\\\\n        \\hline\n        T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{F}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{p}\\phantom{)}\\uv{\\Cond}{M}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -15485,7 +16976,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((p\\Cond p)\\Cond p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p \\Cond p$\\quad\\checkmark \\\\ $\\Neg p$} [.{$\\Neg p$ \\\\ o} ] [.{$p$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 1,
@@ -15744,7 +17236,8 @@
       "premises_all_true": true,
       "countermodel": true
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad c \\qquad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad c\\Cond (c\\Cond p) \\qquad (c\\Cond (c\\Cond p))\\Cond (c\\Cond p) \\qquad p\\Cond q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{c}{T} \\qquad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond (c\\Cond p))\\Cond (c\\Cond p)}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond (c\\Cond p))\\Cond (c\\Cond p)}{T} \\qquad \\uv{p\\Cond q}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{F} \\qquad \\uv{(c\\Cond (c\\Cond p))\\Cond (c\\Cond p)}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{T} \\qquad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{F} \\qquad \\uv{(c\\Cond (c\\Cond p))\\Cond (c\\Cond p)}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond (c\\Cond p))\\Cond (c\\Cond p)}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond (c\\Cond p))\\Cond (c\\Cond p)}{T} \\qquad \\uv{p\\Cond q}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond (c\\Cond p))\\Cond (c\\Cond p)}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{c}{F} \\qquad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{c\\Cond (c\\Cond p)}{T} \\qquad \\uv{(c\\Cond (c\\Cond p))\\Cond (c\\Cond p)}{T} \\qquad \\uv{p\\Cond q}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -15990,7 +17483,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad c\\Cond (c\\Cond p)$\\quad\\checkmark \\\\ \\ckpad $\\qquad (c\\Cond (c\\Cond p))\\Cond (c\\Cond p)$\\quad\\checkmark \\\\ \\ckpad $\\qquad p\\Cond q$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg q$} [.{$\\Neg c$} [.{$\\Neg (c\\Cond (c\\Cond p))$ \\\\ x} ] [.{\\ckpad $c \\Cond p$\\quad\\checkmark} [.{$\\Neg p$} [.{$\\Neg c$ \\\\ o} ] [.{$p$ \\\\ x} ] ] [.{$q$ \\\\ x} ] ] ] [.{\\ckpad $c \\Cond p$\\quad\\checkmark} [.{$\\Neg (c\\Cond (c\\Cond p))$ \\\\ x} ] [.{\\ckpad $c \\Cond p$\\quad\\checkmark} [.{$\\Neg p$} [.{$\\Neg c$} [.{$\\Neg c$ \\\\ o} ] [.{$p$ \\\\ x} ] ] [.{$p$ \\\\ x} ] ] [.{$q$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 3,
@@ -16192,7 +17686,8 @@
       "premises_all_true": true,
       "countermodel": true
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad a \\qquad b \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg (a\\Conj b) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad a\\Bicond \\Neg b \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\quad$ & $\\quad \\uv{\\Neg (a\\Conj b)}{F} \\quad$ & $\\quad \\uv{a\\Bicond \\Neg b}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\quad$ & $\\quad \\uv{\\Neg (a\\Conj b)}{T} \\quad$ & $\\quad \\uv{a\\Bicond \\Neg b}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\quad$ & $\\quad \\uv{\\Neg (a\\Conj b)}{T} \\quad$ & $\\quad \\uv{a\\Bicond \\Neg b}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\quad$ & $\\quad \\uv{\\Neg (a\\Conj b)}{T} \\quad$ & $\\quad \\uv{a\\Bicond \\Neg b}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -16327,7 +17822,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad \\Neg (a\\Conj b)$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (a\\Bicond \\Neg b)$\\quad\\checkmark} [.{$\\Neg a$} [.{$a$ \\\\ $\\Neg \\Neg b$ \\\\ x} ] [.{$\\Neg a$ \\\\ $\\Neg b$ \\\\ o} ] ] [.{$\\Neg b$} [.{$a$ \\\\ $\\Neg \\Neg b$ \\\\ x} ] [.{$\\Neg a$ \\\\ $\\Neg b$ \\\\ o} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 2,
@@ -16520,7 +18016,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad f \\qquad d \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad f\\Disj d \\qquad d \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg f \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{f}{T} \\qquad \\uv{d}{T} \\quad$ & $\\quad \\uv{f\\Disj d}{T} \\qquad \\uv{d}{T} \\quad$ & $\\quad \\uv{\\Neg f}{F} \\quad$ \\\\\n        $\\quad \\uv{f}{T} \\qquad \\uv{d}{F} \\quad$ & $\\quad \\uv{f\\Disj d}{T} \\qquad \\uv{d}{F} \\quad$ & $\\quad \\uv{\\Neg f}{F} \\quad$ \\\\\n        $\\quad \\uv{f}{F} \\qquad \\uv{d}{T} \\quad$ & $\\quad \\uv{f\\Disj d}{T} \\qquad \\uv{d}{T} \\quad$ & $\\quad \\uv{\\Neg f}{T} \\quad$ \\\\\n        $\\quad \\uv{f}{F} \\qquad \\uv{d}{F} \\quad$ & $\\quad \\uv{f\\Disj d}{F} \\qquad \\uv{d}{F} \\quad$ & $\\quad \\uv{\\Neg f}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -16592,7 +18089,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad f\\Disj d$\\quad\\checkmark \\\\ $\\qquad d$ \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg f$\\quad\\checkmark \\\\ $\\vert$ \\\\ $f$} [.{$f$ \\\\ o} ] [.{$d$ \\\\ o} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 2,
@@ -16993,7 +18491,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad tp \\qquad p1 \\qquad p2 \\qquad tn \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad tp\\Bicond (p1\\Conj p2) \\qquad tn\\Bicond (\\Neg p1\\Conj \\Neg p2) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad tp\\Disj tn \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{tp}{T} \\qquad \\uv{p1}{T} \\qquad \\uv{p2}{T} \\qquad \\uv{tn}{T} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{T} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{F} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{T} \\qquad \\uv{p1}{T} \\qquad \\uv{p2}{T} \\qquad \\uv{tn}{F} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{T} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{T} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{T} \\qquad \\uv{p1}{T} \\qquad \\uv{p2}{F} \\qquad \\uv{tn}{T} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{F} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{F} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{T} \\qquad \\uv{p1}{T} \\qquad \\uv{p2}{F} \\qquad \\uv{tn}{F} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{F} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{T} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{T} \\qquad \\uv{p1}{F} \\qquad \\uv{p2}{T} \\qquad \\uv{tn}{T} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{F} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{F} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{T} \\qquad \\uv{p1}{F} \\qquad \\uv{p2}{T} \\qquad \\uv{tn}{F} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{F} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{T} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{T} \\qquad \\uv{p1}{F} \\qquad \\uv{p2}{F} \\qquad \\uv{tn}{T} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{F} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{T} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{T} \\qquad \\uv{p1}{F} \\qquad \\uv{p2}{F} \\qquad \\uv{tn}{F} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{F} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{F} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{F} \\qquad \\uv{p1}{T} \\qquad \\uv{p2}{T} \\qquad \\uv{tn}{T} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{F} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{F} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{F} \\qquad \\uv{p1}{T} \\qquad \\uv{p2}{T} \\qquad \\uv{tn}{F} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{F} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{T} \\quad$ & $\\quad \\uv{tp\\Disj tn}{F} \\quad$ \\\\\n        $\\quad \\uv{tp}{F} \\qquad \\uv{p1}{T} \\qquad \\uv{p2}{F} \\qquad \\uv{tn}{T} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{T} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{F} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{F} \\qquad \\uv{p1}{T} \\qquad \\uv{p2}{F} \\qquad \\uv{tn}{F} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{T} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{T} \\quad$ & $\\quad \\uv{tp\\Disj tn}{F} \\quad$ \\\\\n        $\\quad \\uv{tp}{F} \\qquad \\uv{p1}{F} \\qquad \\uv{p2}{T} \\qquad \\uv{tn}{T} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{T} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{F} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{F} \\qquad \\uv{p1}{F} \\qquad \\uv{p2}{T} \\qquad \\uv{tn}{F} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{T} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{T} \\quad$ & $\\quad \\uv{tp\\Disj tn}{F} \\quad$ \\\\\n        $\\quad \\uv{tp}{F} \\qquad \\uv{p1}{F} \\qquad \\uv{p2}{F} \\qquad \\uv{tn}{T} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{T} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{T} \\quad$ & $\\quad \\uv{tp\\Disj tn}{T} \\quad$ \\\\\n        $\\quad \\uv{tp}{F} \\qquad \\uv{p1}{F} \\qquad \\uv{p2}{F} \\qquad \\uv{tn}{F} \\quad$ & $\\quad \\uv{tp\\Bicond (p1\\Conj p2)}{T} \\qquad \\uv{tn\\Bicond (\\Neg p1\\Conj \\Neg p2)}{F} \\quad$ & $\\quad \\uv{tp\\Disj tn}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -17208,7 +18707,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad tp\\Bicond (p1\\Conj p2)$\\quad\\checkmark \\\\ \\ckpad $\\qquad tn\\Bicond (\\Neg p1\\Conj \\Neg p2)$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (tp\\Disj tn)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg tp$ \\\\ $\\Neg tn$} [.{$tp$ \\\\ $p1 \\Conj p2$ \\\\ x} ] [.{$\\Neg tp$ \\\\ \\ckpad $\\Neg (p1 \\Conj p2)$\\quad\\checkmark} [.{$tn$ \\\\ $\\Neg p1 \\Conj \\Neg p2$ \\\\ x} ] [.{$\\Neg tn$ \\\\ \\ckpad $\\Neg (\\Neg p1 \\Conj \\Neg p2)$\\quad\\checkmark} [.{$\\Neg p1$} [.{\\ckpad $\\Neg \\Neg p1$\\quad\\checkmark \\\\ x} ] [.{\\ckpad $\\Neg \\Neg p2$\\quad\\checkmark \\\\ $p2$ \\\\ o} ] ] [.{$\\Neg p2$} [.{\\ckpad $\\Neg \\Neg p1$\\quad\\checkmark \\\\ $p1$ \\\\ o} ] [.{\\ckpad $\\Neg \\Neg p2$\\quad\\checkmark \\\\ x} ] ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 4,
@@ -17601,7 +19101,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\qquad r \\qquad s \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s) \\qquad s\\Cond (r\\Disj q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p\\Cond s \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{T} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{T} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{F} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{T} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{F} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{T} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{T} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{T} \\qquad \\uv{s\\Cond (r\\Disj q)}{F} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)}{T} \\qquad \\uv{s\\Cond (r\\Disj q)}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -17771,7 +19272,8 @@
       },
       "unconstrained": []
      }
-    ]
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad \\Neg (p\\Disj q)\\Disj (r\\Conj \\Neg s)$\\quad\\checkmark \\\\ \\ckpad $\\qquad s\\Cond (r\\Disj q)$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (p\\Cond s)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg s$} [.{\\ckpad $\\Neg (p \\Disj q)$\\quad\\checkmark \\\\ $\\Neg p$ \\\\ $\\Neg q$ \\\\ x} ] [.{\\ckpad $r \\Conj \\Neg s$\\quad\\checkmark \\\\ $r$} [.{$\\Neg s$ \\\\ o} ] [.{\\ckpad $r \\Disj q$\\quad\\checkmark} [.{$r$ \\\\ o} ] [.{$q$ \\\\ o} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 4,
@@ -17881,19 +19383,104 @@
    },
    "nd": {
     "exists": true,
-    "lines": 11,
+    "lines": 10,
     "max_subproof_depth": 1,
     "rules_used": [
      "As",
      "CondE",
      "CondI",
-     "ConjI",
-     "Reit"
+     "ConjI"
     ],
     "subproof_count": 1,
     "uses_indirect_proof": false,
     "assumption_count": 1,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "bl",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "v > k",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "(bl & k) > ls",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "ls > o",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "v",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 6,
+      "f": "k",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "bl & k",
+      "rule": "ConjI",
+      "depth": 1,
+      "cites": [
+       1,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "ls",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       3,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "o",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       4,
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "v > o",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        5,
+        9
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{bl}\n\\hypo{2}{v\\Cond k}\n\\hypo{3}{(bl\\Conj k)\\Cond ls}\n\\hypo{4}{ls\\Cond o}\n\\open\n\\hypo{5}{v}\n\\have{6}{\\mathmakebox[\\widthof{$(bl\\Conj k)\\Cond ls$}][l]{k}\\quad \\CondE,2,5}\n\\have{7}{\\mathmakebox[\\widthof{$(bl\\Conj k)\\Cond ls$}][l]{bl\\Conj k}\\quad \\ConjI,1,6}\n\\have{8}{\\mathmakebox[\\widthof{$(bl\\Conj k)\\Cond ls$}][l]{ls}\\quad \\CondE,3,7}\n\\have{9}{\\mathmakebox[\\widthof{$(bl\\Conj k)\\Cond ls$}][l]{o}\\quad \\CondE,4,8}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$(bl\\Conj k)\\Cond ls$}][l]{v\\Cond o}\\quad \\CondI,5\\text{--}9}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "looks_like": "dutch-book-is-ought",
    "display": {
@@ -18511,7 +20098,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad bl \\qquad v \\qquad k \\qquad ls \\qquad o \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad bl \\qquad v\\Cond k \\qquad (bl\\Conj k)\\Cond ls \\qquad ls\\Cond o \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad v\\Cond o \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{bl}{T} \\qquad \\uv{v}{T} \\qquad \\uv{k}{T} \\qquad \\uv{ls}{T} \\qquad \\uv{o}{T} \\quad$ & $\\quad \\uv{bl}{T} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(bl\\Conj k)\\Cond ls}{T} \\qquad \\uv{ls\\Cond o}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{bl}{F} \\qquad \\uv{v}{F} \\qquad \\uv{k}{F} \\qquad \\uv{ls}{F} \\qquad \\uv{o}{F} \\quad$ & $\\quad \\uv{bl}{F} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(bl\\Conj k)\\Cond ls}{T} \\qquad \\uv{ls\\Cond o}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -18665,7 +20253,8 @@
     "open_branches": 0,
     "closed_branches": 6,
     "branch_depth": 4,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad bl$ \\\\ \\ckpad $\\qquad v\\Cond k$\\quad\\checkmark \\\\ \\ckpad $\\qquad (bl\\Conj k)\\Cond ls$\\quad\\checkmark \\\\ \\ckpad $\\qquad ls\\Cond o$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (v\\Cond o)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $v$ \\\\ $\\Neg o$} [.{$\\Neg v$ \\\\ x} ] [.{$k$} [.{\\ckpad $\\Neg (bl \\Conj k)$\\quad\\checkmark} [.{$\\Neg ls$} [.{$\\Neg bl$ \\\\ x} ] [.{$\\Neg k$ \\\\ x} ] ] [.{$o$ \\\\ x} ] ] [.{$ls$} [.{$\\Neg ls$ \\\\ x} ] [.{$o$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 5,
@@ -18784,20 +20373,114 @@
    },
    "nd": {
     "exists": true,
-    "lines": 12,
+    "lines": 11,
     "max_subproof_depth": 1,
     "rules_used": [
      "As",
      "CondE",
      "CondI",
      "ConjE",
-     "ConjI",
-     "Reit"
+     "ConjI"
     ],
     "subproof_count": 1,
     "uses_indirect_proof": false,
     "assumption_count": 1,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "b",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "v > k",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "(b & k) > (l & d)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "l > o",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "v",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 6,
+      "f": "k",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "b & k",
+      "rule": "ConjI",
+      "depth": 1,
+      "cites": [
+       1,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "l & d",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       3,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "l",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "o",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       4,
+       9
+      ]
+     },
+     {
+      "n": 11,
+      "f": "v > o",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        5,
+        10
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{b}\n\\hypo{2}{v\\Cond k}\n\\hypo{3}{(b\\Conj k)\\Cond (l\\Conj d)}\n\\hypo{4}{l\\Cond o}\n\\open\n\\hypo{5}{v}\n\\have{6}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{k}\\quad \\CondE,2,5}\n\\have{7}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{b\\Conj k}\\quad \\ConjI,1,6}\n\\have{8}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{l\\Conj d}\\quad \\CondE,3,7}\n\\have{9}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{l}\\quad \\ConjE,8}\n\\have{10}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{o}\\quad \\CondE,4,9}\n\\close\n\\have{11}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{v\\Cond o}\\quad \\CondI,5\\text{--}10}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "looks_like": "dutch-book-lecture-form",
    "display": {
@@ -20056,7 +21739,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad b \\qquad v \\qquad k \\qquad l \\qquad d \\qquad o \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad b \\qquad v\\Cond k \\qquad (b\\Conj k)\\Cond (l\\Conj d) \\qquad l\\Cond o \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad v\\Cond o \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{b}{T} \\qquad \\uv{v}{T} \\qquad \\uv{k}{T} \\qquad \\uv{l}{T} \\qquad \\uv{d}{T} \\qquad \\uv{o}{T} \\quad$ & $\\quad \\uv{b}{T} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(b\\Conj k)\\Cond (l\\Conj d)}{T} \\qquad \\uv{l\\Cond o}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{b}{F} \\qquad \\uv{v}{F} \\qquad \\uv{k}{F} \\qquad \\uv{l}{F} \\qquad \\uv{d}{F} \\qquad \\uv{o}{F} \\quad$ & $\\quad \\uv{b}{F} \\qquad \\uv{v\\Cond k}{T} \\qquad \\uv{(b\\Conj k)\\Cond (l\\Conj d)}{T} \\qquad \\uv{l\\Cond o}{T} \\quad$ & $\\quad \\uv{v\\Cond o}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -20220,7 +21904,8 @@
     "open_branches": 0,
     "closed_branches": 6,
     "branch_depth": 4,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad b$ \\\\ \\ckpad $\\qquad v\\Cond k$\\quad\\checkmark \\\\ \\ckpad $\\qquad (b\\Conj k)\\Cond (l\\Conj d)$\\quad\\checkmark \\\\ \\ckpad $\\qquad l\\Cond o$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (v\\Cond o)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $v$ \\\\ $\\Neg o$} [.{$\\Neg v$ \\\\ x} ] [.{$k$} [.{\\ckpad $\\Neg (b \\Conj k)$\\quad\\checkmark} [.{$\\Neg l$} [.{$\\Neg b$ \\\\ x} ] [.{$\\Neg k$ \\\\ x} ] ] [.{$o$ \\\\ x} ] ] [.{\\ckpad $l \\Conj d$\\quad\\checkmark \\\\ $l$ \\\\ $d$} [.{$\\Neg l$ \\\\ x} ] [.{$o$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 6,
@@ -20340,7 +22025,7 @@
    },
    "nd": {
     "exists": true,
-    "lines": 19,
+    "lines": 14,
     "max_subproof_depth": 3,
     "rules_used": [
      "As",
@@ -20348,13 +22033,143 @@
      "DisjE",
      "FalsumI",
      "NegE",
-     "NegI",
-     "Reit"
+     "NegI"
     ],
     "subproof_count": 5,
     "uses_indirect_proof": true,
     "assumption_count": 5,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "h | w",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "w | c",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "~(h & c)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "h",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 5,
+      "f": "w",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 6,
+      "f": "c",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 7,
+      "f": "h & c",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       4,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~w",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 9,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       7,
+       3
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~~w",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        8,
+        9
+       ]
+      ]
+     },
+     {
+      "n": 11,
+      "f": "w",
+      "rule": "NegE",
+      "depth": 2,
+      "cites": [
+       10
+      ]
+     },
+     {
+      "n": 12,
+      "f": "w",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       2
+      ],
+      "subs": [
+       [
+        5,
+        5
+       ],
+       [
+        6,
+        11
+       ]
+      ]
+     },
+     {
+      "n": 13,
+      "f": "w",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 14,
+      "f": "w",
+      "rule": "DisjE",
+      "depth": 0,
+      "cites": [
+       1
+      ],
+      "subs": [
+       [
+        4,
+        12
+       ],
+       [
+        13,
+        13
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{h\\Disj w}\n\\hypo{2}{w\\Disj c}\n\\hypo{3}{\\Neg (h\\Conj c)}\n\\open\n\\hypo{4}{h}\n\\open\n\\hypo{5}{w}\n\\hypo{6}{c}\n\\have{7}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{h\\Conj c}\\quad \\ConjI,4,6}\n\\open\n\\hypo{8}{\\Neg w}\n\\have{9}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{\\Falsum}\\quad \\FalsumI,7,3}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{\\Neg \\Neg w}\\quad \\NegI,8\\text{--}9}\n\\have{11}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\NegE,10}\n\\close\n\\have{12}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\DisjE,2,5\\text{--}5,6\\text{--}11}\n\\hypo{13}{w}\n\\close\n\\have{14}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\DisjE,1,4\\text{--}12,13\\text{--}13}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "looks_like": "distributed-knowledge",
    "display": {
@@ -20512,7 +22327,8 @@
       "premises_all_true": false,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad h \\qquad w \\qquad c \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad h\\Disj w \\qquad w\\Disj c \\qquad \\Neg (h\\Conj c) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad w \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{h}{T} \\qquad \\uv{w}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\qquad \\uv{\\Neg (h\\Conj c)}{F} \\quad$ & $\\quad \\uv{w}{T} \\quad$ \\\\\n        $\\quad \\uv{h}{T} \\qquad \\uv{w}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\qquad \\uv{\\Neg (h\\Conj c)}{T} \\quad$ & $\\quad \\uv{w}{T} \\quad$ \\\\\n        $\\quad \\uv{h}{T} \\qquad \\uv{w}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\qquad \\uv{\\Neg (h\\Conj c)}{F} \\quad$ & $\\quad \\uv{w}{F} \\quad$ \\\\\n        $\\quad \\uv{h}{T} \\qquad \\uv{w}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{F} \\qquad \\uv{\\Neg (h\\Conj c)}{T} \\quad$ & $\\quad \\uv{w}{F} \\quad$ \\\\\n        $\\quad \\uv{h}{F} \\qquad \\uv{w}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\qquad \\uv{\\Neg (h\\Conj c)}{T} \\quad$ & $\\quad \\uv{w}{T} \\quad$ \\\\\n        $\\quad \\uv{h}{F} \\qquad \\uv{w}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{h\\Disj w}{T} \\qquad \\uv{w\\Disj c}{T} \\qquad \\uv{\\Neg (h\\Conj c)}{T} \\quad$ & $\\quad \\uv{w}{T} \\quad$ \\\\\n        $\\quad \\uv{h}{F} \\qquad \\uv{w}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{h\\Disj w}{F} \\qquad \\uv{w\\Disj c}{T} \\qquad \\uv{\\Neg (h\\Conj c)}{T} \\quad$ & $\\quad \\uv{w}{F} \\quad$ \\\\\n        $\\quad \\uv{h}{F} \\qquad \\uv{w}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{h\\Disj w}{F} \\qquad \\uv{w\\Disj c}{F} \\qquad \\uv{\\Neg (h\\Conj c)}{T} \\quad$ & $\\quad \\uv{w}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -20604,7 +22420,8 @@
     "open_branches": 0,
     "closed_branches": 4,
     "branch_depth": 3,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad h\\Disj w$\\quad\\checkmark \\\\ \\ckpad $\\qquad w\\Disj c$\\quad\\checkmark \\\\ \\ckpad $\\qquad \\Neg (h\\Conj c)$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg w$} [.{$h$} [.{$w$ \\\\ x} ] [.{$c$} [.{$\\Neg h$ \\\\ x} ] [.{$\\Neg c$ \\\\ x} ] ] ] [.{$w$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 3,
@@ -20717,18 +22534,67 @@
    },
    "nd": {
     "exists": true,
-    "lines": 6,
+    "lines": 5,
     "max_subproof_depth": 2,
     "rules_used": [
      "As",
      "CondE",
-     "CondI",
-     "Reit"
+     "CondI"
     ],
     "subproof_count": 2,
     "uses_indirect_proof": false,
     "assumption_count": 2,
-    "verified": true
+    "verified": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p > q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       2,
+       1
+      ]
+     },
+     {
+      "n": 4,
+      "f": "(p > q) > q",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        3
+       ]
+      ]
+     },
+     {
+      "n": 5,
+      "f": "p > ((p > q) > q)",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\open\n\\hypo{2}{p\\Cond q}\n\\have{3}{\\mathmakebox[\\widthof{$p\\Cond ((p\\Cond q)\\Cond q)$}][l]{q}\\quad \\CondE,2,1}\n\\close\n\\have{4}{\\mathmakebox[\\widthof{$p\\Cond ((p\\Cond q)\\Cond q)$}][l]{(p\\Cond q)\\Cond q}\\quad \\CondI,2\\text{--}3}\n\\close\n\\have{5}{\\mathmakebox[\\widthof{$p\\Cond ((p\\Cond q)\\Cond q)$}][l]{p\\Cond ((p\\Cond q)\\Cond q)}\\quad \\CondI,1\\text{--}4}\n\\end{nd}\n\\end{align*}",
+    "checked_by": "latexgen/nd.py"
    },
    "looks_like": "abelian-axiom",
    "display": {
@@ -20798,7 +22664,8 @@
       "premises_all_true": true,
       "countermodel": false
      }
-    ]
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $p\\Cond ((p\\Cond q)\\Cond q)$ \\\\\n        \\hline\n        T & T & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        T & F & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & T & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & F & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{p}\\uv{\\Cond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
    },
    "tree": {
     "roots": [
@@ -20858,7 +22725,8 @@
     "open_branches": 0,
     "closed_branches": 2,
     "branch_depth": 1,
-    "branch_models": []
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (p\\Cond ((p\\Cond q)\\Cond q))$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ \\ckpad $\\Neg (p \\Cond q \\Cond q)$\\quad\\checkmark \\\\ \\ckpad $p \\Cond q$\\quad\\checkmark \\\\ $\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
    },
    "canonical": {
     "atoms": 2,
@@ -20896,5 +22764,22 @@
     "search_sharpness": null
    }
   }
- ]
+ ],
+ "latex_requires": [
+  "FOL_Yale/notation",
+  "qtree",
+  "fitch",
+  "amsmath",
+  "amssymb",
+  "stmaryrd",
+  "mathtools",
+  "calc",
+  "graphicx",
+  "pifont"
+ ],
+ "latex_macros": {
+  "uv": "\\newcommand{\\uv}[2]{\\mathmakebox[\\widthof{$#1$}][c]{\\text{#2}}}",
+  "treebox": "\\newsavebox{\\aetreebox}",
+  "tabbox": "\\newsavebox{\\aetabbox}"
+ }
 }
