@@ -23,7 +23,7 @@ still outstanding is listed in [CHECKLIST.md](CHECKLIST.md).
 | Journal badge colours | `_data/venues.yml`, keyed by the `abbr` field in the .bib |
 | Profile photos | `assets/img/prof_pic.jpg`, `assets/img/DGrimmer2.jpg` |
 | The games | Their landing pages are `_pages/soccerhockey.md`, `_pages/escherchess.md` and `_pages/games.md`. Everything else about them — the engine, the tests, the Firebase setup — is in [`assets/games/README.md`](assets/games/README.md) |
-| The argument-form encyclopedia | Its landing pages are `_pages/arguments.md` and `_pages/argumentspractice.md`. Everything else — the database, the code, the schema gotchas — is in [`assets/arguments/README.md`](assets/arguments/README.md) |
+| The argument-form encyclopedia | Its landing pages are `_pages/arguments.md`, `_pages/argumentsbrowse.md` and `_pages/argumentspractice.md`. Everything else — the database, the code, the schema gotchas — is in [`assets/arguments/README.md`](assets/arguments/README.md) |
 | Nav order / hiding a page | `nav` and `nav_order` in that page's front matter |
 
 ### Adding a publication
@@ -51,14 +51,15 @@ Two gotchas, both learned the hard way during the migration:
 
 ## The argument-form encyclopedia
 
-A browsable catalogue of propositional argument forms for PHIL 1115 at
-`/arguments/`, with a random-draw practice mode at `/arguments/practice/`.
+A browsable catalogue of propositional argument forms for PHIL 1115. An
+overview at `/arguments/`, the catalogue at `/arguments/browse/`, and a
+random-draw practice mode at `/arguments/practice/`.
 
 The whole thing is one folder: `assets/arguments/` holds the database, the
 renderers, the two page controllers and the stylesheet, plus its own
 [README](assets/arguments/README.md). The Jekyll pages are
-`_pages/arguments.md` (also the navbar dropdown parent) and
-`_pages/argumentspractice.md`; they do nothing but load those files.
+`_pages/arguments.md` (the overview, and the navbar dropdown parent),
+`_pages/argumentsbrowse.md` and `_pages/argumentspractice.md`; they do nothing but load those files.
 
 **To grow it, replace `assets/arguments/argument-db.json`** — the facets, the
 filter ranges and the search index all derive from it at load. Do not hand-edit

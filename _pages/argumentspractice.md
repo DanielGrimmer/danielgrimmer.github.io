@@ -8,7 +8,7 @@ nav: false # surfaced via the 'argument forms' dropdown in _pages/arguments.md
 ---
 
 <!--
-  Surfaced as the second child of the 'argument forms' dropdown; see
+  Surfaced as the last child of the 'argument forms' dropdown; see
   _pages/arguments.md. Shares assets/arguments/encyclopedia.{css,js} with the
   catalogue and adds assets/arguments/practice.js for the draw.
 
@@ -48,6 +48,6 @@ nav: false # surfaced via the 'argument forms' dropdown in _pages/arguments.md
 
 <noscript>
   <p><strong>This page needs JavaScript.</strong> The
-  <a href="{{ '/arguments/' | relative_url }}">catalogue</a> has the same entries
+  <a href="{{ '/arguments/browse/' | relative_url }}">catalogue</a> has the same entries
   in a browsable list.</p>
 </noscript>

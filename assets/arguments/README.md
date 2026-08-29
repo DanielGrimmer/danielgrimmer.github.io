@@ -3,10 +3,11 @@
 A browsable catalogue of propositional argument forms, built for PHIL 1115
 (First-Order Logic, Yale) but meant to be useful to anyone. Published at:
 
-- **[/arguments/](https://danielgrimmer.github.io/arguments/)** — the catalogue
+- **[/arguments/](https://danielgrimmer.github.io/arguments/)** — the overview
+- **[/arguments/browse/](https://danielgrimmer.github.io/arguments/browse/)** — the catalogue
 - **[/arguments/practice/](https://danielgrimmer.github.io/arguments/practice/)** — random-draw practice
 
-Everything the site needs is in this folder. The two Jekyll pages live in
+Everything the site needs is in this folder. The three Jekyll pages live in
 `_pages/` because Jekyll requires it, and they do nothing but load these files.
 
 ## What this is, and what makes it unusual
@@ -29,12 +30,12 @@ metrics are computed from the formulas; nothing is asserted on authority.
 | --- | --- |
 | `argument-db.json` | The database. Generated upstream — see *Do not hand-edit* below |
 | `encyclopedia.js` | Data loading, search, filters, and every renderer. All schema knowledge lives here |
-| `browse.js` | The catalogue controller: search, facets, hash routing |
+| `browse.js` | The catalogue controller: search, facets, and the `#/<id>` routes |
 | `practice.js` | The random draw and its shuffled bag |
 | `encyclopedia.css` | All styles, scoped to `.ae-scope` |
 
-The pages are `_pages/arguments.md` (also the navbar dropdown parent) and
-`_pages/argumentspractice.md`.
+The pages are `_pages/arguments.md` (the overview, and the navbar dropdown parent),
+`_pages/argumentsbrowse.md` and `_pages/argumentspractice.md`.
 
 ## Growing it
 
@@ -80,10 +81,34 @@ These are load-bearing. Each one is a correctness bug, not a styling choice.
    closed "Instructor note" disclosure at the foot of an entry, never as body
    copy.
 
-4. **Use the `display` fields; never re-render the ASCII.** `premises` and
-   `conclusion` are ASCII source (`~ & | > =`). `display.premises`,
-   `display.conclusion` and `display.sequent` are already in house glyphs
-   (`∼ & ∨ ⊃ ≡ ⊥`) with minimal parentheses.
+4. **The formulas are built from the ASCII source, *not* from `display` — and
+   this is a deliberate departure from the original brief.** The generator emits
+   `display.premises`, `display.conclusion` and `display.sequent` with *minimal*
+   parentheses, and for a left-nested conditional that is not merely terse but
+   wrong. `notation.precedence` declares the conditional right-associative, so
+   Peirce's Law, whose source is `((p > q) > p) > p`, is emitted as
+   `p ⊃ q ⊃ p ⊃ p` — which re-parses as `p ⊃ (q ⊃ (p ⊃ p))`. That is a different
+   formula, and a tautology in every logic, when the entire interest of Peirce's
+   Law is that it is not.
+
+   **Seven formulas across seven entries are affected**, all of them the
+   substructural ones where the nesting carries the point: `peirce-law`,
+   `contraction-w`, `curry-complete`, `curry-contraction-only`,
+   `abelian-axiom`, `fixed-point-type`, `assertion-t`. The bad strings propagate
+   into `truth_table.columns`, `tree.roots`, `tree.*.from` and
+   `tree.*.branched_on`, since those quote the display forms.
+
+   `attachFormulas()` therefore rebuilds each formula from the ASCII in
+   `premises` / `conclusion` — which carries the author's own parentheses and is
+   unambiguous — translated through the database's own `notation.ascii` map, and
+   builds a per-entry repair map so the table headers and the tree can be
+   corrected by exact match. `sequentText()` assembles the sequent from those
+   parts rather than reading `display.sequent`.
+
+   **The real fix belongs in `build.py`:** emit `display` with enough
+   parentheses to survive a round trip through the stated precedence. When that
+   lands, this whole layer can be deleted and `display` read directly again.
+   `_tests/argument-forms.test.mjs` fails if any entry regresses.
 
 5. **`appearances[].fidelity` matters.** `verbatim` / `paraphrase` /
    `our reconstruction` are styled differently, and the label rides with the

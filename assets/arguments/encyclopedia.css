@@ -400,6 +400,17 @@ html[data-theme="dark"] .ae-btn-primary,
   color: var(--ae-accent-ink);
 }
 
+/*
+ * Chips are nowrap because a two-word tag reads badly broken across lines. But
+ * `course.used_in` can join several lecture names into one long prose string
+ * ("Lecture 7 (retired at V2.0), Lecture 8 (retired at V2.0)"), and a nowrap
+ * chip that long pushes the whole page sideways on a phone. This one wraps.
+ */
+.ae-chip-wrap {
+  white-space: normal;
+  max-width: 100%;
+}
+
 /* A tag chip is a button: clicking it filters the catalogue by that value. */
 button.ae-chip {
   cursor: pointer;
@@ -415,6 +426,7 @@ button.ae-chip:hover {
   flex-wrap: wrap;
   gap: 0.35rem;
   align-items: baseline;
+  min-width: 0;
 }
 
 .ae-tagrow > span:first-child {

@@ -81,8 +81,10 @@ function prepare(raw) {
       byId.get(other)._lookAlikes.add(e.id);
     }
   }
+  const map = glyphMap(raw.notation);
   for (const e of entries) {
     e._lookAlikes = [...e._lookAlikes].filter((id) => id !== e.id);
+    attachFormulas(e, map);
     e._haystack = haystack(e);
   }
 
@@ -115,6 +117,91 @@ function asArray(v) {
   if (v == null) return [];
   return Array.isArray(v) ? v : [v];
 }
+
+/* ------------------------------------------------- notation and formulas */
+
+/*
+ * WHY THE FORMULAS ARE NOT TAKEN FROM `display`.
+ *
+ * The generator emits `display.premises`, `display.conclusion` and
+ * `display.sequent` with *minimal* parentheses. For a left-nested conditional
+ * that is not merely terse, it is wrong: `notation.precedence` declares the
+ * conditional right-associative, so Peirce's Law, whose source is
+ * `((p > q) > p) > p`, comes out as `p ⊃ q ⊃ p ⊃ p` — which re-parses as
+ * `p ⊃ (q ⊃ (p ⊃ p))`, a different formula, and one that is a tautology in
+ * every logic where Peirce's Law is the interesting case precisely because it
+ * is not. Seven entries are affected, all of them the substructural ones where
+ * the nesting is the whole point: peirce-law, contraction-w, curry-complete,
+ * curry-contraction-only, abelian-axiom, fixed-point-type, assertion-t.
+ *
+ * So the house-glyph formulas are built here from the ASCII source in
+ * `premises` / `conclusion`, which carries the author's own parentheses and is
+ * unambiguous, translated through the database's own `notation.ascii` map.
+ * The real fix belongs in `build.py`; when `display` becomes trustworthy this
+ * whole block can go and the `display` fields can be read directly again.
+ */
+
+const GLYPH_FALLBACK = {
+  "~": "∼",
+  "&": "&",
+  "|": "∨",
+  ">": "⊃",
+  "=": "≡",
+  "!": "⊥",
+};
+
+function glyphMap(notation) {
+  return { ...GLYPH_FALLBACK, ...(notation?.ascii || {}) };
+}
+
+function toGlyphs(src, map) {
+  if (!src) return "";
+  let out = "";
+  for (const ch of String(src)) out += map[ch] ?? ch;
+  return out;
+}
+
+/**
+ * Attach corrected formulas to an entry, plus a repair map from the
+ * generator's display strings to ours. The map is what lets the truth-table
+ * headers and the tree — which quote `display` strings rather than the ASCII —
+ * be corrected too, by exact match within this entry only.
+ */
+function attachFormulas(e, map) {
+  e._premises = asArray(e.premises).map((x) => toGlyphs(x, map));
+  e._conclusion = toGlyphs(e.conclusion, map);
+
+  const repair = new Map();
+  const pairs = asArray(e.display?.premises).map((d, i) => [d, e._premises[i]]);
+  if (e.display?.conclusion) pairs.push([e.display.conclusion, e._conclusion]);
+
+  for (const [from, to] of pairs) {
+    if (!from || !to || from === to) continue;
+    repair.set(from, to);
+    // The tree stacks the *negated* conclusion, so its root needs repairing in
+    // negated form as well.
+    repair.set(`∼${from}`, `∼${to}`);
+    repair.set(`∼(${from})`, `∼(${to})`);
+  }
+  e._repair = repair;
+}
+
+/** Correct one formula quoted from the generator's display strings. */
+function fixFormula(entry, s) {
+  if (!s) return s;
+  return entry._repair?.get(s) ?? s;
+}
+
+/** The sequent, assembled from the corrected parts rather than read whole. */
+function sequentText(entry, turnstile) {
+  const prems = asArray(entry._premises);
+  const left = prems.join(", ");
+  return left
+    ? `${left}  ${turnstile} ${entry._conclusion}`
+    : `${turnstile} ${entry._conclusion}`;
+}
+
+export { sequentText };
 
 /** The per-method earliest lecture, as a plain `{table, tree, nd}` of numbers. */
 function lectureMap(entry) {
@@ -149,6 +236,8 @@ function haystack(e) {
     e.display?.sequent,
     ...asArray(e.display?.premises),
     e.display?.conclusion,
+    ...asArray(e._premises),
+    e._conclusion,
     ...asArray(e.premises),
     e.conclusion,
     ...asArray(e.english).map((g) => g.gloss),
@@ -420,7 +509,7 @@ function renderHead(entry, spoilers) {
   const used = asArray(entry.course?.used_in);
   if (used.length) {
     bits.push(
-      `<span class="ae-chip ae-chip-accent">${escapeHtml(used.join(", "))}</span>`,
+      `<span class="ae-chip ae-chip-accent ae-chip-wrap">${escapeHtml(used.join(", "))}</span>`,
     );
   }
 
@@ -448,8 +537,8 @@ function renderHead(entry, spoilers) {
  * stacked premises and conclusion above them say everything else.
  */
 function renderSequent(entry, spoilers = false) {
-  const prems = asArray(entry.display?.premises);
-  const concl = entry.display?.conclusion || "";
+  const prems = asArray(entry._premises);
+  const concl = entry._conclusion || "";
   const turnstile = entry.display?.turnstiles?.table || "⊨";
 
   const rows = prems.map(
@@ -477,8 +566,8 @@ function renderSequent(entry, spoilers = false) {
       : `No premises — the conclusion is offered as a theorem in its own right.${scale ? ` ${scale}.` : ""}`;
   } else {
     note = prems.length
-      ? `${prems.length} premise${prems.length === 1 ? "" : "s"} · ${f(entry.display?.sequent || "")}`
-      : `No premises — the conclusion is asserted as a theorem. ${f(entry.display?.sequent || "")}`;
+      ? `${prems.length} premise${prems.length === 1 ? "" : "s"} · ${f(sequentText(entry, turnstile))}`
+      : `No premises — the conclusion is asserted as a theorem. ${f(sequentText(entry, turnstile))}`;
   }
 
   // The screen-reader turnstile is withheld under spoilers for the same reason
@@ -771,7 +860,15 @@ function buildTruthTable(entry) {
 
   const atoms = asArray(tt.atoms);
   const cols = asArray(tt.columns);
-  const premCount = asArray(entry.display?.premises).length;
+  const premCount = asArray(entry._premises).length;
+
+  // `columns` is the premises followed by the conclusion, in the generator's
+  // own display strings. Rebuild it positionally from the corrected formulas
+  // when the shape matches, and fall back to the repair map if it ever doesn't.
+  const headers =
+    cols.length === premCount + 1
+      ? [...entry._premises, entry._conclusion]
+      : cols.map((c) => fixFormula(entry, c));
 
   // `columns` is premises followed by the conclusion. Splitting on the premise
   // count, rather than assuming the last column, keeps a no-premise theorem
@@ -779,7 +876,7 @@ function buildTruthTable(entry) {
   const head =
     `<tr>` +
     atoms.map((a) => `<th>${escapeHtml(a)}</th>`).join("") +
-    cols
+    headers
       .map(
         (c, i) =>
           `<th class="${i === 0 || i === premCount ? "ae-tt-split" : ""}">${escapeHtml(c)}</th>`,
@@ -838,7 +935,7 @@ function buildTree(entry, spoilers = false) {
     asArray(t.roots)
       .map(
         (r, i) =>
-          `<div class="ae-tree-root"><span class="ae-seq-num">${i + 1}.</span>${f(r)}</div>`,
+          `<div class="ae-tree-root"><span class="ae-seq-num">${i + 1}.</span>${f(fixFormula(entry, r))}</div>`,
       )
       .join("") +
     `</div>`;
@@ -860,17 +957,17 @@ function buildTree(entry, spoilers = false) {
       `when it holds a sentence and its negation; a branch that runs out of rules while still open (<strong>○</strong>) ` +
       `is a countermodel.</p>` +
       roots +
-      `<div class="ae-tree">${treeNode(t.tree)}</div>`,
+      `<div class="ae-tree">${treeNode(t.tree, entry)}</div>`,
   };
 }
 
-function treeNode(node) {
+function treeNode(node, entry) {
   const parts = [];
 
   for (const a of asArray(node.added)) {
     parts.push(
-      `<div class="ae-tree-line">${f(a.formula)}` +
-        `<span class="ae-tree-from">${escapeHtml(a.rule || "")} from ${escapeHtml(a.from || "")}</span></div>`,
+      `<div class="ae-tree-line">${f(fixFormula(entry, a.formula))}` +
+        `<span class="ae-tree-from">${escapeHtml(a.rule || "")} from ${escapeHtml(fixFormula(entry, a.from) || "")}</span></div>`,
     );
   }
 
@@ -894,11 +991,11 @@ function treeNode(node) {
     if (node.branched_on) {
       parts.push(
         `<div class="ae-tree-branch">branches on ${escapeHtml(node.branch_rule || "")} ` +
-          `applied to <span class="ae-f">${escapeHtml(node.branched_on)}</span></div>`,
+          `applied to <span class="ae-f">${escapeHtml(fixFormula(entry, node.branched_on))}</span></div>`,
       );
     }
     parts.push(
-      `<ul>${kids.map((k) => `<li>${treeNode(k)}</li>`).join("")}</ul>`,
+      `<ul>${kids.map((k) => `<li>${treeNode(k, entry)}</li>`).join("")}</ul>`,
     );
   }
 
@@ -999,7 +1096,7 @@ function renderPremiseAnalysis(entry) {
   if (!pa.length) return "";
 
   const idle = pa.filter((p) => p.idle);
-  const display = asArray(entry.display?.premises);
+  const display = asArray(entry._premises);
 
   const items = pa
     .map((p) => {
@@ -1046,7 +1143,7 @@ function renderRelations(entry, db) {
       `<a class="ae-relation" href="#/${encodeURIComponent(id)}">` +
       `<span class="ae-rel-kind">${escapeHtml(kind)}</span>` +
       `<span class="ae-rel-name">${escapeHtml(name)}</span>` +
-      `<div class="ae-rel-seq">${f(target.display?.sequent || "")}</div>` +
+      `<div class="ae-rel-seq">${f(sequentText(target, target.display?.turnstiles?.table || "⊨"))}</div>` +
       (blurb
         ? `<p class="ae-prose" style="margin:.35rem 0 0;font-size:.85rem;color:var(--ae-muted)">${escapeHtml(blurb)}</p>`
         : "") +
@@ -1170,7 +1267,7 @@ export function renderCard(entry, href) {
       .map((t) => `<span class="ae-chip">${escapeHtml(t)}</span>`)
       .join("") +
     `</div>` +
-    `<div class="ae-card-seq">${f(entry.display?.sequent || "")}</div>` +
+    `<div class="ae-card-seq">${f(sequentText(entry, entry.display?.turnstiles?.table || "⊨"))}</div>` +
     `<div class="ae-card-meta">` +
     `<span>${entry.metrics?.atom_count} atoms · ${entry.verdict?.rows} rows</span>` +
     `<span>table ${escapeHtml(entry.difficulty?.table || "—")}` +

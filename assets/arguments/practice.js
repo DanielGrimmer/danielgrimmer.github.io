@@ -134,7 +134,7 @@ async function start() {
     els.stage.insertAdjacentHTML(
       "beforeend",
       `<p style="margin-top:1.5rem;font-size:.85rem">` +
-        `<a href="/arguments/#/${encodeURIComponent(id)}">Open the full encyclopedia entry ` +
+        `<a href="/arguments/browse/#/${encodeURIComponent(id)}">Open the full encyclopedia entry ` +
         `for this form →</a> <span style="color:var(--ae-muted)">(shows the answer, ` +
         `the commentary and the related forms)</span></p>`,
     );
