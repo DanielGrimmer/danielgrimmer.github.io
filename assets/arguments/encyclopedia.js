@@ -31,7 +31,10 @@
  * builder in that list and nothing else.
  */
 
-const DB_URL = "/argument-db.json";
+// The database sits beside this file so the whole encyclopedia is one folder.
+// Absolute, not relative: it must resolve the same from /arguments/ and from
+// /arguments/practice/, which are different directory depths.
+const DB_URL = "/assets/arguments/argument-db.json";
 
 /* ------------------------------------------------------------------ data */
 

@@ -20,14 +20,14 @@ children:
   — the `browse` child above is what links to it. Same arrangement, and same
   reason, as _pages/games.md.
 
-  Everything on this page is drawn client-side from /argument-db.json by
-  assets/logic/browse.js. The stylesheet and both scripts live in
-  assets/logic/, outside assets/css/, so purgecss never sees them: almost every
+  Everything on this page is drawn client-side from argument-db.json by
+  assets/arguments/browse.js. The stylesheet and both scripts live in
+  assets/arguments/, outside assets/css/, so purgecss never sees them: almost every
   class name here only ever appears inside a JS template string, and purgecss
   would strip the lot.
 -->
 
-<link rel="stylesheet" href="{{ '/assets/logic/encyclopedia.css' | relative_url }}" />
+<link rel="stylesheet" href="{{ '/assets/arguments/encyclopedia.css' | relative_url }}" />
 
 <div class="ae-scope">
 
@@ -59,11 +59,11 @@ children:
 
 </div>
 
-<script type="module" src="{{ '/assets/logic/browse.js' | relative_url }}"></script>
+<script type="module" src="{{ '/assets/arguments/browse.js' | relative_url }}"></script>
 
 <noscript>
   <p><strong>This page needs JavaScript</strong> — the catalogue is built in the
   browser from the argument database. The database itself is a plain JSON file
-  at <a href="{{ '/argument-db.json' | relative_url }}">/argument-db.json</a> if
+  at <a href="{{ '/assets/arguments/argument-db.json' | relative_url }}">/assets/arguments/argument-db.json</a> if
   you would rather read it directly.</p>
 </noscript>
