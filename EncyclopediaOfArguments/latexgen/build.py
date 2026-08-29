@@ -47,7 +47,6 @@ PREAMBLE = [
     "mathtools",
     "calc",
     "graphicx",
-    "pifont",
 ]
 
 # The one macro these blocks need beyond notation.sty: a value centred in the
@@ -318,6 +317,11 @@ def build(db: dict) -> tuple[dict, list[str]]:
         eid = entry["id"]
 
         entry["truth_table"]["latex"] = table_block(entry)
+        # The companion "portion of a truth table", for a handout where
+        # sixty-four rows will not fit. See tables.compact_filter for what it
+        # keeps. Never a substitute for the full one: a truth table is an
+        # exhaustive check, and only the full table is that.
+        entry["truth_table"]["latex_compact"] = table_block(entry, compact=True)
         entry["tree"]["latex"] = tree_block(entry)
 
         if entry["verdict"]["valid"]:

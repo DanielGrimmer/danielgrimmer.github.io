@@ -504,18 +504,30 @@ test('the practice page has a well-formed problem set', async (t) => {
 test('every LaTeX block has a current SVG', async (t) => {
   const svgDir = new URL('../assets/arguments/svg/', import.meta.url);
   const index = JSON.parse(readFileSync(new URL('index.json', svgDir)));
-  const holder = { table: 'truth_table', tree: 'tree', nd: 'nd' };
+  // `table-compact` is the "portion of a truth table" companion: the rows that
+  // carry the argument, with the rest elided. It is a handout aid, not a
+  // replacement — only the full table is the exhaustive check.
+  const blockOf = (e, m) =>
+    m === 'table-compact'
+      ? e.truth_table.latex_compact
+      : m === 'table'
+        ? e.truth_table.latex
+        : m === 'tree'
+          ? e.tree.latex
+          : e.nd.latex;
 
   const blocks = [];
   for (const e of entries) {
-    for (const m of ['table', 'tree', 'nd']) {
-      const latex = e[holder[m]]?.latex;
+    for (const m of ['table', 'table-compact', 'tree', 'nd']) {
+      const latex = blockOf(e, m);
       if (latex) blocks.push([e.id, m, latex]);
     }
   }
 
-  await t.test('there is one block per practice problem', () => {
-    assert.equal(blocks.length, 88);
+  await t.test('one block per practice problem, plus a compact table each', () => {
+    // 35 tables + 35 compact tables + 35 trees + 18 derivations.
+    assert.equal(blocks.length, 123);
+    assert.equal(blocks.filter(([, m]) => m === 'table-compact').length, entries.length);
   });
 
   await t.test('the SVG matches the block it was made from', async () => {
@@ -698,5 +710,126 @@ test('an inconsistency claim is not dressed as an argument', () => {
     if (e.nd.exists) {
       assert.equal(e.nd.proof.at(-1).f, '!', `${e.id}: the derivation should end at ⊥`);
     }
+  }
+});
+
+/*
+ * Citation style, which the handouts settle.
+ *
+ * A rule that discharges one subproof cites its first and last line with a
+ * comma — `⊃I,2,6`, `∼I,3,6` — because the rule name already says a subproof
+ * is being discharged and there is nothing for a range to disambiguate. A rule
+ * that discharges two needs the en dash: `∨E,1,2--3,4--5` would otherwise be
+ * five numbers with no way to tell which pairs go together.
+ */
+test('a discharged subproof is cited the way the handouts cite it', async (t) => {
+  const single = ['CondI', 'NegI'];
+  const double = ['DisjE', 'BicondI'];
+
+  await t.test('one subproof, two line numbers, no dash', () => {
+    let seen = 0;
+    for (const e of entries) {
+      for (const line of e.nd.proof ?? []) {
+        if ((line.subs ?? []).length !== 1) continue;
+        assert.ok(single.includes(line.rule), `${e.id}: ${line.rule} discharges one subproof`);
+        const cite = `\\${line.rule},`;
+        const at = e.nd.latex.indexOf(cite);
+        assert.ok(at > 0, `${e.id}: ${line.rule} is not cited in the block`);
+        seen += 1;
+      }
+    }
+    assert.equal(seen, 23, 'the count of single-subproof citations has moved');
+    // No en dash anywhere a single-subproof rule is cited.
+    for (const e of entries) {
+      for (const rule of single) {
+        const re = new RegExp(`\\\\${rule},[^}]*?\\\\text\\{--\\}`);
+        assert.ok(!re.test(e.nd.latex ?? ''), `${e.id}: ${rule} cites a range`);
+      }
+    }
+  });
+
+  await t.test('two subproofs, two ranges, en dashes', () => {
+    for (const e of entries) {
+      for (const line of e.nd.proof ?? []) {
+        if ((line.subs ?? []).length !== 2) continue;
+        assert.ok(double.includes(line.rule), `${e.id}: ${line.rule} discharges two subproofs`);
+        for (const [a, b] of line.subs) {
+          assert.ok(e.nd.latex.includes(`${a}\\text{--}${b}`),
+            `${e.id}: ${line.rule} does not cite ${a}--${b} as a range`);
+        }
+      }
+    }
+  });
+});
+
+/*
+ * The vertical bar inside a tree node marks a resolution: the formulas below
+ * it came out of the formula above it. The handouts write
+ * `$l & d$ ✓ \\ $|$ \\ $l$ \\ $d$`, so there is one bar per resolution, not
+ * one per node.
+ */
+test('every resolution inside a node is marked with a bar', () => {
+  for (const e of entries) {
+    const block = e.tree.latex;
+    let bars = 0;
+    const walk = (node, isRoot) => {
+      // A bar separates a resolution from what is above it *in the same node*.
+      // The root has the stacked premises above it, so its first group takes
+      // one; a child node's first group has nothing above it and takes none.
+      let source = null;
+      let first = true;
+      for (const a of node.added ?? []) {
+        if (a.from !== source) {
+          if (!first || isRoot) bars += 1;
+          first = false;
+          source = a.from;
+        }
+      }
+      for (const k of node.children ?? []) walk(k, false);
+    };
+    walk(e.tree.tree, true);
+    const groups = bars;
+    const drawn = (block.match(/\$\\vert\$/g) ?? []).length;
+    assert.equal(drawn, groups, `${e.id}: ${drawn} bars for ${groups} resolutions`);
+  }
+});
+
+/* A package that is declared and never used is a preamble a handout cannot
+ * take as it stands. `\ding` was never called; `\checkmark` is amssymb's. */
+test('every declared package is one the blocks use', () => {
+  const db2 = JSON.parse(readFileSync(new URL('../assets/arguments/argument-db.json', import.meta.url)));
+  assert.ok(!db2.latex_requires.includes('pifont'), 'pifont is declared but nothing uses \\ding');
+  const all = entries
+    .flatMap((e) => [e.truth_table.latex, e.truth_table.latex_compact, e.tree.latex, e.nd.latex])
+    .filter(Boolean)
+    .join('\n');
+  assert.ok(!all.includes('\\ding'), 'something uses \\ding after all');
+});
+
+/*
+ * The compact table keeps the rows a reader would point at, and says so with a
+ * \vdots wherever it left some out.
+ */
+test('the compact table keeps the rows that carry the argument', () => {
+  for (const e of entries) {
+    const compact = e.truth_table.latex_compact;
+    assert.ok(compact, `${e.id}: no compact table`);
+    const rows = e.truth_table.rows;
+    // Data rows only: the single-formula layout ends with a marker row that
+    // carries `.` and `M` rather than truth values.
+    const kept = compact
+      .split('\n')
+      .filter((l) => l.includes('\\uv{') || /^\s+[TF] &/.test(l))
+      .filter((l) => !l.includes('}{M}') && !l.includes('}{.}')).length;
+    assert.ok(kept >= 1, `${e.id}: the compact table kept no rows`);
+    assert.ok(kept < rows.length || rows.length <= 4,
+      `${e.id}: the compact table kept all ${rows.length} rows`);
+    if (kept < rows.length) {
+      assert.match(compact, /\\vdots/, `${e.id}: rows elided with no \\vdots to say so`);
+    }
+    // What it keeps, by shape.
+    const cms = rows.filter((r) => r.countermodel).length;
+    if (cms) assert.equal(kept, cms, `${e.id}: ${kept} rows kept for ${cms} countermodels`);
+    else if (!e.premises.length) assert.equal(kept, 1, `${e.id}: a tautology keeps its top row`);
   }
 });

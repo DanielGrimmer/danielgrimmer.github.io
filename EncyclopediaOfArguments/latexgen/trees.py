@@ -59,11 +59,18 @@ def _node(node: dict, resolved: set, root_lines=None) -> str:
     """
     lines: list[str] = list(root_lines or [])
 
+    # One `$\\vert$` before each run of formulas that came out of the same
+    # resolution, so the bar sits under the formula that produced them --
+    # `$l\\Conj d$\\quad\\checkmark \\\\ $\\vert$ \\\\ $l$ \\\\ $d$`, as the handouts
+    # write it. `from` is what says which resolution a formula came from, so a
+    # change of `from` is where the bar goes.
     added = node.get("added") or []
-    if added and lines:
-        lines.append("$\\vert$")
-
-    for add in added:
+    source = None
+    for i, add in enumerate(added):
+        if add.get("from") != source:
+            if lines:
+                lines.append("$\\vert$")
+            source = add.get("from")
         f = to_macros(add["formula"])
         if add["formula"] in resolved:
             lines.append(f"\\ckpad ${f}$\\quad\\checkmark")

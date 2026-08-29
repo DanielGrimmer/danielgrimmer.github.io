@@ -61,6 +61,34 @@ def _fit(tabular_lines: list[str]) -> list[str]:
     )
 
 
+def _rows(all_models, row, keep, columns: int) -> list[str]:
+    """The data rows, entire, or the kept ones with the rest shown elided.
+
+    Lecture 8's "portion of a truth table": the rows that carry the argument,
+    with a `\vdots` standing in for every stretch left out. The full table is
+    the one that *proves* something -- a truth table is an exhaustive check --
+    so this is its companion, for a handout where sixty-four rows will not fit,
+    and never the only table an entry has.
+    """
+    if keep is None:
+        return [row(m) for m in all_models]
+
+    gap = "        " + " & ".join("$\\vdots$" for _ in range(columns)) + " \\\\"
+    out: list[str] = []
+    skipped = False
+    for model in all_models:
+        if keep(model):
+            if skipped:
+                out.append(gap)
+                skipped = False
+            out.append(row(model))
+        else:
+            skipped = True
+    if skipped and out:
+        out.append(gap)
+    return out
+
+
 def _uv(under: str, value: str) -> str:
     """A value centred in the width of the thing it belongs to."""
     return f"\\uv{{{under}}}{{{value}}}"
@@ -77,7 +105,7 @@ def _tok_latex(t: Tok) -> str:
 # --------------------------------------------------------------- single formula
 
 
-def single_formula_table(src: str) -> str:
+def single_formula_table(src: str, keep=None) -> str:
     """A theorem's table: a value under every connective, and an `M` row."""
     root, toks = parse(src)
     atoms = atoms_of(root)
@@ -114,9 +142,11 @@ def single_formula_table(src: str) -> str:
         f"        {header_atoms} & {header_formula} \\\\",
         "        \\hline",
     ]
-    for model in models(atoms):
+    def row(model) -> str:
         vals = " & ".join("T" if model[a] else "F" for a in atoms)
-        lines.append(f"        {vals} & {value_row(model)} \\\\")
+        return f"        {vals} & {value_row(model)} \\\\"
+
+    lines += _rows(models(atoms), row, keep, len(atoms) + 1)
     lines += [
         "        \\hline",
         "        " + " & ".join("$.$" for _ in atoms) + f" & {marker_row()} \\\\",
@@ -130,7 +160,7 @@ def single_formula_table(src: str) -> str:
 # ------------------------------------------------------------------- argument
 
 
-def argument_table(premises: list[str], conclusion: str) -> str:
+def argument_table(premises: list[str], conclusion: str, keep=None) -> str:
     """An argument's table: atoms | premises | conclusion, one value each.
 
     Lecture 4 gives one value per premise -- under its main connective -- not a
@@ -187,7 +217,7 @@ def argument_table(premises: list[str], conclusion: str) -> str:
     # is one. The sixty-four-row Dutch book form is exactly the case that
     # matters: what makes it worth showing is that sixty-three rows behave and
     # one does not.
-    lines += [row(m) for m in all_models]
+    lines += _rows(all_models, row, keep, 3)
 
     lines += ["    \\end{tabular}"]
     return "\n".join(
@@ -205,7 +235,7 @@ def models(atoms: list[str]) -> list[dict[str, bool]]:
     return out
 
 
-def contradiction_table(premises: list[str]) -> str:
+def contradiction_table(premises: list[str], keep=None) -> str:
     """A joint-unsatisfiability table: atoms and premises, no conclusion.
 
     Three entries conclude falsum. That is a contradiction claim, `X ⊨`, in the
@@ -215,7 +245,7 @@ def contradiction_table(premises: list[str]) -> str:
     two groups rather than three, and what the reader looks for is a row with
     every premise true. There is none; that is the whole claim.
     """
-    body = argument_table(premises, premises[-1])
+    body = argument_table(premises, premises[-1], keep)
     # Rebuild without the conclusion group: drop the third column everywhere.
     out = []
     for line in body.splitlines():
@@ -235,9 +265,57 @@ def contradiction_table(premises: list[str]) -> str:
     ).replace(" \\\\ \\\\", " \\\\")
 
 
-def table_block(entry: dict) -> str:
+def compact_filter(entry: dict):
+    """Which rows a compact table keeps, as a predicate on a model.
+
+    A compact table cannot establish anything -- only the full one does that,
+    because a truth table is an exhaustive check -- so what it keeps is the
+    rows a reader would point at:
+
+      * **a countermodel, where there is one.** It is what refutes the
+        argument, and on the Dutch book form it is one row in sixty-four;
+      * **the rows where every premise is true**, for a valid argument. Those
+        are the rows validity is *about*, and the conclusion holds in each;
+      * **the top row** for a claimed tautology, which has no premises to make
+        true and so no rows to single out;
+      * **the bottom row** where the premises cannot all be true at once --
+        every contradiction claim, and the vacuously valid `ex-falso`.
+
+    Written as predicates on the model rather than on the row index, so it does
+    not depend on the order the atoms happen to come out in: the top row is the
+    one where every atom is true, the bottom row the one where none is.
+    """
+    prem = [parse(p)[0] for p in entry["premises"]]
+    concl = (
+        None if entry["conclusion"].strip() == "!" else parse(entry["conclusion"])[0]
+    )
+
+    atoms: list[str] = []
+    for root in prem + ([concl] if concl is not None else []):
+        for a in atoms_of(root):
+            if a not in atoms:
+                atoms.append(a)
+
+    def live(m):
+        return all(evaluate(r, m) for r in prem)
+
+    def countermodel(m):
+        return live(m) and concl is not None and not evaluate(concl, m)
+
+    every = models(atoms)
+    if any(countermodel(m) for m in every):
+        return countermodel
+    if not prem:
+        return lambda m: all(m.values())
+    if any(live(m) for m in every):
+        return live
+    return lambda m: not any(m.values())
+
+
+def table_block(entry: dict, compact: bool = False) -> str:
+    keep = compact_filter(entry) if compact else None
     if entry["conclusion"].strip() == "!":
-        return contradiction_table(entry["premises"])
+        return contradiction_table(entry["premises"], keep)
     if entry["premises"]:
-        return argument_table(entry["premises"], entry["conclusion"])
-    return single_formula_table(entry["conclusion"])
+        return argument_table(entry["premises"], entry["conclusion"], keep)
+    return single_formula_table(entry["conclusion"], keep)

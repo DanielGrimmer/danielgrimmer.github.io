@@ -302,11 +302,25 @@ _RULE_MACRO = {
 
 
 def _cite_text(ln: dict) -> str:
-    """`⊃E,1,3` or `∨E, 1, 2--3, 4--5`. Ranges take an en dash, never a hyphen."""
+    """`⊃E,1,3`, `⊃I,2,6`, `∨E,1,2--3,4--5`.
+
+    A rule that discharges **one** subproof cites its first and last line with a
+    comma: `\\CondI,2,6`, `\\NegI,3,6`. That is what the handouts do, twenty
+    times over, and there is no ambiguity to resolve -- the rule name already
+    says a subproof is being discharged.
+
+    A rule that discharges **two** needs the en dash, because `∨E,1,2,3,4,5`
+    would not say which pairs go together. So `\\DisjE` and `\\BicondI` take
+    ranges and nothing else does.
+    """
     if ln["rule"] in ("Pr", "As"):
         return ""
     bits = [str(c) for c in ln.get("cites", [])]
-    bits += [f"{a}\\text{{--}}{b}" for a, b in ln.get("subs", [])]
+    subs = ln.get("subs", [])
+    if len(subs) == 1:
+        bits += [str(n) for n in subs[0]]
+    else:
+        bits += [f"{a}\\text{{--}}{b}" for a, b in subs]
     return _RULE_MACRO[ln["rule"]] + "," + ",".join(bits)
 
 

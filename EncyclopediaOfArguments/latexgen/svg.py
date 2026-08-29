@@ -46,7 +46,7 @@ DB = ROOT / "assets/arguments/argument-db.json"
 OUT = ROOT / "assets/arguments/svg"
 NOTATION = HERE.parent / "notation.sty"
 
-METHODS = ("table", "tree", "nd")
+METHODS = ("table", "table-compact", "tree", "nd")
 
 
 def preamble(db: dict) -> str:
@@ -57,7 +57,6 @@ def preamble(db: dict) -> str:
             r"\usepackage{amsmath,amssymb,stmaryrd,mathtools,calc}",
             r"\usepackage{qtree}",
             r"\usepackage{fitch}",
-            r"\usepackage{pifont}",
             r"\usepackage{graphicx}",
             r"\usepackage{notation}",
             m["uv"],
@@ -68,6 +67,8 @@ def preamble(db: dict) -> str:
 
 
 def block_of(entry: dict, method: str) -> str | None:
+    if method == "table-compact":
+        return entry["truth_table"].get("latex_compact")
     holder = {"table": "truth_table", "tree": "tree", "nd": "nd"}[method]
     return entry[holder].get("latex")
 

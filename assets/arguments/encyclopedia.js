@@ -1321,8 +1321,14 @@ function ndCitation(line) {
   const label = ND_RULE_LABEL[line.rule] ?? line.rule;
   if (!label) return "";
   const bits = asArray(line.cites).map(String);
-  // A discharged subproof is cited as a range, with an en dash.
-  for (const [a, b] of asArray(line.subs)) bits.push(`${a}–${b}`);
+  const subs = asArray(line.subs);
+  // One discharged subproof is cited as two line numbers, `⊃I, 2, 6` — the
+  // rule name already says a subproof is being discharged, so there is nothing
+  // for a range to disambiguate, and the handouts write it that way. Two need
+  // the en dash, because `∨E, 1, 2, 3, 4, 5` would not say which pairs go
+  // together.
+  if (subs.length === 1) bits.push(String(subs[0][0]), String(subs[0][1]));
+  else for (const [a, b] of subs) bits.push(`${a}–${b}`);
   return bits.length ? `${label}, ${bits.join(", ")}` : label;
 }
 

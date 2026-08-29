@@ -49,11 +49,18 @@ The block preamble that was used, and that any consumer of these blocks needs:
 
 ```latex
 \usepackage{amsmath,amssymb,stmaryrd}
-\usepackage{qtree}      % trees
-\usepackage{fitch}      % Fitch derivations -- provides the `nd` environment
-\usepackage{pifont}     % \checkmark via \ding{51}
-\usepackage{notation}   % FOL_Yale/notation.sty
+\usepackage{mathtools,calc}   % \mathmakebox and \widthof, for the ND column
+\usepackage{graphicx}         % \resizebox, for the fit guards
+\usepackage{qtree}            % trees
+\usepackage{fitch}            % Fitch derivations -- provides the `nd` environment
+\usepackage{notation}         % FOL_Yale/notation.sty
+\newsavebox{\aetreebox}\newsavebox{\aetabbox}
 ```
+
+**Not `pifont`.** The handouts load it for `\checkmark` via `\ding{51}`, but
+nothing here calls `\ding` — `\checkmark` comes from `amssymb`, which is
+already loaded — so declaring it would send a consumer after a package the
+blocks never use.
 
 ⚠ **The Fitch package is `fitch`, not `nd`.** The environment is named `nd`,
 which makes it easy to assume the package is too. Lectures 9 and 10 load
@@ -406,7 +413,33 @@ identifies them in prose ("Row 3 is a *counterexample*…"). Follow the course:
 **no marker column.** The website already highlights countermodel rows in HTML,
 and the entry's `countermodel_gloss` says it in words.
 
-### 4.5 Every row, always
+### 4.5 Every row, always — and a compact companion
+
+Tables are listed in full, however many rows they have. A truth table is an
+*exhaustive* check, and a reader who cannot see the rows cannot see that it is
+one. The sixty-four-row Dutch book form is exactly the case that matters: what
+makes it worth showing is that sixty-three rows behave and one does not.
+
+But sixty-four rows is more than a page of a four-page handout, so each entry
+also carries a **compact table** at `truth_table.latex_compact` — Lecture 8's
+"portion of a truth table", with a `\vdots` standing in for every stretch left
+out. It is a companion, never a substitute: an entry has both, the website
+shows the full one, and a handout takes whichever fits.
+
+What it keeps, in order of precedence:
+
+| The entry | Rows kept | Why |
+| --- | --- | --- |
+| has a countermodel | the countermodels | They are what refutes it — one row in sixty-four, on the Dutch book form |
+| has no premises and is valid | the top row | A claimed tautology has no premises to make true, so no row singles itself out |
+| has premises satisfiable by some row | the rows where every premise is true | Those are the rows validity is *about*, and the conclusion holds in each |
+| has premises nothing satisfies | the bottom row | Every contradiction claim, and the vacuously valid `ex-falso` |
+
+The rules are written as predicates on the *model*, not the row number, so they
+do not depend on the order the atoms come out in: the top row is the one where
+every atom is true, the bottom row the one where none is.
+
+### 4.5a Every row, always (the full table)
 
 Tables are listed in full, however many rows they have. Long ones were briefly
 elided to the first row, the countermodels and the last with a `\vdots`
@@ -583,6 +616,23 @@ Any order gives the same verdict — that is the order-invariance fact of Lectur
 rules, resolve the one that closes soonest first. A tree that is twice as large
 as it needs to be is not wrong, but it is not a good exhibit either.
 
+### 5.6a The bar marks a resolution, one per resolution
+
+`$\vert$` between two formulas in the same node says *these came out of that*.
+The handouts write
+
+```latex
+$l\Conj d$\quad\checkmark \\ $\vert$ \\ $l$ \\ $d$
+```
+
+so there is **one bar per resolution, not one per node**. A node holding two
+resolutions gets two bars; a child node whose first formulas came from the
+branch above it gets none before them, because there is nothing above them in
+that node to separate from.
+
+The generator drives this off `from`: each entry in a node's `added` records the
+formula it came out of, and a change of `from` is where a bar goes.
+
 ### 5.7 `\ckpad`, and why checked nodes hang right
 
 `qtree` centres a node's fork under the node's whole box. A root line ending
@@ -693,8 +743,14 @@ negation, you must find a way to add a second negation and then remove the pair.
   identically**, because math mode sets its own space after a comma and ignores
   the one in the source. I checked. So this is a source-tidiness question only,
   and §10 picks the tight form for consistency, not for output.
-- **Line ranges:** an en dash, written `\text{--}`, never a hyphen —
-  `\DisjE, 1, 2\text{--}3, 4\text{--}5`.
+- **One discharged subproof: two line numbers, comma-separated.** `\CondI,2,6`,
+  `\NegI,3,6`. The handouts do this twenty times over and use no en dash for
+  it, and they are right to: the rule name already says a subproof is being
+  discharged, so a range has nothing to disambiguate.
+- **Two discharged subproofs: en dashes, written `\text{--}`, never a hyphen.**
+  `\DisjE,1,2\text{--}3,4\text{--}5`, `\BicondI,1\text{--}7,8\text{--}14`.
+  Here the dash is doing work — `\DisjE,1,2,3,4,5` would not say which pairs go
+  together. `\DisjE` and `\BicondI` are the only two rules that take it.
 - **Symbolic ranges** in schemas brace the operator so it sets tight:
   `(n{+}1)\text{--}m`.
 - **Order of cites** follows the rule's statement: `\FalsumI,n,m` cites `B`
@@ -851,9 +907,11 @@ Rules:
 - **No `\begin{document}`, no preamble.** Each block is a fragment, to be
   dropped into a document that already loads the preamble in §0.1.
 - **Record the dependency.** A top-level `"latex_requires":
-  ["FOL_Yale/notation", "qtree", "fitch", "amsmath", "amssymb", "stmaryrd", "pifont"]` so a
-  consumer knows what to load. `pifont` supplies `\checkmark` in the handouts'
-  preamble via `\ding{51}`.
+  ["FOL_Yale/notation", "qtree", "fitch", "amsmath", "amssymb", "stmaryrd",
+  "mathtools", "calc", "graphicx"]`, so a consumer knows what to load, and
+  `"latex_macros"` for the two `\newsavebox` declarations the fit guards need.
+  Nothing declares `pifont`: `\checkmark` is `amssymb`'s and no block calls
+  `\ding`.
 
 While `nd.proof` is still unpopulated (the site currently shows only the
 verified profile), `nd.latex` doubles as the proof of record. If you later
@@ -965,13 +1023,15 @@ Per block, before it goes in the database:
       not (§4.1)
 - [ ] Values under connectives only — count them (§4.2)
 - [ ] All-true row first (§4.3)
-- [ ] Every row listed, none elided (§4.5)
+- [ ] Every row listed in `latex`, none elided; `latex_compact` carries the
+      portion (§4.5)
 - [ ] Values agree with the entry's stored `truth_table.rows`
 
 **Tree**
 - [ ] Rooted at premises **and negated conclusion**, labelled `X:` / `\Neg A:` (§5.4)
 - [ ] Every resolved formula checked; no atom or negated atom checked (§5.3)
 - [ ] Every complete branch ends in `x` or `o` (§5.2)
+- [ ] One `$\vert$` per resolution inside a node (§5.6a)
 - [ ] Branch count and open/closed verdict agree with the stored `tree` (§5.5)
 - [ ] Countermodel readable off the open branch matches `branch_models` (§5.5)
 
@@ -979,7 +1039,7 @@ Per block, before it goes in the database:
 - [ ] Present iff `nd.exists` (§0.2, §7)
 - [ ] Rule macros, not connective macros (§6.2)
 - [ ] No `\Exp`; reductio written out (§6.2)
-- [ ] Ranges use `\text{--}` (§6.3)
+- [ ] One discharged subproof cited `n,m`; two cited as `\text{--}` ranges (§6.3)
 - [ ] Every cite is accessible — no crossing a closed scope line, and a
       *sibling* subproof at the same depth is closed (§6.7)
 - [ ] Written with the entry's final atom names (§2.4)
