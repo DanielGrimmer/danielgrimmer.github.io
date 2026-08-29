@@ -1046,16 +1046,21 @@ function buildNd(entry, spoilers = false) {
   const lines = asArray(nd.proof);
   const proof = lines.length
     ? renderFitch(lines)
-    : `<div class="ae-missing">A proof exists and has been machine-checked ` +
-      `(<code>verified: true</code>), but <code>argument-db.json</code> does not yet ` +
-      `carry its lines — only the profile above. Have <code>build.py</code> emit an ` +
-      `<code>nd.proof</code> array and it will render here as a Fitch proof.</div>`;
+    : `<div class="ae-missing">This entry has a machine-checked proof, but its ` +
+      `lines are not in <code>argument-db.json</code> — only the profile above.</div>`;
 
+  // The derivation first: on the practice page this panel *is* the answer, and
+  // a reader who opened it wants the proof, not its measurements. The profile
+  // follows as a summary of what they just read.
   return {
     hint: spoilers
       ? "try it, then look"
       : `${nd.lines} lines, ${nd.uses_indirect_proof ? "indirect" : "direct"}`,
-    html: profile + rules + `<div style="margin-top:.9rem">${proof}</div>`,
+    html:
+      proof +
+      `<div style="margin-top:1.1rem">` +
+      rules +
+      `<div style="margin-top:.7rem">${profile}</div></div>`,
   };
 }
 
@@ -1065,24 +1070,67 @@ function buildNd(entry, spoilers = false) {
  * and it is written now so that the day `nd.proof` appears, nothing else has
  * to change. If the emitted shape differs, this is the one function to adjust.
  */
+/*
+ * A Fitch derivation, drawn from `nd.proof`. Each line is
+ * `{n, f, rule, depth, cites?, subs?}` -- the same objects the Python checker
+ * verifies, so what a reader sees here is exactly what was checked.
+ *
+ * The scope lines are the whole visual grammar of a Fitch proof, so they are
+ * drawn as real rules rather than indentation: one vertical rule per open
+ * subproof, and a horizontal stroke under the last assumption of each, which is
+ * what separates what is *assumed* from what is *derived*.
+ */
+const ND_RULE_LABEL = {
+  Pr: "", As: "", Reit: "R",
+  ConjI: "&I", ConjE: "&E", DisjI: "∨I", DisjE: "∨E",
+  CondI: "⊃I", CondE: "⊃E", NegI: "∼I", NegE: "∼E",
+  BicondI: "≡I", BicondE: "≡E", FalsumI: "⊥I",
+};
+
+function ndCitation(line) {
+  const label = ND_RULE_LABEL[line.rule] ?? line.rule;
+  if (!label) return "";
+  const bits = asArray(line.cites).map(String);
+  // A discharged subproof is cited as a range, with an en dash.
+  for (const [a, b] of asArray(line.subs)) bits.push(`${a}–${b}`);
+  return bits.length ? `${label}, ${bits.join(", ")}` : label;
+}
+
 function renderFitch(lines) {
   const rows = lines
-    .map((l) => {
-      const indent = 0.9 * (l.depth || 0);
-      const cites = asArray(l.cites).join(", ");
+    .map((l, i) => {
+      const depth = l.depth || 0;
+      const next = lines[i + 1];
+      // The stroke goes under the last assumption of a run of them.
+      const lastAssumption =
+        (l.rule === "Pr" || l.rule === "As") &&
+        !(next && (next.depth || 0) === depth && (next.rule === "Pr" || next.rule === "As"));
+
+      const bars = Array.from(
+        { length: depth },
+        () => `<span class="ae-nd-bar"></span>`,
+      ).join("");
+
       return (
-        `<div style="display:flex;gap:.7rem;align-items:baseline;padding:.12rem 0">` +
-        `<span class="ae-seq-num">${escapeHtml(l.n ?? "")}</span>` +
-        `<span style="padding-left:${indent}rem;padding-right:.5rem;` +
-        `border-left:${l.depth ? "1px solid var(--ae-rule-2)" : "none"}">` +
-        `${f(l.formula || "")}</span>` +
-        `<span class="ae-tree-from">${escapeHtml(l.rule || "")}${cites ? ` ${cites}` : ""}</span>` +
+        `<div class="ae-nd-line">` +
+        `<span class="ae-nd-n">${escapeHtml(l.n ?? "")}</span>` +
+        `<span class="ae-nd-scope">${bars}` +
+        `<span class="ae-nd-body${lastAssumption ? " ae-nd-assumed" : ""}">` +
+        `${f(latexToGlyphs(l.f))}</span><span class="ae-nd-fill"></span></span>` +
+        `<span class="ae-nd-cite">${escapeHtml(ndCitation(l))}</span>` +
         `</div>`
       );
     })
     .join("");
-  return `<div class="ae-tree">${rows}</div>`;
+  return `<div class="ae-nd">${rows}</div>`;
 }
+
+/** ASCII source (`p > ~q`) into the house glyphs the rest of the page uses. */
+function latexToGlyphs(src) {
+  const map = { "~": "∼", "&": "&", "|": "∨", ">": "⊃", "=": "≡", "!": "⊥" };
+  return [...String(src ?? "")].map((c) => map[c] ?? c).join("");
+}
+
 
 /* ------------------------------------------------- premises + relations */
 
@@ -1244,6 +1292,40 @@ function renderInstructor(entry) {
 }
 
 /* --------------------------------------------------------------- shared */
+
+/**
+ * One method's worked answer, on its own — what the practice page reveals.
+ *
+ * `renderEntry` builds the whole entry: verdict, commentary, provenance, tags,
+ * relations, metrics. The practice page wants none of that; it wants the table,
+ * or the tree, or the derivation, and nothing else. So the three builders are
+ * reachable individually here.
+ */
+export function methodPanel(entry, method) {
+  const build = { table: buildTruthTable, tree: buildTree, nd: buildNd }[method];
+  const built = build ? build(entry, false) : null;
+  return built ? built.html : "";
+}
+
+/** The premises over the conclusion, with no turnstile — see below. */
+export function problemStatement(entry) {
+  // The turnstile is ⊨ or ⊭ by verdict, so it cannot appear on a page that is
+  // asking the reader to work the verdict out. renderSequent's spoiler mode
+  // withholds it, and this is the same stack without the surrounding chrome.
+  const prems = asArray(entry._premises);
+  const rows = prems
+    .map(
+      (p, i) =>
+        `<div class="ae-seq-prem"><span class="ae-seq-num">${i + 1}.</span>${f(p)}</div>`,
+    )
+    .join("");
+  const concl = `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(entry._conclusion)}</div>`;
+  return (
+    `<div class="ae-sequent"><div class="ae-seq-stack">` +
+    (prems.length ? rows + `<div class="ae-seq-bar"></div>` + concl : concl) +
+    `</div></div>`
+  );
+}
 
 /** The card used in the catalogue and in the practice history. */
 export function renderCard(entry, href) {

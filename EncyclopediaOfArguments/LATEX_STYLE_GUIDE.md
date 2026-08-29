@@ -639,7 +639,47 @@ negation, you must find a way to add a second negation and then remove the pair.
   line 8 is `p`, line 7 is `\Neg p` — so the *formula* order governs, not the
   line order.
 
-### 6.4 The classical reductio pattern
+### 6.4 When to reiterate
+
+`\Reit` is never *required* — a formula on an outer scope line stays accessible
+inside a subproof and can be cited directly, which is what Lecture 9's
+accessibility rule says. So reiteration is a choice about clarity, and the house
+rule is: **reiterate wherever it makes a line's logical role visible, and not
+merely to bring an outer formula within reach.**
+
+Two situations meet that test, and both occur in the database.
+
+**1. A subproof whose conclusion is its own assumption.** In a proof by cases,
+if you assume `q` and `q` is what that case has to deliver, write it twice:
+
+```latex
+\open
+\hypo{5}{w}
+\have{6}{w\quad \Reit,5}
+\close
+```
+
+Line 5 is the assumption `\DisjE` licenses; line 6 is what the case concludes.
+They are the same formula doing two different jobs, and a one-line subproof
+would have a single line playing both. `distributed-knowledge-repaired` has two
+of these.
+
+**2. A reductio that contradicts its own assumption.** When the ⊥ comes from the
+subproof's assumption together with something just derived, bring the assumption
+back down immediately before `\FalsumI`, so both halves of the contradiction
+stand together at the point of use. This is what Lecture 10's Kant proof does at
+line 8 — assume `p`, derive `∼p`, reiterate `p`, `⊥`. `peirce-law` and
+`russell-schema` take the same shape.
+
+**What does not meet the test.** Reiterating an outer premise simply because it
+is several scopes up. That is locality, not role, and Lecture 9 teaches the
+accessibility rule precisely so a student can read such a citation. Two proofs
+have a ⊥ whose pair is imported entirely from shallower scopes — `peirce-law`
+line 5 and `distributed-knowledge-repaired` line 10 — and those are left citing
+directly. It is a judgement call and could go the other way; if you want the
+contradiction visible inside every subderivation, say so and both change.
+
+### 6.5 The classical reductio pattern
 
 The commonest shape in the database. It is **not** a basic rule and must be
 written out in full every time:
@@ -658,7 +698,7 @@ written out in full every time:
 \end{align*}
 ```
 
-### 6.5 Contradiction entries (`⊥` as conclusion)
+### 6.6 Contradiction entries (`⊥` as conclusion)
 
 Three entries conclude `⊥`. Per the Notation Guide, **the one-sided turnstile is
 the house form**: write `X \ProvesND`, not `X \ProvesND \Falsum`. Lecture 10
@@ -669,7 +709,7 @@ the table and tree methods, neither of which has a falsum to put on the right.
 Inside the derivation, `\Falsum` stands alone on its final line, cited
 `\FalsumI,n,m`, and the proof simply ends there — no `\NegI` follows.
 
-### 6.6 Accessibility
+### 6.7 Accessibility
 
 A line may be cited only when every sub-derivation it lives inside is still open
 — trace a path straight up the page without crossing a scope line that has
@@ -845,9 +885,9 @@ Per block, before it goes in the database:
 - [ ] Rule macros, not connective macros (§6.2)
 - [ ] No `\Exp`; reductio written out (§6.2)
 - [ ] Ranges use `\text{--}` (§6.3)
-- [ ] Every cite is accessible — no crossing a closed scope line (§6.6)
+- [ ] Every cite is accessible — no crossing a closed scope line (§6.7)
 - [ ] Line count and `rules_used` agree with the stored `nd` metadata
-- [ ] `⊥`-conclusion entries use the one-sided turnstile in prose (§6.5)
+- [ ] `⊥`-conclusion entries use the one-sided turnstile in prose (§6.7)
 
 ---
 

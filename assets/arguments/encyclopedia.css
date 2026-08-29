@@ -864,6 +864,80 @@ button.ae-chip:hover {
   background: rgb(0 0 0 / 8%);
 }
 
+/* -------------------------------------------------- Fitch derivations */
+
+/*
+ * The scope lines are the grammar of a Fitch proof, not decoration: a vertical
+ * rule per open subproof, and a stroke under the last assumption of each,
+ * marking off what is assumed from what is derived. Drawn with borders rather
+ * than indentation so a nested proof still reads as nested on a phone.
+ */
+.ae-nd {
+  font-family: var(--ae-mono);
+  font-size: 0.86rem;
+  overflow-x: auto;
+}
+
+.ae-nd-line {
+  display: flex;
+  align-items: stretch;
+  gap: 0.6rem;
+  min-height: 1.7em;
+}
+
+.ae-nd-n {
+  flex: none;
+  min-width: 1.8rem;
+  text-align: right;
+  color: var(--ae-faint);
+  font-size: 0.8rem;
+  padding-top: 0.25em;
+}
+
+.ae-nd-scope {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+}
+
+.ae-nd-bar {
+  flex: none;
+  width: 0.9rem;
+  border-left: 1px solid var(--ae-rule-2);
+  margin-right: 0.15rem;
+}
+
+/* Content-width, so the assumption stroke below spans the formula rather than
+   the whole row -- which is how a Fitch proof is actually drawn. */
+.ae-nd-body {
+  flex: none;
+  padding: 0.25em 1.2rem 0.25em 0.4rem;
+  border-left: 1px solid var(--ae-rule-2);
+  white-space: nowrap;
+}
+
+/* Takes up the slack so the justification column still sits to the right. */
+.ae-nd-fill {
+  flex: 1;
+  min-width: 0.5rem;
+}
+
+/* The horizontal stroke under the last assumption. */
+.ae-nd-assumed {
+  border-bottom: 1px solid var(--ae-rule-2);
+}
+
+.ae-nd-cite {
+  flex: none;
+  text-align: left;
+  font-family: var(--ae-sans);
+  font-size: 0.76rem;
+  color: var(--ae-muted);
+  padding-top: 0.45em;
+  min-width: 6rem;
+}
+
 /* ---------------------------------------------------------- appearances */
 
 .ae-appearance {
@@ -1022,6 +1096,93 @@ button.ae-chip:hover {
 }
 
 /* ------------------------------------------------------------- practice */
+
+/*
+ * The practice page is two questions and a button. The chips are toggles, so
+ * their state has to be readable at a glance: the pressed one is filled with
+ * the accent, not merely tinted, because a pale tint against a white chip is
+ * not a difference a student will notice in a hurry.
+ */
+.ae-choices {
+  background: var(--ae-desk);
+  border: 1px solid var(--ae-rule);
+  border-radius: var(--ae-radius);
+  padding: 1.15rem 1.25rem 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.ae-choice + .ae-choice {
+  margin-top: 1.15rem;
+}
+
+/* Beats `.ae-scope h3`, which is the serif section heading. */
+.ae-scope .ae-choice h3 {
+  font-family: var(--ae-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ae-ink);
+  margin: 0 0 0.55rem;
+  padding: 0;
+  border: none;
+}
+
+.ae-chiprow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.ae-scope button.ae-chip-toggle {
+  font-size: 0.86rem;
+  padding: 0.42rem 0.9rem;
+  border: 1px solid var(--ae-rule-2);
+  background: var(--ae-paper);
+  color: var(--ae-muted);
+  font-weight: 500;
+}
+
+.ae-scope button.ae-chip-toggle:hover {
+  border-color: var(--ae-accent);
+  color: var(--ae-accent-ink);
+}
+
+.ae-scope button.ae-chip-on {
+  background: var(--ae-accent);
+  border-color: var(--ae-accent);
+  color: var(--ae-paper);
+  font-weight: 600;
+}
+
+.ae-drawrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.35rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--ae-rule);
+}
+
+.ae-btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.ae-task {
+  font-size: 1.02rem;
+  color: var(--ae-ink);
+  margin: 0 0 0.85rem;
+}
+
+.ae-problem .ae-reveal {
+  margin-top: 1.15rem;
+}
+
+.ae-entry-link {
+  margin: 1.3rem 0 0;
+  font-size: 0.88rem;
+}
 
 /*
  * The theme's navbar is fixed, so scrolling a freshly drawn argument to the

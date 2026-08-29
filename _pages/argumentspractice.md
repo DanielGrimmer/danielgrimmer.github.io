@@ -21,21 +21,10 @@ nav: false # surfaced via the 'argument forms' dropdown in _pages/arguments.md
 <div class="ae-scope">
 
   <p>
-    Pick a method, then draw. You get the argument, an English rendering of it,
-    and a note on where it comes from — nothing else. Decide whether it is valid
-    <em>before</em> you open anything: the verdict, the commentary, the truth
-    table, the tree and the natural-deduction analysis are each behind their own
-    toggle, so you can check one step at a time rather than seeing the whole
-    answer at once.
-  </p>
-
-  <p>
-    The draw is a shuffled bag rather than a coin flip — you will see every form
-    in the filtered set once before any of them comes round again, and the site
-    remembers where you were if you close the tab. The
-    <em>only what we have covered</em> filter uses the earliest lecture at which
-    each method becomes available, which is tracked separately per method: the
-    same argument can be a Lecture 4 truth table and a Lecture 11 proof.
+    Pick what you want to work on, then draw a problem. You get the argument
+    form and nothing else — no verdict, no commentary — so the question is
+    genuinely open. The worked answer is one click away when you want it, and
+    the full encyclopedia entry is linked underneath.
   </p>
 
   <div id="ae-practice">

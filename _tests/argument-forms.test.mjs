@@ -324,3 +324,43 @@ test('every entry carries its method blocks', async (t) => {
     assert.match(db.latex_macros.treebox, /aetreebox/);
   });
 });
+
+test('the practice page has a well-formed problem set', async (t) => {
+  // A practice problem is a (form, method) pair, not a form: the same argument
+  // can be an easy table and a hard derivation.
+  const pairs = [];
+  for (const e of entries) {
+    for (const m of ['table', 'tree', 'nd']) {
+      if (m === 'nd' && !e.nd.exists) continue;
+      pairs.push([e.id, m, e.difficulty[m]]);
+    }
+  }
+
+  await t.test('every offered pair carries a difficulty', () => {
+    for (const [id, m, level] of pairs) {
+      assert.ok(['easy', 'medium', 'hard'].includes(level), `${id}/${m}: difficulty is ${level}`);
+    }
+  });
+
+  await t.test('the pair count matches the blocks that exist', () => {
+    // 35 tables + 35 trees + 18 derivations.
+    assert.equal(pairs.length, 88);
+    assert.equal(pairs.filter(([, m]) => m === 'nd').length, 18);
+  });
+
+  await t.test('natural deduction is offered only on valid forms', () => {
+    for (const [id, m] of pairs.filter(([, m]) => m === 'nd')) {
+      assert.ok(entries.find((e) => e.id === id).verdict.valid, `${id} is invalid but offered for ND`);
+    }
+  });
+
+  await t.test('every difficulty level is reachable for every method', () => {
+    // If a level had no problems the chip would be a dead end.
+    for (const m of ['table', 'tree', 'nd']) {
+      for (const level of ['easy', 'medium', 'hard']) {
+        const n = pairs.filter(([, mm, l]) => mm === m && l === level).length;
+        assert.ok(n > 0, `no ${level} ${m} problems`);
+      }
+    }
+  });
+});

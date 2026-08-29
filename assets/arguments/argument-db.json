@@ -393,7 +393,7 @@
    },
    "nd": {
     "exists": true,
-    "lines": 13,
+    "lines": 14,
     "max_subproof_depth": 4,
     "rules_used": [
      "As",
@@ -401,7 +401,8 @@
      "CondI",
      "FalsumI",
      "NegE",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "subproof_count": 4,
     "uses_indirect_proof": true,
@@ -487,49 +488,58 @@
      },
      {
       "n": 10,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~p",
+      "rule": "Reit",
       "depth": 2,
       "cites": [
-       9,
        2
       ]
      },
      {
       "n": 11,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       9,
+       10
+      ]
+     },
+     {
+      "n": 12,
       "f": "~~p",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
         2,
-        10
+        11
        ]
       ]
      },
      {
-      "n": 12,
+      "n": 13,
       "f": "p",
       "rule": "NegE",
       "depth": 1,
       "cites": [
-       11
+       12
       ]
      },
      {
-      "n": 13,
+      "n": 14,
       "f": "((p > q) > p) > p",
       "rule": "CondI",
       "depth": 0,
       "subs": [
        [
         1,
-        12
+        13
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Cond q)\\Cond p}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Falsum}\\quad \\FalsumI,3,2}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg \\Neg q}\\quad \\NegI,4\\text{--}5}\n\\have{7}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{q}\\quad \\NegE,6}\n\\close\n\\have{8}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p\\Cond q}\\quad \\CondI,3\\text{--}7}\n\\have{9}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p}\\quad \\CondE,1,8}\n\\have{10}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Falsum}\\quad \\FalsumI,9,2}\n\\close\n\\have{11}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg \\Neg p}\\quad \\NegI,2\\text{--}10}\n\\have{12}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p}\\quad \\NegE,11}\n\\close\n\\have{13}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{((p\\Cond q)\\Cond p)\\Cond p}\\quad \\CondI,1\\text{--}12}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Cond q)\\Cond p}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Falsum}\\quad \\FalsumI,3,2}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg \\Neg q}\\quad \\NegI,4\\text{--}5}\n\\have{7}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{q}\\quad \\NegE,6}\n\\close\n\\have{8}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p\\Cond q}\\quad \\CondI,3\\text{--}7}\n\\have{9}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p}\\quad \\CondE,1,8}\n\\have{10}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg p}\\quad \\Reit,2}\n\\have{11}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Falsum}\\quad \\FalsumI,9,10}\n\\close\n\\have{12}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg \\Neg p}\\quad \\NegI,2\\text{--}11}\n\\have{13}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p}\\quad \\NegE,12}\n\\close\n\\have{14}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{((p\\Cond q)\\Cond p)\\Cond p}\\quad \\CondI,1\\text{--}13}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -2831,13 +2841,14 @@
    },
    "nd": {
     "exists": true,
-    "lines": 8,
+    "lines": 9,
     "max_subproof_depth": 2,
     "rules_used": [
      "As",
      "BicondE",
      "FalsumI",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "subproof_count": 2,
     "uses_indirect_proof": true,
@@ -2868,60 +2879,69 @@
      },
      {
       "n": 4,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "p",
+      "rule": "Reit",
       "depth": 2,
       "cites": [
-       2,
-       3
+       2
       ]
      },
      {
       "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       4,
+       3
+      ]
+     },
+     {
+      "n": 6,
       "f": "~p",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
         2,
-        4
+        5
        ]
       ]
      },
      {
-      "n": 6,
+      "n": 7,
       "f": "p",
       "rule": "BicondE",
       "depth": 1,
       "cites": [
        1,
-       5
-      ]
-     },
-     {
-      "n": 7,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 1,
-      "cites": [
-       6,
-       5
+       6
       ]
      },
      {
       "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       7,
+       6
+      ]
+     },
+     {
+      "n": 9,
       "f": "~(p = ~p)",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         1,
-        7
+        8
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond \\Neg p}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg p}\\quad \\BicondE,1,2}\n\\have{4}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,2,3}\n\\close\n\\have{5}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg p}\\quad \\NegI,2\\text{--}4}\n\\have{6}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{p}\\quad \\BicondE,1,5}\n\\have{7}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,6,5}\n\\close\n\\have{8}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg (p\\Bicond \\Neg p)}\\quad \\NegI,1\\text{--}7}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond \\Neg p}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg p}\\quad \\BicondE,1,2}\n\\have{4}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{p}\\quad \\Reit,2}\n\\have{5}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,4,3}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg p}\\quad \\NegI,2\\text{--}5}\n\\have{7}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{p}\\quad \\BicondE,1,6}\n\\have{8}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,7,6}\n\\close\n\\have{9}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg (p\\Bicond \\Neg p)}\\quad \\NegI,1\\text{--}8}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -22025,7 +22045,7 @@
    },
    "nd": {
     "exists": true,
-    "lines": 14,
+    "lines": 16,
     "max_subproof_depth": 3,
     "rules_used": [
      "As",
@@ -22033,7 +22053,8 @@
      "DisjE",
      "FalsumI",
      "NegE",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "subproof_count": 5,
     "uses_indirect_proof": true,
@@ -22072,59 +22093,68 @@
      },
      {
       "n": 6,
+      "f": "w",
+      "rule": "Reit",
+      "depth": 2,
+      "cites": [
+       5
+      ]
+     },
+     {
+      "n": 7,
       "f": "c",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 7,
+      "n": 8,
       "f": "h & c",
       "rule": "ConjI",
       "depth": 2,
       "cites": [
        4,
-       6
+       7
       ]
      },
      {
-      "n": 8,
+      "n": 9,
       "f": "~w",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 9,
+      "n": 10,
       "f": "!",
       "rule": "FalsumI",
       "depth": 3,
       "cites": [
-       7,
+       8,
        3
       ]
      },
      {
-      "n": 10,
+      "n": 11,
       "f": "~~w",
       "rule": "NegI",
       "depth": 2,
       "subs": [
        [
-        8,
-        9
+        9,
+        10
        ]
       ]
      },
      {
-      "n": 11,
+      "n": 12,
       "f": "w",
       "rule": "NegE",
       "depth": 2,
       "cites": [
-       10
+       11
       ]
      },
      {
-      "n": 12,
+      "n": 13,
       "f": "w",
       "rule": "DisjE",
       "depth": 1,
@@ -22134,22 +22164,31 @@
       "subs": [
        [
         5,
-        5
+        6
        ],
        [
-        6,
-        11
+        7,
+        12
        ]
       ]
      },
      {
-      "n": 13,
+      "n": 14,
       "f": "w",
       "rule": "As",
       "depth": 1
      },
      {
-      "n": 14,
+      "n": 15,
+      "f": "w",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       14
+      ]
+     },
+     {
+      "n": 16,
       "f": "w",
       "rule": "DisjE",
       "depth": 0,
@@ -22159,16 +22198,16 @@
       "subs": [
        [
         4,
-        12
+        13
        ],
        [
-        13,
-        13
+        14,
+        15
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{h\\Disj w}\n\\hypo{2}{w\\Disj c}\n\\hypo{3}{\\Neg (h\\Conj c)}\n\\open\n\\hypo{4}{h}\n\\open\n\\hypo{5}{w}\n\\hypo{6}{c}\n\\have{7}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{h\\Conj c}\\quad \\ConjI,4,6}\n\\open\n\\hypo{8}{\\Neg w}\n\\have{9}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{\\Falsum}\\quad \\FalsumI,7,3}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{\\Neg \\Neg w}\\quad \\NegI,8\\text{--}9}\n\\have{11}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\NegE,10}\n\\close\n\\have{12}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\DisjE,2,5\\text{--}5,6\\text{--}11}\n\\hypo{13}{w}\n\\close\n\\have{14}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\DisjE,1,4\\text{--}12,13\\text{--}13}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{h\\Disj w}\n\\hypo{2}{w\\Disj c}\n\\hypo{3}{\\Neg (h\\Conj c)}\n\\open\n\\hypo{4}{h}\n\\open\n\\hypo{5}{w}\n\\have{6}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\Reit,5}\n\\hypo{7}{c}\n\\have{8}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{h\\Conj c}\\quad \\ConjI,4,7}\n\\open\n\\hypo{9}{\\Neg w}\n\\have{10}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{\\Falsum}\\quad \\FalsumI,8,3}\n\\close\n\\have{11}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{\\Neg \\Neg w}\\quad \\NegI,9\\text{--}10}\n\\have{12}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\NegE,11}\n\\close\n\\have{13}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\DisjE,2,5\\text{--}6,7\\text{--}12}\n\\hypo{14}{w}\n\\have{15}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\Reit,14}\n\\close\n\\have{16}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\DisjE,1,4\\text{--}13,14\\text{--}15}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "looks_like": "distributed-knowledge",

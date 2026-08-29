@@ -1,29 +1,41 @@
 /*
  * The practice drill at /arguments/practice/.
  *
- * One argument at a time, drawn at random, with the answer hidden. What is
- * visible on a draw is the sequent, the English gloss and the provenance;
- * the verdict, the commentary, the table, the tree and the ND analysis are all
- * behind reveals. `interest` counts as an answer, not as context — it tends to
- * open with a phrase like "the argument is valid vacuously", which settles the
- * question before the reader has looked at it.
+ * Two questions, one button, one problem. Which methods do you want to
+ * practise, and at what difficulty — then draw. Everything else is deliberately
+ * absent: no search, no facets, no metrics. A student arriving between classes
+ * should be able to get a problem in two clicks and read nothing.
  *
- * The draw is a shuffled bag, not a coin flip. With 35 entries, sampling with
- * replacement repeats inside the first handful of clicks and students notice;
- * drawing without replacement guarantees every form in the filtered set comes
- * up once before any comes up twice. The bag survives a reload via
- * localStorage, so closing the tab does not restart the cycle.
+ * A problem is a **(form, method) pair**, not a form. The same argument can be
+ * an easy truth table and a hard derivation, which is why the database scores
+ * difficulty per method (`difficulty.table` / `.tree` / `.nd`), and why the bag
+ * is drawn over pairs: you can meet one form twice in a session, once as a
+ * table and once as a tree, and they are genuinely different exercises.
+ *
+ * What is withheld, and why. For a table or a tree the student is asked to
+ * *assess* the form, so nothing may say whether it is valid: not the turnstile
+ * (⊨ against ⊭), not the verdict, not the tags. For natural deduction the task
+ * is to derive the conclusion, so validity is given away by the asking — every
+ * ND problem is drawn from the valid entries, because an invalid one has no
+ * derivation to find.
  */
 
 import {
   loadDatabase,
-  filterEntries,
-  renderEntry,
+  methodPanel,
+  problemStatement,
   escapeHtml,
   asArray,
 } from "./encyclopedia.js";
 
-const STORE_KEY = "phil1115.practice.v1";
+const STORE = "phil1115.practice.v2";
+
+const METHODS = [
+  { key: "table", label: "Truth tables", verb: "truth table" },
+  { key: "tree", label: "Truth trees", verb: "truth tree" },
+  { key: "nd", label: "Natural deduction", verb: "natural deduction" },
+];
+const LEVELS = ["easy", "medium", "hard"];
 
 const root = document.getElementById("ae-practice");
 if (root) start();
@@ -39,145 +51,175 @@ async function start() {
     return;
   }
 
-  root.innerHTML = shell(db);
-
-  const els = {
-    controls: root.querySelector("#ae-p-controls"),
-    stage: root.querySelector("#ae-stage"),
-    draw: root.querySelector("#ae-draw"),
-    progress: root.querySelector("#ae-progress"),
-  };
-
-  // `method` is what the student is practising. It makes `difficulty` and
-  // `lecture` method-relative and reorders the reveals so the panel they want
-  // is the first one — an entry can be an easy Lecture 4 table and a hard
-  // Lecture 11 natural deduction at once.
+  // Everything on by default, so the button works on the first click. A
+  // student who wants only hard trees can say so; one who just wants a problem
+  // does not have to choose anything.
+  const saved = load();
   const state = {
-    method: "table",
-    difficulty: "",
-    maxAtoms: "",
-    lecture: "",
-    ...loadState().filters,
+    methods: new Set(saved.methods ?? METHODS.map((m) => m.key)),
+    levels: new Set(saved.levels ?? LEVELS),
   };
-
-  let bag = loadState().bag || [];
-  let seen = new Set(loadState().seen || []);
+  let bag = saved.bag ?? [];
+  let seen = new Set(saved.seen ?? []);
   let current = null;
 
-  const pool = () =>
-    filterEntries(db.entries, {
-      method: state.method,
-      difficulty: state.difficulty,
-      maxAtoms: state.maxAtoms,
-      lecture: state.lecture,
-      requireNd: state.method === "nd",
-    });
+  root.innerHTML = shell();
+  const els = {
+    chips: root.querySelector("#ae-choices"),
+    draw: root.querySelector("#ae-draw"),
+    stage: root.querySelector("#ae-stage"),
+    count: root.querySelector("#ae-count"),
+  };
+
+  /** Every (form, method) pair the current choices allow. */
+  function pool() {
+    const out = [];
+    for (const e of db.entries) {
+      for (const m of METHODS) {
+        if (!state.methods.has(m.key)) continue;
+        // Natural deduction only ever offers valid forms: an invalid one has
+        // no derivation, so there would be nothing to find.
+        if (m.key === "nd" && !e.nd?.exists) continue;
+        const level = e.difficulty?.[m.key];
+        if (!level || !state.levels.has(level)) continue;
+        out.push(`${e.id}|${m.key}`);
+      }
+    }
+    return out;
+  }
 
   function persist() {
     try {
       localStorage.setItem(
-        STORE_KEY,
-        JSON.stringify({ filters: state, bag, seen: [...seen] }),
+        STORE,
+        JSON.stringify({
+          methods: [...state.methods],
+          levels: [...state.levels],
+          bag,
+          seen: [...seen],
+        }),
       );
     } catch {
-      // A student in a private window, or with storage disabled. The drill
-      // still works for the session; only the memory of it is lost.
+      // Private window, or storage switched off. The drill still works; only
+      // the memory of it between visits is lost.
     }
   }
 
-  function refill(available) {
-    // Refill with whatever is in the filtered set but not yet seen this cycle.
-    // Changing a filter mid-cycle therefore keeps the student's progress
-    // instead of silently restarting it.
-    const ids = available.map((e) => e.id);
-    const fresh = ids.filter((id) => !seen.has(id));
-    if (fresh.length) return shuffle(fresh);
-    seen = new Set();
-    return shuffle(ids);
+  function refresh() {
+    const n = pool().length;
+    els.count.textContent = n
+      ? `${n} problem${n === 1 ? "" : "s"} match`
+      : "no problems match those choices";
+    els.draw.disabled = n === 0;
+    for (const b of els.chips.querySelectorAll("button[data-group]")) {
+      const on =
+        b.dataset.group === "method"
+          ? state.methods.has(b.dataset.value)
+          : state.levels.has(b.dataset.value);
+      b.setAttribute("aria-pressed", String(on));
+      b.classList.toggle("ae-chip-on", on);
+    }
   }
 
   function draw() {
     const available = pool();
+    if (!available.length) return;
 
-    if (!available.length) {
-      current = null;
-      els.stage.innerHTML =
-        `<div class="ae-empty"><p><strong>No form matches those filters.</strong></p>` +
-        `<p>Natural deduction is only offered on forms that have a proof, so ` +
-        `pairing it with a tight lecture limit can empty the set.</p></div>`;
-      updateProgress(available);
-      return;
+    const allowed = new Set(available);
+    bag = bag.filter((k) => allowed.has(k));
+    if (!bag.length) {
+      const fresh = available.filter((k) => !seen.has(k));
+      if (!fresh.length) seen = new Set();
+      bag = shuffle(fresh.length ? fresh : available);
     }
 
-    const ids = new Set(available.map((e) => e.id));
-    bag = bag.filter((id) => ids.has(id));
-    if (!bag.length) bag = refill(available);
-
-    // Avoid handing back the argument already on screen when more than one is
-    // available — a "random" button that redraws the same problem reads as
-    // broken even when it is behaving correctly.
-    let id = bag.pop();
-    if (id === current?.id && bag.length) {
+    let key = bag.pop();
+    // Re-drawing the problem already on screen reads as a broken button.
+    if (key === current && bag.length) {
       const swap = bag.pop();
-      bag.push(id);
-      id = swap;
+      bag.push(key);
+      key = swap;
     }
-
-    seen.add(id);
-    current = db.byId.get(id);
+    current = key;
+    seen.add(key);
     persist();
 
-    els.stage.innerHTML = renderEntry(current, db, {
-      spoilers: true,
-      method: state.method,
-    });
-    els.stage.insertAdjacentHTML(
-      "beforeend",
-      `<p style="margin-top:1.5rem;font-size:.85rem">` +
-        `<a href="/arguments/browse/#/${encodeURIComponent(id)}">Open the full encyclopedia entry ` +
-        `for this form →</a> <span style="color:var(--ae-muted)">(shows the answer, ` +
-        `the commentary and the related forms)</span></p>`,
-    );
-    updateProgress(available);
-    els.stage.scrollIntoView({ block: "start", behavior: "smooth" });
+    const [id, method] = key.split("|");
+    const entry = db.byId.get(id);
+    const m = METHODS.find((x) => x.key === method);
+
+    // "Assess" for a table or a tree, because the verdict is the question.
+    // "Prove" for a derivation, because the verdict is given and the
+    // derivation is the question.
+    const task =
+      method === "nd"
+        ? `Use the <strong>natural deduction</strong> method to prove the following argument form:`
+        : `Use the <strong>${m.verb}</strong> method to assess the following argument form:`;
+
+    els.stage.innerHTML =
+      `<div class="ae-problem">` +
+      `<p class="ae-task">${task}</p>` +
+      problemStatement(entry) +
+      `<details class="ae-reveal"><summary>Show the answer</summary>` +
+      `<div class="ae-reveal-body">${methodPanel(entry, method)}</div></details>` +
+      `<p class="ae-entry-link">` +
+      `<a href="/arguments/browse/#/${encodeURIComponent(id)}">` +
+      `Open the encyclopedia entry for this form →</a></p>` +
+      `</div>`;
+    els.stage.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
-  function updateProgress(available) {
-    const total = available.length;
-    const done = available.filter((e) => seen.has(e.id)).length;
-    els.progress.textContent = total
-      ? `${done} of ${total} in this set seen — no repeats until you have seen them all`
-      : "";
-  }
-
-  els.draw.addEventListener("click", draw);
-
-  els.controls.addEventListener("change", (ev) => {
-    const sel = ev.target.closest("select[data-ae-key]");
-    if (!sel) return;
-    state[sel.dataset.aeKey] = sel.value;
-    bag = []; // the filtered set changed; rebuild on the next draw
-    persist();
-    updateProgress(pool());
-  });
-
-  root.querySelector("#ae-reset").addEventListener("click", () => {
-    seen = new Set();
+  els.chips.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button[data-group]");
+    if (!b) return;
+    const set = b.dataset.group === "method" ? state.methods : state.levels;
+    const v = b.dataset.value;
+    if (set.has(v)) set.delete(v);
+    else set.add(v);
+    // Never leave both questions unanswerable: the last chip in a group stays.
+    if (!set.size) set.add(v);
     bag = [];
     persist();
-    updateProgress(pool());
+    refresh();
   });
 
-  // Restore the controls, then open with a problem already on screen — landing
-  // on an empty page with one button is a worse invitation than landing on a
-  // problem.
-  for (const sel of els.controls.querySelectorAll("select[data-ae-key]")) {
-    sel.value = state[sel.dataset.aeKey] || "";
-  }
-  draw();
+  els.draw.addEventListener("click", draw);
+  refresh();
 }
 
-/* Fisher–Yates, so every ordering is equally likely. */
+function shell() {
+  const group = (name, items) =>
+    items
+      .map(
+        (i) =>
+          `<button type="button" class="ae-chip ae-chip-toggle" ` +
+          `data-group="${name}" data-value="${i.key}" aria-pressed="true">` +
+          `${escapeHtml(i.label)}</button>`,
+      )
+      .join("");
+
+  return (
+    `<div id="ae-choices" class="ae-choices">` +
+    `<div class="ae-choice">` +
+    `<h3>Which method would you like to practise?</h3>` +
+    `<div class="ae-chiprow">${group("method", METHODS)}</div>` +
+    `</div>` +
+    `<div class="ae-choice">` +
+    `<h3>How hard?</h3>` +
+    `<div class="ae-chiprow">${group(
+      "level",
+      LEVELS.map((l) => ({ key: l, label: l[0].toUpperCase() + l.slice(1) })),
+    )}</div>` +
+    `</div>` +
+    `<div class="ae-drawrow">` +
+    `<button type="button" id="ae-draw" class="ae-btn ae-btn-primary">New problem</button>` +
+    `<span id="ae-count" class="ae-progress"></span>` +
+    `</div></div>` +
+    `<div id="ae-stage"></div>`
+  );
+}
+
+/* Fisher–Yates: every ordering equally likely. */
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -187,64 +229,10 @@ function shuffle(arr) {
   return a;
 }
 
-function loadState() {
+function load() {
   try {
-    return JSON.parse(localStorage.getItem(STORE_KEY)) || {};
+    return JSON.parse(localStorage.getItem(STORE)) || {};
   } catch {
     return {};
   }
-}
-
-/* ------------------------------------------------------------- markup */
-
-function shell(db) {
-  return (
-    `<div id="ae-p-controls" class="ae-controls">` +
-    `<div class="ae-selects">` +
-    select("method", "practising", [
-      ["table", "truth table"],
-      ["tree", "truth tree"],
-      ["nd", "natural deduction"],
-    ]) +
-    select("difficulty", "difficulty", [
-      ["", "any"],
-      ["easy", "easy"],
-      ["medium", "medium"],
-      ["hard", "hard"],
-    ]) +
-    select("maxAtoms", "at most … atoms", [
-      ["", "any"],
-      ...Array.from({ length: db.maxAtoms }, (_, i) => [
-        String(i + 1),
-        `${i + 1} atom${i ? "s" : ""}`,
-      ]),
-    ]) +
-    select("lecture", "only what we have covered", [
-      ["", "any lecture"],
-      ...Array.from({ length: db.maxLecture }, (_, i) => [
-        String(i + 1),
-        `through Lecture ${i + 1}`,
-      ]),
-    ]) +
-    `</div>` +
-    `<div class="ae-practice-bar">` +
-    `<button type="button" id="ae-draw" class="ae-btn ae-btn-primary">Random argument</button>` +
-    `<button type="button" id="ae-reset" class="ae-btn">start the cycle over</button>` +
-    `<span id="ae-progress" class="ae-progress"></span>` +
-    `</div></div>` +
-    `<div id="ae-stage"></div>`
-  );
-}
-
-function select(key, label, options) {
-  const opts = options
-    .map(
-      ([value, text]) =>
-        `<option value="${escapeHtml(value)}">${escapeHtml(text)}</option>`,
-    )
-    .join("");
-  return (
-    `<label class="ae-field"><span>${escapeHtml(label)}</span>` +
-    `<select data-ae-key="${escapeHtml(key)}">${opts}</select></label>`
-  );
 }

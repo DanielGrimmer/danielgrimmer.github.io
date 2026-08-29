@@ -56,10 +56,14 @@ PROOFS["peirce-law"] = [
     _l(7, "q", "NegE", 3, [6]),
     _l(8, "p > q", "CondI", 2, subs=[[3, 7]]),
     _l(9, "p", "CondE", 2, [1, 8]),
-    _l(10, "!", "FalsumI", 2, [9, 2]),
-    _l(11, "~~p", "NegI", 1, subs=[[2, 10]]),
-    _l(12, "p", "NegE", 1, [11]),
-    _l(13, "((p > q) > p) > p", "CondI", 0, subs=[[1, 12]]),
+    # The contradiction is with line 2, this subproof's own assumption, so it
+    # is brought back down: we assumed ∼p, we have now derived p, and here is
+    # the ∼p we assumed.
+    _l(10, "~p", "Reit", 2, [2]),
+    _l(11, "!", "FalsumI", 2, [9, 10]),
+    _l(12, "~~p", "NegI", 1, subs=[[2, 11]]),
+    _l(13, "p", "NegE", 1, [12]),
+    _l(14, "((p > q) > p) > p", "CondI", 0, subs=[[1, 13]]),
 ]
 
 # ------------------------------------------------------------------ contraction
@@ -126,11 +130,14 @@ PROOFS["russell-schema"] = [
     _l(1, "p = ~p", "As", 1),
     _l(2, "p", "As", 2),
     _l(3, "~p", "BicondE", 2, [1, 2]),
-    _l(4, "!", "FalsumI", 2, [2, 3]),
-    _l(5, "~p", "NegI", 1, subs=[[2, 4]]),
-    _l(6, "p", "BicondE", 1, [1, 5]),
-    _l(7, "!", "FalsumI", 1, [6, 5]),
-    _l(8, "~(p = ~p)", "NegI", 0, subs=[[1, 7]]),
+    # Line 2 is the assumption; line 4 is that same p standing as one half of
+    # the contradiction we have just walked into.
+    _l(4, "p", "Reit", 2, [2]),
+    _l(5, "!", "FalsumI", 2, [4, 3]),
+    _l(6, "~p", "NegI", 1, subs=[[2, 5]]),
+    _l(7, "p", "BicondE", 1, [1, 6]),
+    _l(8, "!", "FalsumI", 1, [7, 6]),
+    _l(9, "~(p = ~p)", "NegI", 0, subs=[[1, 8]]),
 ]
 
 # ------------------------------------------------- rebutting entails undercutting
@@ -294,15 +301,20 @@ PROOFS["distributed-knowledge-repaired"] = [
     P(3, "~(h & c)"),
     _l(4, "h", "As", 1),
     _l(5, "w", "As", 2),
-    _l(6, "c", "As", 2),
-    _l(7, "h & c", "ConjI", 2, [4, 6]),
-    _l(8, "~w", "As", 3),
-    _l(9, "!", "FalsumI", 3, [7, 3]),
-    _l(10, "~~w", "NegI", 2, subs=[[8, 9]]),
-    _l(11, "w", "NegE", 2, [10]),
-    _l(12, "w", "DisjE", 1, [2], [[5, 5], [6, 11]]),
-    _l(13, "w", "As", 1),
-    _l(14, "w", "DisjE", 0, [1], [[4, 12], [13, 13]]),
+    # Lines 5 and 6 are the same formula doing two different jobs: 5 is the
+    # assumption ∨E licenses, 6 is what this case concludes. Without the
+    # reiteration one line would have to play both roles.
+    _l(6, "w", "Reit", 2, [5]),
+    _l(7, "c", "As", 2),
+    _l(8, "h & c", "ConjI", 2, [4, 7]),
+    _l(9, "~w", "As", 3),
+    _l(10, "!", "FalsumI", 3, [8, 3]),
+    _l(11, "~~w", "NegI", 2, subs=[[9, 10]]),
+    _l(12, "w", "NegE", 2, [11]),
+    _l(13, "w", "DisjE", 1, [2], [[5, 6], [7, 12]]),
+    _l(14, "w", "As", 1),
+    _l(15, "w", "Reit", 1, [14]),
+    _l(16, "w", "DisjE", 0, [1], [[4, 13], [14, 15]]),
 ]
 
 # ------------------------------------------------------------------- assertion
