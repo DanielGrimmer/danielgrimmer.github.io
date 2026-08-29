@@ -1379,3 +1379,12 @@ button.ae-chip:hover {
   line-height: 1.5;
   color: var(--ae-muted);
 }
+
+/* Where one subproof ends and its sibling begins — the second half of a
+   biconditional proof, the second case of a proof by cases. They sit at the
+   same depth with nothing between them, so without a break the two scope
+   lines read as one. */
+.ae-nd-restart {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+}

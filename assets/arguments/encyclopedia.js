@@ -108,10 +108,26 @@ export function hydrateSvgs(root) {
  * *inconsistent*, so its answer is whether they are. Everything else is an
  * ordinary argument, and its answer is valid or invalid.
  */
+/*
+ * An entry whose conclusion is falsum is not an argument for a sentence. It is
+ * the claim that its premises are inconsistent, and that is how it should read.
+ *
+ * `⊥` is a perfectly good formula of this language and `X ⊢ ⊥` is exactly what
+ * the derivation establishes, so falsum stays wherever a turnstile makes it a
+ * claim *about* the set. What it cannot do is sit after `∴`: nobody concludes
+ * falsum, and the truth table and the tree do not treat it as a conclusion
+ * either — the table has no conclusion column and the tree stacks no negated
+ * conclusion. So the stacked display drops the `∴` line and asks the question
+ * the two methods are actually answering.
+ */
+export function claimsInconsistency(entry) {
+  return entry.conclusion === "!";
+}
+
 export function answerLine(entry) {
   const valid = !!entry.verdict?.valid;
   const noPremises = !asArray(entry._premises).length;
-  const claimsContradiction = entry.conclusion === "!";
+  const claimsContradiction = claimsInconsistency(entry);
 
   let text;
   if (noPremises) {
@@ -120,8 +136,8 @@ export function answerLine(entry) {
       : `<strong>Invalid</strong> — the conclusion is <strong>not</strong> a tautology.`;
   } else if (claimsContradiction) {
     text = valid
-      ? `<strong>Valid</strong> — the premises are <strong>inconsistent</strong>: nothing satisfies them all.`
-      : `<strong>Invalid</strong> — the premises are <strong>consistent</strong>, so they do not entail a contradiction.`;
+      ? `<strong>Inconsistent.</strong> No assignment makes all of these sentences true.`
+      : `<strong>Consistent.</strong> Some assignment makes all of these sentences true.`;
   } else {
     text = valid ? `<strong>Valid.</strong>` : `<strong>Invalid.</strong>`;
   }
@@ -493,7 +509,14 @@ export function filterEntries(entries, f = {}) {
 export function md(text) {
   if (!text) return "";
   return escapeHtml(String(text))
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    // A backticked span is a formula almost everywhere in this database, so
+    // its atoms get their subscripts. Anything that is not made only of
+    // formula characters — `argument-db.json`, a file name — is left alone.
+    .replace(/`([^`]+)`/g, (whole, span) =>
+      /^[A-Za-z0-9 ()~&amp;|>=!∼∨⊃≡⊥⊨⊭⊢⊬,.∴]+$/.test(span)
+        ? `<code>${subscripts(span)}</code>`
+        : `<code>${span}</code>`,
+    )
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s.,;:!?)]|$)/g, "$1<em>$2</em>")
     .replace(/ -- /g, " — ");
@@ -509,8 +532,23 @@ export function escapeHtml(s) {
 
 /** A formula in house glyphs. Rule 4: callers pass `display.*`, never ASCII. */
 function f(formula) {
-  return `<span class="ae-f">${escapeHtml(formula)}</span>`;
+  return `<span class="ae-f">${subscripts(escapeHtml(formula))}</span>`;
 }
+
+/*
+ * Digits after a letter are a subscript, not a suffix.
+ *
+ * Lecture 2 gives the whole alphabet of propositional names: "lower case
+ * letters (e.g. p, q, r) potentially with subscripts (e.g. p_2, q_3, r_5)".
+ * The database stores those inline as `p1`, `o2`, since one token is easier to
+ * parse and to search than a token plus markup, and they are set as real
+ * subscripts here and as `p_{1}` in the LaTeX.
+ */
+function subscripts(escaped) {
+  return escaped.replace(/([a-z])([0-9]+)/g, "$1<sub>$2</sub>");
+}
+
+export { subscripts };
 
 export { f as formula };
 
@@ -657,19 +695,28 @@ function renderSequent(entry, spoilers = false) {
       `<div class="ae-seq-prem"><span class="ae-seq-num">${i + 1}.</span>${f(p)}</div>`,
   );
 
-  const body = prems.length
-    ? rows.join("") +
-      `<div class="ae-seq-bar"></div>` +
-      `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(concl)}</div>`
-    : // Not `⊢`: a no-premise entry is a *claimed* theorem, not a proved one,
-      // and four of them are invalid. `∴` asserts nothing either way.
-      `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(concl)}</div>`;
+  const inconsistency = claimsInconsistency(entry);
+
+  const body = inconsistency
+    ? // No `∴ ⊥`. See claimsInconsistency: the claim is about the set.
+      rows.join("")
+    : prems.length
+      ? rows.join("") +
+        `<div class="ae-seq-bar"></div>` +
+        `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(concl)}</div>`
+      : // Not `⊢`: a no-premise entry is a *claimed* theorem, not a proved one,
+        // and four of them are invalid. `∴` asserts nothing either way.
+        `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(concl)}</div>`;
 
   const atoms = entry.metrics?.atom_count;
   const scale = atoms ? `${atoms} atom${atoms === 1 ? "" : "s"}` : "";
 
   let note;
-  if (spoilers) {
+  if (inconsistency) {
+    note = spoilers
+      ? `${prems.length} sentences · are they consistent?`
+      : `${prems.length} sentences · ${f(sequentText(entry, turnstile))}`;
+  } else if (spoilers) {
     note = prems.length
       ? [`${prems.length} premise${prems.length === 1 ? "" : "s"}`, scale]
           .filter(Boolean)
@@ -717,7 +764,16 @@ function renderVerdictBanner(entry, bare = false) {
   const valid = !!v.valid;
 
   let text;
-  if (valid) {
+  if (claimsInconsistency(entry)) {
+    // Not "valid, but vacuously": there is no conclusion here, and calling it
+    // vacuous invites the reader to look for one. See claimsInconsistency.
+    text = valid
+      ? `<strong>Inconsistent.</strong> Of ${v.rows} rows, <strong>none</strong> ` +
+        `makes all of these sentences true, so together they entail anything at ` +
+        `all — which is the same as saying they say nothing.`
+      : `<strong>Consistent.</strong> Some of the ${v.rows} rows make all of ` +
+        `these sentences true, so they do not entail a contradiction.`;
+  } else if (valid) {
     if (v.premises_satisfiable === false) {
       text =
         `<strong>Valid</strong> — but vacuously. Of ${v.rows} rows, ` +
@@ -763,6 +819,11 @@ function assignmentText(model) {
   return Object.entries(model)
     .map(([k, v]) => `${k} = ${v}`)
     .join(",  ");
+}
+
+/** An assignment as markup, so its atoms keep their subscripts. */
+function assignmentHtml(model) {
+  return subscripts(escapeHtml(assignmentText(model)));
 }
 
 function renderInterest(entry, bare = false) {
@@ -976,9 +1037,16 @@ function buildTruthTable(entry) {
   // `columns` is the premises followed by the conclusion, in the generator's
   // own display strings. Rebuild it positionally from the corrected formulas
   // when the shape matches, and fall back to the repair map if it ever doesn't.
+  // An inconsistency claim has no conclusion column. A column of falsum would
+  // be F all the way down and say nothing; the question is whether any row
+  // makes the premises true. The typeset table is one-sided for the same
+  // reason, and this keeps the fallback matching it.
+  const oneSided = claimsInconsistency(entry);
   const headers =
     cols.length === premCount + 1
-      ? [...entry._premises, entry._conclusion]
+      ? oneSided
+        ? [...entry._premises]
+        : [...entry._premises, entry._conclusion]
       : cols.map((c) => fixFormula(entry, c));
 
   // `columns` is premises followed by the conclusion. Splitting on the premise
@@ -986,11 +1054,11 @@ function buildTruthTable(entry) {
   // (where columns is just the conclusion) correct.
   const head =
     `<tr>` +
-    atoms.map((a) => `<th>${escapeHtml(a)}</th>`).join("") +
+    atoms.map((a) => `<th>${subscripts(escapeHtml(a))}</th>`).join("") +
     headers
       .map(
         (c, i) =>
-          `<th class="${i === 0 || i === premCount ? "ae-tt-split" : ""}">${escapeHtml(c)}</th>`,
+          `<th class="${i === 0 || i === premCount ? "ae-tt-split" : ""}">${subscripts(escapeHtml(c))}</th>`,
       )
       .join("") +
     `<th class="ae-tt-split"></th>` +
@@ -1014,7 +1082,9 @@ function buildTruthTable(entry) {
               `<td class="${i === 0 ? "ae-tt-split" : ""}">${escapeHtml(v)}</td>`,
           )
           .join("") +
-        `<td class="${premCount === 0 ? "ae-tt-split" : "ae-tt-split"}">${escapeHtml(r.conclusion ?? "")}</td>` +
+        (oneSided
+          ? ""
+          : `<td class="ae-tt-split">${escapeHtml(r.conclusion ?? "")}</td>`) +
         `<td class="ae-tt-split ae-tt-mark">${r.countermodel ? "←" : ""}</td>`;
 
       return `<tr class="${cls}">${cells}</tr>`;
@@ -1024,7 +1094,9 @@ function buildTruthTable(entry) {
   const legend =
     `<div class="ae-tt-legend">` +
     `<span><span class="ae-swatch" style="background:var(--ae-accent-soft)"></span>all premises true</span>` +
-    `<span><span class="ae-swatch" style="background:var(--ae-invalid-bg)"></span>countermodel — premises true, conclusion false</span>` +
+    (oneSided
+      ? ""
+      : `<span><span class="ae-swatch" style="background:var(--ae-invalid-bg)"></span>countermodel — premises true, conclusion false</span>`) +
     `</div>`;
 
   return {
@@ -1070,7 +1142,11 @@ function buildTree(entry, spoilers = false) {
   if (!t || !t.tree) return null;
 
   const resolved = collectResolved(t.tree);
+  // `∼⊥` is stored as the negated conclusion but never stacked: an
+  // inconsistency claim's tree starts from the premises alone, because it is
+  // asking whether they can all be true. The typeset tree omits it too.
   const roots = asArray(t.roots)
+    .filter((r) => !(claimsInconsistency(entry) && (r === "∼⊥" || r === "⊥")))
     .map((r, i) => treeFormula(entry, r, resolved, i + 1))
     .join("");
 
@@ -1084,10 +1160,16 @@ function buildTree(entry, spoilers = false) {
   return {
     hint,
     html:
-      `<p class="ae-tree-key">The premises and the <em>negated</em> conclusion, ` +
-      `stacked. A branch closes (<strong>x</strong>) when it holds a sentence and ` +
-      `its negation; a branch still open when the rules run out (<strong>o</strong>) ` +
-      `is a countermodel.</p>` +
+      (claimsInconsistency(entry)
+        ? `<p class="ae-tree-key">The sentences themselves, stacked — there is no ` +
+          `conclusion to negate. A branch closes (<strong>x</strong>) when it holds a ` +
+          `sentence and its negation; a branch still open when the rules run out ` +
+          `(<strong>o</strong>) satisfies them all, so the set is consistent exactly ` +
+          `when some branch stays open.</p>`
+        : `<p class="ae-tree-key">The premises and the <em>negated</em> conclusion, ` +
+          `stacked. A branch closes (<strong>x</strong>) when it holds a sentence and ` +
+          `its negation; a branch still open when the rules run out (<strong>o</strong>) ` +
+          `is a countermodel.</p>`) +
       svgFigure(
         entry,
         "tree",
@@ -1158,7 +1240,7 @@ function treeBox(node, entry, resolved) {
   } else if (node.status === "open") {
     mark = `<div class="ae-t-mark ae-t-open">o</div>`;
     if (node.model) {
-      mark += `<div class="ae-t-model">${escapeHtml(assignmentText(node.model))}</div>`;
+      mark += `<div class="ae-t-model">${assignmentHtml(node.model)}</div>`;
     }
   }
   return `<div class="ae-t-box">${rows}${mark}</div>`;
@@ -1258,7 +1340,34 @@ function ndCitation(line) {
   return bits.length ? `${label}, ${bits.join(", ")}` : label;
 }
 
+/*
+ * Which subproofs each line is inside, outermost first.
+ *
+ * Depth says how deep a line is; this says *which* subproofs it is in, and the
+ * two come apart wherever subproofs are siblings — the two halves of a
+ * biconditional proof, the two cases of a proof by cases. Those sit at the
+ * same depth with no line between them at a shallower one, so drawing the
+ * scope lines from depth alone runs them together and the second assumption
+ * looks like it belongs to the first case. An assumption is what opens a
+ * subproof, so an `As` line at depth d ends every subproof at depth d or
+ * deeper and starts a fresh one. `latexgen/nd.py` computes the same paths, and
+ * checks citations against them.
+ */
+function ndScopes(lines) {
+  const out = [];
+  let path = [];
+  let made = 0;
+  for (const l of lines) {
+    const d = l.depth || 0;
+    if (l.rule === "As") path = path.slice(0, Math.max(d - 1, 0)).concat(++made);
+    else path = path.slice(0, d);
+    out.push(path);
+  }
+  return out;
+}
+
 function renderFitch(lines) {
+  const scope = ndScopes(lines);
   const rows = lines
     .map((l, i) => {
       const depth = l.depth || 0;
@@ -1268,13 +1377,22 @@ function renderFitch(lines) {
         (l.rule === "Pr" || l.rule === "As") &&
         !(next && (next.depth || 0) === depth && (next.rule === "Pr" || next.rule === "As"));
 
+      // A line that starts a subproof its predecessor was not inside gets a
+      // break above it, so two sibling cases read as two.
+      const prev = scope[i - 1] || [];
+      const restart =
+        depth > 0 &&
+        i > 0 &&
+        scope[i].length <= prev.length &&
+        scope[i][scope[i].length - 1] !== prev[scope[i].length - 1];
+
       const bars = Array.from(
         { length: depth },
         () => `<span class="ae-nd-bar"></span>`,
       ).join("");
 
       return (
-        `<div class="ae-nd-line">` +
+        `<div class="ae-nd-line${restart ? " ae-nd-restart" : ""}">` +
         `<span class="ae-nd-n">${escapeHtml(l.n ?? "")}</span>` +
         `<span class="ae-nd-scope">${bars}` +
         `<span class="ae-nd-body${lastAssumption ? " ae-nd-assumed" : ""}">` +
@@ -1485,11 +1603,13 @@ export function problemStatement(entry) {
     )
     .join("");
   const concl = `<div class="ae-seq-concl"><span class="ae-seq-num">∴</span>${f(entry._conclusion)}</div>`;
-  return (
-    `<div class="ae-sequent"><div class="ae-seq-stack">` +
-    (prems.length ? rows + `<div class="ae-seq-bar"></div>` + concl : concl) +
-    `</div></div>`
-  );
+  // An inconsistency claim has no conclusion to state; see claimsInconsistency.
+  const stack = claimsInconsistency(entry)
+    ? rows
+    : prems.length
+      ? rows + `<div class="ae-seq-bar"></div>` + concl
+      : concl;
+  return `<div class="ae-sequent"><div class="ae-seq-stack">${stack}</div></div>`;
 }
 
 /** The card used in the catalogue and in the practice history. */

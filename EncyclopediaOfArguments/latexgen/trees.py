@@ -23,7 +23,7 @@ quoted here are already the ones to print.
 
 from __future__ import annotations
 
-from formula import latex, parse, render
+from formula import latex, parse, render, to_ascii
 
 
 # The display alphabet the database stores tree formulas in.
@@ -40,14 +40,13 @@ _GLYPH_TO_MACRO = {
 def to_macros(shown: str) -> str:
     """House-glyph LaTeX for a formula quoted from the stored tree.
 
-    A straight transliteration, because `build.py`'s normalisation pass has
-    already put every stored formula into the fully parenthesised spelling --
-    there is nothing left to repair here.
+    Round-tripped through the parser rather than transliterated character by
+    character, so that atom names come out with their subscripts (`o1` as
+    `o_{1}`). `build.py`'s normalisation pass has already put every stored
+    formula into the fully parenthesised spelling, so this reprints it as it
+    stands rather than repairing anything.
     """
-    out = []
-    for ch in shown:
-        out.append(_GLYPH_TO_MACRO.get(ch, ch))
-    return "".join(out).replace("  ", " ").strip()
+    return latex(to_ascii(shown))
 
 
 def _node(node: dict, resolved: set, root_lines=None) -> str:

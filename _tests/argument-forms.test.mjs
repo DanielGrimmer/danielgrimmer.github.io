@@ -555,3 +555,116 @@ test('every entry has an answer the reveal can lead with', () => {
     }
   }
 });
+
+/*
+ * What may name a proposition.
+ *
+ * Lecture 2 gives the alphabet and it is short: "lower case letters (e.g. p,
+ * q, r, etc.) potentially with subscripts (e.g. p_2, q_3, r_5)". So `bl`,
+ * `ls`, `aS` and `bpq` are not names of propositions, however mnemonic. The
+ * subscripts are stored inline (`o1`) and typeset as subscripts — `o_{1}` in
+ * the LaTeX, `o<sub>1</sub>` on the page.
+ *
+ * `latexgen/build.py` renames on every build: each atom keeps its initial,
+ * which is where the mnemonic value lives, and takes a subscript only when it
+ * would otherwise collide with another atom in the same entry.
+ */
+test('every atom is a name the language allows', async (t) => {
+  const legal = /^[a-z][0-9]*$/;
+
+  await t.test('the atom lists are legal', () => {
+    for (const e of entries) {
+      for (const a of e.truth_table.atoms) {
+        assert.match(a, legal, `${e.id}: ${a} is not a lower-case letter with an optional subscript`);
+      }
+    }
+  });
+
+  await t.test('the formulas use no others', () => {
+    for (const e of entries) {
+      const known = new Set(e.truth_table.atoms);
+      for (const src of [...e.premises, e.conclusion, ...(e.nd.proof ?? []).map((l) => l.f)]) {
+        for (const [, name] of src.matchAll(/([A-Za-z][A-Za-z0-9]*)/g)) {
+          assert.ok(known.has(name), `${e.id}: ${name} is not one of its atoms`);
+        }
+      }
+    }
+  });
+
+  await t.test('a subscripted atom is typeset as one', () => {
+    for (const e of entries) {
+      if (!e.truth_table.atoms.some((a) => /[0-9]/.test(a))) continue;
+      for (const block of [e.truth_table.latex, e.tree.latex, e.nd.latex].filter(Boolean)) {
+        // `o1` must never reach the page as two characters.
+        assert.ok(!/[a-z][0-9]/.test(block.replace(/_\{[0-9]+\}/g, '')),
+          `${e.id}: an atom is printed without its subscript`);
+      }
+    }
+  });
+});
+
+/*
+ * Sibling subproofs.
+ *
+ * Two subproofs can sit at the same depth with nothing between them — the two
+ * halves of a biconditional proof, the two cases of a proof by cases. Drawing
+ * the scope lines from depth alone runs them together, so the second
+ * assumption looks like it belongs inside the first case, and a citation from
+ * the second reaching into the first looks accessible when it is not.
+ */
+test('sibling subproofs are drawn, and checked, as two', async (t) => {
+  const siblings = [];
+  for (const e of entries) {
+    const proof = e.nd.proof ?? [];
+    proof.forEach((line, i) => {
+      const before = proof[i - 1];
+      if (before && line.rule === 'As' && (before.depth ?? 0) >= (line.depth ?? 0)) {
+        siblings.push([e.id, line.n]);
+      }
+    });
+  }
+
+  await t.test('the proofs that have them are the ones that should', () => {
+    // Every biconditional introduction and every proof by cases.
+    assert.ok(siblings.length >= 7, `only ${siblings.length} sibling subproofs found`);
+  });
+
+  await t.test('each one closes before the next opens', () => {
+    for (const [id, n] of siblings) {
+      const block = entries.find((e) => e.id === id).nd.latex;
+      const at = block.indexOf(`\\hypo{${n}}`);
+      assert.ok(at > 0, `${id}: line ${n} is not in the derivation`);
+      const between = block.slice(0, at).split('\n').slice(-3).join('\n');
+      assert.match(between, /\\close/,
+        `${id}: line ${n} opens a sibling subproof with no \\close before it`);
+    }
+  });
+});
+
+/*
+ * Inconsistency claims.
+ *
+ * An entry whose conclusion is falsum is not an argument for a sentence; it is
+ * the claim that its premises cannot all be true. `⊥` is a formula and `X ⊢ ⊥`
+ * is exactly what its derivation establishes, so falsum belongs on the right
+ * of a turnstile — but not after `∴`, and not as a truth-table column that
+ * would read F all the way down, and not as a negated conclusion at the head
+ * of a tree.
+ */
+test('an inconsistency claim is not dressed as an argument', () => {
+  const claims = entries.filter((e) => e.conclusion === '!');
+  assert.equal(claims.length, 3);
+  for (const e of claims) {
+    assert.ok(e.premises.length, `${e.id}: an inconsistency claim needs premises`);
+    assert.ok(!e.truth_table.latex.includes('Conclusion'),
+      `${e.id}: the table has a conclusion column`);
+    assert.ok(!e.tree.latex.includes('\\Falsum'),
+      `${e.id}: the tree stacks a negated falsum`);
+    assert.ok(!e.tree.latex.includes('\\Neg A'),
+      `${e.id}: the tree labels a negated conclusion`);
+    // The derivation is the one place falsum is the goal, and it is reached.
+    if (e.nd.exists) {
+      assert.equal(e.nd.proof.at(-1).f, '!', `${e.id}: the derivation should end at ⊥`);
+    }
+  }
+});

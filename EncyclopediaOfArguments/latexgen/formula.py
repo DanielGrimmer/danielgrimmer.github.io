@@ -30,6 +30,22 @@ GLYPH = {
 NEG, AND, OR, IMP, IFF, BOT = "~", "&", "|", ">", "=", "!"
 BINARY = (AND, OR, IMP, IFF)
 
+# What may name a proposition. Lecture 2: "lower case letters (e.g., p, q, r,
+# etc.) potentially with subscripts (e.g., p_2, q_3, r_5)". Nothing else -- no
+# `bl`, no `aS`. The digits are stored inline (`p1`) and typeset as a subscript.
+ATOM = re.compile(r"^[a-z][0-9]*$")
+
+
+def legal_atom(name: str) -> bool:
+    return bool(ATOM.match(name))
+
+
+def atom_latex(name: str) -> str:
+    """`o2` as `o_{2}`."""
+    head = name.rstrip("0123456789")
+    tail = name[len(head):]
+    return f"{head}_{{{tail}}}" if tail else head
+
 
 @dataclass
 class Tok:
@@ -269,7 +285,7 @@ def render(toks: list[Tok]) -> str:
     out = []
     for t in toks:
         if t.kind == "atom":
-            out.append(t.text)
+            out.append(atom_latex(t.text))
         elif t.kind in ("op", "neg", "bot"):
             out.append(GLYPH[t.text])
         else:

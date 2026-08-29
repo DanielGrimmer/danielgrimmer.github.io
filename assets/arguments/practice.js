@@ -24,6 +24,7 @@ import {
   loadDatabase,
   methodPanel,
   problemStatement,
+  claimsInconsistency,
   hydrateSvgs,
   escapeHtml,
   asArray,
@@ -159,8 +160,16 @@ async function start() {
     // "Assess" for a table or a tree, because the verdict is the question.
     // "Prove" for a derivation, because the verdict is given and the
     // derivation is the question.
-    const task =
-      method === "nd"
+    //
+    // A handful of entries claim not that a conclusion follows but that their
+    // premises cannot all be true at once, and asking whether *that* argument
+    // form is valid makes no sense. The question there is consistency, and for
+    // a derivation it is to reach ⊥.
+    const task = claimsInconsistency(entry)
+      ? method === "nd"
+        ? `Use the <strong>natural deduction</strong> method to derive <span class="ae-f">⊥</span> from the following premises:`
+        : `Use the <strong>${m.verb}</strong> method to decide whether the following sentences are consistent:`
+      : method === "nd"
         ? `Use the <strong>natural deduction</strong> method to prove the following argument form:`
         : `Use the <strong>${m.verb}</strong> method to assess the following argument form:`;
 

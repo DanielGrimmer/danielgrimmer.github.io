@@ -225,10 +225,36 @@ footnote makes the point sharply: `A` is not an expression of the language at
 all, because the language contains no upper-case letters. A rule *schema* is
 written in `A`/`B`; a concrete entry is written in `p`/`q`/`r`.
 
-The database's multi-letter atoms (`bl`, `ls`, `gs`, `on`, `aS`, `bD`, `p1`,
-`tp`) are a departure from the course's single-letter habit — mnemonic atoms
-that make a Dutch-book argument readable. They are lower-case, so they respect
-the rule that matters. Set them as-is; `aS` and `bD` keep their internal capital.
+**An atom is a lower-case letter with an optional numeric subscript, and
+nothing else.** Lecture 2 gives the alphabet and it is short: "lower case
+letters (e.g. `p`, `q`, `r`, etc.) potentially with subscripts (e.g. `p_2`,
+`q_3`, `r_5`)". `bl`, `ls`, `aS` and `bpq` are not names of propositions,
+however mnemonic — `bl` is two letters, and the language has no way to read a
+string of them as one name.
+
+The subscript is stored inline and typeset as a subscript: `o1` in the JSON,
+`o_{1}` in the LaTeX, `o<sub>1</sub>` on the page. So a formula that needs more
+than twenty-six names still has them.
+
+`build.py` legalises on every build, and the rule keeps as much of the mnemonic
+as the language allows: **each atom keeps its initial**, and takes a subscript
+only when it would collide with another atom in the same entry, numbered by
+order of first appearance. The Cleopatra entry's `bS, aS, bD, aD, aC` become
+`b1, a1, b2, a2, a3` — which still pairs each `b` with its `a`. The Dutch book's
+`bl, v, k, ls, o` become `b, v, k, l, o`, all distinct initials, no subscripts
+needed.
+
+Two consequences for authoring:
+
+- **Write the entry with whatever atoms are natural; the build settles the
+  spelling.** It renames the formulas, the table, the tree, the derivation, the
+  countermodels and the atoms quoted in backticks in the prose, all together.
+- **A hand-written proof in `proofs.py` must use the entry's *final* atom
+  names.** The build renames the entry and the proof together the first time,
+  but `proofs.py` is a source file and is not rewritten, so on the next build
+  the entry is already legal and the proof no longer matches. `check()` catches
+  it — the error names the mismatched premises — and the fix is to update
+  `proofs.py`.
 
 ### 2.5 Quantifiers, identity, substitution
 
@@ -728,16 +754,30 @@ written out in full every time:
 \end{align*}
 ```
 
-### 6.6 Contradiction entries (`⊥` as conclusion)
+### 6.6 Inconsistency entries (`⊥` as conclusion)
 
-Three entries conclude `⊥`. Per the Notation Guide, **the one-sided turnstile is
-the house form**: write `X \ProvesND`, not `X \ProvesND \Falsum`. Lecture 10
-*defines* the former by the latter, and that definition is the only place the
-two-sided form belongs, because it is what keeps the ND dictionary aligned with
-the table and tree methods, neither of which has a falsum to put on the right.
+Three entries conclude `⊥`, and they are **not arguments for a sentence**. The
+claim is that the premises cannot all be true, and every part of the entry
+should say so rather than pretending there is a conclusion.
 
-Inside the derivation, `\Falsum` stands alone on its final line, cited
-`\FalsumI,n,m`, and the proof simply ends there — no `\NegI` follows.
+`⊥` is a formula of the language and `X \ProvesND \Falsum` is exactly what the
+derivation establishes, so falsum is at home **on the right of a turnstile**.
+What it must never do is sit **after `∴`**: nobody concludes falsum, and the
+other two methods do not treat it as a conclusion either.
+
+| Where | What it shows |
+| --- | --- |
+| Stacked display | the sentences, numbered, **no `∴` line** |
+| Turnstile line | `X ⊨ ⊥`, `X ⊢ ⊥`, `X ⊢ND` — falsum on the right is fine |
+| Truth table | **one-sided**: atoms and premises, no conclusion column. A falsum column would read F on every row and say nothing; the question is whether any row makes the premises true |
+| Truth tree | the premises alone at the root, **no `\Neg A`** and no negated conclusion. The set is consistent exactly when some branch stays open |
+| Derivation | `\Falsum` alone on the final line, cited `\FalsumI,n,m`, and the proof ends there — no `\NegI` follows |
+| The question asked | "are these sentences consistent?", not "is this argument valid?" |
+
+Per the Notation Guide the **one-sided turnstile is the house form** in the ND
+heading: write `X \ProvesND`, not `X \ProvesND \Falsum`. Lecture 10 *defines*
+the former by the latter, and that definition is the only place the two-sided
+form belongs.
 
 ### 6.7 Accessibility
 
@@ -749,6 +789,22 @@ formula *down into* a sub-derivation.
 
 Every proof we author must be checked against this by hand until a checker
 exists; a citation across a closed scope line is the classic invisible error.
+
+**Depth is not scope.** Two subproofs can be *siblings* — the two halves of a
+biconditional proof, the two cases of a proof by cases — and they sit at the
+same depth with no line between them at a shallower one. So "the depth never
+dips below m's" is not the accessibility rule, and drawing the scope lines from
+depth alone runs the two siblings together into one, which is both wrong and
+unreadable: the second assumption appears to be inside the first case.
+
+An **assumption is what opens a subproof**, so an `As` line at depth d ends
+every subproof at depth d or deeper and starts a fresh one. `nd.py` gives each
+line a **scope path** on that rule, cites are checked against it (`scope[m]` a
+prefix of `scope[k]`), and `render_proof` emits `\close` / `\open` from the
+path rather than from the depth. Five of the eighteen proofs have siblings —
+`exportation`, `finite-choice-2x2`, `distribution`,
+`distributed-knowledge-repaired` — and every one of them was being drawn as a
+single run before the paths existed.
 
 ---
 
@@ -889,11 +945,15 @@ Per block, before it goes in the database:
 **All blocks**
 - [ ] Every symbol is a macro, not a raw glyph (§1)
 - [ ] `\Conj` between operands, `\ConjTight` when naming the symbol (§2.1)
-- [ ] Atoms lower-case; `A`/`B` only in schemas (§2.4)
-- [ ] Parenthesisation matches the ASCII source, outermost pair dropped only
-      when the main connective is not `\Neg` (§3.1) — **not** taken from
-      `display.*` (§3.2)
+- [ ] Every atom is a lower-case letter with an optional numeric subscript —
+      no `bl`, no `aS` (§2.4)
+- [ ] Every binary application carries its own parentheses, outermost pair
+      dropped only when the main connective is not `\Neg` (§3.1) — **not**
+      taken from `display.*` (§3.2)
 - [ ] No `\Falsum` inside any formula (§2.2)
+- [ ] If the conclusion is `⊥`, the entry is an inconsistency claim throughout:
+      no `∴` line, no conclusion column, no negated conclusion at the root
+      (§6.6)
 
 **Table**
 - [ ] Right layout for the entry: argument if it has premises, single-formula if
@@ -915,7 +975,9 @@ Per block, before it goes in the database:
 - [ ] Rule macros, not connective macros (§6.2)
 - [ ] No `\Exp`; reductio written out (§6.2)
 - [ ] Ranges use `\text{--}` (§6.3)
-- [ ] Every cite is accessible — no crossing a closed scope line (§6.7)
+- [ ] Every cite is accessible — no crossing a closed scope line, and a
+      *sibling* subproof at the same depth is closed (§6.7)
+- [ ] Written with the entry's final atom names (§2.4)
 - [ ] Line count and `rules_used` agree with the stored `nd` metadata
 - [ ] `⊥`-conclusion entries use the one-sided turnstile in prose (§6.7)
 
@@ -993,6 +1055,67 @@ python3 svg.py --check      # is anything stale?
 
 The test suite fails if the SVGs and the database have drifted apart, so a
 forgotten `svg.py` is caught rather than shipped.
+
+## 11b. Importing from the inventory
+
+The plan is a routine that takes a few rows from the inventory each firing and
+writes their entries. What follows is the contract it has to meet, split into
+what the build **enforces** — so a bad entry stops the build rather than
+reaching the site — and what it **repairs**, which the author can leave alone.
+
+**Repaired automatically (write what is natural):**
+
+| | |
+| --- | --- |
+| Atom names | Legalised per §2.4: each keeps its initial, subscripted only on collision |
+| Parentheses | Every binary application parenthesised, outermost pair dropped per §3.1 |
+| `display.*` | Rebuilt from the ASCII, so the two cannot drift |
+| `truth_table.columns` | Rebuilt from the premises and conclusion |
+| Tree node formulas | Matched against the entry's own subformulas and reprinted |
+| The `nd` profile | Recomputed from the proof actually shown |
+| All three LaTeX blocks | Generated from the structured data, never hand-written into the JSON |
+
+**Enforced (the build stops):**
+
+| Check | The error says |
+| --- | --- |
+| Atom names legal after renaming | *`bl` is not a name of a proposition* |
+| A tree node is a subformula of the entry's own formulas | *tree node … is not a subformula* |
+| No stored display string is ambiguous between two subformulas | *… is ambiguous between …* |
+| A valid entry has a proof | *valid but no proof written* |
+| The proof's premises are the entry's | *premise lines … do not match* |
+| Every citation is accessible, sibling subproofs included (§6.7) | *line k cites line m, which is not accessible* |
+| Every discharge lands in the scope that held the subproof | *subproof a-b is out of scope* |
+| The table's values recompute from the formulas | the mismatched cell |
+
+**Still on the author.** The build can check that an entry is *coherent*; it
+cannot check that it is *right*, or that it belongs here at all:
+
+- **An appearance with a source.** The inclusion criterion is that somebody
+  actually used the argument — a form with no `appearances` entry does not
+  belong in the encyclopedia (see `assets/arguments/README.md`).
+- **The English gloss**, and whether it is `faithful`.
+- **`interest`** — why this form is worth a student's time.
+- **The three difficulty scores**, one per method; a hard table can be an easy
+  derivation.
+- **The derivation itself**, in `proofs.py`, written with the entry's final
+  atom names.
+- **`course.quarantined` for anything marked `EX` in the inventory.** Those are
+  midterm material and must never reach the public database.
+
+After writing entries, always:
+
+```
+cd EncyclopediaOfArguments/latexgen
+python3 build.py --write     # normalise, generate, verify
+python3 svg.py               # typeset
+node --test "_tests/*.test.mjs"
+```
+
+The SVGs are committed build artifacts, so a forgotten `svg.py` leaves the site
+showing last week's proof; `svg.py --check` and the test suite both catch it.
+
+---
 
 ## 12. Suggested order of work
 

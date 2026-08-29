@@ -12,12 +12,20 @@ its depth. Rules that discharge an assumption cite a subproof as a range:
 
 The checker exists because the classic invisible error in a Fitch proof is a
 citation reaching across a subproof that has already closed. Lecture 9 states
-the accessibility rule -- you may cite an earlier line only when every
-subproof it lives inside is still open -- and here that is:
+the accessibility rule: you may cite an earlier line only when every subproof
+it lives inside is still open.
 
-    line m is accessible from line k  iff  min(depth[m..k]) >= depth[m]
+Depth alone does not express that. Two subproofs can be *siblings* -- the two
+halves of a biconditional proof, the two cases of a proof by cases -- and they
+sit at the same depth with nothing between them, so `min(depth[m..k])` never
+dips and a line in the second case appears to be able to cite a line in the
+first. It cannot: the first case is closed. So each line carries a **scope
+path**, a tuple naming the subproofs it is inside, and
 
-which is exactly "no scope line between them has ended below m's own level".
+    line m is accessible from line k  iff  scope[m] is a prefix of scope[k]
+
+An `As` line at depth d closes every subproof at depth d or deeper and opens a
+fresh one, which is what makes the two siblings distinct.
 
 Nothing here trusts the database's `nd` metadata; `check()` re-derives the line
 count, the rules used and the maximum depth, and `verify_against_metadata()`
@@ -65,6 +73,32 @@ def _is(node, op):
 # ------------------------------------------------------------------ checking
 
 
+def scopes(proof: list[dict]) -> dict[int, tuple]:
+    """The subproof path each line sits inside, outermost first.
+
+    Depth says how deep a line is; this says *which* subproofs it is in. They
+    come apart wherever two subproofs are siblings -- the two halves of a
+    biconditional proof, the two cases of a proof by cases -- because those sit
+    at the same depth with no line between them at a shallower one.
+
+    An assumption is what starts a subproof, so an `As` line at depth d ends
+    every subproof at depth d or deeper and opens a fresh one.
+    """
+    out: dict[int, tuple] = {}
+    path: list[int] = []
+    made = 0
+    for ln in proof:
+        d = ln.get("depth", 0)
+        if ln["rule"] == "As":
+            del path[max(d - 1, 0):]
+            made += 1
+            path.append(made)
+        else:
+            del path[d:]
+        out[ln["n"]] = tuple(path)
+    return out
+
+
 def check(proof: list[dict], premises: list[str], conclusion: str) -> dict:
     """Verify a derivation. Raises ProofError on the first fault found."""
     if not proof:
@@ -83,6 +117,7 @@ def check(proof: list[dict], premises: list[str], conclusion: str) -> dict:
 
     order = [ln["n"] for ln in proof]
     pos = {n: i for i, n in enumerate(order)}
+    scope = scopes(proof)
 
     # Depth may only rise by one, and only on an `As` line.
     prev = 0
@@ -110,8 +145,8 @@ def check(proof: list[dict], premises: list[str], conclusion: str) -> dict:
     def accessible(m: int, k: int) -> bool:
         if m not in pos or pos[m] >= pos[k]:
             return False
-        span = order[pos[m]: pos[k] + 1]
-        return min(depth[j] for j in span) >= depth[m]
+        sm = scope[m]
+        return scope[k][: len(sm)] == sm
 
     def cite(k: int, m: int) -> tuple:
         if not accessible(m, k):
@@ -133,7 +168,7 @@ def check(proof: list[dict], premises: list[str], conclusion: str) -> dict:
                 f"line {k}: subproof {a}-{b} ends at depth {depth[b]}, opened at {d}"
             )
         for j in order[pos[a]: pos[b] + 1]:
-            if depth[j] < d:
+            if scope[j][: len(scope[a])] != scope[a]:
                 raise ProofError(f"line {k}: subproof {a}-{b} is not contiguous")
         # It must be closed by the time it is cited, and its parent scope live.
         if pos[b] >= pos[k]:
@@ -142,8 +177,9 @@ def check(proof: list[dict], premises: list[str], conclusion: str) -> dict:
             raise ProofError(
                 f"line {k} is at depth {depth[k]}; discharging {a}-{b} must land at depth {d - 1}"
             )
-        span = order[pos[b]: pos[k] + 1]
-        if min(depth[j] for j in span) > d - 1:
+        # The discharge belongs in the scope that *contained* the subproof --
+        # not merely at the right depth, which a later sibling also has.
+        if scope[k] != scope[a][:-1]:
             raise ProofError(f"line {k}: subproof {a}-{b} is out of scope")
         return ast(by_n[a]["f"]), ast(by_n[b]["f"])
 
@@ -289,24 +325,32 @@ def render_proof(proof: list[dict]) -> str:
     widest = max(body, key=len) if body else ""
     slot = f"\\widthof{{${widest}$}}"
 
+    # The scope lines are drawn from the scope *path*, not from the depth. Two
+    # sibling subproofs -- the halves of a biconditional proof, the cases of a
+    # proof by cases -- sit at the same depth with nothing between them, so
+    # opening and closing on depth changes alone runs them together into one
+    # scope line and the second assumption appears to be inside the first case.
+    scope = scopes(proof)
     out = ["\\begin{align*}", "\\begin{nd}"]
-    prev = 0
+    prev: tuple = ()
     for ln, tex, cite in zip(proof, body, cites):
-        d = ln.get("depth", 0)
-        while d > prev:
-            out.append("\\open")
-            prev += 1
-        while d < prev:
-            out.append("\\close")
-            prev -= 1
+        here = scope[ln["n"]]
+        shared = 0
+        while (
+            shared < len(prev)
+            and shared < len(here)
+            and prev[shared] == here[shared]
+        ):
+            shared += 1
+        out += ["\\close"] * (len(prev) - shared)
+        out += ["\\open"] * (len(here) - shared)
+        prev = here
         cmd = "\\hypo" if ln["rule"] in ("Pr", "As") else "\\have"
         if cite:
             boxed = f"\\mathmakebox[{slot}][l]{{{tex}}}"
             out.append(f"{cmd}{{{ln['n']}}}{{{boxed}\\quad {cite}}}")
         else:
             out.append(f"{cmd}{{{ln['n']}}}{{{tex}}}")
-    while prev > 0:
-        out.append("\\close")
-        prev -= 1
+    out += ["\\close"] * len(prev)
     out += ["\\end{nd}", "\\end{align*}"]
     return "\n".join(out)

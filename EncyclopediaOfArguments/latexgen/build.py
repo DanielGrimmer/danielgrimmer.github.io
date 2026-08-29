@@ -16,12 +16,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from formula import GLYPH, canonical, subformula_index, to_ascii
+from formula import (
+    GLYPH,
+    canonical,
+    legal_atom,
+    parse,
+    subformula_index,
+    to_ascii,
+)
 from nd import ProofError, check, render_proof
 from proofs import PROOFS
 from tables import table_block
@@ -52,12 +60,137 @@ TABBOX = r"\newsavebox{\aetabbox}"
 
 ASCII_TO_GLYPH = {"~": "∼", "&": "&", "|": "∨", ">": "⊃", "=": "≡", "!": "⊥"}
 
+# A backticked span in the prose is a formula in this database ("delete
+# `gs ⊃ on` and it reopens"), and an atom renamed in the formulas has to be
+# renamed there too. Only spans made entirely of formula characters are
+# touched, so `argument-db.json` is left alone.
+FORMULA_SPAN = re.compile(r"`([^`]+)`")
+FORMULA_CHARS = re.compile(r"^[A-Za-z0-9 ()~&|>=!∼∨⊃≡⊥⊨⊭⊢⊬,.∴]+$")
+
+
+def legalise_atoms(entry: dict) -> dict[str, str]:
+    """Rename the entry's atoms to names the language allows.
+
+    Lecture 2 admits "lower case letters ... potentially with subscripts" and
+    nothing else, so `bl`, `ls`, `aS` and `bpq` are not names of propositions.
+    Each atom keeps its initial -- which is where its mnemonic value lives --
+    and takes a subscript only when it would otherwise collide with another
+    atom in the same entry, numbered by order of first appearance. So the
+    Cleopatra entry's `bS, aS, bD, aD, aC` become `b1, a1, b2, a2, a3`, which
+    still pairs each `b` with its `a`.
+
+    Deterministic and idempotent: an entry already legalised renames to itself.
+    """
+    order: list[str] = []
+    sources = list(entry["premises"])
+    if entry["conclusion"] != "!":
+        sources.append(entry["conclusion"])
+    for src in sources:
+        for tok in parse(src)[1]:
+            if tok.kind == "atom" and tok.text not in order:
+                order.append(tok.text)
+
+    base = {}
+    for name in order:
+        head = name[0].lower()
+        base.setdefault(head, []).append(name)
+
+    rename: dict[str, str] = {}
+    for head, names in base.items():
+        if len(names) == 1:
+            rename[names[0]] = head
+        else:
+            for i, name in enumerate(names, 1):
+                rename[name] = f"{head}{i}"
+    return {k: v for k, v in rename.items() if k != v}
+
+
+def rename_atoms(text: str, rename: dict[str, str]) -> str:
+    """Substitute atom names in a formula string, in either alphabet."""
+    if not rename:
+        return text
+    pattern = re.compile(
+        r"(?<![A-Za-z0-9])(" + "|".join(sorted(map(re.escape, rename), key=len, reverse=True)) + r")(?![A-Za-z0-9])"
+    )
+    return pattern.sub(lambda m: rename[m.group(1)], text)
+
+
+def rename_in_prose(text: str, rename: dict[str, str]) -> str:
+    def one(m):
+        span = m.group(1)
+        if not FORMULA_CHARS.match(span):
+            return m.group(0)
+        return "`" + rename_atoms(span, rename) + "`"
+
+    return FORMULA_SPAN.sub(one, text)
+
+
+def apply_rename(entry: dict, rename: dict[str, str]) -> None:
+    """Carry a rename through every field that names an atom."""
+    if not rename:
+        return
+    f = lambda s: rename_atoms(s, rename)
+    key = lambda d: {rename.get(k, k): v for k, v in (d or {}).items()}
+
+    entry["premises"] = [f(p) for p in entry["premises"]]
+    entry["conclusion"] = f(entry["conclusion"])
+
+    tt = entry["truth_table"]
+    tt["atoms"] = [rename.get(a, a) for a in tt["atoms"]]
+    for row in tt["rows"]:
+        row["assignment"] = key(row.get("assignment"))
+
+    verdict = entry["verdict"]
+    verdict["countermodels"] = [key(m) for m in verdict.get("countermodels") or []]
+
+    tree = entry.get("tree") or {}
+    tree["roots"] = [f(r) for r in tree.get("roots") or []]
+    tree["branch_models"] = [key(m) for m in tree.get("branch_models") or []]
+
+    def walk(node):
+        for added in node.get("added") or []:
+            for k in ("formula", "from"):
+                if added.get(k):
+                    added[k] = f(added[k])
+        if node.get("branched_on"):
+            node["branched_on"] = f(node["branched_on"])
+        if node.get("model"):
+            node["model"] = key(node["model"])
+        for kid in node.get("children") or []:
+            walk(kid)
+
+    if tree.get("tree"):
+        walk(tree["tree"])
+
+    for line in entry.get("nd", {}).get("proof") or []:
+        line["f"] = f(line["f"])
+    for item in entry.get("premise_analysis") or []:
+        if item.get("premise"):
+            item["premise"] = f(item["premise"])
+
+    # Prose, where a formula is quoted in backticks.
+    for field in ("interest", "countermodel_gloss"):
+        if entry.get(field):
+            entry[field] = rename_in_prose(entry[field], rename)
+    if entry.get("nd", {}).get("note"):
+        entry["nd"]["note"] = rename_in_prose(entry["nd"]["note"], rename)
+    for item in entry.get("english") or []:
+        if isinstance(item, dict) and item.get("gloss"):
+            item["gloss"] = rename_in_prose(item["gloss"], rename)
+    for item in entry.get("appearances") or []:
+        for k in ("quote", "note"):
+            if isinstance(item, dict) and item.get(k):
+                item[k] = rename_in_prose(item[k], rename)
+    course = entry.get("course") or {}
+    if course.get("note"):
+        course["note"] = rename_in_prose(course["note"], rename)
+
 
 def glyphs(ascii_src: str) -> str:
     return "".join(ASCII_TO_GLYPH.get(c, c) for c in ascii_src)
 
 
-def normalise(db: dict) -> list[str]:
+def normalise(db: dict) -> tuple[list[str], dict[str, dict[str, str]]]:
     """Put every stored formula into the language the course actually uses.
 
     Lecture 2 is explicit: formulas are officially fully parenthesised, and the
@@ -81,9 +214,22 @@ def normalise(db: dict) -> list[str]:
     subformula.
     """
     notes: list[str] = []
+    renames: dict[str, dict[str, str]] = {}
 
     for entry in db["entries"]:
         eid = entry["id"]
+
+        rename = renames[eid] = legalise_atoms(entry)
+        if rename:
+            apply_rename(entry, rename)
+            shown = ", ".join(f"{k} -> {v}" for k, v in sorted(rename.items()))
+            notes.append(f"{eid}: atoms renamed ({shown})")
+        for atom in entry["truth_table"]["atoms"]:
+            if not legal_atom(atom):
+                raise SystemExit(
+                    f"{eid}: {atom!r} is not a name of a proposition -- a lower-case "
+                    f"letter, optionally subscripted, is the whole of the alphabet"
+                )
 
         before = list(entry["premises"]) + [entry["conclusion"]]
         entry["premises"] = [canonical(p) for p in entry["premises"]]
@@ -149,11 +295,11 @@ def normalise(db: dict) -> list[str]:
         if tree.get("tree"):
             walk(tree["tree"])
 
-    return notes
+    return notes, renames
 
 
 def build(db: dict) -> tuple[dict, list[str]]:
-    notes: list[str] = normalise(db)
+    notes, renames = normalise(db)
     for entry in db["entries"]:
         eid = entry["id"]
 
@@ -167,7 +313,13 @@ def build(db: dict) -> tuple[dict, list[str]]:
             # proofs.py is written by hand, so its formulas get the same
             # normalisation as the database's own -- a proof whose last line
             # spells the conclusion differently is not a proof of it.
-            proof = [dict(ln, f=canonical(ln["f"])) for ln in proof]
+            # proofs.py is written by hand against the entry as it was
+            # authored, so it gets the same two passes the database got: the
+            # atom renaming first, then canonical parentheses.
+            proof = [
+                dict(ln, f=canonical(rename_atoms(ln["f"], renames.get(eid, {}))))
+                for ln in proof
+            ]
             profile = check(proof, entry["premises"], entry["conclusion"])
             before = {
                 k: entry["nd"].get(k)

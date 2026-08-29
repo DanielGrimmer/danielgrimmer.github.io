@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from formula import (
     Tok,
+    atom_latex,
     atoms_of,
     connective_tokens,
     evaluate,
@@ -84,7 +85,7 @@ def single_formula_table(src: str) -> str:
     main = main_connective_index(toks, root)
 
     # One tabular column per atom, matching the value rows below.
-    header_atoms = " & ".join(f"${a}$" for a in atoms)
+    header_atoms = " & ".join(f"${atom_latex(a)}$" for a in atoms)
     header_formula = f"${render(toks)}$"
 
     def value_row(model) -> str:
@@ -155,13 +156,13 @@ def argument_table(premises: list[str], conclusion: str) -> str:
         return "\\quad " + " \\qquad ".join(items) + " \\quad"
 
     head = (
-        f"$\\overbrace{{{group(atoms)}}}^\\text{{Atomic Formulas}}$"
+        f"$\\overbrace{{{group([atom_latex(a) for a in atoms])}}}^\\text{{Atomic Formulas}}$"
         f"\n      & $\\overbrace{{{group(prem_tex)}}}^\\text{{Premises}}$"
         f"\n      & $\\overbrace{{{group([concl_tex])}}}^\\text{{Conclusion}}$"
     )
 
     def row(model) -> str:
-        a = group([_uv(x, "T" if model[x] else "F") for x in atoms])
+        a = group([_uv(atom_latex(x), "T" if model[x] else "F") for x in atoms])
         p = group(
             [
                 _uv(prem_tex[i], "T" if evaluate(root, model) else "F")
