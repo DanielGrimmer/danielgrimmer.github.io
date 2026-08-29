@@ -1,0 +1,379 @@
+\documentclass[options]{philosophersimprint}
+%\usepackage{sectsty}
+%\linespread{1.2}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont[
+Ligatures={Common}, Numbers={OldStyle}, Variant=01,
+BoldFont=LinLibertine_RB.otf,
+ItalicFont=LinLibertine_RI.otf,
+BoldItalicFont=LinLibertine_RBI.otf
+]{LinLibertine_R.otf}
+\setmonofont[Scale=0.8]{DejaVuSansMono.ttf}
+\usepackage{stmaryrd}
+\usepackage[toc,page]{appendix}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[colorlinks=true, citecolor=blue, linkcolor=blue, hyperfootnotes=false]{hyperref}
+\usepackage{nameref}
+\usepackage{soul}
+\usepackage{frame}
+\usepackage[style=apa, natbib=true]{biblatex}
+\usepackage{scrextend}
+\usepackage{mathrsfs}
+%\addtokomafont{labelinglabel}{\sffamily}
+\makeatletter
+\newcommand\labelitem[2]{%
+  \item[#1]\def\@currentlabel{#1}\label{#2}}
+\makeatother
+\usepackage[inline]{enumitem}
+\usepackage{framed, csquotes}
+\usepackage{tikz}
+\usetikzlibrary{cd}
+\tikzset{%
+    symbol/.style={%
+        draw=none,
+        every to/.append style={%
+            edge node={node [sloped, allow upside down, auto=false]{$#1$}}}
+    }
+}
+%\usepackage{anyfontsize}
+\usepackage[nodayofweek,level]{datetime}
+\usepackage{etoolbox}
+\patchcmd{\formatdate}{,}{}{}{}
+\usepackage{enumitem, hyperref}
+\makeatletter
+\def\namedlabel#1#2{\begingroup
+    #2%
+    \def\@currentlabel{#2}%
+    \phantomsection\label{#1}\endgroup
+}
+\makeatother
+%\usepackage{anyfontsize}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}
+\usepackage{forest}
+\forestset{
+  L1/.style={draw=black,},
+  L2/.style={,edge={,line width=0.8pt}},
+}
+\usepackage[acronym]{glossaries}
+\usepackage{stackengine}
+\stackMath
+\usepackage{scalerel}
+\usepackage{titlesec}
+\newcommand\halo{{{\circ}\mkern-1mu}}
+\usepackage{linguex}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\pagestyle{plain}
+% Diagrams
+%\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{arrows,calc,patterns,positioning,shapes}
+\usetikzlibrary{decorations.pathmorphing}
+\tikzset{
+modal/.style={>=stealth’,shorten >=1pt,shorten <=1pt,auto,
+node distance=1.5cm,semithick},
+world/.style={circle,draw,minimum size=1cm,fill=gray!15},
+point/.style={circle,draw,fill=black,inner sep=0.5mm},
+reflexive/.style={->,in=120,out=60,loop,looseness=#1},
+reflexive/.default={5},
+reflexive point/.style={->,in=135,out=45,loop,looseness=#1},
+reflexive point/.default={25},
+}
+\usepackage{tree-dvips}
+\usepackage{qtree}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{fact}{Fact}
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\newcommand{\ev}[2][]{\ensuremath{\llbracket #2\rrbracket^{#1}}}
+%command
+\newcommand{\A}{\mathscr{A}}
+\newcommand{\cred}{\mathcal{C}}
+\newcommand{\des}{\mathcal{D}}
+\newcommand{\scred}{\mathsf{C}}
+\newcommand{\sdes}{\mathsf{D}}
+\newcommand{\ut}{\mathcal{U}}
+\newcommand{\rb}{{\rrbracket}}
+\newcommand{\lb}{{\llbracket}}
+\newcommand{\counterfactual}{\ensuremath{%
+  \Box\kern-1.5pt
+  \raise1pt\hbox{$\mathord{\rightarrow}$}}}
+  \newcommand{\tr}{\mathsf{T}}
+%\renewcommand{\fa}{\mathsf{F}}
+
+
+\usepackage{FOL_Yale/notation}
+
+\begin{document}
+
+PHIL 1115: First-order Logic \hfill Yale, Fall 2026\\
+Lecture 3, Handout \hfill Dr. Daniel Grimmer
+
+Our goal in this lecture is to establish a \textbf{semantics} for our new language, propositional logic. That is, we want to give some \textit{meaning} to the symbols $\Neg$, $\ConjTight$, $\Disj$, $\Cond$, and $\Bicond$. Last lecture, I introduced them as being (roughly) equivalent to the English words: ``not'', ``and'', ``or'', ``if...then'', and ``if and only if''. As we shall see today, however, English is very complicated and our new language is much simpler. But what exactly are we losing in the simplification?
+
+\textbf{0. Review: The Syntax of Propositional Logic} Last time, we built up the \textbf{syntax} of our new language. That is, we discussed the \textit{grammar} of the language, how its symbols are allowed to be arranged. The characters in our language are the above-listed symbols ($\Neg$, $\ConjTight$, $\Disj$, $\Cond$, and $\Bicond$), parentheses, and lower case letters (e.g., $p$, $q$, $r$, etc.) potentially with subscripts. (e.g., $p_2$, $q_3$, $r_5$, etc.). Any string of these characters is called an \textbf{expression} of the language. An Expression:$\quad p\Neg)\Disj r_8\Cond$. This expression is ungrammatical (ill-formed). We are mostly interested in grammatical expressions. We call these \textbf{(well-formed) formulas}. Here is how to build them recursively:
+\begin{itemize}
+    \item[(i)] Every lower case letter (potentially with a subscript) is a formula of the language. For instance, $p$ is one and $r_5$ is another.
+    \item[(ii)] Let $A$ represent a generic expression of the language.\footnote{Note something important here: $A$ is \textit{not} itself an expression of our language (nor a formula). That's because our language doesn't contain \textit{upper-case} Roman letters; it only contains lower-case ones. Rather, $A$ is a part of the meta-language which I'm using to talk \textit{about} expressions of our language. We'll talk more about this idea later on.} If $A$ is a formula of the language, then so is $\Neg A$.
+    \item[(iii)] Let $A$ and $B$ represent two generic expressions of the language. If $A$ and $B$ are formulas of the language, then: \begin{itemize}
+        \item $(A \Conj B)$ and $(A \Disj B)$ and $(A \Cond B)$ and $(A \Bicond B)$ are each formulas of the language.
+    \end{itemize}
+    \item[(iv)] Nothing else is a formula of the language.
+\end{itemize}
+But what do all of these formulas mean?
+
+\textbf{1. Truth Tables for the Connectives: First Pass} To move beyond mere syntax, we need to somehow specify the \textit{meanings} of the symbols $\Neg$, $\ConjTight$, $\Disj$, $\Cond$, and $\Bicond$ in our new language. Before we assign a meaning to $\ConjTight$, let's first get a grip on the meaning of the English word ``and''. Here is an idea:
+\begin{itemize}
+    \item \textit{Truth Conditional Semantics:} To know the meaning of the English word ``and'' is to know the precise conditions under which propositions featuring the word ``and'' are true.
+\end{itemize}
+So let's compare the following pairs of sentences involving ``and'':
+\begin{itemize}
+    \item[1a.] Dan and Caroline got married in Iceland.
+    \item[1b.] Dan got married in Iceland and Caroline got married in Iceland.
+    \item[2a.] I left the house and had dinner.
+    \item[2b.] I had dinner and left the house.
+    \item[3a.] One false move and I shoot.
+    \item[3b.] If you make a false move then I will shoot.
+\end{itemize}
+1a seems to require that Dan and Caroline got married \textit{to each other} whereas 1b does not. And 2a seems to require that I left the house \textit{before} having dinner whereas 2b requires the reverse ordering. Lastly, the equivalence between 3a and 3b shows that ``and'' can be used to indicate consequence.\footnote{Chess is another context in which ``and'' can be used to indicate consequence: You move over here and I will go there. You move over there and I will go here.}
+
+These examples show that English is very complicated. Our new language will be simpler! We shall stipulate that the truth/falsity of any complex sentence (such as $A \Conj B$) is a function of (and only of) the truth or falsity of its atomic parts. This systematic dependence is what makes our language \textbf{truth-functional}. (As we just saw, the English word ``and'' is not truth-functional.)
+
+In this course, we're going to let the letter T stand for `True' and the letter F for `False'. Hence, the sentence ``Joe Biden was the 46th President of the United States'' has truth-value T. Consider the following \textbf{truth tables} for $\ConjTight$ and $\Disj$ and $\Neg$ (and a guest symbol, $\oplus$, not part of our official language):
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c c| c}
+        $p$ & $q$ & $p \Conj q$ \\
+        \hline
+        T & T & T \\
+        T & F & F\\
+        F & T & F\\
+        F & F & F\\
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+    \hspace{.1cm}
+    \begin{tabular}{c c| c}
+        $p$ & $q$ & $p \Disj q$ \\
+        \hline
+        T & T & T \\
+        T & F & T\\
+        F & T & T\\
+        F & F & F\\
+    \end{tabular}
+    \hspace{.1cm}
+    \begin{tabular}{c c| c}
+        $p$ & $q$ & $p \oplus q$ \\
+        \hline
+        T & T & F \\
+        T & F & T\\
+        F & T & T\\
+        F & F & F\\
+    \end{tabular}
+    \hspace{.1cm}
+    \begin{tabular}{c|c}
+        $p$ & $\Neg p$ \\
+        \hline
+        T & F\\
+        F & T
+    \end{tabular}
+\end{table}
+
+The left side of these tables lists all possible combinations of truth values that $p$ and $q$ might take. That is, each row of the table represents a different logical possibility. These are called \textbf{models}. The right side of the $\ConjTight$-table shows how the truth values of $p \Conj q$ in each model depends systematically on the truth values of $p$ and $q$. Under what conditions is $p\Conj q$ true?
+
+According to the above truth tables, when is $p \Disj q$ true? What about $p \oplus q$? Does the English connective ``or'' behave more like $\Disj$ or $\oplus$? Is the English ``or'' even truth-functional? Let's compare the following pairs of sentences:
+\begin{itemize}
+    \item[1a.] You can have cake or ice cream.
+    \item[1b.] You can have cake or ice cream, but not both.
+    \item[2a.] The number I am thinking of is divisible by two or it is divisible by three.
+    \item[2b.] The number I am thinking of is divisible by two or it is divisible by three, or both.
+\end{itemize}
+In English, ``or'' is sometimes the \textbf{exclusive-or}: A or B (implicit: but not both). At other times it is the \textbf{inclusive-or}: A or B (implicit: or both).
+
+In our new language of propositional logic, we have chosen (quite arbitrarily) to use only the $\Disj$ symbol (which means inclusive-or). We could have chosen the exclusive-or, $\oplus$, instead or better yet we could have included both symbols. But we did not. Importantly, however, our language is just as expressive no matter which of these options we choose! Let us see why.
+\begin{framed}
+\noindent\textbf{Deep Thought: Many-Valued Logics.}
+We have just assumed that every formula takes exactly one of two truth values, T or F, with no third option. This assumption is called \textbf{bivalence}. It might seem obvious, but it is a choice. Allowing for more truth values opens up the field of \textit{many-valued logics}. We will return to this idea briefly in Lecture 11 when we explore ways of resolving the apparent strangeness of the material conditional discussed below. See also Problem Set 2.
+\end{framed}
+
+\textbf{2. Truth Tables: The General Case} In the foregoing, we looked at truth tables for only the simplest kind of complex formulas. But truth tables can be used to give the truth-values of more general complex formulas as well. Let's see how. As a test case let us try to build a large formula out of $\ConjTight$, $\Disj$, and $\Neg$ which behaves exactly like $\oplus$. Intuitively, ``A exclusive-or B'' has the same meaning as ``(A inclusive-or B) and not (A and B)''. This motivates the following formula: $((p \Disj q) \Conj \Neg (p \Conj q))$. To better understand how the parentheses work in this formula, let's work an arithmetic example on the board. The parentheses indicate the order of operations in exactly the way you are used to:
+\begin{table}[h!]
+\centering
+\begin{tabular}{c c | c }
+    $p$ & $q$ & $((p + q) \ \times \ - (p \ \times \ q))$ \\
+    \hline
+     $2$ & $4$ & $6$ \quad \quad \quad \quad \quad $8$\\
+      &  &  \quad \quad \ \ $-8$\\
+      &  &  $-48$ \quad \ \
+    \end{tabular}
+\end{table}
+
+Note that each stage of the calculation can be written below its corresponding connective. Only below a connective: we never re-copy the values of $p$ and $q$ inside the formula (though Restall does, so see the Reading Guide). The final answer, of course, comes out under the main connective, i.e., the last top-level operation in the formula. We can hence compress this calculation to a single line as follows.
+\begin{table}[h!]
+\centering
+\begin{tabular}{c c | c }
+    $p$ & $q$ & $((p + q) \ \times \ - (p \ \times \ q))$ \\
+    \hline
+     $2$ & $4$ & $6$ \ \ $-48$ \ $-8$ \quad $8$\\
+     \hline
+     $.$ & $.$ & $.$ \quad $M$ \quad $.$ \quad $.$\\
+    \end{tabular}
+\end{table}
+
+We know that $-48$ is the final answer because it appears in the column of the main connective. This is marked with an $M$.
+
+We are now ready to work through our first truth table on the board.
+\begin{table}[h!]
+\centering
+\begin{tabular}{c c | c | c}
+    $p$ & $q$ & $((p \Disj q) \Conj \Neg (p \Conj q))$ & $p \oplus q$\\
+    \hline
+     T & T & T \quad F \quad F \quad T & F\\
+     T & F & T \quad T \quad T \quad F & T\\
+     F & T & T \quad T \quad T \quad F & T\\
+     F & F & F \quad F \quad T \quad F & F\\
+     \hline
+     $.$ & $.$ & $.$ \quad $M$ \quad $.$ \quad $.$ & M\\
+     $c1$ & $c2$ & $c3$ \quad $c4$ \quad $c5$ \quad $c6$ & $c7$\\
+    \end{tabular}
+\end{table}
+
+The first two columns (c1 and c2) list all of relevant models: the space of logical possibilities for $p$ and $q$. The third column (c3) shows the value that $(p\Disj q)$ takes in each of these four models. The last column (c6) shows the values of $(p\Conj q)$. The second to last column (c5) shows $\Neg (p\Conj q)$, the negation of $(p\Conj q)$. Finally, c4 combines c3 and c5 via conjunction. \textbf{The final ``answer'' of the truth table is the entire column of the main connective. It shows what truth-values the formula takes in each model.}
+
+In this case, our long expression turns out to take on the same truth values (c4) as the exclusive-or does (c7). This is our first example of \textit{logical equivalence} (a concept which will be defined more formally in the next lecture).
+
+\textbf{3. Two More Truth Tables} The last two symbols in our language are the \textit{material conditional}, $\Cond$, and the \textit{material biconditional}, $\Bicond$. Very roughly, their intended meanings are ``If... then...'' and ``...if and only if...'' respectively.
+
+Rather than immediately stating their truth tables, let us think carefully about how ``If... then...'' actually works in English. Here are three arguments (two valid, one invalid):
+\begin{align}
+\nonumber
+\text{Modus Ponens (valid):}&\text{\qquad If $p$, then $q$,\qquad $p$} && \therefore q\\
+\nonumber
+\text{Reflexivity (valid):}& &&\therefore \text{If $p$, then $p$}\\
+\nonumber
+\text{Affirming the Consequent (invalid):}&\text{\qquad If $p$, then $q$,\qquad $q$}& &\therefore p
+\end{align}
+As far as I know, no one seriously doubts these (in)-validity judgements.
+
+Here, then, is the controversial assumption. Let us assume that there is a good approximation for the English ``If... then...'' which is: 1) truth-functional and 2) bivalent, i.e., just true and false. These are the exact same assumptions that we made above when simplifying ``and'' to $\ConjTight$ and ``or'' to $\Disj$. Applying these same two simplifying assumptions to $\Cond$ and $\Bicond$ already limits us to only 16 possible options for each. Namely, we can pick between two options ($T$ or $F$) for each of the four locations in their truth table, hence $2^4=16$ options.
+
+In the case of $\Cond$ we can then narrow these options further by demanding that the above-discussed argument forms are valid/invalid. Applying these constraints in sequence one finds:
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c c| c}
+        $p$ & $q$ & $p\Cond q$ \\
+        \hline
+        T & T & ? \\
+        T & F & ?\\
+        F & T & ?\\
+        F & F & ?\\
+    \end{tabular}
+    \hspace{.5cm}
+    \begin{tabular}{c c| c}
+        $p$ & $q$ & $p \Cond q$ \\
+        \hline
+        T & T & ? \\
+        T & F & F\\
+        F & T & ?\\
+        F & F & ?\\
+    \end{tabular}
+    \hspace{.5cm}
+    \begin{tabular}{c c| c}
+        $p$ & $q$ & $p \Cond q$ \\
+        \hline
+        T & T & T \\
+        T & F & F\\
+        F & T & ?\\
+        F & F & T\\
+    \end{tabular}
+\end{table}
+
+The validity of modus ponens forces the second row to be F. The validity of reflexivity forces both the first and fourth rows to be T. At this point (i.e., prior to enforcing the invalidity of the third argument form) there are only two options left. They are given by the following two truth tables. The right-hand option (which we ultimately reject for $\Cond$) turns out to be exactly the biconditional, $\Bicond$.
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c c| c}
+        $p$ & $q$ & $p \Cond q$ \\
+        \hline
+        T & T & T \\
+        T & F & F\\
+        F & T & T\\
+        F & F & T\\
+    \end{tabular}
+    \hspace{.5cm}
+    \begin{tabular}{c c| c}
+        $p$ & $q$ & $p\Bicond q$ \\
+        \hline
+        T & T & T \\
+        T & F & F\\
+        F & T & F\\
+        F & F & T\\
+    \end{tabular}
+\end{table}
+\vspace{-0.2cm}
+
+What forces $\Cond$ to have the truth table on the left is the invalidity of affirming the consequent. By contrast, $\Bicond$ is ultimately forced to have the truth table on the right because for it all three argument forms are valid:
+\begin{align}
+\nonumber
+\text{Valid:}&\text{\qquad $p$ if and only if $q$,\qquad $p$} && \therefore q\\
+\nonumber
+\text{Valid:}& &&\therefore \text{$p$ if and only if $p$}\\
+\nonumber
+\text{Valid:}&\text{\qquad $p$ if and only if $q$,\qquad $q$}& &\therefore p
+\end{align}
+You may be (rightly) confused by the truth-table for $\Cond$. It says that:
+\begin{itemize}
+    \item The sentence ``If the sky is blue, then grass is green'' is true.
+    \item The sentence ``If the sky is blue, then pigs can fly'' is false.
+    \item The sentence ``If I am the Pope, then Paris is the capital of France'' is true.
+    \item The sentence ``If $2+2=5$, then the moon is made of cheese'' is true.
+\end{itemize}
+Strange! Which of these make intuitive sense to you? It may help to think of $p \Cond q$ as a promise: `If it is raining when I leave the house, then I'll bring you an umbrella.’ Now consider two cases:
+\begin{itemize}
+    \item Suppose that it is not raining as I leave the house. If the pre-condition of the promise was never met, then the promise was never activated and therefore never broken. I spoke truly and kept my (conditional) promise.
+    \item Now suppose that it is raining as I leave the house. In this case, whether or not my promise is kept or broken depends exactly upon whether or not I bring you an umbrella.
+\end{itemize}
+In sum: The only way for my if-then promise to be broken is if the condition described by its first half is met, but the condition described by its second half is not. Compare this analysis with the above truth table.
+\begin{framed}
+\noindent\textbf{Deep Thought: Paradoxes of the Material Conditional.}
+It may nevertheless bother you that none of the antecedents ($p$) are \textit{relevant} to the consequent ($q$). Moreover, why should a \textit{false} antecedent make the whole conditional true, no matter what the consequent says? Such cases are sometimes called the \textbf{paradoxes of the material conditional}.
+
+Recall how we derived the truth table for $\Cond$:
+\begin{itemize}
+    \item We considered three argument forms whose validity/invalidity everyone agrees upon.
+    \item We assumed \textit{truth functionality}. Namely, we demanded that the truth value of the whole conditional ($p\Cond q$) is determined uniquely by the truth values of the antecedent ($p$) and the consequent ($q$).
+    \item We assumed \textit{bivalence}. Namely, we only allowed true or false values (T or F) for the antecedent ($p$), the consequent ($q$), and the whole conditional ($p\Cond q$).
+\end{itemize}
+Given the above-discussed strangeness, you are free to reject that $\Cond$ is a faithful approximation of the English ``if ... then ...''. But if you do so, then you must reject one of these three assumptions.
+
+\textbf{A fork in the road.} \textit{Relevance logicians} argue that a genuine conditional requires the antecedent to actually \textit{bear on} the consequent, so that content and connection matter, not just truth values. On their view, ``If $2+2=5$, then the moon is made of cheese'' is not a logical truth, because arithmetic and lunar geology have nothing to do with each other. We will return to this topic in Lecture 11. Restall points the same way: his Chapter 6, ``Conditionality'', is the book's own treatment of what a conditional might be beyond the material one, and it is optional reading for us at Lecture 11. Its closing pages reach for \textit{necessity} and \textit{possibility} to do the job, which is where modal logic starts, and which is why the same chapter comes back at Lecture 24.
+\end{framed}
+With $\Cond$ and $\Bicond$ now pinned down, we can sort out a family of English constructions that all express one or other of them, and which trips everyone at first. English does not always put the antecedent first:
+\vspace{-0.3cm}
+\begin{center}
+\begin{tabular}{l l}
+`If $p$, then $q$' \quad / \quad `$q$, if $p$' & $p \Cond q$\\
+`$p$ \textbf{only if} $q$' & $p \Cond q$\\
+`$p$ is \textbf{sufficient} for $q$' & $p \Cond q$\\
+`$p$ is \textbf{necessary} for $q$' & $q \Cond p$\\
+`$p$ if and only if $q$' & $p \Bicond q$\\
+\end{tabular}
+\end{center}
+\vspace{-0.2cm}
+The treacherous row is `only if': ``you may vote \textit{only if} you are eighteen'' does \textit{not} say that being eighteen guarantees a vote; it says that voting \textit{guarantees} you are eighteen. So `$p$ only if $q$' points the arrow \textit{from} $p$ \textit{to} $q$: $p \Cond q$. When in doubt, ask which side is being promised on the strength of the other. The promise reading above is exactly the tool for this: the antecedent is the side whose truth would put the speaker on the hook.
+\end{document}

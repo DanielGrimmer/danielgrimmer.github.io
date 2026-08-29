@@ -1,0 +1,364 @@
+\documentclass[options]{philosophersimprint}
+%\usepackage{sectsty}
+%\linespread{1.2}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont[
+Ligatures={Common}, Numbers={OldStyle}, Variant=01,
+BoldFont=LinLibertine_RB.otf,
+ItalicFont=LinLibertine_RI.otf,
+BoldItalicFont=LinLibertine_RBI.otf
+]{LinLibertine_R.otf}
+\setmonofont[Scale=0.8]{DejaVuSansMono.ttf}
+\usepackage{stmaryrd}
+\usepackage[toc,page]{appendix}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[colorlinks=true, citecolor=blue, linkcolor=blue, hyperfootnotes=false]{hyperref}
+\usepackage{nameref}
+\usepackage{soul}
+\usepackage{frame}
+\usepackage[style=apa, natbib=true]{biblatex}
+\usepackage{scrextend}
+\usepackage{mathrsfs}
+%\addtokomafont{labelinglabel}{\sffamily}
+\makeatletter
+\newcommand\labelitem[2]{%
+  \item[#1]\def\@currentlabel{#1}\label{#2}}
+\makeatother
+\usepackage[inline]{enumitem}
+\usepackage{framed, csquotes}
+\usepackage{tikz}
+\usetikzlibrary{cd}
+\tikzset{%
+    symbol/.style={%
+        draw=none,
+        every to/.append style={%
+            edge node={node [sloped, allow upside down, auto=false]{$#1$}}}
+    }
+}
+%\usepackage{anyfontsize}
+\usepackage[nodayofweek,level]{datetime}
+\usepackage{etoolbox}
+\patchcmd{\formatdate}{,}{}{}{}
+\usepackage{enumitem, hyperref}
+\makeatletter
+\def\namedlabel#1#2{\begingroup
+    #2%
+    \def\@currentlabel{#2}%
+    \phantomsection\label{#1}\endgroup
+}
+\makeatother
+%\usepackage{anyfontsize}
+\usepackage[margin=1in]{geometry}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}
+\usepackage{forest}
+\forestset{
+  L1/.style={draw=black,},
+  L2/.style={,edge={,line width=0.8pt}},
+}
+\usepackage[acronym]{glossaries}
+\usepackage{stackengine}
+\stackMath
+\usepackage{scalerel}
+\usepackage{titlesec}
+\newcommand\halo{{{\circ}\mkern-1mu}}
+\usepackage{linguex}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\pagestyle{plain}
+% Diagrams
+%\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{arrows,calc,patterns,positioning,shapes}
+\usetikzlibrary{decorations.pathmorphing}
+\tikzset{
+modal/.style={>=stealth’,shorten >=1pt,shorten <=1pt,auto,
+node distance=1.5cm,semithick},
+world/.style={circle,draw,minimum size=1cm,fill=gray!15},
+point/.style={circle,draw,fill=black,inner sep=0.5mm},
+reflexive/.style={->,in=120,out=60,loop,looseness=#1},
+reflexive/.default={5},
+reflexive point/.style={->,in=135,out=45,loop,looseness=#1},
+reflexive point/.default={25},
+}
+\usepackage{tree-dvips}
+\usepackage{qtree}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{fact}{Fact}
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\newcommand{\ev}[2][]{\ensuremath{\llbracket #2\rrbracket^{#1}}}
+%command
+\newcommand{\A}{\mathscr{A}}
+\newcommand{\cred}{\mathcal{C}}
+\newcommand{\des}{\mathcal{D}}
+\newcommand{\scred}{\mathsf{C}}
+\newcommand{\sdes}{\mathsf{D}}
+\newcommand{\ut}{\mathcal{U}}
+\newcommand{\rb}{{\rrbracket}}
+\newcommand{\lb}{{\llbracket}}
+\newcommand{\counterfactual}{\ensuremath{%
+  \Box\kern-1.5pt
+  \raise1pt\hbox{$\mathord{\rightarrow}$}}}
+  \newcommand{\tr}{\mathsf{T}}
+%\renewcommand{\fa}{\mathsf{F}}
+
+
+\usepackage{FOL_Yale/notation}
+
+\begin{document}
+
+PHIL 1115: First-order Logic \hfill Yale, Fall 2026\\
+Lecture 4, Handout \hfill Dr. Daniel Grimmer
+
+One of the great things about truth tables is that, not only do they give us a systematic way of figuring out in which circumstances a complex formula is going to be true, they also give us a systematic way of testing whether argument forms are \textit{valid}. Today we're going to see how this works.
+
+Note: In this lecture, we will define what it means for an argument to be ``table''-valid. Similarly, we will define what it means for a formula to be a ``table''-tautology or a ``table''-contradiction. Later in the course, we'll see that there are other, equally good, versions of these concepts which have nothing to do with truth tables. The fact that the table method and the tree method (see Lecture 6) agree in every instance is a remarkable fact (see Lectures 7 and 8). Even more remarkable is the fact that the natural deduction method (Lectures 9 and 10) is also in perfect agreement with the table and tree methods.
+
+\textbf{1. Validity of Argument Forms via Truth Tables}
+
+Recall that an \textbf{argument} consists of some number of \textbf{premises} (maybe many, maybe none) together with a \textbf{conclusion}. Here is a simple argument:
+$$\text{Premises: } p, p \Cond q \quad \text{Conclusion: }q$$
+Recall the notion of ``good reasoning'' which we motivated in Lecture 1. An argument is \textit{valid} if and only if:
+\begin{enumerate}
+    \item whenever the premises are true, \textit{the flawless structure of the argument somehow guarantees} that the conclusion is true.
+    \item Equivalently, whenever the conclusion is false \textit{the flawless structure of the argument somehow guarantees} that its falseness can be traced back to at least one premise being false.
+\end{enumerate}
+That is, an argument is valid if it's logically impossible for all of its premises to be true and yet its conclusion false.
+
+Recall from Lecture 3, that we can think of each row of a truth table (each \textbf{model}) as representing a logically possible world for the atomic formulas ($p$, $q$, etc.). This leads us to the following definition of validity:
+
+\textbf{Validity}: Let $X$ be a set of formulas of propositional logic, and let $A$ be a single formula. The corresponding argument form is \textbf{table-valid} (denoted $X \Entails A$, read ``X \textit{entails} A'') if and only if there is no model (i.e., no row of the truth table) for which all of its premises are true and yet its conclusion is false.
+
+Exercise: Use a truth table to show that modus ponens is valid: $p, p \Cond q \Entails q$.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c | c | c}
+        $\overbrace{\quad p \qquad q\quad}^\text{Atomic Formulas}$ & $\overbrace{p \ \ \quad p \Cond q}^\text{Premises}$ & $\overbrace{\quad q\quad}^\text{Conclusion}$\\
+        \hline
+        T \qquad T & T \qquad T \quad & T\\
+        T \qquad F & T \qquad F \quad & F\\
+        F \qquad T & F \qquad T \quad & T\\
+        F \qquad F & F \qquad T \quad & F\\
+    \end{tabular}
+\end{table}
+Is there any model (i.e., any row of the truth table) in which both of the premises are true and yet the conclusion is false? Looking at the table, the only row where both premises are true is row 1, and there the conclusion $q$ is also true. Since no model has that all of the premises are true and the conclusion false, the argument form is table-valid: $p, p \Cond q \Entails q$.
+
+Equivalently: Are there any models in which the conclusion is false without us being able to blame this on the falsity of at least one premise? The conclusion is false on rows 2 and 4. In row 2, the second premise is false. In row 4, the first premise is false. Hence in every model where the conclusion is false, we can blame this on one of the premises being false.
+
+\textbf{Challenge Question}. Consider this argument from Kant:
+\begin{quote}
+If a moral theory is studied empirically then examples of conduct will be considered. And if examples of conduct are considered, principles for selecting examples will be used. But if principles for selecting examples are used, then moral theory is not being studied empirically. Therefore, moral theory is not studied empirically.
+\end{quote}
+Let's translate this argument into the language of propositional logic. Looking closely at the form of the argument one finds:
+$$p\Cond q, \quad q\Cond r, \quad r\Cond \Neg p \quad \Entails \quad \Neg p$$
+\vspace{-1cm}
+\begin{table}[h!]
+            \centering
+            \begin{tabular}{c | c | c }
+                 $\overbrace{\quad p \qquad q\qquad r\quad}^\text{Atomic Formulas}$ & $\overbrace{p\Cond q \quad q\Cond r \quad r\Cond \Neg p}^\text{Premises}$ & $\overbrace{\quad\Neg p\quad}^\text{Conclusion}$ \\
+                 \hline
+                 T \qquad T \qquad T & T \qquad T \qquad F & F\\
+                 T \qquad T \qquad F & T \qquad F \qquad T & F\\
+                 T \qquad F \qquad T & F \qquad T \qquad F & F\\
+                 T \qquad F \qquad F & F \qquad T \qquad T & F\\
+                 F \qquad T \qquad T & T \qquad T \qquad T & T\\
+                 F \qquad T \qquad F & T \qquad F \qquad T & T\\
+                 F \qquad F \qquad T & T \qquad T \qquad T & T\\
+                 F \qquad F \qquad F & T \qquad T \qquad T & T
+            \end{tabular}
+        \end{table}
+
+The rows on which the premises are all true are 5, 7, and 8. In these rows the conclusion is also true. Hence the argument is valid.
+
+What happens if an argument's conclusion is always true?
+
+\textbf{Tautology}: A formula of propositional logic, $A$, is a \textbf{table-tautology} (denoted $\Entails A$) if and only if it is true in every model. That is, if we have only T's under its main connective in every row of its truth table.
+
+Exercise: Show that $p\Cond (p\Disj q)$ is a table-tautology. Intuitively it should be: If $p$ then surely we have that either $p$ or $q$ is true (in fact, we know $p$ is true).
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c c | c}
+        $p$ & $q$ & $p \Cond (p \Disj q)$ \\
+        \hline
+        T & T & T \quad T \\
+        T & F & T \quad T \\
+        F & T & T \quad T \\
+        F & F & T \quad F \\
+        $.$ & $.$ & M \quad $.$ \\
+    \end{tabular}
+\end{table}
+
+The main column is all T, confirming that $p \Cond (p \Disj q)$ is a table-tautology. Importantly, if we were to add another atomic formula to this table (say, $r$) it would not change the fact that $p \Cond (p \Disj q)$ is a tautology.
+
+Exercise: Use a truth table to show that $r \Entails p \Cond (p \Disj q)$.
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c | c | c}
+        $\overbrace{\quad p \quad q \quad r\quad}^\text{Atomic Formulas}$ & $\overbrace{\quad r \quad }^\text{Premises}$ & $\overbrace{ p \Cond (p \Disj q)}^\text{Conclusion}$\\
+        \hline
+        T \quad T \quad T & T & T\\
+        \vdots \ \ (mixed) \ \ \vdots & \vdots & \qquad \qquad \quad \vdots \quad (All True)\\
+        F \quad F \quad F & F & T\\
+    \end{tabular}
+\end{table}
+
+Is there any model (any row) in which the premise is true and yet the conclusion is false? No, the conclusion is never false! This demonstrates a general fact about propositional logic: If the conclusion, $A$, of an argument is a tautology then the argument is always valid, $X\Entails A$, \textit{no matter its premises}.
+
+Indeed, nothing in our definition of ``argument'' or ``validity'' requires there to be any premises. One can always conclude a table-tautology \textit{from no premises whatsoever}. Matching our notation for a valid argument, $X \Entails A$, we denote tautologies as following from no premises, $\Entails A$. (Note: tautologies are sometimes called theorems, or logical truths.)
+
+The above results can be given an epistemic gloss as follows: No matter what premises someone buys into (whatever $X$, even no $X$), if they follow the rules of logic then you can convince them to believe any tautology (any always-true statement, $A$).
+
+What happens if an argument's premises are always (jointly) false?
+
+\textbf{Contradiction}: A formula of propositional logic, $A$, is a \textbf{table-contradiction} (denoted $A\Entails$) if and only if it is false in every model. That is, if we have only F's under its main connective in every row of its truth table.
+
+More generally, for any set of formulas $X$ we let $X\Entails$ denote the claim that they are \textit{jointly contradictory} or \textit{unsatisfiable}, i.e., no model makes them all true at the same time.
+
+Exercise: Show that $(p \Conj  q)\Conj  \Neg p$ is a table-contradiction. Intuitively, it should be: its claiming that both $p$ and $\Neg p$ are true (and so is $q$).
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c c | c}
+        $p$ & $q$ & $(p \Conj q) \Conj \Neg p$ \\
+        \hline
+        T & T & \quad T \quad \ \ F \ \  F \\
+        T & F & \quad F \quad \ \ F \ \  F \\
+        F & T & \quad F \quad \ \ F \ \  T \\
+        F & F & \quad F \quad \ \ F \ \  T \\
+        \hline
+        $.$ & $.$ & \quad $.$ \quad \ \ M \ \  $.$ \\
+    \end{tabular}
+\end{table}
+The main column is all F, confirming that $(p \Conj q) \Conj \Neg p$ is a contradiction. It is unsatisfiable. This result is denoted as $(p \Conj q) \Conj \Neg p \Entails$.
+
+Exercise: Use a truth table to show that $(p \Conj q) \Conj \Neg p \Entails r$.
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c | c | c}
+        $\overbrace{\quad p \quad q \quad r\quad}^\text{Atomic Formulas}$ & $\overbrace{(p \Conj q) \Conj \Neg p }^\text{Premises}$ & $\overbrace{ r }^\text{Conclusion}$\\
+        \hline
+        T \quad T \quad T & F & T\\
+        \vdots \ \ (mixed) \ \ \vdots & \qquad\qquad\quad\vdots \ \ (All False) & \vdots \\
+        F \quad F \quad F & F & F\\
+    \end{tabular}
+\end{table}
+
+Is there any model (logical possibility, row of the truth table) in which the premise is true and yet the conclusion is false? No, the premise is never true! This demonstrates a general fact about propositional logic, the \textbf{principle of explosion}: If the premises, $X$, of an argument are jointly contradictory, $X\Entails$, then \textit{absolutely any conclusion follows}: $X\Entails A$ for every $A$.
+
+This can be given an epistemic gloss as follows: If you can convince someone to believe a contradiction (say, $p \Conj \Neg p$) then you can use logic to convince them to believe anything (literally any claim, $r$).
+
+\textbf{2. Invalidity of Argument Forms via Truth Tables}
+
+\textbf{Invalidity}: An argument form is \textbf{table-invalid} (denoted $X \notEntails A$, read ``X does not entail A'') if and only if it has a \textbf{counter-example}: a model in which all of its premises, $X$, are true and yet its conclusion, $A$, is false.
+
+Exercise: Show that \textbf{affirming the consequent} is invalid: $p\Cond q, q \notEntails p$.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c | c | c}
+        $\overbrace{\quad p \qquad q\quad}^\text{Atomic Formulas}$ & $\overbrace{p \Cond q \ \ \quad q}^\text{Premises}$ & $\overbrace{\quad p\quad}^\text{Conclusion}$\\
+        \hline
+        T \qquad T & \quad T \qquad T & T\\
+        T \qquad F & \quad F \qquad F & T\\
+        F \qquad T & \quad T \qquad T & F\\
+        F \qquad F & \quad T \qquad F & F\\
+    \end{tabular}
+\end{table}
+
+Is there any model (logical possibility, row of the truth table) in which both of the premises are true and yet the conclusion is false? The premises are both true on rows 1 and row 3. On row 1 the conclusion is true. However, on row 3 the conclusion is false. Row 3 is a \textit{counterexample} to the validity of this argument. This single model establishes that $p \Cond q, q \notEntails p$.
+
+For this argument, it is not the case that true premises always lead to a true conclusion. Moreover, it is not the case that a false conclusion can always be blamed on a false premise (see row 3).
+
+By our above discussion, for an argument to be invalid, $X \notEntails A$, its premises must not be a contradiction, and its conclusion must not be a tautology. This motivates the following definitions.
+
+\textbf{Satisfiable}: A formula of propositional logic, $A$, is \textbf{table-satisfiable} (denoted $A\notEntails$) if and only if it is true according to at least one model. This happens exactly when $A$ is not a table-contradiction. More generally, for any set of formulas $X$ we let $X\notEntails$ denote the claim that they are \textit{jointly satisfiable}, i.e., there exists at least one model which makes them all true at the same time.
+
+\textbf{Falsifiable}: A formula of propositional logic, $A$, is \textbf{table-falsifiable} (denoted $\notEntails A$) if and only if it is false according to at least one model. This happens exactly when $A$ is not a table-tautology. (Such $A$ do not follow automatically from no premises.)
+
+\textbf{Contingent}: A formula is \textbf{table-contingent} if and only if it is true according to some models and false according to others. This happens exactly when $A$ is both table-satisfiable and table-falsifiable (or, equivalently, if it is neither a table-contradiction nor a table-tautology).
+
+Exercise: Use a truth table to show that $p\Conj  (q \Cond p)$ is contingent.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c c | c}
+        $p$ & $q$ & $p \Conj (q \Cond p)$ \\
+        \hline
+        T & T & T \quad T \\
+        T & F & T \quad T \\
+        F & T & F \quad F \\
+        F & F & F \quad T \\
+        \hline
+        $.$ & $.$ & M \quad $.$ \\
+    \end{tabular}
+\end{table}
+The column under the main connective (marked with an M) contains both T and F, confirming that $p \Conj (q \Cond p)$ is contingent.
+
+One last definition:
+
+\textbf{Logical Equivalence}: Two formulas are \textbf{table-equivalent} if and only if they take the exact same truth values across all models.
+
+Exercise: Use a table to show that the formula $p \ \ \Cond \ q$ is logically equivalent to the formula $\Neg q \Cond \Neg p$. This example is called the \textbf{contrapositive rule}.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{c c | c | c}
+        $p$ & $q$ & $p\Cond q$ & $\Neg q \ \Cond \ \Neg p$ \\
+        \hline
+        T & T & T & F \quad T \quad F \qquad\\
+        T & F & F & T \quad F \quad F \qquad\\
+        F & T & T & F \quad T \quad T \qquad\\
+        F & F & T & T \quad T \quad T \qquad\\
+        \hline
+        $.$ & $.$ & M  & $.$ \quad M \quad $.$ \qquad\\
+    \end{tabular}
+\end{table}
+The two main-connective columns (marked with Ms) are identical in every model (both read T, F, T, T), confirming that $p \ \Cond \ q$ is logically equivalent to $\Neg q \Cond \Neg p$.
+
+\textbf{Challenge Question}. Can you find a formula that's logically equivalent to $p\Cond q$ but uses only $\Neg$ and $\Disj$? What about only $\Neg$ and $\ConjTight$? (We'll work through the $\Neg,\Disj$ case on Problem Set 2.)
+
+\textbf{Challenge Question}. Is the formula $p\Conj q$ logically equivalent to $p\Conj s$? Both of their truth tables will read as T, F, F, F. But do they take the same truth values in all models? Consider them in a larger 8-row $p,q,s$ table.
+
+\textbf{Important:} Two formulas can be logically equivalent even if their truth tables are ``different sizes''. For example, consider $p \Conj q$ and $(p \Conj q) \Conj  (s \ \Disj \ \Neg s)$.
+
+To properly compare two formulas that contain different atomic formulas, we need to compare their truth tables after ``expanding'' them to include all the same atomic formulas.
+
+\textbf{Caution:} We must be careful to distinguish ``arguments'' of propositional logic from ``argument forms''. It is possible to take an invalid argument form, give a dictionary for its atomic propositions, and end up with a valid argument. Hence, there are two distinct notions of validity at play here: one for arguments, and one for argument forms. This is discussed at the end of Chapter 1 of the Restall textbook.
+
+\begin{framed}
+\noindent\textbf{Definitions Summary: Table-Notions and Notation}\\
+\begin{tabular}{l | l}%{@{}rl@{}}
+table-valid ($X\Entails A$) & No models has all $X$ true and $A$ false.\\
+table-tautology ($\Entails A$) & All models have $A$ true.\\
+table-contradiction ($X\Entails$) & All models have some $X$ false.\\
+table-invalid ($X\notEntails A$) & Some model has all $X$ true and $A$ false.\\
+table-satisfiable ($X\notEntails$) & Some model has all $X$ true. \\
+table-falsifiable ($\notEntails A$) & Some model has $A$ false.\\
+table-contingent & Some model has $A$ true, another $A$ false.\\
+table-equivalent & $A$ and $B$ match in every model.
+\end{tabular}
+
+\smallskip
+\noindent\footnotesize See the Symbol Sheet for the logic underlying the notational scheme.
+\end{framed}
+
+In sum: Truth tables thus give us an \textbf{algorithm} for testing the validity of argument forms in propositional logic: a mechanical procedure that's \textit{guaranteed} to give us the answer in a finite amount of time.
+
+\end{document}

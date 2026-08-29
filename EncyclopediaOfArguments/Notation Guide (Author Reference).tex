@@ -1,0 +1,167 @@
+\documentclass[11pt]{article}
+
+% AUTHOR-SIDE reference: documents the standard notation for FOL @ Yale.
+% Students get "Symbol Sheet.tex" (the one-page card) and "Reading Guide.tex"
+% (the lecture-by-lecture Restall companion), NOT this file.
+% The same conventions are encoded as macros in notation.sty.
+\usepackage{amsmath,amssymb}
+\usepackage{stmaryrd}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage[margin=1in]{geometry}
+\usepackage{FOL_Yale/notation} % standard semantic macros (\Cond, \Neg, ...)
+\usepackage[colorlinks=true,linkcolor=blue]{hyperref}
+
+\title{Notation Guide (Author Reference)\\\large First-Order Logic @ Yale}
+\author{D.\ Grimmer}
+\date{Standard as of \today}
+
+\begin{document}
+\maketitle
+
+\noindent
+This document fixes the notation used across every lecture handout, problem set, and exam in the course. The goal is that a student sees exactly one symbol for each concept, all semester. The conventions below are also available as LaTeX macros in \texttt{notation.sty}: where a macro exists, \emph{call the macro, not the raw glyph}, so the whole course can be re-skinned from one file.
+
+\section{Connectives}
+
+Our house style follows Quine. In particular, the conditional is $\supset$ (not $\to$) and the biconditional is $\equiv$ (not $\leftrightarrow$).
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Concept & Symbol & Example & Macro \\
+\midrule
+Negation        & $\Neg$     & $\Neg p$           & \verb|\Neg| \\
+Conjunction     & $\ConjTight$    & $p \Conj q$        & \verb|\Conj| \\
+Disjunction     & $\Disj$    & $p \Disj q$        & \verb|\Disj| \\
+Conditional     & $\Cond$    & $p \Cond q$        & \verb|\Cond| \\
+Biconditional   & $\Bicond$  & $p \Bicond q$      & \verb|\Bicond| \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\textbf{The falsum is not on that list, and the omission is the point.} $\Falsum$ (\verb|\Falsum|) is not a connective and not part of the object language: no formation rule admits it, no truth table has a column for it, no tree branch closes on it. It is a proof-level marker, introduced in Lecture~10 and used only from there onwards, which stands \emph{alone} on a line of a natural deduction and means ``a contradiction has been reached.'' So it never appears inside a formula. The single exception is Lecture~11, where the constructive reading of negation as $A \Cond \Falsum$ is written out in order to be discussed; that is a sentence \emph{about} a rival system, not a formula of ours. If you find $\Falsum$ nested inside a formula anywhere else, it is an error.
+
+\noindent
+\textbf{Deprecated forms} (do not use): $\lnot$, $\neg$ for negation; $\to$, $\rightarrow$ for the conditional; $\lor$ for disjunction; $\leftrightarrow$ for the biconditional.
+
+\section{Quantifiers and Identity}
+
+Quantifiers are written with explicit parentheses around the binder.
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Concept & Symbol & Example & Macro \\
+\midrule
+Universal    & $(\forall x)$ & $\all{x}\,Fx$        & \verb|\all{x}| \\
+Existential  & $(\exists x)$ & $\some{x}\,Fx$       & \verb|\some{x}| \\
+Identity     & $=$       & $a = b$                  & \verb|\Ident| \\
+Non-identity & $\neq$    & $a \neq b$               & \verb|\Nident| \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Substitution}
+
+The colon-equals notation $s := t$ means \emph{replace $s$ by $t$}: the expression on the \emph{left} of the $:=$ is the one that goes out, and the expression on the \emph{right} is what takes its place. That single reading is uniform everywhere the notation appears; the only thing that changes is what gets swapped for what. Four uses recur across the second half, and because two of them look identical it is easy to misread one for another, so they are collected here.
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Use & Written & Effect & First appears \\
+\midrule
+Formation      & $A(a := x)$ & name $a \mapsto$ variable $x$   & Lecture 14 (clauses iv--v) \\
+Evaluation     & $B(x := d)$ & variable $x \mapsto$ object $d$ & Lecture 15 (truth clauses) \\
+Instantiation  & $A(x := a)$ & variable $x \mapsto$ name $a$   & Lectures 17, 19 \\
+Generalization & $A(a := x)$ & name $a \mapsto$ variable $x$   & Lecture 20 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Two shapes sit back to back. \textbf{Formation} and \textbf{generalization} both write $A(a := x)$: they push a \emph{name} back into a bound \emph{variable}, either to build a quantified formula in the first place (Lecture 14, clauses (iv)--(v): $\all{x}A(a:=x)$) or to close one up again after a derivation (Lecture 20's quantifier De~Morgan laws). \textbf{Instantiation} writes $A(x := a)$, the reverse, dropping a \emph{name} into the variable slot to strip a quantifier off ($\AllE$, $\SomeI$, and the matching tree rules: from $\all{x}A$ infer $A(x:=a)$). \textbf{Evaluation} is instantiation's semantic cousin, $B(x := d)$: here the thing dropped in is an \emph{object} $d$ of the domain rather than a name, so strictly $B(x:=d)$ is not yet a formula until $d$ is given a name (Lecture 15). Lecture 20 explicitly flags that its $A(a := x)$ runs Lecture 19's $A(x := a)$ backwards; the table shows why the warning is needed: same colon-equals, opposite direction.
+
+\section{Proof Theory and Semantics}
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Concept & Symbol & Example & Macro \\
+\midrule
+Derivability (trees)& $\vdash$  & $X \Proves A$        & \verb|\Proves| \\
+Derivability (ND)   & $\vdash_{\mathrm{ND}}$ & $X \ProvesND A$ & \verb|\ProvesND| \\
+Non-derivability    & $\nvdash$ & $X \notProves A$     & \verb|\notProves| \\
+Falsum (ND only)    & $\Falsum$  & $\Falsum$             & \verb|\Falsum| \\
+Logical consequence & $\vDash$  & $X \Entails A$       & \verb|\Entails| \\
+Not a consequence   & $\nvDash$ & $X \notEntails A$    & \verb|\notEntails| \\
+Denotation          & $\llbracket\,\cdot\,\rrbracket$ & $\Den[M]{t}$ & \verb|\Den[M]{t}| \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The denotation/valuation of an expression $e$ on a model $M$ is $\Den[M]{e}$; the model superscript is optional, so $\Den{e}$ is also fine when the model is understood.
+
+\noindent
+\textbf{Contradiction keeps the one-sided turnstile.} That $X$ is an ND-contradiction is written $X \ProvesND$, with nothing to the right. Lecture~10 \emph{defines} that notation by $X \ProvesND \Falsum$, which is sayable now that $\Falsum$ exists, but the one-sided form is the house notation everywhere thereafter: it is what keeps the ND dictionary aligned with the table and tree methods, neither of which has a falsum to put on the right. Outside that one definition, write $X \ProvesND$.
+
+\noindent
+\textbf{Rule labels.} \verb|\FalsumI| sets the citation $\FalsumI$, for the rule taking $B$ and $\Neg B$ to $\Falsum$. \verb|\NegE| is unchanged and still sets $\NegE$: from Lecture~10 that rule \emph{is} double negation elimination (from $\Neg\Neg A$ infer $A$), but it is still negation's elimination rule and still pairs with $\NegI$, so the label did not move. Prose may call it DNE. \verb|\Exp| has been \textbf{retired} and is no longer defined: explosion is not a citable rule, and every proof that once wrote \verb|\Exp,n| now spells the reductio out (assume the negation of the target, reiterate the contradiction, $\FalsumI$, $\NegI$, $\NegE$). The Mid-Term Study Guide still sets deriving it as a practice problem, which is now the only place it appears.
+
+\medskip
+\noindent
+\textbf{Deprecated:} \verb|\ev|, which must not be used in new material. It remains defined only as a legacy alias for \verb|\Den|, so that older handouts keep compiling without edits.
+
+\medskip
+\noindent
+\textbf{Two derivability turnstiles.} Tree derivability is the bare $\Proves$ (\verb|\Proves|); natural-deduction derivability is the subscripted $\ProvesND$ (\verb|\ProvesND|), which renders as $\vdash_{\mathrm{ND}}$. Use \verb|\ProvesND| rather than an ad hoc \verb|\vdash_D| or \verb|\vdash_\text{ND}| so the two systems are distinguished uniformly across the course.
+
+\medskip
+\noindent
+\textbf{Rule-name labels use the dedicated macros.} Inside Fitch-style derivations the rule annotations name a rule, not a connective, so they need their own macros with the correct standalone spacing. \texttt{notation.sty} now defines the full set: \verb|\ConjI|, \verb|\ConjE|, \verb|\DisjI|, \verb|\DisjE|, \verb|\CondI|, \verb|\CondE|, \verb|\NegI|, \verb|\NegE|, \verb|\BicondI|, \verb|\BicondE|, \verb|\AllI|, \verb|\AllE|, \verb|\SomeI|, \verb|\SomeE|, \verb|\IdentI|, \verb|\IdentE|, and \verb|\Reit|. These typeset as ``\&I'', ``$\vee$E'', ``$\forall$E'', and so on, and the ND lectures use them throughout. Use these; do \emph{not} wrap the binary-connective macros (\verb|\Conj|, \verb|\Disj|, \dots) directly in a label (their operator spacing is wrong), and do \emph{not} hand-type $\Neg\text{I}$ as \verb|\Neg\text{I}|. Two-directional rules (\verb|\BicondE|, \verb|\IdentE|) keep a single label. The bare-quantifier aliases \verb|\Univ| and \verb|\Exist| are also defined and may be used in rule-label constructions (e.g.\ \verb|\Univ\text{E}| for $\forall$E) in place of \verb|\forall|/\verb|\exists|.
+
+\section{Metavariables}
+
+\begin{itemize}
+  \item \textbf{Object-language atomic formulas} (the propositional
+        letters) are \emph{lower-case} roman: $p, q, r, \ldots$, possibly with subscripts ($p_1, p_2, \ldots$). Do \emph{not} use upper-case letters for atomic formulas of the object language.
+  \item \textbf{Formula metavariables} (ranging over arbitrary
+        well-formed formulas) are upper-case italic roman $A, B, C, \ldots$ in the lecture handouts (e.g.\ ``if $A$ is a formula, then so is $\Neg A$''); lower-case Greek $\phi, \psi, \chi$ are also used in the more metatheoretic material.
+  \item \textbf{Sets of formulas / premise sets} are upright capitals
+        $X, Y, Z$, e.g.\ $X \Proves A$.
+\end{itemize}
+
+\section{Displaying Arguments}
+
+Arguments and argument forms are displayed as a vertical list of premises followed by the conclusion, the conclusion being marked with $\therefore$. Within a single handout, arguments are numbered sequentially and introduced with a bold label (\textbf{Argument 1.}, \textbf{Argument 2.}, \dots), optionally tagged with a parenthetical verdict, e.g.\ \textbf{Argument 1 (Good).} The shared form of several arguments is labelled to match, e.g.\ \textbf{Form of Arguments 1 and 2.} When a schematic letter inside an argument form stands for a whole proposition, it is written lower-case ($p, q, r$), in keeping with the atomic-formula convention above.
+
+\section{Reading Restall}
+
+This is a \emph{student-facing} note, and it is the short record. The expanded version students actually read is the \textit{Reading Guide}, which sorts the same material by lecture; keep the two in step. The lectures and Restall's textbook are each internally consistent, but they make a handful of different notational choices (none wrong, only different), and meeting one unannounced in the reading costs time. The course notation is the official one for problem sets and exams; the table below is just a dictionary for translating as you read.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Concept & This course & Restall \\
+\midrule
+Truth values             & $T$ / $F$                 & $1$ / $0$ (from Ch.~3) \\
+A row / logical possibility & a \textbf{model}       & an \emph{evaluation} or \emph{case} \\
+Formula holding at a row & ``true in the model''      & the evaluation \emph{satisfies} it \\
+Truth-table row order    & all-true row \emph{first}  & all-false row first \\
+Open branch (trees)      & marked \texttt{o}          & marked by a vertical arrow \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Three points deserve a sentence. First, when Restall says an evaluation \emph{satisfies} a formula, he means what we mean by ``the formula is true in that model'': the same relation, a different verb; you will meet ``satisfies'' in the reading before we use it in lecture. Second, our \emph{one-sided turnstiles}, namely $\Entails A$ (a tautology), $A \notEntails$ (satisfiable), $A \Entails$ (a contradiction), and $\notEntails A$ (falsifiable), together with their tree ($\Proves$) and ND ($\ProvesND$) counterparts, are introduced in Lecture~4. They follow the standard (Gentzen) reading, on which an empty side is not nothing but the empty conjunction ($\top$) on the left and the empty disjunction ($\bot$) on the right. They are uniform across all three of our methods, which is their point. Restall has no counterpart for them, so read them off the Lecture~4 definitions rather than by analogy to the textbook.
+
+\emph{History, so it is not re-broken.} Until 2026-08-22 the right-empty forms ran the other way ($A \Entails$ meant satisfiable, $A \notEntails$ a contradiction), which was backwards relative to every other source. All 61 right-empty occurrences were flipped course-wide on that date. If you meet an old PDF that disagrees with a handout, the handout is right.
+
+Third, the two of us fill truth tables in differently. Restall copies the value of each atomic formula underneath \emph{every occurrence of it inside the formula} before writing values under the connectives; we write values only under the connectives. Both reach the same answer, but the handouts, the Truth Table cheat sheet and every answer key show ours, so ours is what problem sets and exams expect.
+
+Fourth, a typo worth warning students about rather than letting them puzzle over. The book prints \emph{prepositional} where it means \emph{propositional} in roughly half of its occurrences: 19 times against 19, by a count over the whole text. It is not a stray slip in the body prose either, since it reaches the Part~1 title page, the caption of Table~2.1 (``Prepositional connectives''), and the index. Four of the nineteen fall in Chapter~1's \emph{Argument forms} section and three more in Chapter~2, so a student meets it in the first week and again in the second, in exactly the passages those lectures rest on. There is no such thing as prepositional logic; prepositions are ``on'', ``under'', ``between''. The student symbol sheet carries a one-sentence version of this.
+
+\end{document}

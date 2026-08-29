@@ -1,0 +1,215 @@
+\documentclass[options]{philosophersimprint}
+%\usepackage{sectsty}
+%\linespread{1.2}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont[
+Ligatures={Common}, Numbers={OldStyle}, Variant=01,
+BoldFont=LinLibertine_RB.otf,
+ItalicFont=LinLibertine_RI.otf,
+BoldItalicFont=LinLibertine_RBI.otf
+]{LinLibertine_R.otf}
+\setmonofont[Scale=0.8]{DejaVuSansMono.ttf}
+\usepackage{stmaryrd}
+\usepackage[toc,page]{appendix}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[colorlinks=true, citecolor=blue, linkcolor=blue, hyperfootnotes=false]{hyperref}
+\usepackage{nameref}
+\usepackage{soul}
+\usepackage{frame}
+\usepackage[style=apa, natbib=true]{biblatex}
+\usepackage{scrextend}
+\usepackage{mathrsfs}
+%\addtokomafont{labelinglabel}{\sffamily}
+\makeatletter
+\newcommand\labelitem[2]{%
+  \item[#1]\def\@currentlabel{#1}\label{#2}}
+\makeatother
+\usepackage[inline]{enumitem}
+\usepackage{framed, csquotes}
+\usepackage{tikz}
+\usepackage{scalerel}
+\usepackage{titlesec}
+\newcommand\halo{{{\circ}\mkern-1mu}}
+\usepackage{linguex}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\pagestyle{plain}
+% Diagrams
+%\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{qtree}
+\usepackage{comment}
+
+\usepackage{FOL_Yale/notation}
+
+\begin{document}
+
+PHIL 1115: First-order Logic \hfill Yale, Fall 2026\\
+Lecture 8, Handout \hfill Dr. Daniel Grimmer
+
+\textbf{1. Validity Via Trees}
+
+\begin{center}
+\begin{minipage}[t]{0.27\textwidth}
+We can also use trees to determine whether an argument is valid. For example, recall this argument from Kant from Lecture 4:
+\begin{quote}
+If a moral theory is studied empirically then examples of conduct will be considered. And if examples of conduct are considered, principles for selecting examples will be used. But if principles for selecting examples are used, then moral theory is not being studied empirically. Therefore, moral theory is not studied empirically.
+\end{quote}
+Exercise: Confirm the validity of this argument using the tree method.
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.18\textwidth}
+\begin{center}
+\text{Start from $X$ and $\Neg A$:} \\
+\vspace{1em}
+\Tree[.{$X:\quad p \Cond q$\quad\checkmark \\ \qquad$q \Cond r$\quad\checkmark \\ \qquad$r \Cond \Neg p$\quad\checkmark \\ $\Neg A:\quad \Neg \Neg p$\qquad\checkmark \\ $\vert$ \\ $p$}
+        [.{$\Neg p$ \\ x} ] [.{$q$} [.{$\Neg q$ \\ x} ] [.{$r$} [.{$\Neg r$ \\ x} ] [.{$\Neg p$ \\ x} ] ] ] ]
+\end{center}
+\end{minipage}
+\end{center}
+
+As before, we can translate this argument into propositional logic as:
+$$p\Cond q, \quad q\Cond r, \quad r\Cond \Neg p \quad \therefore \quad \Neg p$$
+Recall that an argument is formally valid just in case it is logically impossible for its premises to be true and yet its conclusion false. In tree terms, this would mean a tree with roots $X$ and $\Neg A$ having only closed branches. Let's test if this happens on the board.
+
+The fact that this tree closes means that there is no model (i.e., no logical possibility) in which its roots are all true. Hence it is impossible for the argument's premises, $X$, to all be true yet for its conclusion $A$ to be false. We can denote this conclusion as:
+$$p\Cond q, \quad q\Cond r, \quad r\Cond \Neg p \quad \Proves \quad \Neg p$$
+
+(If we had reached this conclusion using the table method we would instead write, $p\Cond q, \quad q\Cond r, \quad r\Cond \Neg p \quad \Entails \quad \Neg p$.)
+
+\textbf{Validity:} An argument with premises $X$ and conclusion $A$ is \textbf{tree-valid} (denoted $X \Proves A$) if and only if its premises together with the negation of its conclusion are jointly a tree-contradiction (denoted $X,\Neg A\Proves$). To test if an argument is tree-valid, one develops the tree for $X$ and $\Neg A$ to check if all of its branches close. Importantly, this is a different notion from table-validity which we denoted $X \Entails A$ in Lecture 4.
+
+In sum: the procedure for testing whether an argument is valid or not using trees is as follows. Begin a tree by listing the sentences in $X$, then $\Neg A$. Apply the tree-rules until:
+\begin{itemize}
+    \item each branch closes, in which case, the argument is \textbf{tree-valid}, $X \Proves A$; or
+    \item you have a complete open branch, in which case the argument is \textbf{tree-invalid}, $X \not\Proves A$.
+\end{itemize}
+
+\textbf{2. Review: Soundness and Completeness for Trees}
+
+\textbf{Soundness}. The tree method is \textbf{sound}: if $X \Proves A$, then $X \Entails A$ (i.e., the tree method recognizes as valid \textit{only} arguments that the truth table method also considers valid). \textbf{We will sketch a proof of this today!}
+
+\textbf{Completeness}. The tree method is \textbf{complete}: if $X \Entails A$, then $X \Proves A$ (i.e., the tree method recognizes as valid \textit{all} arguments that the truth table method also recognizes as valid). \textbf{We sketched a proof of this last lecture!}
+
+Together, these results tell us that $X \Proves A$ if and only if $X \Entails A$. That is, if you had one computer that could make truth tables and another one that could make truth trees, you could trust that they would always reach the exact same conclusions about the validity of arguments.
+
+None of this is trivial. Lots of ways of altering our system of tree rules would ruin soundness, completeness, or both. \textbf{Ask your TFs about this!}
+
+In the previous lecture we sketched a proof of the completeness of the tree method. In this lecture we shall sketch a proof of the soundness of the tree method. Before doing this, however, we should first rephrase it using the \textit{contrapositive rule}. In Lecture 4, we used the table method to prove that $p\Cond q$ is logically equivalent to $\Neg q\Cond \Neg p$. Moreover, in Lecture 6 we proved this using the tree method.
+
+Elevating this rule to our meta-language (English) and applying it to the above formulation of soundness (if $X \Proves A$, then $X \Entails A$) gives us the following alternative formulation.
+
+\textbf{Proposition 2} (Soundness of the Tree Method)\textbf{.}\footnote{We continue the numbering from Lecture 7, where Proposition 1 was the completeness of the tree method and Lemmas 1 and 2 were used to prove it. The soundness lemma below is accordingly Lemma 3.} Let $X$ be a finite set of formulas and let $A$ be a formula. Consider the argument with premises given by $X$ and conclusion given by $A$. If this argument is table-invalid, $X \notEntails A$, then it is also tree-invalid, $X \not\Proves A$.
+
+Before we prove this claim in general, let us work through an example in detail.
+
+\textbf{3. A Worked Example: From Satisfying Model to an Open Branch}\\ Let us reconsider the invalid argument from the last lecture. It had premises $X: \  \Neg(p\Disj q) \Disj (r \Conj \Neg s)$ and $s \Cond (r \Disj q)$ and a conclusion $A: \ p \Cond s$. Here is a portion of a truth table which shows that this argument is invalid.
+\begin{table}[h!]
+            \centering
+            \begin{tabular}{c | c | c }
+                 $\overbrace{\quad p \ \quad q \ \quad r \ \quad s\ \ }^\text{Atomic Formulas}$ & $\overbrace{\Neg(p\Disj q) \Disj (r \Conj \Neg s), \quad s \Cond (r \Disj q)}^\text{Premises}$ & $\overbrace{\quad p \Cond s\quad}^\text{Conclusion}$ \\
+                 \hline
+                 \dots & \dots & \dots\\
+                 I:\quad T \quad T \quad T \quad F \quad & F \quad T \quad T \quad T \ \ T \qquad \ T\quad \ \ \ T \quad \ & F \\
+                 \dots & \dots & \dots\\
+             \quad $.$ \ \quad $.$ \ \quad $.$ \ \quad $.$ & $.$ \quad $.$ \quad \ M \quad \ \ $.$ \ \ $.$ \qquad \ M\quad \ \ \ $.$ \quad \  & $.$\\
+            \end{tabular}
+        \end{table}
+As this table shows, we have a countermodel to this argument.
+\begin{align}\label{EqEval}
+I: \quad p=T, \quad q=T, \quad  r=T, \quad  s=F
+\end{align}
+Hence the argument is invalid according to the table method.
+$$\Neg(p\Disj q) \Disj (r \Conj \Neg s), \quad s \Cond (r \Disj q)\quad \notEntails \quad p \Cond s$$
+But if the tree method is sound, then it should follow that we have:
+$$\Neg(p\Disj q) \Disj (r \Conj \Neg s), \quad s \Cond (r \Disj q)\quad \not\Proves \quad p \Cond s$$
+Namely, the completely resolved tree which has roots $X$ and $\Neg A$, should have an open branch.
+
+But how can we know that this will happen? In the previous lecture, we worked through this tree and saw that it, in fact, does have an open branch. But soundness claims that this \textit{always happens}. Why is it that whenever an argument has a table counterexample ($X \notEntails A$) its corresponding tree will always maintain an open branch ($X \not\Proves A$)? Here is the key idea.
+
+\textbf{Lemma 3} (Tree Development Preserves Satisfiability on Some Branch)\textbf{.} Consider a set of formulas, $R$, such that there exists a row in their collective truth table (i.e., a model, $I$) according to which they are all true. Consider any possible development of a tree whose roots are these formulas, $R$. This tree will always have at least one branch which is entirely true according to $I$. (That is, all of the formulas which appear on this branch will be true according to $I$).
+
+Let's see this lemma in action. We begin with the roots $X$ and $\Neg A$ and note that the table-invalidity of this argument ($X \notEntails A$) has already given us a model $I$ which makes both $X$ and $\Neg A$ true. We can then resolve one of the roots to find the following tree.
+
+\begin{center}
+\begin{minipage}[t]{0.27\textwidth}
+Is Lemma 3 still true? There is only one branch, and the new formulas on it ($p$ and $\Neg s$) are both true according to $I$. This holds because of the tree-rule for resolving a negated conditional, $\Neg(p\Cond s)$. For the resolved formula to be true, its antecedent must be true $p=T$ and yet its consequent false, $s=F$.
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.18\textwidth}
+\begin{center}
+\Tree[.{
+$X:\quad \Neg(p\Disj q)\Disj(r\Conj\Neg s)$\quad \\ \qquad$s\Cond(r\Disj q)$\quad \\ $\Neg A:\quad \Neg(p\Cond s)$\quad\checkmark \\ $\vert$ \\ $p$ \\ $\Neg s$} ]
+\end{center}
+\end{minipage}
+\end{center}
+
+Let's resolve another formula and check if the lemma is still true.
+
+\begin{center}
+\begin{minipage}[t]{0.28\textwidth}
+The tree has branched with a new formula on the left, $\Neg(p\Disj q)$, as well as on the right, $r\Conj\Neg s$. The lemma only claims that the developed tree will have at least one branch entirely true according to $I$. In this case the left branch is not entirely true according to $I$ but the right branch is. So Lemma 3 still holds. Why did this happen? Consider the tree-rule which we just used for resolving a disjunction, $\Neg(p\Disj q)\Disj(r\Conj\Neg s)$. We know that this disjunction is true according to $I$, and so at least one of its two disjuncts must be as well. Whenever we develop by this rule, it is guaranteed that one of the new branches will be entirely true according to $I$.
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.17\textwidth}
+\begin{center}
+\Tree[.{
+$X:\quad \Neg(p\Disj q)\Disj(r\Conj\Neg s)$\quad\checkmark \\ \qquad$s\Cond(r\Disj q)$\quad \\ $\Neg A:\quad \Neg(p\Cond s)$\quad\checkmark \\ $\vert$ \\ $p$ \\ $\Neg s$} [.{\qquad$\Neg(p\Disj q)$} ] [.{\qquad$r\Conj\Neg s$} ] ]
+\end{center}
+\end{minipage}
+\end{center}
+
+\begin{center}
+\begin{minipage}[t]{0.25\textwidth}
+Let's resolve two more formulas and check if the lemma is still true. Resolving $\Neg(p\Disj q)$ and $r\Conj\Neg s$ has added new formulas to their respective branches. We already knew that the left branch was not entirely true according to $I$. With this subsequent development the branch actually closes: \textit{In fact, the left branch is not entirely true according to any model.} By contrast, the right branch continues to be entirely true according to $I$. In particular, the fact that two new formulas $r$ and $\Neg s$ are true according to $I$ follows directly from the fact that their parent $r\Conj\Neg s$ was.
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.2\textwidth}
+\begin{center}
+\vspace{-0.5cm}
+\Tree[.{
+$X:\quad \Neg(p\Disj q)\Disj(r\Conj\Neg s)$\quad\checkmark \\ \qquad$s\Cond(r\Disj q)$\quad \\ $\Neg A:\quad \Neg(p\Cond s)$\quad\checkmark \\ $\vert$ \\ $p$ \\ $\Neg s$} [.{\qquad$\Neg(p\Disj q)$\quad\checkmark \\ $\vert$ \\ $\Neg p$ \\ $\Neg q$ \\ x} ] [.{\qquad$r\Conj\Neg s$\quad\checkmark \\ $\vert$ \\ $r$ \\ $\Neg s$} ] ]
+\end{center}
+\end{minipage}
+\end{center}
+
+\begin{center}
+\vspace{-0.25cm}
+\Tree[.{
+$X:\quad \Neg(p\Disj q)\Disj(r\Conj\Neg s)$\quad\checkmark \\ \qquad$s\Cond(r\Disj q)$\quad\checkmark \\ $\Neg A:\quad \Neg(p\Cond s)$\quad\checkmark \\ $\vert$ \\ $p$ \\ $\Neg s$} [.{\qquad$\Neg(p\Disj q)$\quad\checkmark \\ $\vert$ \\ $\Neg p$ \\ $\Neg q$ \\ x} ] [.{\qquad$r\Conj\Neg s$\quad\checkmark \\ $\vert$ \\ $r$ \\ $\Neg s$} [.{$\Neg s$ \\ o} ] [.{\qquad$r\Disj q$\quad\checkmark} [.{$r$ \\ o} ] [.{$q$ \\ o} ] ] ] ]
+\end{center}
+The tree is now completely resolved. We next resolved $s\Cond(r\Disj q)$ which caused a split. We have already established that this conditional is true according to $I$ and from this it follows that either its antecedent is false or its consequent is true. But this just means that one of the two new formulas ($\Neg s$ or $r\Disj q$) must be true according to $I$. In this case, both of them are.
+
+Lastly, we resolve the disjunction $r\Disj q$. We proceed by the exact same reasoning as above. We already know the disjunction is true according to $I$ and hence at least one of its two disjuncts must be as well. Hence, at least one of the subsequent branches must remain entirely true according to $I$.
+
+\textbf{4. Sketched Proof of Soundness} Hopefully it is clear that the techniques we used in this particular example generalize. Here is the general strategy:
+\begin{enumerate}
+    \item $X \notEntails A$ gives us a model $I$ according to which $X$ and $\Neg A$ are all true.
+    \item From this model, Lemma 3 then guarantees that as we develop this tree to completion, there will be at least one branch, $O$, which is entirely true according to $I$.
+    \item But recall that no closed branch is entirely true according to any model: a branch closes precisely when it contains some formula together with its negation, and no model can make both of these true at once. Hence, the branch in question, $O$, must be open.
+    \item Thus, the completely resolved tree with roots $X$ and $\Neg A$ has an open branch. This establishes the desired conclusion, $X \not\Proves A$.
+\end{enumerate}
+
+Once we have properly proved Lemma 3, we will have shown \textit{in general} that $X \notEntails A$ implies $X \not\Proves A$. Namely, whenever the table method deems an argument invalid, so too does the tree method. This is our desired soundness result.
+
+\textbf{5. Proving Lemma 3 by Induction}
+
+\begin{proof}
+We proceed by induction on the length of the tree which grows out of the roots $R$. The property to be preserved at each step in the development is ``There exists at least one branch on this tree which is entirely true according to $I$''.
+
+\textit{Base Case}. For our base case, consider the shortest possible tree, i.e., the one which only consists of the roots $R$. This has the desired property because we have already assumed that all of the formulas in $R$ are true according to $I$.
+
+\textit{Inductive Step}. For our inductive step, we are now allowed to assume that we have a partially developed tree rooted in $R$ and so far we still have at least one branch which is entirely true according to $I$. Our goal is now to develop this tree one step further and show that we still have at least one branch which is entirely true according to $I$. (This is one domino knocking over the next.)
+
+Given our partially developed tree rooted in $R$ there are exactly 9 ways that this tree could continue to develop based on what kind of formula we next choose to resolve. What we need to show is that all nine of these rules result in a new tree which has the desired property: at least one of its branches should be entirely true according to $I$. One preliminary point: if the development resolves a formula that does not lie on this branch, then the branch is not extended at all and so trivially stays entirely true according to $I$; hence we may assume that the formula being resolved sits on it. (We'll only consider a few representative examples. But it's a good exercise to try other rules yourself!)
+
+\textit{Double Negation}. Consider the branch which we already know is entirely true according to $I$. Suppose that we extend this branch by resolving a double negation, $\Neg \Neg B$, which sits somewhere higher on this branch. We thereby extend our branch by adding a $B$ to it. But is this newly extended branch entirely true according to $I$? Yes. First note that $\Neg \Neg B$ sits higher up on this branch and hence, by our inductive hypothesis, is true according to $I$. But if $\Neg \Neg B$ is true according to $I$ then so too is $B$. Thus, the formula which we added to our branch is also true according to $I$.
+
+\textit{Negated Conjunction}. Consider the branch which we already know is entirely true according to $I$. Suppose that we extend this branch by resolving a negated conjunction, $\Neg (B \Conj C)$, which sits somewhere higher on this branch. Because this is a splitting rule, we now end up with two new branches extended by $\Neg B$ and $\Neg C$ respectively. But is at least one of these newly extended branches entirely true according to $I$? Yes. First note that $\Neg (B \Conj C)$ sits higher up on this branch and hence, by our inductive hypothesis, is true according to $I$. But if $\Neg (B \Conj C)$ is true according to $I$ then either $B$ must be false or else $C$ must be false. In the first case, the branch extended by $\Neg B$ remains entirely true according to $I$. In the second case, the branch extended by $\Neg C$ remains entirely true according to $I$. So, at least one of these extended branches will be entirely true according to $I$.
+
+The other seven cases follow the same structure.
+\end{proof}
+
+\end{document}
