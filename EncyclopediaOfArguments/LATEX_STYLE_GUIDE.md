@@ -1210,34 +1210,25 @@ One entry per episode, not per author.
 either the reconstruction is `our reconstruction` and says so, or the appearance
 does not belong.
 
-### 13.5 The spoiler discipline
+### 13.5 The spoiler discipline, and how narrow it is
 
-The practice page today shows the sequent and nothing else — no title, no
-gloss, no tags — so nothing in the prose can currently leak. But the entry
-renderer keeps a **spoiler mode** that shows an entry with the answer withheld,
-which is what the practice page would use if it ever offered more than the bare
-form, and the prose should be written so that mode works. In it the head, the
-sequent, `english`, `appearances` and the `topic`/`figure` tags are visible
-before the reader has worked the problem. So:
+**The practice page is the only place the verdict has to be hidden**, and it
+shows the sequent and nothing else — no title, no gloss, no tags, no
+commentary. So the prose has no spoiler rules to obey. Write `interest`,
+`english`, `countermodel_gloss` and the tags as plainly as the subject deserves:
+`affirming-a-disjunct` may be tagged `informal fallacies`, an `interest` may
+open by saying the argument fails, a gloss may say whatever is true.
 
-- **`english[].gloss` and the `topic`/`figure` tags must not state or imply the
-  verdict.** No "the fallacy of…", no "this invalid form", no "as Kant
-  correctly argued".
-- `interest`, `countermodel_gloss`, `defect` and `nonclassical` are withheld
-  automatically, so they may say anything.
-- **Quotes are the exception that proves the rule.** A source may perfectly well
-  say "show that this argument is tree-invalid", and rewriting it is not an
-  option — so under spoilers the attribution stays visible and the quoted text
-  sits behind a one-click reveal. Write the quote faithfully and let the page
-  handle it.
-- Verdict-bearing words in a *name* are fine (`affirming-a-disjunct` is a name,
-  and the reader has to be able to search for it), but a name is a heading, so
-  prefer the traditional label to a description of the mistake.
-- **One existing tag breaks the rule:** `affirming-a-disjunct` carries the topic
-  `informal fallacies`, which announces the verdict. It is harmless while the
-  practice page shows only the sequent; if spoiler mode ever goes back into use,
-  rename it (`informal logic` says the same thing about the subject area and
-  nothing about this entry) rather than special-casing the renderer.
+This is worth stating flatly because the opposite assumption cost real work.
+The entry renderer still carries a **spoiler mode** — it withholds the verdict
+banner, the `defect` and `nonclassical` facets and the method turnstiles, and
+puts each appearance's quote behind a one-click reveal — from when the practice
+page was going to show a whole entry with the answer hidden. Nothing calls it
+now. Leave it or delete it, but do not write prose around it.
+
+The one rule that survives is about the *problem statement* itself, and it lives
+in the code rather than the prose: `problemStatement()` stacks the premises and
+the conclusion with `∴` and no turnstile, because `⊨` against `⊭` is the answer.
 
 ### 13.6 House voice
 
