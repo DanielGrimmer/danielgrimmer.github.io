@@ -66,6 +66,11 @@ filter ranges and the search index all derive from it at load. Do not hand-edit
 it; it is generated upstream by `build.py`, and edits are destroyed on the next
 build.
 
+The LaTeX blocks that carry each form in the course's own notation are
+specified in
+[`EncyclopediaOfArguments/LATEX_STYLE_GUIDE.md`](EncyclopediaOfArguments/LATEX_STYLE_GUIDE.md),
+alongside the lecture handouts and `notation.sty` it was derived from.
+
 Before changing the code, read
 [`assets/arguments/README.md`](assets/arguments/README.md). Several things in
 there are load-bearing rather than stylistic — routing on `id` rather than

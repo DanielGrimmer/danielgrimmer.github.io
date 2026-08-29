@@ -167,6 +167,22 @@ argument is valid vacuously".
 **If you add a field to the entry view, ask first whether it gives away
 validity.**
 
+## Course-exact LaTeX blocks
+
+Each entry is to carry a LaTeX block per method, set in the PHIL 1115 house
+notation, so the encyclopedia reads as an extension of the course handouts.
+**[`EncyclopediaOfArguments/LATEX_STYLE_GUIDE.md`](../../EncyclopediaOfArguments/LATEX_STYLE_GUIDE.md)
+is the spec** — macros, both table layouts, the tree and Fitch conventions, the
+JSON schema for the blocks, and the traps.
+
+Two things from it that bear on this folder's code:
+
+- The blocks use `qtree` and `fitch`, **neither of which any browser maths
+  renderer supports**. They are the canonical print artifact; the site keeps
+  rendering from the structured data, as it does today.
+- The blocks must be built from the ASCII in `premises`/`conclusion`, not from
+  `display.*`, for the reason in item 4 above.
+
 ## Natural-deduction proofs are not in the data yet
 
 `nd` carries the *profile* of each proof — `lines`, `rules_used`,
