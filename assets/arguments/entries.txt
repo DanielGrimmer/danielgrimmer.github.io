@@ -71,3 +71,6 @@ disjunction-not-conjunction
 problem-sets-running-invalid
 vacuous-conditional-no-reach
 minimal-example
+addition
+conditional-identity
+bicond-elim-to-cond
