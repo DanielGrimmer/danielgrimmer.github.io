@@ -6352,7 +6352,7 @@
    },
    "difficulty": {
     "table": "hard",
-    "tree": "hard",
+    "tree": "extremely hard",
     "nd": "hard",
     "search_sharpness": null
    }
@@ -10567,7 +10567,7 @@
     "idle_premises": []
    },
    "difficulty": {
-    "table": "hard",
+    "table": "extremely hard",
     "tree": "medium",
     "nd": null,
     "search_sharpness": 0.0156
@@ -22022,7 +22022,7 @@
     "idle_premises": []
    },
    "difficulty": {
-    "table": "hard",
+    "table": "extremely hard",
     "tree": "medium",
     "nd": "easy",
     "search_sharpness": null
@@ -24877,32 +24877,50 @@
      },
      {
       "n": 16,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "p",
+      "rule": "Reit",
       "depth": 3,
       "cites": [
-       15,
-       12
+       15
       ]
      },
      {
       "n": 17,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       16,
+       12
+      ]
+     },
+     {
+      "n": 18,
       "f": "q",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 18,
+      "n": 19,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 3,
+      "cites": [
+       18
+      ]
+     },
+     {
+      "n": 20,
       "f": "!",
       "rule": "FalsumI",
       "depth": 3,
       "cites": [
-       17,
+       19,
        13
       ]
      },
      {
-      "n": 19,
+      "n": 21,
       "f": "!",
       "rule": "DisjE",
       "depth": 2,
@@ -24912,28 +24930,28 @@
       "subs": [
        [
         15,
-        16
+        17
        ],
        [
-        17,
-        18
+        18,
+        20
        ]
       ]
      },
      {
-      "n": 20,
+      "n": 22,
       "f": "~(p | q)",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
         14,
-        19
+        21
        ]
       ]
      },
      {
-      "n": 21,
+      "n": 23,
       "f": "~(p | q) = (~p & ~q)",
       "rule": "BicondI",
       "depth": 0,
@@ -24944,13 +24962,13 @@
        ],
        [
         11,
-        20
+        22
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj q)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj q}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\open\n\\hypo{6}{q}\n\\have{7}{p\\Disj q}\\by{\\DisjI}{6}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,1}\n\\close\n\\have{9}{\\Neg q}\\by{\\NegI}{6,8}\n\\have{10}{\\Neg p\\Conj \\Neg q}\\by{\\ConjI}{5,9}\n\\close\n\\open\n\\hypo{11}{\\Neg p\\Conj \\Neg q}\n\\have{12}{\\Neg p}\\by{\\ConjE}{11}\n\\have{13}{\\Neg q}\\by{\\ConjE}{11}\n\\open\n\\hypo{14}{p\\Disj q}\n\\open\n\\hypo{15}{p}\n\\have{16}{\\Falsum}\\by{\\FalsumI}{15,12}\n\\close\n\\open\n\\hypo{17}{q}\n\\have{18}{\\Falsum}\\by{\\FalsumI}{17,13}\n\\close\n\\have{19}{\\Falsum}\\by{\\DisjE}{14,15-16,17-18}\n\\close\n\\have{20}{\\Neg (p\\Disj q)}\\by{\\NegI}{14,19}\n\\close\n\\have{21}{\\Neg (p\\Disj q)\\Bicond (\\Neg p\\Conj \\Neg q)}\\by{\\BicondI}{1-10,11-20}\n\\end{nd}\n\\end{align*}",
-    "lines": 21,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj q)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj q}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\open\n\\hypo{6}{q}\n\\have{7}{p\\Disj q}\\by{\\DisjI}{6}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,1}\n\\close\n\\have{9}{\\Neg q}\\by{\\NegI}{6,8}\n\\have{10}{\\Neg p\\Conj \\Neg q}\\by{\\ConjI}{5,9}\n\\close\n\\open\n\\hypo{11}{\\Neg p\\Conj \\Neg q}\n\\have{12}{\\Neg p}\\by{\\ConjE}{11}\n\\have{13}{\\Neg q}\\by{\\ConjE}{11}\n\\open\n\\hypo{14}{p\\Disj q}\n\\open\n\\hypo{15}{p}\n\\have{16}{p}\\by{\\Reit}{15}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{16,12}\n\\close\n\\open\n\\hypo{18}{q}\n\\have{19}{q}\\by{\\Reit}{18}\n\\have{20}{\\Falsum}\\by{\\FalsumI}{19,13}\n\\close\n\\have{21}{\\Falsum}\\by{\\DisjE}{14,15-17,18-20}\n\\close\n\\have{22}{\\Neg (p\\Disj q)}\\by{\\NegI}{14,21}\n\\close\n\\have{23}{\\Neg (p\\Disj q)\\Bicond (\\Neg p\\Conj \\Neg q)}\\by{\\BicondI}{1-10,11-22}\n\\end{nd}\n\\end{align*}",
+    "lines": 23,
     "max_subproof_depth": 3,
     "subproof_count": 7,
     "assumption_count": 7,
@@ -24963,7 +24981,8 @@
      "DisjE",
      "DisjI",
      "FalsumI",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "checked_by": "latexgen/nd.py"
    },
@@ -25540,7 +25559,7 @@
     "checked_by": "latexgen/nd.py"
    },
    "difficulty": {
-    "nd": "hard",
+    "nd": "extremely hard",
     "table": "easy",
     "tree": "hard"
    },
@@ -26102,7 +26121,7 @@
     "checked_by": "latexgen/nd.py"
    },
    "difficulty": {
-    "nd": "hard",
+    "nd": "extremely hard",
     "table": "easy",
     "tree": "medium"
    },
@@ -27787,38 +27806,47 @@
      },
      {
       "n": 7,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~(p | ~p)",
+      "rule": "Reit",
       "depth": 1,
       "cites": [
-       6,
        1
       ]
      },
      {
       "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       6,
+       7
+      ]
+     },
+     {
+      "n": 9,
       "f": "~~(p | ~p)",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         1,
-        7
+        8
        ]
       ]
      },
      {
-      "n": 9,
+      "n": 10,
       "f": "p | ~p",
       "rule": "NegE",
       "depth": 0,
       "cites": [
-       8
+       9
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj \\Neg p)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj \\Neg p}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\have{6}{p\\Disj \\Neg p}\\by{\\DisjI}{5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,1}\n\\close\n\\have{8}{\\Neg \\Neg (p\\Disj \\Neg p)}\\by{\\NegI}{1,7}\n\\have{9}{p\\Disj \\Neg p}\\by{\\NegE}{8}\n\\end{nd}\n\\end{align*}",
-    "lines": 9,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj \\Neg p)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj \\Neg p}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\have{6}{p\\Disj \\Neg p}\\by{\\DisjI}{5}\n\\have{7}{\\Neg (p\\Disj \\Neg p)}\\by{\\Reit}{1}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{6,7}\n\\close\n\\have{9}{\\Neg \\Neg (p\\Disj \\Neg p)}\\by{\\NegI}{1,8}\n\\have{10}{p\\Disj \\Neg p}\\by{\\NegE}{9}\n\\end{nd}\n\\end{align*}",
+    "lines": 10,
     "max_subproof_depth": 2,
     "subproof_count": 2,
     "assumption_count": 2,
@@ -27828,7 +27856,8 @@
      "DisjI",
      "FalsumI",
      "NegE",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "checked_by": "latexgen/nd.py"
    },
@@ -28682,38 +28711,47 @@
      },
      {
       "n": 16,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~((q > p) | (p > r))",
+      "rule": "Reit",
       "depth": 1,
       "cites": [
-       15,
        1
       ]
      },
      {
       "n": 17,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       15,
+       16
+      ]
+     },
+     {
+      "n": 18,
       "f": "~~((q > p) | (p > r))",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         1,
-        16
+        17
        ]
       ]
      },
      {
-      "n": 18,
+      "n": 19,
       "f": "(q > p) | (p > r)",
       "rule": "NegE",
       "depth": 0,
       "cites": [
-       17
+       18
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg ((q\\Cond p)\\Disj (p\\Cond r))}\n\\open\n\\hypo{2}{p}\n\\open\n\\hypo{3}{q}\n\\have{4}{p}\\by{\\Reit}{2}\n\\close\n\\have{5}{q\\Cond p}\\by{\\CondI}{3,4}\n\\have{6}{(q\\Cond p)\\Disj (p\\Cond r)}\\by{\\DisjI}{5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,1}\n\\close\n\\have{8}{\\Neg p}\\by{\\NegI}{2,7}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{\\Neg r}\n\\have{11}{\\Falsum}\\by{\\FalsumI}{9,8}\n\\close\n\\have{12}{\\Neg \\Neg r}\\by{\\NegI}{10,11}\n\\have{13}{r}\\by{\\NegE}{12}\n\\close\n\\have{14}{p\\Cond r}\\by{\\CondI}{9,13}\n\\have{15}{(q\\Cond p)\\Disj (p\\Cond r)}\\by{\\DisjI}{14}\n\\have{16}{\\Falsum}\\by{\\FalsumI}{15,1}\n\\close\n\\have{17}{\\Neg \\Neg ((q\\Cond p)\\Disj (p\\Cond r))}\\by{\\NegI}{1,16}\n\\have{18}{(q\\Cond p)\\Disj (p\\Cond r)}\\by{\\NegE}{17}\n\\end{nd}\n\\end{align*}",
-    "lines": 18,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg ((q\\Cond p)\\Disj (p\\Cond r))}\n\\open\n\\hypo{2}{p}\n\\open\n\\hypo{3}{q}\n\\have{4}{p}\\by{\\Reit}{2}\n\\close\n\\have{5}{q\\Cond p}\\by{\\CondI}{3,4}\n\\have{6}{(q\\Cond p)\\Disj (p\\Cond r)}\\by{\\DisjI}{5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,1}\n\\close\n\\have{8}{\\Neg p}\\by{\\NegI}{2,7}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{\\Neg r}\n\\have{11}{\\Falsum}\\by{\\FalsumI}{9,8}\n\\close\n\\have{12}{\\Neg \\Neg r}\\by{\\NegI}{10,11}\n\\have{13}{r}\\by{\\NegE}{12}\n\\close\n\\have{14}{p\\Cond r}\\by{\\CondI}{9,13}\n\\have{15}{(q\\Cond p)\\Disj (p\\Cond r)}\\by{\\DisjI}{14}\n\\have{16}{\\Neg ((q\\Cond p)\\Disj (p\\Cond r))}\\by{\\Reit}{1}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{15,16}\n\\close\n\\have{18}{\\Neg \\Neg ((q\\Cond p)\\Disj (p\\Cond r))}\\by{\\NegI}{1,17}\n\\have{19}{(q\\Cond p)\\Disj (p\\Cond r)}\\by{\\NegE}{18}\n\\end{nd}\n\\end{align*}",
+    "lines": 19,
     "max_subproof_depth": 3,
     "subproof_count": 5,
     "assumption_count": 5,
@@ -29008,38 +29046,47 @@
      },
      {
       "n": 16,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~((p > q) | (q > p))",
+      "rule": "Reit",
       "depth": 1,
       "cites": [
-       15,
        1
       ]
      },
      {
       "n": 17,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       15,
+       16
+      ]
+     },
+     {
+      "n": 18,
       "f": "~~((p > q) | (q > p))",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         1,
-        16
+        17
        ]
       ]
      },
      {
-      "n": 18,
+      "n": 19,
       "f": "(p > q) | (q > p)",
       "rule": "NegE",
       "depth": 0,
       "cites": [
-       17
+       18
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg ((p\\Cond q)\\Disj (q\\Cond p))}\n\\open\n\\hypo{2}{p}\n\\open\n\\hypo{3}{q}\n\\have{4}{p}\\by{\\Reit}{2}\n\\close\n\\have{5}{q\\Cond p}\\by{\\CondI}{3,4}\n\\have{6}{(p\\Cond q)\\Disj (q\\Cond p)}\\by{\\DisjI}{5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,1}\n\\close\n\\have{8}{\\Neg p}\\by{\\NegI}{2,7}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{\\Neg q}\n\\have{11}{\\Falsum}\\by{\\FalsumI}{9,8}\n\\close\n\\have{12}{\\Neg \\Neg q}\\by{\\NegI}{10,11}\n\\have{13}{q}\\by{\\NegE}{12}\n\\close\n\\have{14}{p\\Cond q}\\by{\\CondI}{9,13}\n\\have{15}{(p\\Cond q)\\Disj (q\\Cond p)}\\by{\\DisjI}{14}\n\\have{16}{\\Falsum}\\by{\\FalsumI}{15,1}\n\\close\n\\have{17}{\\Neg \\Neg ((p\\Cond q)\\Disj (q\\Cond p))}\\by{\\NegI}{1,16}\n\\have{18}{(p\\Cond q)\\Disj (q\\Cond p)}\\by{\\NegE}{17}\n\\end{nd}\n\\end{align*}",
-    "lines": 18,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg ((p\\Cond q)\\Disj (q\\Cond p))}\n\\open\n\\hypo{2}{p}\n\\open\n\\hypo{3}{q}\n\\have{4}{p}\\by{\\Reit}{2}\n\\close\n\\have{5}{q\\Cond p}\\by{\\CondI}{3,4}\n\\have{6}{(p\\Cond q)\\Disj (q\\Cond p)}\\by{\\DisjI}{5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,1}\n\\close\n\\have{8}{\\Neg p}\\by{\\NegI}{2,7}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{\\Neg q}\n\\have{11}{\\Falsum}\\by{\\FalsumI}{9,8}\n\\close\n\\have{12}{\\Neg \\Neg q}\\by{\\NegI}{10,11}\n\\have{13}{q}\\by{\\NegE}{12}\n\\close\n\\have{14}{p\\Cond q}\\by{\\CondI}{9,13}\n\\have{15}{(p\\Cond q)\\Disj (q\\Cond p)}\\by{\\DisjI}{14}\n\\have{16}{\\Neg ((p\\Cond q)\\Disj (q\\Cond p))}\\by{\\Reit}{1}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{15,16}\n\\close\n\\have{18}{\\Neg \\Neg ((p\\Cond q)\\Disj (q\\Cond p))}\\by{\\NegI}{1,17}\n\\have{19}{(p\\Cond q)\\Disj (q\\Cond p)}\\by{\\NegE}{18}\n\\end{nd}\n\\end{align*}",
+    "lines": 19,
     "max_subproof_depth": 3,
     "subproof_count": 5,
     "assumption_count": 5,
@@ -33097,29 +33144,38 @@
      },
      {
       "n": 4,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "c",
+      "rule": "Reit",
       "depth": 1,
       "cites": [
-       2,
-       3
+       2
       ]
      },
      {
       "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       4,
+       3
+      ]
+     },
+     {
+      "n": 6,
       "f": "~c",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         2,
-        4
+        5
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{c\\Cond \\Neg c}\n\\open\n\\hypo{2}{c}\n\\have{3}{\\Neg c}\\by{\\CondE}{1,2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{2,3}\n\\close\n\\have{5}{\\Neg c}\\by{\\NegI}{2,4}\n\\end{nd}\n\\end{align*}",
-    "lines": 5,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{c\\Cond \\Neg c}\n\\open\n\\hypo{2}{c}\n\\have{3}{\\Neg c}\\by{\\CondE}{1,2}\n\\have{4}{c}\\by{\\Reit}{2}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,3}\n\\close\n\\have{6}{\\Neg c}\\by{\\NegI}{2,5}\n\\end{nd}\n\\end{align*}",
+    "lines": 6,
     "max_subproof_depth": 1,
     "subproof_count": 1,
     "assumption_count": 1,
@@ -33128,7 +33184,8 @@
      "As",
      "CondE",
      "FalsumI",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "checked_by": "latexgen/nd.py"
    },
@@ -33361,104 +33418,113 @@
      },
      {
       "n": 6,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~q",
+      "rule": "Reit",
       "depth": 1,
       "cites": [
-       5,
        3
       ]
      },
      {
       "n": 7,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       5,
+       6
+      ]
+     },
+     {
+      "n": 8,
       "f": "~~q",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         3,
-        6
+        7
        ]
       ]
      },
      {
-      "n": 8,
+      "n": 9,
       "f": "q",
       "rule": "NegE",
       "depth": 0,
       "cites": [
-       7
-      ]
-     },
-     {
-      "n": 9,
-      "f": "p",
-      "rule": "BicondE",
-      "depth": 0,
-      "cites": [
-       1,
        8
       ]
      },
      {
       "n": 10,
-      "f": "~q",
+      "f": "p",
       "rule": "BicondE",
       "depth": 0,
       "cites": [
-       2,
+       1,
        9
       ]
      },
      {
       "n": 11,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~q",
+      "rule": "BicondE",
       "depth": 0,
       "cites": [
-       8,
+       2,
        10
       ]
      },
      {
       "n": 12,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 0,
+      "cites": [
+       9,
+       11
+      ]
+     },
+     {
+      "n": 13,
       "f": "~r",
       "rule": "As",
       "depth": 1
      },
      {
-      "n": 13,
+      "n": 14,
       "f": "!",
       "rule": "Reit",
       "depth": 1,
       "cites": [
-       11
+       12
       ]
      },
      {
-      "n": 14,
+      "n": 15,
       "f": "~~r",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
-        12,
-        13
+        13,
+        14
        ]
       ]
      },
      {
-      "n": 15,
+      "n": 16,
       "f": "r",
       "rule": "NegE",
       "depth": 0,
       "cites": [
-       14
+       15
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Bicond q}\n\\hypo{2}{p\\Bicond \\Neg q}\n\\open\n\\hypo{3}{\\Neg q}\n\\have{4}{p}\\by{\\BicondE}{2,3}\n\\have{5}{q}\\by{\\BicondE}{1,4}\n\\have{6}{\\Falsum}\\by{\\FalsumI}{5,3}\n\\close\n\\have{7}{\\Neg \\Neg q}\\by{\\NegI}{3,6}\n\\have{8}{q}\\by{\\NegE}{7}\n\\have{9}{p}\\by{\\BicondE}{1,8}\n\\have{10}{\\Neg q}\\by{\\BicondE}{2,9}\n\\have{11}{\\Falsum}\\by{\\FalsumI}{8,10}\n\\open\n\\hypo{12}{\\Neg r}\n\\have{13}{\\Falsum}\\by{\\Reit}{11}\n\\close\n\\have{14}{\\Neg \\Neg r}\\by{\\NegI}{12,13}\n\\have{15}{r}\\by{\\NegE}{14}\n\\end{nd}\n\\end{align*}",
-    "lines": 15,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Bicond q}\n\\hypo{2}{p\\Bicond \\Neg q}\n\\open\n\\hypo{3}{\\Neg q}\n\\have{4}{p}\\by{\\BicondE}{2,3}\n\\have{5}{q}\\by{\\BicondE}{1,4}\n\\have{6}{\\Neg q}\\by{\\Reit}{3}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{5,6}\n\\close\n\\have{8}{\\Neg \\Neg q}\\by{\\NegI}{3,7}\n\\have{9}{q}\\by{\\NegE}{8}\n\\have{10}{p}\\by{\\BicondE}{1,9}\n\\have{11}{\\Neg q}\\by{\\BicondE}{2,10}\n\\have{12}{\\Falsum}\\by{\\FalsumI}{9,11}\n\\open\n\\hypo{13}{\\Neg r}\n\\have{14}{\\Falsum}\\by{\\Reit}{12}\n\\close\n\\have{15}{\\Neg \\Neg r}\\by{\\NegI}{13,14}\n\\have{16}{r}\\by{\\NegE}{15}\n\\end{nd}\n\\end{align*}",
+    "lines": 16,
     "max_subproof_depth": 1,
     "subproof_count": 2,
     "assumption_count": 2,
@@ -38732,26 +38798,36 @@
      },
      {
       "n": 2,
+      "f": "p",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 3,
       "f": "p > p",
       "rule": "CondI",
       "depth": 0,
       "subs": [
        [
         1,
-        1
+        2
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\close\n\\have{2}{p\\Cond p}\\by{\\CondI}{1,1}\n\\end{nd}\n\\end{align*}",
-    "lines": 2,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\have{2}{p}\\by{\\Reit}{1}\n\\close\n\\have{3}{p\\Cond p}\\by{\\CondI}{1,2}\n\\end{nd}\n\\end{align*}",
+    "lines": 3,
     "max_subproof_depth": 1,
     "subproof_count": 1,
     "assumption_count": 1,
     "uses_indirect_proof": false,
     "rules_used": [
      "As",
-     "CondI"
+     "CondI",
+     "Reit"
     ],
     "checked_by": "latexgen/nd.py"
    },
@@ -39312,38 +39388,47 @@
      },
      {
       "n": 13,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~(p | (p > q))",
+      "rule": "Reit",
       "depth": 1,
       "cites": [
-       12,
        1
       ]
      },
      {
       "n": 14,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       12,
+       13
+      ]
+     },
+     {
+      "n": 15,
       "f": "~~(p | (p > q))",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         1,
-        13
+        14
        ]
       ]
      },
      {
-      "n": 15,
+      "n": 16,
       "f": "p | (p > q)",
       "rule": "NegE",
       "depth": 0,
       "cites": [
-       14
+       15
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj (p\\Cond q))}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj (p\\Cond q)}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\open\n\\hypo{6}{p}\n\\open\n\\hypo{7}{\\Neg q}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{6,5}\n\\close\n\\have{9}{\\Neg \\Neg q}\\by{\\NegI}{7,8}\n\\have{10}{q}\\by{\\NegE}{9}\n\\close\n\\have{11}{p\\Cond q}\\by{\\CondI}{6,10}\n\\have{12}{p\\Disj (p\\Cond q)}\\by{\\DisjI}{11}\n\\have{13}{\\Falsum}\\by{\\FalsumI}{12,1}\n\\close\n\\have{14}{\\Neg \\Neg (p\\Disj (p\\Cond q))}\\by{\\NegI}{1,13}\n\\have{15}{p\\Disj (p\\Cond q)}\\by{\\NegE}{14}\n\\end{nd}\n\\end{align*}",
-    "lines": 15,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj (p\\Cond q))}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj (p\\Cond q)}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\open\n\\hypo{6}{p}\n\\open\n\\hypo{7}{\\Neg q}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{6,5}\n\\close\n\\have{9}{\\Neg \\Neg q}\\by{\\NegI}{7,8}\n\\have{10}{q}\\by{\\NegE}{9}\n\\close\n\\have{11}{p\\Cond q}\\by{\\CondI}{6,10}\n\\have{12}{p\\Disj (p\\Cond q)}\\by{\\DisjI}{11}\n\\have{13}{\\Neg (p\\Disj (p\\Cond q))}\\by{\\Reit}{1}\n\\have{14}{\\Falsum}\\by{\\FalsumI}{12,13}\n\\close\n\\have{15}{\\Neg \\Neg (p\\Disj (p\\Cond q))}\\by{\\NegI}{1,14}\n\\have{16}{p\\Disj (p\\Cond q)}\\by{\\NegE}{15}\n\\end{nd}\n\\end{align*}",
+    "lines": 16,
     "max_subproof_depth": 3,
     "subproof_count": 4,
     "assumption_count": 4,
@@ -39354,7 +39439,8 @@
      "DisjI",
      "FalsumI",
      "NegE",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "checked_by": "latexgen/nd.py"
    },
@@ -39977,49 +40063,58 @@
      },
      {
       "n": 4,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "p",
+      "rule": "Reit",
       "depth": 1,
       "cites": [
-       2,
-       3
+       2
       ]
      },
      {
       "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       4,
+       3
+      ]
+     },
+     {
+      "n": 6,
       "f": "~p",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         2,
-        4
+        5
        ]
       ]
      },
      {
-      "n": 6,
+      "n": 7,
       "f": "p",
       "rule": "BicondE",
       "depth": 0,
       "cites": [
        1,
-       5
+       6
       ]
      },
      {
-      "n": 7,
+      "n": 8,
       "f": "!",
       "rule": "FalsumI",
       "depth": 0,
       "cites": [
-       6,
-       5
+       7,
+       6
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Bicond \\Neg p}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\Neg p}\\by{\\BicondE}{1,2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{2,3}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\have{6}{p}\\by{\\BicondE}{1,5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,5}\n\\end{nd}\n\\end{align*}",
-    "lines": 7,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Bicond \\Neg p}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\Neg p}\\by{\\BicondE}{1,2}\n\\have{4}{p}\\by{\\Reit}{2}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,3}\n\\close\n\\have{6}{\\Neg p}\\by{\\NegI}{2,5}\n\\have{7}{p}\\by{\\BicondE}{1,6}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,6}\n\\end{nd}\n\\end{align*}",
+    "lines": 8,
     "max_subproof_depth": 1,
     "subproof_count": 1,
     "assumption_count": 1,
@@ -40028,7 +40123,8 @@
      "As",
      "BicondE",
      "FalsumI",
-     "NegI"
+     "NegI",
+     "Reit"
     ],
     "checked_by": "latexgen/nd.py"
    },
@@ -41240,37 +41336,46 @@
      },
      {
       "n": 21,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~(p | q)",
+      "rule": "Reit",
       "depth": 2,
       "cites": [
-       20,
        13
       ]
      },
      {
       "n": 22,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       20,
+       21
+      ]
+     },
+     {
+      "n": 23,
       "f": "~~(p | q)",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
         13,
-        21
+        22
        ]
       ]
      },
      {
-      "n": 23,
+      "n": 24,
       "f": "p | q",
       "rule": "NegE",
       "depth": 1,
       "cites": [
-       22
+       23
       ]
      },
      {
-      "n": 24,
+      "n": 25,
       "f": "(p | q) = (~p > q)",
       "rule": "BicondI",
       "depth": 0,
@@ -41281,13 +41386,13 @@
        ],
        [
         12,
-        23
+        24
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Disj q}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{3,2}\n\\close\n\\have{6}{\\Neg \\Neg q}\\by{\\NegI}{4,5}\n\\have{7}{q}\\by{\\NegE}{6}\n\\close\n\\open\n\\hypo{8}{q}\n\\have{9}{q}\\by{\\Reit}{8}\n\\close\n\\have{10}{q}\\by{\\DisjE}{1,3-7,8-9}\n\\close\n\\have{11}{\\Neg p\\Cond q}\\by{\\CondI}{2,10}\n\\close\n\\open\n\\hypo{12}{\\Neg p\\Cond q}\n\\open\n\\hypo{13}{\\Neg (p\\Disj q)}\n\\open\n\\hypo{14}{\\Neg p}\n\\have{15}{q}\\by{\\CondE}{12,14}\n\\have{16}{p\\Disj q}\\by{\\DisjI}{15}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{16,13}\n\\close\n\\have{18}{\\Neg \\Neg p}\\by{\\NegI}{14,17}\n\\have{19}{p}\\by{\\NegE}{18}\n\\have{20}{p\\Disj q}\\by{\\DisjI}{19}\n\\have{21}{\\Falsum}\\by{\\FalsumI}{20,13}\n\\close\n\\have{22}{\\Neg \\Neg (p\\Disj q)}\\by{\\NegI}{13,21}\n\\have{23}{p\\Disj q}\\by{\\NegE}{22}\n\\close\n\\have{24}{(p\\Disj q)\\Bicond (\\Neg p\\Cond q)}\\by{\\BicondI}{1-11,12-23}\n\\end{nd}\n\\end{align*}",
-    "lines": 24,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Disj q}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{3,2}\n\\close\n\\have{6}{\\Neg \\Neg q}\\by{\\NegI}{4,5}\n\\have{7}{q}\\by{\\NegE}{6}\n\\close\n\\open\n\\hypo{8}{q}\n\\have{9}{q}\\by{\\Reit}{8}\n\\close\n\\have{10}{q}\\by{\\DisjE}{1,3-7,8-9}\n\\close\n\\have{11}{\\Neg p\\Cond q}\\by{\\CondI}{2,10}\n\\close\n\\open\n\\hypo{12}{\\Neg p\\Cond q}\n\\open\n\\hypo{13}{\\Neg (p\\Disj q)}\n\\open\n\\hypo{14}{\\Neg p}\n\\have{15}{q}\\by{\\CondE}{12,14}\n\\have{16}{p\\Disj q}\\by{\\DisjI}{15}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{16,13}\n\\close\n\\have{18}{\\Neg \\Neg p}\\by{\\NegI}{14,17}\n\\have{19}{p}\\by{\\NegE}{18}\n\\have{20}{p\\Disj q}\\by{\\DisjI}{19}\n\\have{21}{\\Neg (p\\Disj q)}\\by{\\Reit}{13}\n\\have{22}{\\Falsum}\\by{\\FalsumI}{20,21}\n\\close\n\\have{23}{\\Neg \\Neg (p\\Disj q)}\\by{\\NegI}{13,22}\n\\have{24}{p\\Disj q}\\by{\\NegE}{23}\n\\close\n\\have{25}{(p\\Disj q)\\Bicond (\\Neg p\\Cond q)}\\by{\\BicondI}{1-11,12-24}\n\\end{nd}\n\\end{align*}",
+    "lines": 25,
     "max_subproof_depth": 4,
     "subproof_count": 8,
     "assumption_count": 8,
@@ -41917,319 +42022,318 @@
      },
      {
       "n": 16,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~((p & q) | (~p & ~q))",
+      "rule": "Reit",
       "depth": 2,
       "cites": [
-       15,
        2
       ]
      },
      {
       "n": 17,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       15,
+       16
+      ]
+     },
+     {
+      "n": 18,
       "f": "~~((p & q) | (~p & ~q))",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
         2,
-        16
+        17
        ]
       ]
      },
      {
-      "n": 18,
+      "n": 19,
       "f": "(p & q) | (~p & ~q)",
       "rule": "NegE",
       "depth": 1,
       "cites": [
-       17
+       18
       ]
      },
      {
-      "n": 19,
+      "n": 20,
       "f": "p & q",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 20,
+      "n": 21,
       "f": "~p | ~q",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 21,
+      "n": 22,
       "f": "~p",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 22,
+      "n": 23,
       "f": "p",
       "rule": "ConjE",
       "depth": 4,
       "cites": [
-       19
-      ]
-     },
-     {
-      "n": 23,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
-      "cites": [
-       22,
-       21
+       20
       ]
      },
      {
       "n": 24,
+      "f": "~p",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       22
+      ]
+     },
+     {
+      "n": 25,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       23,
+       24
+      ]
+     },
+     {
+      "n": 26,
       "f": "~q",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 25,
+      "n": 27,
       "f": "q",
       "rule": "ConjE",
       "depth": 4,
       "cites": [
-       19
-      ]
-     },
-     {
-      "n": 26,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
-      "cites": [
-       25,
-       24
-      ]
-     },
-     {
-      "n": 27,
-      "f": "!",
-      "rule": "DisjE",
-      "depth": 3,
-      "cites": [
        20
-      ],
-      "subs": [
-       [
-        21,
-        23
-       ],
-       [
-        24,
-        26
-       ]
       ]
      },
      {
       "n": 28,
-      "f": "~(~p | ~q)",
-      "rule": "NegI",
-      "depth": 2,
-      "subs": [
-       [
-        20,
-        27
-       ]
+      "f": "~q",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       26
       ]
      },
      {
       "n": 29,
-      "f": "~(~p | ~q) | ~(p | q)",
-      "rule": "DisjI",
-      "depth": 2,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
       "cites": [
+       27,
        28
       ]
      },
      {
       "n": 30,
+      "f": "!",
+      "rule": "DisjE",
+      "depth": 3,
+      "cites": [
+       21
+      ],
+      "subs": [
+       [
+        22,
+        25
+       ],
+       [
+        26,
+        29
+       ]
+      ]
+     },
+     {
+      "n": 31,
+      "f": "~(~p | ~q)",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        21,
+        30
+       ]
+      ]
+     },
+     {
+      "n": 32,
+      "f": "~(~p | ~q) | ~(p | q)",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       31
+      ]
+     },
+     {
+      "n": 33,
       "f": "~p & ~q",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 31,
+      "n": 34,
       "f": "p | q",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 32,
+      "n": 35,
       "f": "p",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 33,
+      "n": 36,
       "f": "~p",
       "rule": "ConjE",
       "depth": 4,
       "cites": [
-       30
-      ]
-     },
-     {
-      "n": 34,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
-      "cites": [
-       32,
        33
       ]
      },
      {
-      "n": 35,
-      "f": "q",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 36,
-      "f": "~q",
-      "rule": "ConjE",
-      "depth": 4,
-      "cites": [
-       30
-      ]
-     },
-     {
       "n": 37,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "p",
+      "rule": "Reit",
       "depth": 4,
       "cites": [
-       35,
-       36
+       35
       ]
      },
      {
       "n": 38,
       "f": "!",
-      "rule": "DisjE",
-      "depth": 3,
+      "rule": "FalsumI",
+      "depth": 4,
       "cites": [
-       31
-      ],
-      "subs": [
-       [
-        32,
-        34
-       ],
-       [
-        35,
-        37
-       ]
+       37,
+       36
       ]
      },
      {
       "n": 39,
-      "f": "~(p | q)",
-      "rule": "NegI",
-      "depth": 2,
-      "subs": [
-       [
-        31,
-        38
-       ]
-      ]
+      "f": "q",
+      "rule": "As",
+      "depth": 4
      },
      {
       "n": 40,
-      "f": "~(~p | ~q) | ~(p | q)",
-      "rule": "DisjI",
-      "depth": 2,
+      "f": "~q",
+      "rule": "ConjE",
+      "depth": 4,
+      "cites": [
+       33
+      ]
+     },
+     {
+      "n": 41,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 4,
       "cites": [
        39
       ]
      },
      {
-      "n": 41,
-      "f": "~(~p | ~q) | ~(p | q)",
-      "rule": "DisjE",
-      "depth": 1,
+      "n": 42,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
       "cites": [
-       18
+       41,
+       40
+      ]
+     },
+     {
+      "n": 43,
+      "f": "!",
+      "rule": "DisjE",
+      "depth": 3,
+      "cites": [
+       34
       ],
       "subs": [
        [
-        19,
-        29
+        35,
+        38
        ],
        [
-        30,
-        40
+        39,
+        42
        ]
       ]
      },
      {
-      "n": 42,
-      "f": "~(~p | ~q) | ~(p | q)",
-      "rule": "As",
-      "depth": 1
-     },
-     {
-      "n": 43,
-      "f": "~(~p | ~q)",
-      "rule": "As",
-      "depth": 2
-     },
-     {
       "n": 44,
-      "f": "~p",
-      "rule": "As",
-      "depth": 3
+      "f": "~(p | q)",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        34,
+        43
+       ]
+      ]
      },
      {
       "n": 45,
-      "f": "~p | ~q",
+      "f": "~(~p | ~q) | ~(p | q)",
       "rule": "DisjI",
-      "depth": 3,
+      "depth": 2,
       "cites": [
        44
       ]
      },
      {
       "n": 46,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 3,
+      "f": "~(~p | ~q) | ~(p | q)",
+      "rule": "DisjE",
+      "depth": 1,
       "cites": [
-       45,
-       43
-      ]
-     },
-     {
-      "n": 47,
-      "f": "~~p",
-      "rule": "NegI",
-      "depth": 2,
+       19
+      ],
       "subs": [
        [
-        44,
-        46
+        20,
+        32
+       ],
+       [
+        33,
+        45
        ]
       ]
      },
      {
+      "n": 47,
+      "f": "~(~p | ~q) | ~(p | q)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
       "n": 48,
-      "f": "p",
-      "rule": "NegE",
-      "depth": 2,
-      "cites": [
-       47
-      ]
+      "f": "~(~p | ~q)",
+      "rule": "As",
+      "depth": 2
      },
      {
       "n": 49,
-      "f": "~q",
+      "f": "~p",
       "rule": "As",
       "depth": 3
      },
@@ -42249,12 +42353,12 @@
       "depth": 3,
       "cites": [
        50,
-       43
+       48
       ]
      },
      {
       "n": 52,
-      "f": "~~q",
+      "f": "~~p",
       "rule": "NegI",
       "depth": 2,
       "subs": [
@@ -42266,7 +42370,7 @@
      },
      {
       "n": 53,
-      "f": "q",
+      "f": "p",
       "rule": "NegE",
       "depth": 2,
       "cites": [
@@ -42275,13 +42379,74 @@
      },
      {
       "n": 54,
-      "f": "p",
+      "f": "~q",
       "rule": "As",
       "depth": 3
      },
      {
       "n": 55,
+      "f": "~p | ~q",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       54
+      ]
+     },
+     {
+      "n": 56,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       55,
+       48
+      ]
+     },
+     {
+      "n": 57,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        54,
+        56
+       ]
+      ]
+     },
+     {
+      "n": 58,
       "f": "q",
+      "rule": "NegE",
+      "depth": 2,
+      "cites": [
+       57
+      ]
+     },
+     {
+      "n": 59,
+      "f": "p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 60,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 3,
+      "cites": [
+       58
+      ]
+     },
+     {
+      "n": 61,
+      "f": "q",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 62,
+      "f": "p",
       "rule": "Reit",
       "depth": 3,
       "cites": [
@@ -42289,168 +42454,110 @@
       ]
      },
      {
-      "n": 56,
-      "f": "q",
-      "rule": "As",
-      "depth": 3
-     },
-     {
-      "n": 57,
-      "f": "p",
-      "rule": "Reit",
-      "depth": 3,
-      "cites": [
-       48
-      ]
-     },
-     {
-      "n": 58,
+      "n": 63,
       "f": "p = q",
       "rule": "BicondI",
       "depth": 2,
       "subs": [
        [
-        54,
-        55
+        59,
+        60
        ],
        [
-        56,
-        57
-       ]
-      ]
-     },
-     {
-      "n": 59,
-      "f": "~(p | q)",
-      "rule": "As",
-      "depth": 2
-     },
-     {
-      "n": 60,
-      "f": "p",
-      "rule": "As",
-      "depth": 3
-     },
-     {
-      "n": 61,
-      "f": "p | q",
-      "rule": "DisjI",
-      "depth": 3,
-      "cites": [
-       60
-      ]
-     },
-     {
-      "n": 62,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 3,
-      "cites": [
-       61,
-       59
-      ]
-     },
-     {
-      "n": 63,
-      "f": "~p",
-      "rule": "NegI",
-      "depth": 2,
-      "subs": [
-       [
-        60,
+        61,
         62
        ]
       ]
      },
      {
       "n": 64,
-      "f": "q",
+      "f": "~(p | q)",
       "rule": "As",
-      "depth": 3
+      "depth": 2
      },
      {
       "n": 65,
-      "f": "p | q",
-      "rule": "DisjI",
-      "depth": 3,
-      "cites": [
-       64
-      ]
-     },
-     {
-      "n": 66,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 3,
-      "cites": [
-       65,
-       59
-      ]
-     },
-     {
-      "n": 67,
-      "f": "~q",
-      "rule": "NegI",
-      "depth": 2,
-      "subs": [
-       [
-        64,
-        66
-       ]
-      ]
-     },
-     {
-      "n": 68,
       "f": "p",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 69,
-      "f": "~q",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 70,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
+      "n": 66,
+      "f": "p | q",
+      "rule": "DisjI",
+      "depth": 3,
       "cites": [
-       68,
-       63
+       65
       ]
      },
      {
-      "n": 71,
-      "f": "~~q",
-      "rule": "NegI",
+      "n": 67,
+      "f": "!",
+      "rule": "FalsumI",
       "depth": 3,
+      "cites": [
+       66,
+       64
+      ]
+     },
+     {
+      "n": 68,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 2,
       "subs": [
        [
-        69,
-        70
+        65,
+        67
        ]
       ]
      },
      {
-      "n": 72,
-      "f": "q",
-      "rule": "NegE",
-      "depth": 3,
-      "cites": [
-       71
-      ]
-     },
-     {
-      "n": 73,
+      "n": 69,
       "f": "q",
       "rule": "As",
       "depth": 3
      },
      {
+      "n": 70,
+      "f": "p | q",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       69
+      ]
+     },
+     {
+      "n": 71,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       70,
+       64
+      ]
+     },
+     {
+      "n": 72,
+      "f": "~q",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        69,
+        71
+       ]
+      ]
+     },
+     {
+      "n": 73,
+      "f": "p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
       "n": 74,
-      "f": "~p",
+      "f": "~q",
       "rule": "As",
       "depth": 4
      },
@@ -42461,12 +42568,12 @@
       "depth": 4,
       "cites": [
        73,
-       67
+       68
       ]
      },
      {
       "n": 76,
-      "f": "~~p",
+      "f": "~~q",
       "rule": "NegI",
       "depth": 3,
       "subs": [
@@ -42478,7 +42585,7 @@
      },
      {
       "n": 77,
-      "f": "p",
+      "f": "q",
       "rule": "NegE",
       "depth": 3,
       "cites": [
@@ -42487,58 +42594,101 @@
      },
      {
       "n": 78,
+      "f": "q",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 79,
+      "f": "~p",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 80,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       78,
+       72
+      ]
+     },
+     {
+      "n": 81,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        79,
+        80
+       ]
+      ]
+     },
+     {
+      "n": 82,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 3,
+      "cites": [
+       81
+      ]
+     },
+     {
+      "n": 83,
       "f": "p = q",
       "rule": "BicondI",
       "depth": 2,
       "subs": [
        [
-        68,
-        72
-       ],
-       [
         73,
         77
+       ],
+       [
+        78,
+        82
        ]
       ]
      },
      {
-      "n": 79,
+      "n": 84,
       "f": "p = q",
       "rule": "DisjE",
       "depth": 1,
       "cites": [
-       42
+       47
       ],
       "subs": [
        [
-        43,
-        58
+        48,
+        63
        ],
        [
-        59,
-        78
+        64,
+        83
        ]
       ]
      },
      {
-      "n": 80,
+      "n": 85,
       "f": "(p = q) = (~(~p | ~q) | ~(p | q))",
       "rule": "BicondI",
       "depth": 0,
       "subs": [
        [
         1,
-        41
+        46
        ],
        [
-        42,
-        79
+        47,
+        84
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond q}\n\\open\n\\hypo{2}{\\Neg ((p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q))}\n\\open\n\\hypo{3}{\\Neg p}\n\\open\n\\hypo{4}{q}\n\\have{5}{p}\\by{\\BicondE}{1,4}\n\\have{6}{\\Falsum}\\by{\\FalsumI}{5,3}\n\\close\n\\have{7}{\\Neg q}\\by{\\NegI}{4,6}\n\\have{8}{\\Neg p\\Conj \\Neg q}\\by{\\ConjI}{3,7}\n\\have{9}{(p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q)}\\by{\\DisjI}{8}\n\\have{10}{\\Falsum}\\by{\\FalsumI}{9,2}\n\\close\n\\have{11}{\\Neg \\Neg p}\\by{\\NegI}{3,10}\n\\have{12}{p}\\by{\\NegE}{11}\n\\have{13}{q}\\by{\\BicondE}{1,12}\n\\have{14}{p\\Conj q}\\by{\\ConjI}{12,13}\n\\have{15}{(p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q)}\\by{\\DisjI}{14}\n\\have{16}{\\Falsum}\\by{\\FalsumI}{15,2}\n\\close\n\\have{17}{\\Neg \\Neg ((p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q))}\\by{\\NegI}{2,16}\n\\have{18}{(p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q)}\\by{\\NegE}{17}\n\\open\n\\hypo{19}{p\\Conj q}\n\\open\n\\hypo{20}{\\Neg p\\Disj \\Neg q}\n\\open\n\\hypo{21}{\\Neg p}\n\\have{22}{p}\\by{\\ConjE}{19}\n\\have{23}{\\Falsum}\\by{\\FalsumI}{22,21}\n\\close\n\\open\n\\hypo{24}{\\Neg q}\n\\have{25}{q}\\by{\\ConjE}{19}\n\\have{26}{\\Falsum}\\by{\\FalsumI}{25,24}\n\\close\n\\have{27}{\\Falsum}\\by{\\DisjE}{20,21-23,24-26}\n\\close\n\\have{28}{\\Neg (\\Neg p\\Disj \\Neg q)}\\by{\\NegI}{20,27}\n\\have{29}{\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q)}\\by{\\DisjI}{28}\n\\close\n\\open\n\\hypo{30}{\\Neg p\\Conj \\Neg q}\n\\open\n\\hypo{31}{p\\Disj q}\n\\open\n\\hypo{32}{p}\n\\have{33}{\\Neg p}\\by{\\ConjE}{30}\n\\have{34}{\\Falsum}\\by{\\FalsumI}{32,33}\n\\close\n\\open\n\\hypo{35}{q}\n\\have{36}{\\Neg q}\\by{\\ConjE}{30}\n\\have{37}{\\Falsum}\\by{\\FalsumI}{35,36}\n\\close\n\\have{38}{\\Falsum}\\by{\\DisjE}{31,32-34,35-37}\n\\close\n\\have{39}{\\Neg (p\\Disj q)}\\by{\\NegI}{31,38}\n\\have{40}{\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q)}\\by{\\DisjI}{39}\n\\close\n\\have{41}{\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q)}\\by{\\DisjE}{18,19-29,30-40}\n\\close\n\\open\n\\hypo{42}{\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q)}\n\\open\n\\hypo{43}{\\Neg (\\Neg p\\Disj \\Neg q)}\n\\open\n\\hypo{44}{\\Neg p}\n\\have{45}{\\Neg p\\Disj \\Neg q}\\by{\\DisjI}{44}\n\\have{46}{\\Falsum}\\by{\\FalsumI}{45,43}\n\\close\n\\have{47}{\\Neg \\Neg p}\\by{\\NegI}{44,46}\n\\have{48}{p}\\by{\\NegE}{47}\n\\open\n\\hypo{49}{\\Neg q}\n\\have{50}{\\Neg p\\Disj \\Neg q}\\by{\\DisjI}{49}\n\\have{51}{\\Falsum}\\by{\\FalsumI}{50,43}\n\\close\n\\have{52}{\\Neg \\Neg q}\\by{\\NegI}{49,51}\n\\have{53}{q}\\by{\\NegE}{52}\n\\open\n\\hypo{54}{p}\n\\have{55}{q}\\by{\\Reit}{53}\n\\close\n\\open\n\\hypo{56}{q}\n\\have{57}{p}\\by{\\Reit}{48}\n\\close\n\\have{58}{p\\Bicond q}\\by{\\BicondI}{54-55,56-57}\n\\close\n\\open\n\\hypo{59}{\\Neg (p\\Disj q)}\n\\open\n\\hypo{60}{p}\n\\have{61}{p\\Disj q}\\by{\\DisjI}{60}\n\\have{62}{\\Falsum}\\by{\\FalsumI}{61,59}\n\\close\n\\have{63}{\\Neg p}\\by{\\NegI}{60,62}\n\\open\n\\hypo{64}{q}\n\\have{65}{p\\Disj q}\\by{\\DisjI}{64}\n\\have{66}{\\Falsum}\\by{\\FalsumI}{65,59}\n\\close\n\\have{67}{\\Neg q}\\by{\\NegI}{64,66}\n\\open\n\\hypo{68}{p}\n\\open\n\\hypo{69}{\\Neg q}\n\\have{70}{\\Falsum}\\by{\\FalsumI}{68,63}\n\\close\n\\have{71}{\\Neg \\Neg q}\\by{\\NegI}{69,70}\n\\have{72}{q}\\by{\\NegE}{71}\n\\close\n\\open\n\\hypo{73}{q}\n\\open\n\\hypo{74}{\\Neg p}\n\\have{75}{\\Falsum}\\by{\\FalsumI}{73,67}\n\\close\n\\have{76}{\\Neg \\Neg p}\\by{\\NegI}{74,75}\n\\have{77}{p}\\by{\\NegE}{76}\n\\close\n\\have{78}{p\\Bicond q}\\by{\\BicondI}{68-72,73-77}\n\\close\n\\have{79}{p\\Bicond q}\\by{\\DisjE}{42,43-58,59-78}\n\\close\n\\have{80}{(p\\Bicond q)\\Bicond (\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q))}\\by{\\BicondI}{1-41,42-79}\n\\end{nd}\n\\end{align*}",
-    "lines": 80,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond q}\n\\open\n\\hypo{2}{\\Neg ((p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q))}\n\\open\n\\hypo{3}{\\Neg p}\n\\open\n\\hypo{4}{q}\n\\have{5}{p}\\by{\\BicondE}{1,4}\n\\have{6}{\\Falsum}\\by{\\FalsumI}{5,3}\n\\close\n\\have{7}{\\Neg q}\\by{\\NegI}{4,6}\n\\have{8}{\\Neg p\\Conj \\Neg q}\\by{\\ConjI}{3,7}\n\\have{9}{(p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q)}\\by{\\DisjI}{8}\n\\have{10}{\\Falsum}\\by{\\FalsumI}{9,2}\n\\close\n\\have{11}{\\Neg \\Neg p}\\by{\\NegI}{3,10}\n\\have{12}{p}\\by{\\NegE}{11}\n\\have{13}{q}\\by{\\BicondE}{1,12}\n\\have{14}{p\\Conj q}\\by{\\ConjI}{12,13}\n\\have{15}{(p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q)}\\by{\\DisjI}{14}\n\\have{16}{\\Neg ((p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q))}\\by{\\Reit}{2}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{15,16}\n\\close\n\\have{18}{\\Neg \\Neg ((p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q))}\\by{\\NegI}{2,17}\n\\have{19}{(p\\Conj q)\\Disj (\\Neg p\\Conj \\Neg q)}\\by{\\NegE}{18}\n\\open\n\\hypo{20}{p\\Conj q}\n\\open\n\\hypo{21}{\\Neg p\\Disj \\Neg q}\n\\open\n\\hypo{22}{\\Neg p}\n\\have{23}{p}\\by{\\ConjE}{20}\n\\have{24}{\\Neg p}\\by{\\Reit}{22}\n\\have{25}{\\Falsum}\\by{\\FalsumI}{23,24}\n\\close\n\\open\n\\hypo{26}{\\Neg q}\n\\have{27}{q}\\by{\\ConjE}{20}\n\\have{28}{\\Neg q}\\by{\\Reit}{26}\n\\have{29}{\\Falsum}\\by{\\FalsumI}{27,28}\n\\close\n\\have{30}{\\Falsum}\\by{\\DisjE}{21,22-25,26-29}\n\\close\n\\have{31}{\\Neg (\\Neg p\\Disj \\Neg q)}\\by{\\NegI}{21,30}\n\\have{32}{\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q)}\\by{\\DisjI}{31}\n\\close\n\\open\n\\hypo{33}{\\Neg p\\Conj \\Neg q}\n\\open\n\\hypo{34}{p\\Disj q}\n\\open\n\\hypo{35}{p}\n\\have{36}{\\Neg p}\\by{\\ConjE}{33}\n\\have{37}{p}\\by{\\Reit}{35}\n\\have{38}{\\Falsum}\\by{\\FalsumI}{37,36}\n\\close\n\\open\n\\hypo{39}{q}\n\\have{40}{\\Neg q}\\by{\\ConjE}{33}\n\\have{41}{q}\\by{\\Reit}{39}\n\\have{42}{\\Falsum}\\by{\\FalsumI}{41,40}\n\\close\n\\have{43}{\\Falsum}\\by{\\DisjE}{34,35-38,39-42}\n\\close\n\\have{44}{\\Neg (p\\Disj q)}\\by{\\NegI}{34,43}\n\\have{45}{\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q)}\\by{\\DisjI}{44}\n\\close\n\\have{46}{\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q)}\\by{\\DisjE}{19,20-32,33-45}\n\\close\n\\open\n\\hypo{47}{\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q)}\n\\open\n\\hypo{48}{\\Neg (\\Neg p\\Disj \\Neg q)}\n\\open\n\\hypo{49}{\\Neg p}\n\\have{50}{\\Neg p\\Disj \\Neg q}\\by{\\DisjI}{49}\n\\have{51}{\\Falsum}\\by{\\FalsumI}{50,48}\n\\close\n\\have{52}{\\Neg \\Neg p}\\by{\\NegI}{49,51}\n\\have{53}{p}\\by{\\NegE}{52}\n\\open\n\\hypo{54}{\\Neg q}\n\\have{55}{\\Neg p\\Disj \\Neg q}\\by{\\DisjI}{54}\n\\have{56}{\\Falsum}\\by{\\FalsumI}{55,48}\n\\close\n\\have{57}{\\Neg \\Neg q}\\by{\\NegI}{54,56}\n\\have{58}{q}\\by{\\NegE}{57}\n\\open\n\\hypo{59}{p}\n\\have{60}{q}\\by{\\Reit}{58}\n\\close\n\\open\n\\hypo{61}{q}\n\\have{62}{p}\\by{\\Reit}{53}\n\\close\n\\have{63}{p\\Bicond q}\\by{\\BicondI}{59-60,61-62}\n\\close\n\\open\n\\hypo{64}{\\Neg (p\\Disj q)}\n\\open\n\\hypo{65}{p}\n\\have{66}{p\\Disj q}\\by{\\DisjI}{65}\n\\have{67}{\\Falsum}\\by{\\FalsumI}{66,64}\n\\close\n\\have{68}{\\Neg p}\\by{\\NegI}{65,67}\n\\open\n\\hypo{69}{q}\n\\have{70}{p\\Disj q}\\by{\\DisjI}{69}\n\\have{71}{\\Falsum}\\by{\\FalsumI}{70,64}\n\\close\n\\have{72}{\\Neg q}\\by{\\NegI}{69,71}\n\\open\n\\hypo{73}{p}\n\\open\n\\hypo{74}{\\Neg q}\n\\have{75}{\\Falsum}\\by{\\FalsumI}{73,68}\n\\close\n\\have{76}{\\Neg \\Neg q}\\by{\\NegI}{74,75}\n\\have{77}{q}\\by{\\NegE}{76}\n\\close\n\\open\n\\hypo{78}{q}\n\\open\n\\hypo{79}{\\Neg p}\n\\have{80}{\\Falsum}\\by{\\FalsumI}{78,72}\n\\close\n\\have{81}{\\Neg \\Neg p}\\by{\\NegI}{79,80}\n\\have{82}{p}\\by{\\NegE}{81}\n\\close\n\\have{83}{p\\Bicond q}\\by{\\BicondI}{73-77,78-82}\n\\close\n\\have{84}{p\\Bicond q}\\by{\\DisjE}{47,48-63,64-83}\n\\close\n\\have{85}{(p\\Bicond q)\\Bicond (\\Neg (\\Neg p\\Disj \\Neg q)\\Disj \\Neg (p\\Disj q))}\\by{\\BicondI}{1-46,47-84}\n\\end{nd}\n\\end{align*}",
+    "lines": 85,
     "max_subproof_depth": 4,
     "subproof_count": 25,
     "assumption_count": 25,
@@ -42559,9 +42709,9 @@
     "checked_by": "latexgen/nd.py"
    },
    "difficulty": {
-    "nd": "hard",
+    "nd": "extremely hard",
     "table": "easy",
-    "tree": "hard"
+    "tree": "extremely hard"
    },
    "display": {
     "premises": [],
@@ -42846,239 +42996,248 @@
      },
      {
       "n": 4,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "p",
+      "rule": "Reit",
       "depth": 3,
       "cites": [
-       3,
-       2
+       3
       ]
      },
      {
       "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       4,
+       2
+      ]
+     },
+     {
+      "n": 6,
       "f": "~q",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 6,
+      "n": 7,
       "f": "!",
       "rule": "Reit",
       "depth": 4,
       "cites": [
-       4
+       5
       ]
      },
      {
-      "n": 7,
+      "n": 8,
       "f": "~~q",
       "rule": "NegI",
       "depth": 3,
       "subs": [
        [
-        5,
-        6
+        6,
+        7
        ]
       ]
      },
      {
-      "n": 8,
+      "n": 9,
       "f": "q",
       "rule": "NegE",
       "depth": 3,
       "cites": [
-       7
+       8
       ]
      },
      {
-      "n": 9,
+      "n": 10,
       "f": "p > q",
       "rule": "CondI",
       "depth": 2,
       "subs": [
        [
         3,
-        8
+        9
        ]
       ]
      },
      {
-      "n": 10,
+      "n": 11,
       "f": "!",
       "rule": "FalsumI",
       "depth": 2,
       "cites": [
-       9,
+       10,
        1
       ]
      },
      {
-      "n": 11,
+      "n": 12,
       "f": "~~p",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
         2,
-        10
+        11
        ]
       ]
      },
      {
-      "n": 12,
+      "n": 13,
       "f": "p",
       "rule": "NegE",
       "depth": 1,
       "cites": [
-       11
+       12
       ]
      },
      {
-      "n": 13,
+      "n": 14,
       "f": "q",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 14,
+      "n": 15,
       "f": "p",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 15,
+      "n": 16,
       "f": "q",
       "rule": "Reit",
       "depth": 3,
       "cites": [
-       13
+       14
       ]
      },
      {
-      "n": 16,
+      "n": 17,
       "f": "p > q",
       "rule": "CondI",
       "depth": 2,
       "subs": [
        [
-        14,
-        15
+        15,
+        16
        ]
       ]
      },
      {
-      "n": 17,
+      "n": 18,
       "f": "!",
       "rule": "FalsumI",
       "depth": 2,
       "cites": [
-       16,
+       17,
        1
       ]
      },
      {
-      "n": 18,
+      "n": 19,
       "f": "~q",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
-        13,
-        17
+        14,
+        18
        ]
-      ]
-     },
-     {
-      "n": 19,
-      "f": "p & ~q",
-      "rule": "ConjI",
-      "depth": 1,
-      "cites": [
-       12,
-       18
       ]
      },
      {
       "n": 20,
       "f": "p & ~q",
+      "rule": "ConjI",
+      "depth": 1,
+      "cites": [
+       13,
+       19
+      ]
+     },
+     {
+      "n": 21,
+      "f": "p & ~q",
       "rule": "As",
       "depth": 1
      },
      {
-      "n": 21,
+      "n": 22,
       "f": "p > q",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 22,
+      "n": 23,
       "f": "p",
       "rule": "ConjE",
       "depth": 2,
       "cites": [
-       20
-      ]
-     },
-     {
-      "n": 23,
-      "f": "~q",
-      "rule": "ConjE",
-      "depth": 2,
-      "cites": [
-       20
+       21
       ]
      },
      {
       "n": 24,
-      "f": "q",
-      "rule": "CondE",
+      "f": "~q",
+      "rule": "ConjE",
       "depth": 2,
       "cites": [
-       21,
-       22
+       21
       ]
      },
      {
       "n": 25,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "q",
+      "rule": "CondE",
       "depth": 2,
       "cites": [
-       24,
+       22,
        23
       ]
      },
      {
       "n": 26,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       25,
+       24
+      ]
+     },
+     {
+      "n": 27,
       "f": "~(p > q)",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
-        21,
-        25
+        22,
+        26
        ]
       ]
      },
      {
-      "n": 27,
+      "n": 28,
       "f": "~(p > q) = (p & ~q)",
       "rule": "BicondI",
       "depth": 0,
       "subs": [
        [
         1,
-        19
+        20
        ],
        [
-        20,
-        26
+        21,
+        27
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Cond q)}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,2}\n\\open\n\\hypo{5}{\\Neg q}\n\\have{6}{\\Falsum}\\by{\\Reit}{4}\n\\close\n\\have{7}{\\Neg \\Neg q}\\by{\\NegI}{5,6}\n\\have{8}{q}\\by{\\NegE}{7}\n\\close\n\\have{9}{p\\Cond q}\\by{\\CondI}{3,8}\n\\have{10}{\\Falsum}\\by{\\FalsumI}{9,1}\n\\close\n\\have{11}{\\Neg \\Neg p}\\by{\\NegI}{2,10}\n\\have{12}{p}\\by{\\NegE}{11}\n\\open\n\\hypo{13}{q}\n\\open\n\\hypo{14}{p}\n\\have{15}{q}\\by{\\Reit}{13}\n\\close\n\\have{16}{p\\Cond q}\\by{\\CondI}{14,15}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{16,1}\n\\close\n\\have{18}{\\Neg q}\\by{\\NegI}{13,17}\n\\have{19}{p\\Conj \\Neg q}\\by{\\ConjI}{12,18}\n\\close\n\\open\n\\hypo{20}{p\\Conj \\Neg q}\n\\open\n\\hypo{21}{p\\Cond q}\n\\have{22}{p}\\by{\\ConjE}{20}\n\\have{23}{\\Neg q}\\by{\\ConjE}{20}\n\\have{24}{q}\\by{\\CondE}{21,22}\n\\have{25}{\\Falsum}\\by{\\FalsumI}{24,23}\n\\close\n\\have{26}{\\Neg (p\\Cond q)}\\by{\\NegI}{21,25}\n\\close\n\\have{27}{\\Neg (p\\Cond q)\\Bicond (p\\Conj \\Neg q)}\\by{\\BicondI}{1-19,20-26}\n\\end{nd}\n\\end{align*}",
-    "lines": 27,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Cond q)}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\have{4}{p}\\by{\\Reit}{3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,2}\n\\open\n\\hypo{6}{\\Neg q}\n\\have{7}{\\Falsum}\\by{\\Reit}{5}\n\\close\n\\have{8}{\\Neg \\Neg q}\\by{\\NegI}{6,7}\n\\have{9}{q}\\by{\\NegE}{8}\n\\close\n\\have{10}{p\\Cond q}\\by{\\CondI}{3,9}\n\\have{11}{\\Falsum}\\by{\\FalsumI}{10,1}\n\\close\n\\have{12}{\\Neg \\Neg p}\\by{\\NegI}{2,11}\n\\have{13}{p}\\by{\\NegE}{12}\n\\open\n\\hypo{14}{q}\n\\open\n\\hypo{15}{p}\n\\have{16}{q}\\by{\\Reit}{14}\n\\close\n\\have{17}{p\\Cond q}\\by{\\CondI}{15,16}\n\\have{18}{\\Falsum}\\by{\\FalsumI}{17,1}\n\\close\n\\have{19}{\\Neg q}\\by{\\NegI}{14,18}\n\\have{20}{p\\Conj \\Neg q}\\by{\\ConjI}{13,19}\n\\close\n\\open\n\\hypo{21}{p\\Conj \\Neg q}\n\\open\n\\hypo{22}{p\\Cond q}\n\\have{23}{p}\\by{\\ConjE}{21}\n\\have{24}{\\Neg q}\\by{\\ConjE}{21}\n\\have{25}{q}\\by{\\CondE}{22,23}\n\\have{26}{\\Falsum}\\by{\\FalsumI}{25,24}\n\\close\n\\have{27}{\\Neg (p\\Cond q)}\\by{\\NegI}{22,26}\n\\close\n\\have{28}{\\Neg (p\\Cond q)\\Bicond (p\\Conj \\Neg q)}\\by{\\BicondI}{1-20,21-27}\n\\end{nd}\n\\end{align*}",
+    "lines": 28,
     "max_subproof_depth": 4,
     "subproof_count": 8,
     "assumption_count": 8,
@@ -43449,143 +43608,152 @@
      },
      {
       "n": 7,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~(p | ~p)",
+      "rule": "Reit",
       "depth": 1,
       "cites": [
-       6,
        1
       ]
      },
      {
       "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       6,
+       7
+      ]
+     },
+     {
+      "n": 9,
       "f": "~~(p | ~p)",
       "rule": "NegI",
       "depth": 0,
       "subs": [
        [
         1,
-        7
+        8
        ]
       ]
      },
      {
-      "n": 9,
+      "n": 10,
       "f": "p | ~p",
       "rule": "NegE",
       "depth": 0,
       "cites": [
-       8
+       9
       ]
      },
      {
-      "n": 10,
+      "n": 11,
       "f": "~p > (p | q)",
       "rule": "As",
       "depth": 1
      },
      {
-      "n": 11,
+      "n": 12,
       "f": "p",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 12,
+      "n": 13,
       "f": "p | q",
       "rule": "DisjI",
       "depth": 2,
       "cites": [
-       11
+       12
       ]
      },
      {
-      "n": 13,
+      "n": 14,
       "f": "~p",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 14,
+      "n": 15,
       "f": "p | q",
       "rule": "CondE",
       "depth": 2,
       "cites": [
-       10,
-       13
-      ]
-     },
-     {
-      "n": 15,
-      "f": "p | q",
-      "rule": "DisjE",
-      "depth": 1,
-      "cites": [
-       9
-      ],
-      "subs": [
-       [
-        11,
-        12
-       ],
-       [
-        13,
-        14
-       ]
+       11,
+       14
       ]
      },
      {
       "n": 16,
       "f": "p | q",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       10
+      ],
+      "subs": [
+       [
+        12,
+        13
+       ],
+       [
+        14,
+        15
+       ]
+      ]
+     },
+     {
+      "n": 17,
+      "f": "p | q",
       "rule": "As",
       "depth": 1
      },
      {
-      "n": 17,
+      "n": 18,
       "f": "~p",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 18,
+      "n": 19,
       "f": "p | q",
       "rule": "Reit",
       "depth": 2,
       "cites": [
-       16
+       17
       ]
      },
      {
-      "n": 19,
+      "n": 20,
       "f": "~p > (p | q)",
       "rule": "CondI",
       "depth": 1,
       "subs": [
        [
-        17,
-        18
+        18,
+        19
        ]
       ]
      },
      {
-      "n": 20,
+      "n": 21,
       "f": "(~p > (p | q)) = (p | q)",
       "rule": "BicondI",
       "depth": 0,
       "subs": [
        [
-        10,
-        15
+        11,
+        16
        ],
        [
-        16,
-        19
+        17,
+        20
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj \\Neg p)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj \\Neg p}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\have{6}{p\\Disj \\Neg p}\\by{\\DisjI}{5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,1}\n\\close\n\\have{8}{\\Neg \\Neg (p\\Disj \\Neg p)}\\by{\\NegI}{1,7}\n\\have{9}{p\\Disj \\Neg p}\\by{\\NegE}{8}\n\\open\n\\hypo{10}{\\Neg p\\Cond (p\\Disj q)}\n\\open\n\\hypo{11}{p}\n\\have{12}{p\\Disj q}\\by{\\DisjI}{11}\n\\close\n\\open\n\\hypo{13}{\\Neg p}\n\\have{14}{p\\Disj q}\\by{\\CondE}{10,13}\n\\close\n\\have{15}{p\\Disj q}\\by{\\DisjE}{9,11-12,13-14}\n\\close\n\\open\n\\hypo{16}{p\\Disj q}\n\\open\n\\hypo{17}{\\Neg p}\n\\have{18}{p\\Disj q}\\by{\\Reit}{16}\n\\close\n\\have{19}{\\Neg p\\Cond (p\\Disj q)}\\by{\\CondI}{17,18}\n\\close\n\\have{20}{(\\Neg p\\Cond (p\\Disj q))\\Bicond (p\\Disj q)}\\by{\\BicondI}{10-15,16-19}\n\\end{nd}\n\\end{align*}",
-    "lines": 20,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj \\Neg p)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj \\Neg p}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\have{6}{p\\Disj \\Neg p}\\by{\\DisjI}{5}\n\\have{7}{\\Neg (p\\Disj \\Neg p)}\\by{\\Reit}{1}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{6,7}\n\\close\n\\have{9}{\\Neg \\Neg (p\\Disj \\Neg p)}\\by{\\NegI}{1,8}\n\\have{10}{p\\Disj \\Neg p}\\by{\\NegE}{9}\n\\open\n\\hypo{11}{\\Neg p\\Cond (p\\Disj q)}\n\\open\n\\hypo{12}{p}\n\\have{13}{p\\Disj q}\\by{\\DisjI}{12}\n\\close\n\\open\n\\hypo{14}{\\Neg p}\n\\have{15}{p\\Disj q}\\by{\\CondE}{11,14}\n\\close\n\\have{16}{p\\Disj q}\\by{\\DisjE}{10,12-13,14-15}\n\\close\n\\open\n\\hypo{17}{p\\Disj q}\n\\open\n\\hypo{18}{\\Neg p}\n\\have{19}{p\\Disj q}\\by{\\Reit}{17}\n\\close\n\\have{20}{\\Neg p\\Cond (p\\Disj q)}\\by{\\CondI}{18,19}\n\\close\n\\have{21}{(\\Neg p\\Cond (p\\Disj q))\\Bicond (p\\Disj q)}\\by{\\BicondI}{11-16,17-20}\n\\end{nd}\n\\end{align*}",
+    "lines": 21,
     "max_subproof_depth": 2,
     "subproof_count": 7,
     "assumption_count": 7,

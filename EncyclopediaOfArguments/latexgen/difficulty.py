@@ -40,13 +40,28 @@ DB = Path(__file__).resolve().parents[2] / "assets/arguments/argument-db.json"
 
 # Truth-functional evaluations. A couple of seconds each, so roughly a minute
 # and a half, then five; past that a table is an endurance test.
-TABLE_EASY, TABLE_MEDIUM = 48, 160
+TABLE_EASY, TABLE_MEDIUM, TABLE_EXTREME = 48, 160, 256
 
 # Rule applications, non-branching first. A handful, a page, more than a page.
-TREE_EASY, TREE_MEDIUM = 3, 7
+TREE_EASY, TREE_MEDIUM, TREE_EXTREME = 3, 7, 16
+
+# `extremely hard` is not a fourth slice of the same cake -- it is a warning
+# label. The three bands below it sort the work a student is expected to do;
+# this one says the item is an outlier that will eat an evening, and it is
+# calibrated so that only two or three entries per method wear it. The point is
+# that seeing it should mean something, which stops being true the moment a
+# dozen entries qualify: if a firing finds this band filling up, the threshold
+# has drifted and wants raising, not the entries excusing.
+#
+# A derivation has no countable measure (§14.3), so its top band is the two
+# signals together: every one of the five triggers fires, *and* the proof is
+# long enough that finding it is not the only difficulty.
+ND_EXTREME_LINES = 29
 
 
-def band(value: int, easy: int, medium: int) -> str:
+def band(value: int, easy: int, medium: int, extreme: int | None = None) -> str:
+    if extreme is not None and value >= extreme:
+        return "extremely hard"
     return "easy" if value <= easy else ("medium" if value <= medium else "hard")
 
 
@@ -112,6 +127,13 @@ def nd_triggers(entry: dict) -> list:
     return out
 
 
+def nd_band(entry: dict, hits: list) -> str:
+    """Where a derivation sits. See ND_EXTREME_LINES for the top band."""
+    if len(hits) >= 5 and entry["nd"].get("lines", 0) >= ND_EXTREME_LINES:
+        return "extremely hard"
+    return "easy" if not hits else ("medium" if len(hits) <= 2 else "hard")
+
+
 def scores(entry: dict) -> dict:
     """What the rubric gives. `nd` is a suggestion; the other two are the score."""
     calls = table_calls(entry)
@@ -119,10 +141,9 @@ def scores(entry: dict) -> dict:
     hits = nd_triggers(entry)
     cm = entry["verdict"]["countermodel_count"]
     return {
-        "table": band(calls, TABLE_EASY, TABLE_MEDIUM),
-        "tree": band(apps, TREE_EASY, TREE_MEDIUM),
-        "nd": None if not entry["nd"].get("exists")
-        else ("easy" if not hits else ("medium" if len(hits) <= 2 else "hard")),
+        "table": band(calls, TABLE_EASY, TABLE_MEDIUM, TABLE_EXTREME),
+        "tree": band(apps, TREE_EASY, TREE_MEDIUM, TREE_EXTREME),
+        "nd": None if not entry["nd"].get("exists") else nd_band(entry, hits),
         "search_sharpness": None if entry["verdict"]["valid"]
         else round(cm / entry["verdict"]["rows"], 4),
         "_why": {
@@ -164,27 +185,32 @@ def balance() -> None:
     entries = db["entries"]
     n = len(entries)
 
+    BANDS = ("easy", "medium", "hard", "extremely hard")
+
     for method, measure, cuts in (
-        ("table", table_calls, (TABLE_EASY, TABLE_MEDIUM)),
-        ("tree", tree_applications, (TREE_EASY, TREE_MEDIUM)),
+        ("table", table_calls, (TABLE_EASY, TABLE_MEDIUM, TABLE_EXTREME)),
+        ("tree", tree_applications, (TREE_EASY, TREE_MEDIUM, TREE_EXTREME)),
     ):
         values = sorted(measure(e) for e in entries)
-        counts = {"easy": 0, "medium": 0, "hard": 0}
+        counts = dict.fromkeys(BANDS, 0)
         for e in entries:
             counts[band(measure(e), *cuts)] += 1
         thirds = (values[n // 3], values[2 * n // 3])
-        print(f"{method:6s} at {cuts[0]}/{cuts[1]}: "
-              f"{counts['easy']} easy, {counts['medium']} medium, {counts['hard']} hard"
-              f"   |  thirds would fall at {thirds[0]}/{thirds[1]}")
+        print(f"{method:6s} at {cuts[0]}/{cuts[1]}/{cuts[2]}: "
+              + ", ".join(f"{counts[b]} {b}" for b in BANDS)
+              + f"   |  thirds would fall at {thirds[0]}/{thirds[1]}")
         print(f"       spread: {values[0]} to {values[-1]}, median {values[n // 2]}")
 
-    counts = {"easy": 0, "medium": 0, "hard": 0}
+    # The top band is a warning label, not a third of anything: it is meant to
+    # stay at two or three entries per method, so `thirds` above has nothing to
+    # say about it. If it is filling up, raise the threshold.
+    counts = dict.fromkeys(BANDS, 0)
     for e in entries:
         if e["difficulty"].get("nd"):
             counts[e["difficulty"]["nd"]] += 1
-    print(f"nd     counted, not cut: {counts['easy']} easy, {counts['medium']} medium, "
-          f"{counts['hard']} hard — a lopsided shape here wants a better trigger, "
-          f"not a different boundary")
+    print("nd     counted, not cut: "
+          + ", ".join(f"{counts[b]} {b}" for b in BANDS)
+          + " — a lopsided shape here wants a better trigger, not a different boundary")
 
 
 def main() -> None:
