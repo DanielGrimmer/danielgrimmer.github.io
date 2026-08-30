@@ -185,7 +185,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Conj \\Neg p}\n\\open\n\\hypo{2}{\\Neg q}\n\\have{3}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{p}\\quad \\ConjE,1}\n\\have{4}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{\\Neg p}\\quad \\ConjE,1}\n\\have{5}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{\\Falsum}\\quad \\FalsumI,3,4}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{\\Neg \\Neg q}\\quad \\NegI,2,5}\n\\have{7}{\\mathmakebox[\\widthof{$p\\Conj \\Neg p$}][l]{q}\\quad \\NegE,6}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Conj \\Neg p}\n\\open\n\\hypo{2}{\\Neg q}\n\\have{3}{p}\\by{\\ConjE}{1}\n\\have{4}{\\Neg p}\\by{\\ConjE}{1}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{3,4}\n\\close\n\\have{6}{\\Neg \\Neg q}\\by{\\NegI}{2,5}\n\\have{7}{q}\\by{\\NegE}{6}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -540,7 +540,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Cond q)\\Cond p}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Falsum}\\quad \\FalsumI,3,2}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg \\Neg q}\\quad \\NegI,4,5}\n\\have{7}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{q}\\quad \\NegE,6}\n\\close\n\\have{8}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p\\Cond q}\\quad \\CondI,3,7}\n\\have{9}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p}\\quad \\CondE,1,8}\n\\have{10}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg p}\\quad \\Reit,2}\n\\have{11}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Falsum}\\quad \\FalsumI,9,10}\n\\close\n\\have{12}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{\\Neg \\Neg p}\\quad \\NegI,2,11}\n\\have{13}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{p}\\quad \\NegE,12}\n\\close\n\\have{14}{\\mathmakebox[\\widthof{$((p\\Cond q)\\Cond p)\\Cond p$}][l]{((p\\Cond q)\\Cond p)\\Cond p}\\quad \\CondI,1,13}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Cond q)\\Cond p}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{3,2}\n\\close\n\\have{6}{\\Neg \\Neg q}\\by{\\NegI}{4,5}\n\\have{7}{q}\\by{\\NegE}{6}\n\\close\n\\have{8}{p\\Cond q}\\by{\\CondI}{3,7}\n\\have{9}{p}\\by{\\CondE}{1,8}\n\\have{10}{\\Neg p}\\by{\\Reit}{2}\n\\have{11}{\\Falsum}\\by{\\FalsumI}{9,10}\n\\close\n\\have{12}{\\Neg \\Neg p}\\by{\\NegI}{2,11}\n\\have{13}{p}\\by{\\NegE}{12}\n\\close\n\\have{14}{((p\\Cond q)\\Cond p)\\Cond p}\\by{\\CondI}{1,13}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -844,7 +844,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond (p\\Cond q)}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\mathmakebox[\\widthof{$(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$}][l]{p\\Cond q}\\quad \\CondE,1,2}\n\\have{4}{\\mathmakebox[\\widthof{$(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$}][l]{q}\\quad \\CondE,3,2}\n\\close\n\\have{5}{\\mathmakebox[\\widthof{$(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$}][l]{p\\Cond q}\\quad \\CondI,2,4}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)$}][l]{(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)}\\quad \\CondI,1,5}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond (p\\Cond q)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Cond q}\\by{\\CondE}{1,2}\n\\have{4}{q}\\by{\\CondE}{3,2}\n\\close\n\\have{5}{p\\Cond q}\\by{\\CondI}{2,4}\n\\close\n\\have{6}{(p\\Cond (p\\Cond q))\\Cond (p\\Cond q)}\\by{\\CondI}{1,5}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -1226,7 +1226,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond (q\\Cond r)}\n\\open\n\\hypo{2}{p\\Conj q}\n\\have{3}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{p}\\quad \\ConjE,2}\n\\have{4}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{q}\\quad \\ConjE,2}\n\\have{5}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{q\\Cond r}\\quad \\CondE,1,3}\n\\have{6}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{r}\\quad \\CondE,5,4}\n\\close\n\\have{7}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{(p\\Conj q)\\Cond r}\\quad \\CondI,2,6}\n\\close\n\\open\n\\hypo{8}{(p\\Conj q)\\Cond r}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{q}\n\\have{11}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{p\\Conj q}\\quad \\ConjI,9,10}\n\\have{12}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{r}\\quad \\CondE,8,11}\n\\close\n\\have{13}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{q\\Cond r}\\quad \\CondI,10,12}\n\\close\n\\have{14}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{p\\Cond (q\\Cond r)}\\quad \\CondI,9,13}\n\\close\n\\have{15}{\\mathmakebox[\\widthof{$(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)$}][l]{(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)}\\quad \\BicondI,1\\text{--}7,8\\text{--}14}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond (q\\Cond r)}\n\\open\n\\hypo{2}{p\\Conj q}\n\\have{3}{p}\\by{\\ConjE}{2}\n\\have{4}{q}\\by{\\ConjE}{2}\n\\have{5}{q\\Cond r}\\by{\\CondE}{1,3}\n\\have{6}{r}\\by{\\CondE}{5,4}\n\\close\n\\have{7}{(p\\Conj q)\\Cond r}\\by{\\CondI}{2,6}\n\\close\n\\open\n\\hypo{8}{(p\\Conj q)\\Cond r}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{q}\n\\have{11}{p\\Conj q}\\by{\\ConjI}{9,10}\n\\have{12}{r}\\by{\\CondE}{8,11}\n\\close\n\\have{13}{q\\Cond r}\\by{\\CondI}{10,12}\n\\close\n\\have{14}{p\\Cond (q\\Cond r)}\\by{\\CondI}{9,13}\n\\close\n\\have{15}{(p\\Cond (q\\Cond r))\\Bicond ((p\\Conj q)\\Cond r)}\\by{\\BicondI}{1-7,8-14}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -1747,7 +1747,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{c}\n\\hypo{2}{n}\n\\hypo{3}{(c\\Conj n)\\Cond \\Neg s}\n\\hypo{4}{i\\Cond s}\n\\open\n\\hypo{5}{i}\n\\have{6}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{s}\\quad \\CondE,4,5}\n\\have{7}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{c\\Conj n}\\quad \\ConjI,1,2}\n\\have{8}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{\\Neg s}\\quad \\CondE,3,7}\n\\have{9}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{\\Falsum}\\quad \\FalsumI,6,8}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$(c\\Conj n)\\Cond \\Neg s$}][l]{\\Neg i}\\quad \\NegI,5,9}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{c}\n\\hypo{2}{n}\n\\hypo{3}{(c\\Conj n)\\Cond \\Neg s}\n\\hypo{4}{i\\Cond s}\n\\open\n\\hypo{5}{i}\n\\have{6}{s}\\by{\\CondE}{4,5}\n\\have{7}{c\\Conj n}\\by{\\ConjI}{1,2}\n\\have{8}{\\Neg s}\\by{\\CondE}{3,7}\n\\have{9}{\\Falsum}\\by{\\FalsumI}{6,8}\n\\close\n\\have{10}{\\Neg i}\\by{\\NegI}{5,9}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -2413,7 +2413,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{c\\Cond (c\\Cond p)}\n\\hypo{2}{(c\\Cond p)\\Cond c}\n\\hypo{3}{p\\Cond q}\n\\open\n\\hypo{4}{c}\n\\have{5}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{c\\Cond p}\\quad \\CondE,1,4}\n\\have{6}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{p}\\quad \\CondE,5,4}\n\\close\n\\have{7}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{c\\Cond p}\\quad \\CondI,4,6}\n\\have{8}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{c}\\quad \\CondE,2,7}\n\\have{9}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{p}\\quad \\CondE,7,8}\n\\have{10}{\\mathmakebox[\\widthof{$c\\Cond (c\\Cond p)$}][l]{q}\\quad \\CondE,3,9}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{c\\Cond (c\\Cond p)}\n\\hypo{2}{(c\\Cond p)\\Cond c}\n\\hypo{3}{p\\Cond q}\n\\open\n\\hypo{4}{c}\n\\have{5}{c\\Cond p}\\by{\\CondE}{1,4}\n\\have{6}{p}\\by{\\CondE}{5,4}\n\\close\n\\have{7}{c\\Cond p}\\by{\\CondI}{4,6}\n\\have{8}{c}\\by{\\CondE}{2,7}\n\\have{9}{p}\\by{\\CondE}{7,8}\n\\have{10}{q}\\by{\\CondE}{3,9}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -2947,7 +2947,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond \\Neg p}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg p}\\quad \\BicondE,1,2}\n\\have{4}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{p}\\quad \\Reit,2}\n\\have{5}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,4,3}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg p}\\quad \\NegI,2,5}\n\\have{7}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{p}\\quad \\BicondE,1,6}\n\\have{8}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,7,6}\n\\close\n\\have{9}{\\mathmakebox[\\widthof{$\\Neg (p\\Bicond \\Neg p)$}][l]{\\Neg (p\\Bicond \\Neg p)}\\quad \\NegI,1,8}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond \\Neg p}\n\\open\n\\hypo{2}{p}\n\\have{3}{\\Neg p}\\by{\\BicondE}{1,2}\n\\have{4}{p}\\by{\\Reit}{2}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,3}\n\\close\n\\have{6}{\\Neg p}\\by{\\NegI}{2,5}\n\\have{7}{p}\\by{\\BicondE}{1,6}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,6}\n\\close\n\\have{9}{\\Neg (p\\Bicond \\Neg p)}\\by{\\NegI}{1,8}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -3243,7 +3243,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{r\\Cond \\Neg q}\n\\hypo{2}{r}\n\\hypo{3}{p}\n\\hypo{4}{(s\\Conj p)\\Cond q}\n\\open\n\\hypo{5}{s}\n\\have{6}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{s\\Conj p}\\quad \\ConjI,5,3}\n\\have{7}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{q}\\quad \\CondE,4,6}\n\\have{8}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{\\Neg q}\\quad \\CondE,1,2}\n\\have{9}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{\\Falsum}\\quad \\FalsumI,7,8}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$(s\\Conj p)\\Cond q$}][l]{\\Neg s}\\quad \\NegI,5,9}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{r\\Cond \\Neg q}\n\\hypo{2}{r}\n\\hypo{3}{p}\n\\hypo{4}{(s\\Conj p)\\Cond q}\n\\open\n\\hypo{5}{s}\n\\have{6}{s\\Conj p}\\by{\\ConjI}{5,3}\n\\have{7}{q}\\by{\\CondE}{4,6}\n\\have{8}{\\Neg q}\\by{\\CondE}{1,2}\n\\have{9}{\\Falsum}\\by{\\FalsumI}{7,8}\n\\close\n\\have{10}{\\Neg s}\\by{\\NegI}{5,9}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -3861,7 +3861,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{d}\n\\hypo{2}{d\\Cond k}\n\\hypo{3}{k\\Cond p}\n\\hypo{4}{d\\Cond \\Neg p}\n\\have{5}{\\mathmakebox[\\widthof{$d\\Cond \\Neg p$}][l]{k}\\quad \\CondE,2,1}\n\\have{6}{\\mathmakebox[\\widthof{$d\\Cond \\Neg p$}][l]{p}\\quad \\CondE,3,5}\n\\have{7}{\\mathmakebox[\\widthof{$d\\Cond \\Neg p$}][l]{\\Neg p}\\quad \\CondE,4,1}\n\\have{8}{\\mathmakebox[\\widthof{$d\\Cond \\Neg p$}][l]{\\Falsum}\\quad \\FalsumI,6,7}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{d}\n\\hypo{2}{d\\Cond k}\n\\hypo{3}{k\\Cond p}\n\\hypo{4}{d\\Cond \\Neg p}\n\\have{5}{k}\\by{\\CondE}{2,1}\n\\have{6}{p}\\by{\\CondE}{3,5}\n\\have{7}{\\Neg p}\\by{\\CondE}{4,1}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{6,7}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -4358,7 +4358,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{v\\Cond l_{s}}\n\\hypo{2}{v\\Cond g_{s}}\n\\hypo{3}{l_{s}\\Cond o}\n\\hypo{4}{g_{s}\\Cond o_{n}}\n\\hypo{5}{\\Neg (o\\Conj o_{n})}\n\\hypo{6}{v}\n\\have{7}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj o_{n})$}][l]{l_{s}}\\quad \\CondE,1,6}\n\\have{8}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj o_{n})$}][l]{g_{s}}\\quad \\CondE,2,6}\n\\have{9}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj o_{n})$}][l]{o}\\quad \\CondE,3,7}\n\\have{10}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj o_{n})$}][l]{o_{n}}\\quad \\CondE,4,8}\n\\have{11}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj o_{n})$}][l]{o\\Conj o_{n}}\\quad \\ConjI,9,10}\n\\have{12}{\\mathmakebox[\\widthof{$\\Neg (o\\Conj o_{n})$}][l]{\\Falsum}\\quad \\FalsumI,11,5}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{v\\Cond l_{s}}\n\\hypo{2}{v\\Cond g_{s}}\n\\hypo{3}{l_{s}\\Cond o}\n\\hypo{4}{g_{s}\\Cond o_{n}}\n\\hypo{5}{\\Neg (o\\Conj o_{n})}\n\\hypo{6}{v}\n\\have{7}{l_{s}}\\by{\\CondE}{1,6}\n\\have{8}{g_{s}}\\by{\\CondE}{2,6}\n\\have{9}{o}\\by{\\CondE}{3,7}\n\\have{10}{o_{n}}\\by{\\CondE}{4,8}\n\\have{11}{o\\Conj o_{n}}\\by{\\ConjI}{9,10}\n\\have{12}{\\Falsum}\\by{\\FalsumI}{11,5}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -5601,7 +5601,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Disj q)\\Conj (r\\Disj s)}\n\\have{2}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{p\\Disj q}\\quad \\ConjE,1}\n\\have{3}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{r\\Disj s}\\quad \\ConjE,1}\n\\open\n\\hypo{4}{p}\n\\open\n\\hypo{5}{r}\n\\have{6}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{p\\Conj r}\\quad \\ConjI,4,5}\n\\have{7}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)}\\quad \\DisjI,6}\n\\have{8}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r)}\\quad \\DisjI,7}\n\\have{9}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\quad \\DisjI,8}\n\\close\n\\open\n\\hypo{10}{s}\n\\have{11}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{p\\Conj s}\\quad \\ConjI,4,10}\n\\have{12}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(p\\Conj r)\\Disj (p\\Conj s)}\\quad \\DisjI,11}\n\\have{13}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r)}\\quad \\DisjI,12}\n\\have{14}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\quad \\DisjI,13}\n\\close\n\\have{15}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\quad \\DisjE,3,5\\text{--}9,10\\text{--}14}\n\\close\n\\open\n\\hypo{16}{q}\n\\open\n\\hypo{17}{r}\n\\have{18}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{q\\Conj r}\\quad \\ConjI,16,17}\n\\have{19}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r)}\\quad \\DisjI,18}\n\\have{20}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\quad \\DisjI,19}\n\\close\n\\open\n\\hypo{21}{s}\n\\have{22}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{q\\Conj s}\\quad \\ConjI,16,21}\n\\have{23}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\quad \\DisjI,22}\n\\close\n\\have{24}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\quad \\DisjE,3,17\\text{--}20,21\\text{--}23}\n\\close\n\\have{25}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\quad \\DisjE,2,4\\text{--}15,16\\text{--}24}\n\\close\n\\have{26}{\\mathmakebox[\\widthof{$((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))$}][l]{((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))}\\quad \\CondI,1,25}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Disj q)\\Conj (r\\Disj s)}\n\\have{2}{p\\Disj q}\\by{\\ConjE}{1}\n\\have{3}{r\\Disj s}\\by{\\ConjE}{1}\n\\open\n\\hypo{4}{p}\n\\open\n\\hypo{5}{r}\n\\have{6}{p\\Conj r}\\by{\\ConjI}{4,5}\n\\have{7}{(p\\Conj r)\\Disj (p\\Conj s)}\\by{\\DisjI}{6}\n\\have{8}{((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r)}\\by{\\DisjI}{7}\n\\have{9}{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\by{\\DisjI}{8}\n\\close\n\\open\n\\hypo{10}{s}\n\\have{11}{p\\Conj s}\\by{\\ConjI}{4,10}\n\\have{12}{(p\\Conj r)\\Disj (p\\Conj s)}\\by{\\DisjI}{11}\n\\have{13}{((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r)}\\by{\\DisjI}{12}\n\\have{14}{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\by{\\DisjI}{13}\n\\close\n\\have{15}{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\by{\\DisjE}{3,5-9,10-14}\n\\close\n\\open\n\\hypo{16}{q}\n\\open\n\\hypo{17}{r}\n\\have{18}{q\\Conj r}\\by{\\ConjI}{16,17}\n\\have{19}{((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r)}\\by{\\DisjI}{18}\n\\have{20}{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\by{\\DisjI}{19}\n\\close\n\\open\n\\hypo{21}{s}\n\\have{22}{q\\Conj s}\\by{\\ConjI}{16,21}\n\\have{23}{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\by{\\DisjI}{22}\n\\close\n\\have{24}{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\by{\\DisjE}{3,17-20,21-23}\n\\close\n\\have{25}{(((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s)}\\by{\\DisjE}{2,4-15,16-24}\n\\close\n\\have{26}{((p\\Disj q)\\Conj (r\\Disj s))\\Cond ((((p\\Conj r)\\Disj (p\\Conj s))\\Disj (q\\Conj r))\\Disj (q\\Conj s))}\\by{\\CondI}{1,25}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -6551,7 +6551,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Conj (q\\Disj r)}\n\\have{2}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{p}\\quad \\ConjE,1}\n\\have{3}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{q\\Disj r}\\quad \\ConjE,1}\n\\open\n\\hypo{4}{q}\n\\have{5}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{p\\Conj q}\\quad \\ConjI,2,4}\n\\have{6}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{(p\\Conj q)\\Disj (p\\Conj r)}\\quad \\DisjI,5}\n\\close\n\\open\n\\hypo{7}{r}\n\\have{8}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{p\\Conj r}\\quad \\ConjI,2,7}\n\\have{9}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{(p\\Conj q)\\Disj (p\\Conj r)}\\quad \\DisjI,8}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{(p\\Conj q)\\Disj (p\\Conj r)}\\quad \\DisjE,3,4\\text{--}6,7\\text{--}9}\n\\close\n\\have{11}{\\mathmakebox[\\widthof{$(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))$}][l]{(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))}\\quad \\CondI,1,10}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Conj (q\\Disj r)}\n\\have{2}{p}\\by{\\ConjE}{1}\n\\have{3}{q\\Disj r}\\by{\\ConjE}{1}\n\\open\n\\hypo{4}{q}\n\\have{5}{p\\Conj q}\\by{\\ConjI}{2,4}\n\\have{6}{(p\\Conj q)\\Disj (p\\Conj r)}\\by{\\DisjI}{5}\n\\close\n\\open\n\\hypo{7}{r}\n\\have{8}{p\\Conj r}\\by{\\ConjI}{2,7}\n\\have{9}{(p\\Conj q)\\Disj (p\\Conj r)}\\by{\\DisjI}{8}\n\\close\n\\have{10}{(p\\Conj q)\\Disj (p\\Conj r)}\\by{\\DisjE}{3,4-6,7-9}\n\\close\n\\have{11}{(p\\Conj (q\\Disj r))\\Cond ((p\\Conj q)\\Disj (p\\Conj r))}\\by{\\CondI}{1,10}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -6997,7 +6997,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{(b_{S}\\Cond a_{S})\\Conj (b_{D}\\Cond a_{D})}\n\\hypo{2}{b_{S}\\Conj b_{D}}\n\\hypo{3}{a_{C}}\n\\hypo{4}{\\Neg a_{S}\\Conj \\Neg a_{D}}\n\\have{5}{\\mathmakebox[\\widthof{$(b_{S}\\Cond a_{S})\\Conj (b_{D}\\Cond a_{D})$}][l]{b_{S}\\Cond a_{S}}\\quad \\ConjE,1}\n\\have{6}{\\mathmakebox[\\widthof{$(b_{S}\\Cond a_{S})\\Conj (b_{D}\\Cond a_{D})$}][l]{b_{S}}\\quad \\ConjE,2}\n\\have{7}{\\mathmakebox[\\widthof{$(b_{S}\\Cond a_{S})\\Conj (b_{D}\\Cond a_{D})$}][l]{a_{S}}\\quad \\CondE,5,6}\n\\have{8}{\\mathmakebox[\\widthof{$(b_{S}\\Cond a_{S})\\Conj (b_{D}\\Cond a_{D})$}][l]{\\Neg a_{S}}\\quad \\ConjE,4}\n\\have{9}{\\mathmakebox[\\widthof{$(b_{S}\\Cond a_{S})\\Conj (b_{D}\\Cond a_{D})$}][l]{\\Falsum}\\quad \\FalsumI,7,8}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{(b_{S}\\Cond a_{S})\\Conj (b_{D}\\Cond a_{D})}\n\\hypo{2}{b_{S}\\Conj b_{D}}\n\\hypo{3}{a_{C}}\n\\hypo{4}{\\Neg a_{S}\\Conj \\Neg a_{D}}\n\\have{5}{b_{S}\\Cond a_{S}}\\by{\\ConjE}{1}\n\\have{6}{b_{S}}\\by{\\ConjE}{2}\n\\have{7}{a_{S}}\\by{\\CondE}{5,6}\n\\have{8}{\\Neg a_{S}}\\by{\\ConjE}{4}\n\\have{9}{\\Falsum}\\by{\\FalsumI}{7,8}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -7929,7 +7929,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{q\\Cond r}\n\\hypo{3}{r\\Cond \\Neg p}\n\\open\n\\hypo{4}{p}\n\\have{5}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{q}\\quad \\CondE,1,4}\n\\have{6}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{r}\\quad \\CondE,2,5}\n\\have{7}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{\\Neg p}\\quad \\CondE,3,6}\n\\have{8}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{p}\\quad \\Reit,4}\n\\have{9}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{\\Falsum}\\quad \\FalsumI,8,7}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$r\\Cond \\Neg p$}][l]{\\Neg p}\\quad \\NegI,4,9}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{q\\Cond r}\n\\hypo{3}{r\\Cond \\Neg p}\n\\open\n\\hypo{4}{p}\n\\have{5}{q}\\by{\\CondE}{1,4}\n\\have{6}{r}\\by{\\CondE}{2,5}\n\\have{7}{\\Neg p}\\by{\\CondE}{3,6}\n\\have{8}{p}\\by{\\Reit}{4}\n\\have{9}{\\Falsum}\\by{\\FalsumI}{8,7}\n\\close\n\\have{10}{\\Neg p}\\by{\\NegI}{4,9}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "display": {
@@ -19530,7 +19530,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{b_{l}}\n\\hypo{2}{v\\Cond k}\n\\hypo{3}{(b_{l}\\Conj k)\\Cond l_{s}}\n\\hypo{4}{l_{s}\\Cond o}\n\\open\n\\hypo{5}{v}\n\\have{6}{\\mathmakebox[\\widthof{$(b_{l}\\Conj k)\\Cond l_{s}$}][l]{k}\\quad \\CondE,2,5}\n\\have{7}{\\mathmakebox[\\widthof{$(b_{l}\\Conj k)\\Cond l_{s}$}][l]{b_{l}\\Conj k}\\quad \\ConjI,1,6}\n\\have{8}{\\mathmakebox[\\widthof{$(b_{l}\\Conj k)\\Cond l_{s}$}][l]{l_{s}}\\quad \\CondE,3,7}\n\\have{9}{\\mathmakebox[\\widthof{$(b_{l}\\Conj k)\\Cond l_{s}$}][l]{o}\\quad \\CondE,4,8}\n\\close\n\\have{10}{\\mathmakebox[\\widthof{$(b_{l}\\Conj k)\\Cond l_{s}$}][l]{v\\Cond o}\\quad \\CondI,5,9}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{b_{l}}\n\\hypo{2}{v\\Cond k}\n\\hypo{3}{(b_{l}\\Conj k)\\Cond l_{s}}\n\\hypo{4}{l_{s}\\Cond o}\n\\open\n\\hypo{5}{v}\n\\have{6}{k}\\by{\\CondE}{2,5}\n\\have{7}{b_{l}\\Conj k}\\by{\\ConjI}{1,6}\n\\have{8}{l_{s}}\\by{\\CondE}{3,7}\n\\have{9}{o}\\by{\\CondE}{4,8}\n\\close\n\\have{10}{v\\Cond o}\\by{\\CondI}{5,9}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "looks_like": "dutch-book-is-ought",
@@ -20531,7 +20531,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{b}\n\\hypo{2}{v\\Cond k}\n\\hypo{3}{(b\\Conj k)\\Cond (l\\Conj d)}\n\\hypo{4}{l\\Cond o}\n\\open\n\\hypo{5}{v}\n\\have{6}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{k}\\quad \\CondE,2,5}\n\\have{7}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{b\\Conj k}\\quad \\ConjI,1,6}\n\\have{8}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{l\\Conj d}\\quad \\CondE,3,7}\n\\have{9}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{l}\\quad \\ConjE,8}\n\\have{10}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{o}\\quad \\CondE,4,9}\n\\close\n\\have{11}{\\mathmakebox[\\widthof{$(b\\Conj k)\\Cond (l\\Conj d)$}][l]{v\\Cond o}\\quad \\CondI,5,10}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{b}\n\\hypo{2}{v\\Cond k}\n\\hypo{3}{(b\\Conj k)\\Cond (l\\Conj d)}\n\\hypo{4}{l\\Cond o}\n\\open\n\\hypo{5}{v}\n\\have{6}{k}\\by{\\CondE}{2,5}\n\\have{7}{b\\Conj k}\\by{\\ConjI}{1,6}\n\\have{8}{l\\Conj d}\\by{\\CondE}{3,7}\n\\have{9}{l}\\by{\\ConjE}{8}\n\\have{10}{o}\\by{\\CondE}{4,9}\n\\close\n\\have{11}{v\\Cond o}\\by{\\CondI}{5,10}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "looks_like": "dutch-book-lecture-form",
@@ -22240,7 +22240,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{h\\Disj w}\n\\hypo{2}{w\\Disj c}\n\\hypo{3}{\\Neg (h\\Conj c)}\n\\open\n\\hypo{4}{h}\n\\open\n\\hypo{5}{w}\n\\have{6}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\Reit,5}\n\\close\n\\open\n\\hypo{7}{c}\n\\have{8}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{h\\Conj c}\\quad \\ConjI,4,7}\n\\open\n\\hypo{9}{\\Neg w}\n\\have{10}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{\\Falsum}\\quad \\FalsumI,8,3}\n\\close\n\\have{11}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{\\Neg \\Neg w}\\quad \\NegI,9,10}\n\\have{12}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\NegE,11}\n\\close\n\\have{13}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\DisjE,2,5\\text{--}6,7\\text{--}12}\n\\close\n\\open\n\\hypo{14}{w}\n\\have{15}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\Reit,14}\n\\close\n\\have{16}{\\mathmakebox[\\widthof{$\\Neg (h\\Conj c)$}][l]{w}\\quad \\DisjE,1,4\\text{--}13,14\\text{--}15}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{h\\Disj w}\n\\hypo{2}{w\\Disj c}\n\\hypo{3}{\\Neg (h\\Conj c)}\n\\open\n\\hypo{4}{h}\n\\open\n\\hypo{5}{w}\n\\have{6}{w}\\by{\\Reit}{5}\n\\close\n\\open\n\\hypo{7}{c}\n\\have{8}{h\\Conj c}\\by{\\ConjI}{4,7}\n\\open\n\\hypo{9}{\\Neg w}\n\\have{10}{\\Falsum}\\by{\\FalsumI}{8,3}\n\\close\n\\have{11}{\\Neg \\Neg w}\\by{\\NegI}{9,10}\n\\have{12}{w}\\by{\\NegE}{11}\n\\close\n\\have{13}{w}\\by{\\DisjE}{2,5-6,7-12}\n\\close\n\\open\n\\hypo{14}{w}\n\\have{15}{w}\\by{\\Reit}{14}\n\\close\n\\have{16}{w}\\by{\\DisjE}{1,4-13,14-15}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "looks_like": "distributed-knowledge",
@@ -22666,7 +22666,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\open\n\\hypo{2}{p\\Cond q}\n\\have{3}{\\mathmakebox[\\widthof{$p\\Cond ((p\\Cond q)\\Cond q)$}][l]{q}\\quad \\CondE,2,1}\n\\close\n\\have{4}{\\mathmakebox[\\widthof{$p\\Cond ((p\\Cond q)\\Cond q)$}][l]{(p\\Cond q)\\Cond q}\\quad \\CondI,2,3}\n\\close\n\\have{5}{\\mathmakebox[\\widthof{$p\\Cond ((p\\Cond q)\\Cond q)$}][l]{p\\Cond ((p\\Cond q)\\Cond q)}\\quad \\CondI,1,4}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\open\n\\hypo{2}{p\\Cond q}\n\\have{3}{q}\\by{\\CondE}{2,1}\n\\close\n\\have{4}{(p\\Cond q)\\Cond q}\\by{\\CondI}{2,3}\n\\close\n\\have{5}{p\\Cond ((p\\Cond q)\\Cond q)}\\by{\\CondI}{1,4}\n\\end{nd}\n\\end{align*}",
     "checked_by": "latexgen/nd.py"
    },
    "looks_like": "abelian-axiom",
@@ -22921,7 +22921,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{p}\n\\have{3}{\\mathmakebox[\\widthof{$p\\Cond q$}][l]{q}\\quad \\CondE,1,2}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{p}\n\\have{3}{q}\\by{\\CondE}{1,2}\n\\end{nd}\n\\end{align*}",
     "lines": 3,
     "max_subproof_depth": 0,
     "subproof_count": 0,
@@ -23214,7 +23214,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{\\Neg q}\n\\open\n\\hypo{3}{p}\n\\have{4}{\\mathmakebox[\\widthof{$p\\Cond q$}][l]{q}\\quad \\CondE,1,3}\n\\have{5}{\\mathmakebox[\\widthof{$p\\Cond q$}][l]{\\Neg q}\\quad \\Reit,2}\n\\have{6}{\\mathmakebox[\\widthof{$p\\Cond q$}][l]{\\Falsum}\\quad \\FalsumI,4,5}\n\\close\n\\have{7}{\\mathmakebox[\\widthof{$p\\Cond q$}][l]{\\Neg p}\\quad \\NegI,3,6}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{\\Neg q}\n\\open\n\\hypo{3}{p}\n\\have{4}{q}\\by{\\CondE}{1,3}\n\\have{5}{\\Neg q}\\by{\\Reit}{2}\n\\have{6}{\\Falsum}\\by{\\FalsumI}{4,5}\n\\close\n\\have{7}{\\Neg p}\\by{\\NegI}{3,6}\n\\end{nd}\n\\end{align*}",
     "lines": 7,
     "max_subproof_depth": 1,
     "subproof_count": 1,
@@ -23771,7 +23771,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{q\\Cond r}\n\\open\n\\hypo{3}{p}\n\\have{4}{\\mathmakebox[\\widthof{$p\\Cond q$}][l]{q}\\quad \\CondE,1,3}\n\\have{5}{\\mathmakebox[\\widthof{$p\\Cond q$}][l]{r}\\quad \\CondE,2,4}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$p\\Cond q$}][l]{p\\Cond r}\\quad \\CondI,3,5}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{q\\Cond r}\n\\open\n\\hypo{3}{p}\n\\have{4}{q}\\by{\\CondE}{1,3}\n\\have{5}{r}\\by{\\CondE}{2,4}\n\\close\n\\have{6}{p\\Cond r}\\by{\\CondI}{3,5}\n\\end{nd}\n\\end{align*}",
     "lines": 6,
     "max_subproof_depth": 1,
     "subproof_count": 1,
@@ -24252,7 +24252,7 @@
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond q}\n\\open\n\\hypo{2}{\\Neg q}\n\\open\n\\hypo{3}{p}\n\\have{4}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{q}\\quad \\CondE,1,3}\n\\have{5}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,4,2}\n\\close\n\\have{6}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{\\Neg p}\\quad \\NegI,3,5}\n\\close\n\\have{7}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{\\Neg q\\Cond \\Neg p}\\quad \\CondI,2,6}\n\\close\n\\open\n\\hypo{8}{\\Neg q\\Cond \\Neg p}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{\\Neg q}\n\\have{11}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{\\Neg p}\\quad \\CondE,8,10}\n\\have{12}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{\\Falsum}\\quad \\FalsumI,9,11}\n\\close\n\\have{13}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{\\Neg \\Neg q}\\quad \\NegI,10,12}\n\\have{14}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{q}\\quad \\NegE,13}\n\\close\n\\have{15}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{p\\Cond q}\\quad \\CondI,9,14}\n\\close\n\\have{16}{\\mathmakebox[\\widthof{$(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)$}][l]{(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)}\\quad \\BicondI,1\\text{--}7,8\\text{--}15}\n\\end{nd}\n\\end{align*}",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond q}\n\\open\n\\hypo{2}{\\Neg q}\n\\open\n\\hypo{3}{p}\n\\have{4}{q}\\by{\\CondE}{1,3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,2}\n\\close\n\\have{6}{\\Neg p}\\by{\\NegI}{3,5}\n\\close\n\\have{7}{\\Neg q\\Cond \\Neg p}\\by{\\CondI}{2,6}\n\\close\n\\open\n\\hypo{8}{\\Neg q\\Cond \\Neg p}\n\\open\n\\hypo{9}{p}\n\\open\n\\hypo{10}{\\Neg q}\n\\have{11}{\\Neg p}\\by{\\CondE}{8,10}\n\\have{12}{\\Falsum}\\by{\\FalsumI}{9,11}\n\\close\n\\have{13}{\\Neg \\Neg q}\\by{\\NegI}{10,12}\n\\have{14}{q}\\by{\\NegE}{13}\n\\close\n\\have{15}{p\\Cond q}\\by{\\CondI}{9,14}\n\\close\n\\have{16}{(p\\Cond q)\\Bicond (\\Neg q\\Cond \\Neg p)}\\by{\\BicondI}{1-7,8-15}\n\\end{nd}\n\\end{align*}",
     "lines": 16,
     "max_subproof_depth": 3,
     "subproof_count": 6,
@@ -24501,6 +24501,7 @@
  "latex_macros": {
   "uv": "\\newcommand{\\uv}[2]{\\mathmakebox[\\widthof{$#1$}][c]{\\text{#2}}}",
   "treebox": "\\newsavebox{\\aetreebox}",
-  "tabbox": "\\newsavebox{\\aetabbox}"
+  "tabbox": "\\newsavebox{\\aetabbox}",
+  "ndjust": "\\renewcommand{\\ndjustformat}[2]{$#1$, #2}\n\\setkeys{fitch}{justsep=2em}"
  }
 }

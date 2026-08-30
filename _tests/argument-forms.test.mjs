@@ -857,36 +857,60 @@ test('a discharged subproof is cited the way the handouts cite it', async (t) =>
   const single = ['CondI', 'NegI'];
   const double = ['DisjE', 'BicondI'];
 
+  await t.test('citations live in the justification column, not the formula', () => {
+    for (const e of entries) {
+      if (!e.nd.exists) continue;
+      // `nd` is a three-column array and `\by` fills the third, which is why
+      // the citations line up without a hand-tuned \quad. Mixing the two
+      // spellings in one display roughly triples its width, so there is no
+      // half-measure: no \mathmakebox, no \widthof, no inline \quad citation.
+      assert.ok(!e.nd.latex.includes('\\mathmakebox'),
+        `${e.id}: a citation is still padded into the formula column`);
+      assert.ok(!e.nd.latex.includes('\\widthof'), `${e.id}: leftover width machinery`);
+      assert.match(e.nd.latex, /\\by\{/, `${e.id}: no \\by citations at all`);
+    }
+  });
+
+  await t.test('premises and assumptions carry no justification', () => {
+    for (const e of entries) {
+      for (const line of e.nd.proof ?? []) {
+        const at = e.nd.latex.indexOf(`{${line.n}}{`);
+        if (at < 0) continue;
+        const rest = e.nd.latex.slice(at, e.nd.latex.indexOf('\n', at));
+        if (line.rule === 'Pr' || line.rule === 'As') {
+          assert.ok(!rest.includes('\\by{'), `${e.id} line ${line.n}: a hypo with a citation`);
+        }
+      }
+    }
+  });
+
   await t.test('one subproof, two line numbers, no dash', () => {
     let seen = 0;
     for (const e of entries) {
       for (const line of e.nd.proof ?? []) {
         if ((line.subs ?? []).length !== 1) continue;
         assert.ok(single.includes(line.rule), `${e.id}: ${line.rule} discharges one subproof`);
-        const cite = `\\${line.rule},`;
-        const at = e.nd.latex.indexOf(cite);
-        assert.ok(at > 0, `${e.id}: ${line.rule} is not cited in the block`);
+        const [a, b] = line.subs[0];
+        assert.ok(e.nd.latex.includes(`\\by{\\${line.rule}}{${a},${b}}`)
+          || e.nd.latex.includes(`,${a},${b}}`),
+          `${e.id}: ${line.rule} does not cite ${a},${b} with a comma`);
         seen += 1;
       }
+      // `\by` passes refs through `\ndref`, which makes the en dash itself.
+      assert.ok(!/\\by\{[^}]*\}\{[^}]*\\text\{--\}/.test(e.nd.latex ?? ''),
+        `${e.id}: a \\by reference spells its range with \\text{--}`);
     }
     assert.ok(seen > 0, 'no single-subproof citation found at all');
-    // No en dash anywhere a single-subproof rule is cited.
-    for (const e of entries) {
-      for (const rule of single) {
-        const re = new RegExp(`\\\\${rule},[^}]*?\\\\text\\{--\\}`);
-        assert.ok(!re.test(e.nd.latex ?? ''), `${e.id}: ${rule} cites a range`);
-      }
-    }
   });
 
-  await t.test('two subproofs, two ranges, en dashes', () => {
+  await t.test('two subproofs, two ranges, plain hyphens', () => {
     for (const e of entries) {
       for (const line of e.nd.proof ?? []) {
         if ((line.subs ?? []).length !== 2) continue;
         assert.ok(double.includes(line.rule), `${e.id}: ${line.rule} discharges two subproofs`);
         for (const [a, b] of line.subs) {
-          assert.ok(e.nd.latex.includes(`${a}\\text{--}${b}`),
-            `${e.id}: ${line.rule} does not cite ${a}--${b} as a range`);
+          assert.ok(e.nd.latex.includes(`${a}-${b}`),
+            `${e.id}: ${line.rule} does not cite ${a}-${b} as a range`);
         }
       }
     }

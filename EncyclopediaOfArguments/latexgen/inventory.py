@@ -31,6 +31,7 @@ from formula import Node, canonical, parse, to_ascii, unparse
 
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE.parent / "Argument Form Inventory (2026-08-28).md"
+LOG = HERE.parent / "IMPORT_LOG.md"
 DB = HERE.parents[1] / "assets/arguments/argument-db.json"
 
 TURNSTILES = ("⊢ND", "⊬ND", "⊨", "⊭", "⊢", "⊬", "∴")
@@ -192,7 +193,22 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
         if got:
             banned.add(shape(*got))
 
-    tally = {"rows": 0, "multiple": 0, "unparsable": 0, "quarantined": 0, "known": 0}
+    # A row already judged and logged is settled. Without this every firing
+    # would meet the same rejected row, spend a run re-deciding it, and write
+    # the same line into the log again.
+    settled = set()
+    if LOG.exists():
+        for quoted in re.findall(r"`([^`]+)`", LOG.read_text()):
+            got = split_sequent(quoted)
+            if not got:
+                continue
+            try:
+                settled.add(shape(*got))
+            except Exception:
+                pass
+
+    tally = {"rows": 0, "multiple": 0, "unparsable": 0, "quarantined": 0,
+             "known": 0, "logged": 0}
     out: list[dict] = []
 
     for row in rows_of(text):
@@ -225,6 +241,9 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
             continue
         if key in known:
             tally["known"] += 1
+            continue
+        if key in settled:
+            tally["logged"] += 1
             continue
 
         where = " ".join(row["cells"][2:]) if len(row["cells"]) > 2 else ""
@@ -265,6 +284,7 @@ def main() -> None:
     print(f"  reserved {tally['quarantined']} quarantined (exam material)")
     print(f"  compound {tally['multiple']} rows holding more than one sequent")
     print(f"  unread   {tally['unparsable']} rows whose formulas would not parse")
+    print(f"  settled  {tally['logged']} already judged, in IMPORT_LOG.md")
     print(f"queue      {len(queue)} candidates left")
     for i, c in enumerate(queue[:5]):
         print(f"  {i:3d}  {c['sequent']:44s} {c['name'][:40]}")

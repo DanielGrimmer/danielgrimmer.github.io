@@ -62,6 +62,10 @@ def preamble(db: dict) -> str:
             m["uv"],
             m["treebox"],
             m["tabbox"],
+            # After \usepackage{notation}, which must come last: it is what
+            # configures fitch, and loading it first makes the configuration
+            # silently do nothing.
+            m["ndjust"],
         ]
     )
 
@@ -135,6 +139,14 @@ def to_svg(block: str, db: dict, workdir: Path, tag: str) -> str:
     if not dvi.exists():
         tail = "\n".join(run.stdout.splitlines()[-25:])
         raise RuntimeError(f"latex produced no DVI:\n{tail}")
+
+    # A citation fitch cannot resolve sets a bold `??` and logs a *warning*.
+    # The document compiles, the page looks plausible, and nobody notices --
+    # a batch of these once sat in three handouts for a fortnight. Not here.
+    log = (workdir / "b.log").read_text(errors="replace")
+    if "Undefined line reference" in log:
+        bad = [l for l in log.splitlines() if "Undefined line reference" in l]
+        raise RuntimeError("fitch could not resolve a citation:\n" + "\n".join(bad))
 
     # --no-fonts turns every glyph into a path, so the result carries no font
     # dependency and no browser can mis-map it.
