@@ -853,3 +853,35 @@ PROOFS["importation"] = [
     _l(6, "r", "CondE", 1, [5, 4]),
     _l(7, "(p & q) > r", "CondI", 0, subs=[[2, 6]]),
 ]
+
+# -------------------------------------------------------------------- absorption
+PROOFS["absorption"] = [
+    P(1, "p > q"),
+    _l(2, "p", "As", 1),
+    _l(3, "q", "CondE", 1, [1, 2]),
+    _l(4, "p & q", "ConjI", 1, [2, 3]),
+    _l(5, "p > (p & q)", "CondI", 0, subs=[[2, 4]]),
+]
+
+# ------------------------------------------------------ negated-conditional-intro
+# The goal is a negation, so ∼I is dictated -- the premise hands over both
+# halves of the contradiction (q via ⊃E, ∼q via &E) with nothing to search for.
+PROOFS["negated-conditional-intro"] = [
+    P(1, "p & ~q"),
+    _l(2, "p > q", "As", 1),
+    _l(3, "p", "ConjE", 1, [1]),
+    _l(4, "~q", "ConjE", 1, [1]),
+    _l(5, "q", "CondE", 1, [2, 3]),
+    _l(6, "!", "FalsumI", 1, [5, 4]),
+    _l(7, "~(p > q)", "NegI", 0, subs=[[2, 6]]),
+]
+
+# ------------------------------------------------------------------ buried-conjunct
+# `s` in the second premise is never used again -- the whole chain runs on `p`.
+PROOFS["buried-conjunct"] = [
+    P(1, "p > (q & ~r)"),
+    P(2, "p & s"),
+    _l(3, "p", "ConjE", 0, [2]),
+    _l(4, "q & ~r", "CondE", 0, [1, 3]),
+    _l(5, "~r", "ConjE", 0, [4]),
+]
