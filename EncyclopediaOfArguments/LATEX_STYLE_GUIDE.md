@@ -1222,8 +1222,21 @@ words.
 
 **A form with no `appearances` entry does not belong here.** Not "is
 instructive in the abstract", not "is a nice tree" — somebody actually used it,
-argued about it, or got caught out by it. If the inventory row gives no source,
-the entry is not ready; leave it out rather than inventing provenance.
+argued about it, or got caught out by it.
+
+**The course counts.** A form worked in a lecture, set on a problem set, or
+taken from Restall has an appearance, and it is the honest one: `who: PHIL
+1115`, the handout as the `work`, the section as the `locus`, and `fidelity:
+our reconstruction` unless you have the text to quote. Much of the course
+inventory is like this, and the right `interest` is a modest true one —
+*"one of the course's own worked examples: the first derivation students meet,
+and the shape every later proof by cases is built on"* — not an invented
+philosophical significance. Those entries can be deepened later when a champion
+turns up.
+
+What is still forbidden is manufacturing provenance: an appearance that names a
+philosopher who did not make the argument, or a `quote` that paraphrases a
+source into quotation marks.
 
 ### 13.2 The fields, and what each is for
 
@@ -1237,6 +1250,7 @@ the entry is not ready; leave it out rather than inventing provenance.
 | `countermodel_gloss` | 1–2 sentences | What the countermodel *means* — not that `p = T, q = F`, which the table already says, but what it is a picture of |
 | `nd.note` | 1–3 sentences | Only on invalid entries: where the attempt at a derivation breaks down. "No derivation" alone is a wasted field; say which rule you reach for and why it will not come |
 | `course.note` | any | **Instructor-facing.** Never rendered as body copy. Scheduling, pairings, things to say in lecture |
+| `course.problem_set` | a map | Which methods this form has been *set* in. See §13.8 — it decides what the practice page may draw |
 | `tags.topic` / `.figure` | 1–3 each | Facets, and shown before the answer — so they must not name the verdict |
 | `tags.defect` / `.nonclassical` | 0–3 each | Facets, and **withheld** before the answer, because "affirming a disjunct" is the answer |
 
@@ -1296,6 +1310,30 @@ now. Leave it or delete it, but do not write prose around it.
 The one rule that survives is about the *problem statement* itself, and it lives
 in the code rather than the prose: `problemStatement()` stacks the premises and
 the conclusion with `∴` and no turnstile, because `⊨` against `⊭` is the answer.
+
+### 13.8 What must not be practised
+
+`course.problem_set` maps a method to where the form was set as graded work:
+
+```json
+"problem_set": { "table": "PS2.8a", "tree": "PS4.2a" }
+```
+
+The practice page drops those pairs. A student who was asked to build that very
+tree is not getting a fair random draw when it comes up again, so the tree is
+withheld — but **the other methods stay open**, because having been asked for
+the table is no help at all with the derivation. The encyclopedia itself still
+shows everything; the answer was never hidden there.
+
+**Exam appearances are deliberately not recorded here.** The site is
+unreachable during the exam and there is far too much of it to memorise, so
+exam material is free to practise. The six forms the course inventory's §8
+quarantines are a separate matter and never enter the database at all —
+`latexgen/inventory.py` refuses to offer them, and anything that reaches the
+database another way takes `course.quarantined: true`.
+
+`inventory.py` derives the map from the inventory's own "where" column, so an
+importing author copies it rather than working it out.
 
 ### 13.6 House voice
 

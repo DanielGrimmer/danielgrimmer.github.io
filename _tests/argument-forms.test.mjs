@@ -456,6 +456,7 @@ test('the practice page has a well-formed problem set', async (t) => {
   for (const e of entries) {
     for (const m of ['table', 'tree', 'nd']) {
       if (m === 'nd' && !e.nd.exists) continue;
+      if (e.course?.problem_set?.[m]) continue;
       pairs.push([e.id, m, e.difficulty[m]]);
     }
   }
@@ -470,6 +471,22 @@ test('the practice page has a well-formed problem set', async (t) => {
     // 35 tables + 35 trees + 18 derivations.
     assert.equal(pairs.length, 88);
     assert.equal(pairs.filter(([, m]) => m === 'nd').length, 18);
+  });
+
+  await t.test('nothing set as graded work is offered in that method', () => {
+    // A form a student met on a problem set is not a fair random draw in the
+    // method they were set: they have already been asked to build that tree.
+    // The other methods stay open. Exam appearances are deliberately not
+    // recorded — the site is unreachable during the exam.
+    for (const e of entries) {
+      const locked = e.course?.problem_set ?? {};
+      for (const m of Object.keys(locked)) {
+        assert.ok(['table', 'tree', 'nd'].includes(m), `${e.id}: ${m} is not a method`);
+        assert.ok(!pairs.some(([id, mm]) => id === e.id && mm === m),
+          `${e.id}/${m} is set at ${locked[m]} and must not be drawn`);
+        assert.ok(!/^EX/.test(locked[m]), `${e.id}: ${locked[m]} is exam material, which is free to practise`);
+      }
+    }
   });
 
   await t.test('natural deduction is offered only on valid forms', () => {

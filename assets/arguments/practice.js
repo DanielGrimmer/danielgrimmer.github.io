@@ -83,6 +83,13 @@ async function start() {
         // Natural deduction only ever offers valid forms: an invalid one has
         // no derivation, so there would be nothing to find.
         if (m.key === "nd" && !e.nd?.exists) continue;
+        // A form set as graded work is not a fair random draw *in that
+        // method*: the student has already been asked to build that very tree.
+        // The other two methods stay open, since being asked for the table is
+        // no help with the derivation. Exam appearances do not count -- the
+        // site is unreachable during the exam, and there is far too much of it
+        // to memorise -- so only problem sets are recorded here.
+        if (e.course?.problem_set?.[m.key]) continue;
         const level = e.difficulty?.[m.key];
         if (!level || !state.levels.has(level)) continue;
         out.push(`${e.id}|${m.key}`);
