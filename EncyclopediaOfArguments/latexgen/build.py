@@ -57,6 +57,21 @@ UV = r"\newcommand{\uv}[2]{\mathmakebox[\widthof{$#1$}][c]{\text{#2}}}"
 # Trees are typeset into this box so their width can be measured before use.
 TREEBOX = r"\newsavebox{\aetreebox}"  # \treebox is qtree.sty's own
 TABBOX = r"\newsavebox{\aetabbox}"
+# fitch's justification column, configured for the course's rule labels.
+# `\ndlabel` is `\mathord{#1}\text{#2}` and needs math mode, but fitch's own
+# `\ndjustformat` \mbox-es its argument -- so without this a `\by{\CondE}{...}`
+# stops the build with "Missing $ inserted". `justsep` is the gap between the
+# formula and the justification, down from fitch's 2.5em to buy back width.
+#
+# These belong in notation.sty, guarded by \@ifpackageloaded{fitch}, and the
+# course copy has them. They are repeated here so a block stays self-contained:
+# a consumer with an older notation.sty still gets a correct display, and one
+# with the current copy just sets the same values twice.
+NDJUST = (
+    r"\renewcommand{\ndjustformat}[2]{$#1$, #2}"
+    "\n"
+    r"\setkeys{fitch}{justsep=2em}"
+)
 
 
 ASCII_TO_GLYPH = {"~": "∼", "&": "&", "|": "∨", ">": "⊃", "=": "≡", "!": "⊥"}
@@ -391,7 +406,8 @@ def build(db: dict) -> tuple[dict, list[str]]:
     MANIFEST.write_text("\n".join(e["id"] for e in db["entries"]) + "\n")
 
     db["latex_requires"] = PREAMBLE
-    db["latex_macros"] = {"uv": UV, "treebox": TREEBOX, "tabbox": TABBOX}
+    db["latex_macros"] = {"uv": UV, "treebox": TREEBOX, "tabbox": TABBOX,
+                          "ndjust": NDJUST}
     return db, notes
 
 

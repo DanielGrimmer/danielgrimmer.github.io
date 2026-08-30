@@ -49,13 +49,26 @@ The block preamble that was used, and that any consumer of these blocks needs:
 
 ```latex
 \usepackage{amsmath,amssymb,stmaryrd}
-\usepackage{mathtools,calc}   % \mathmakebox and \widthof, for the ND column
+\usepackage{mathtools,calc}   % \mathmakebox and \widthof, for the table's \uv
 \usepackage{graphicx}         % \resizebox, for the fit guards
 \usepackage{qtree}            % trees
 \usepackage{fitch}            % Fitch derivations -- provides the `nd` environment
-\usepackage{notation}         % FOL_Yale/notation.sty
+\usepackage{notation}         % FOL_Yale/notation.sty -- ALWAYS LAST
 \newsavebox{\aetreebox}\newsavebox{\aetabbox}
+\renewcommand{\ndjustformat}[2]{$#1$, #2}
+\setkeys{fitch}{justsep=2em}
 ```
+
+⚠ **`notation` loads last, and it must.** It configures fitch, guarded by
+`\@ifpackageloaded{fitch}`, so loading it first makes the configuration
+silently do nothing and the rule names come out wrong.
+
+The last two lines are that configuration, repeated so a block stays
+self-contained. `\ndlabel` is `\mathord{#1}\text{#2}` and needs math mode,
+while fitch's own `\ndjustformat` `\mbox`es its argument — without the
+`\renewcommand`, a `\by{\CondE}{1,3}` stops the build with *Missing $
+inserted*. They are in `latex_macros.ndjust`; a consumer whose `notation.sty`
+already has them just sets the same values twice.
 
 **Not `pifont`.** The handouts load it for `\checkmark` via `\ding{51}`, but
 nothing here calls `\ding` — `\checkmark` comes from `amssymb`, which is
@@ -743,23 +756,57 @@ directly on `ex-falso`, whose `course.note` already records it.
 There is **no single-negation elimination.** "If you ever want to remove a single
 negation, you must find a way to add a second negation and then remove the pair."
 
-### 6.3 Citation format
+### 6.3 Citation format — the justification column
 
-- **Single lines:** comma-separated — `\CondE,1,3`. Lecture 9 writes `\ConjE, 1`
-  with a source space and Lecture 10 writes `\CondE,2,4` without; **these render
-  identically**, because math mode sets its own space after a comma and ignores
-  the one in the source. I checked. So this is a source-tidiness question only,
-  and §10 picks the tight form for consistency, not for output.
-- **One discharged subproof: two line numbers, comma-separated.** `\CondI,2,6`,
-  `\NegI,3,6`. The handouts do this twenty times over and use no en dash for
-  it, and they are right to: the rule name already says a subproof is being
-  discharged, so a range has nothing to disambiguate.
-- **Two discharged subproofs: en dashes, written `\text{--}`, never a hyphen.**
-  `\DisjE,1,2\text{--}3,4\text{--}5`, `\BicondI,1\text{--}7,8\text{--}14`.
-  Here the dash is doing work — `\DisjE,1,2,3,4,5` would not say which pairs go
-  together. `\DisjE` and `\BicondI` are the only two rules that take it.
-- **Symbolic ranges** in schemas brace the operator so it sets tight:
-  `(n{+}1)\text{--}m`.
+**Citations go in `\by`, never inline in the formula.**
+
+```latex
+\have{5}{r}\by{\CondE}{2,4}
+\have{10}{r \Disj s}\by{\DisjE}{1,4-6,7-9}
+```
+
+`nd` is a three-column array — line number, formula, justification — and `\by`
+fills the third, which is why every citation in a proof lines up with no
+hand-tuned `\quad`: the column sizes itself to its widest entry.
+
+The blocks used to pad the citation into the formula argument with
+`\mathmakebox[\widthof{…}]`. It worked, but it measured the citation as part of
+the *formula* column, so every display came out far wider than it needed to be.
+**Do not mix the two spellings in one display** — a single inline citation
+among `\by` ones roughly triples the width, which in a two-column handout is
+the difference between fitting and not.
+
+- **`\hypo` lines carry no `\by`.** Premises and assumptions are not cited; the
+  bar and the `\open` are what mark them. No `Pr`, no `As`.
+- **Ranges take a plain hyphen** inside `\by`: `{1,4-6,7-9}` sets *1, 4–6,
+  7–9*. `\by` passes its second argument through `\ndref`, which walks it
+  character by character, turns `-` into a proper en dash, and puts the space
+  after each comma itself. `\text{--}` is right only in the older inline
+  spelling, which had no `\ndref` to do the work.
+- **Never use fitch's own shorthands** — `\ai`, `\ae`, `\oi`, `\oe`, `\ni` and
+  the rest are hardcoded to `\wedge` and `\neg`, and will silently set ∧ and ¬
+  where the course uses & and ∼. The course macros pass straight through `\by`.
+- **An unresolvable reference is a warning, not an error.** fitch sets a bold
+  `??` and logs `Undefined line reference`; the document compiles and the page
+  looks plausible. `svg.py` greps the log and refuses to write an SVG when it
+  finds one.
+- **A cited line needs a key**, which is not the printed label: `\have` is
+  `\have[<printed>]{<key>}{<formula>}` and they coincide only when the optional
+  argument is omitted. `\have[13]{}{…}` prints 13 and is not citable. This is
+  also what lets a *schematic* proof use `\by`: write the letter as both, as in
+  `\have[n]{n}{A \Cond B}` … `\by{\CondE}{n,m}`.
+- **One discharged subproof: two line numbers, comma-separated.**
+  `\by{\CondI}{2,6}`, `\by{\NegI}{3,6}`. The handouts do this twenty times over
+  and use no dash for it, and they are right to: the rule name already says a
+  subproof is being discharged, so a range has nothing to disambiguate.
+- **Two discharged subproofs: ranges.** `\by{\DisjE}{1,2-3,4-5}`,
+  `\by{\BicondI}{1-7,8-14}`. Here the dash does work — `∨E, 1, 2, 3, 4, 5`
+  would not say which pairs go together. `\DisjE` and `\BicondI` are the only
+  two rules that take one.
+- **Symbolic ranges** in a schema are written the same way, with a hyphen:
+  `\by{\CondI}{n-m}`, `\by{\CondI}{m+1-k}`. `\ndref` treats `-`, `,`, `;`, `.`,
+  `(` and `)` as separators and everything else as part of a key, so `m+1` is a
+  legal key and needs no bracing.
 - **Order of cites** follows the rule's statement: `\FalsumI,n,m` cites `B`
   first and `\Neg B` second. Lecture 10's Kant proof writes `\FalsumI,8,7` —
   line 8 is `p`, line 7 is `\Neg p` — so the *formula* order governs, not the
@@ -1046,7 +1093,8 @@ Per block, before it goes in the database:
 - [ ] Present iff `nd.exists` (§0.2, §7)
 - [ ] Rule macros, not connective macros (§6.2)
 - [ ] No `\Exp`; reductio written out (§6.2)
-- [ ] One discharged subproof cited `n,m`; two cited as `\text{--}` ranges (§6.3)
+- [ ] Citations in `\by`, never inline; `\hypo` lines uncited; one discharged
+      subproof cited `n,m`, two cited as `a-b` ranges with plain hyphens (§6.3)
 - [ ] Every cite is accessible — no crossing a closed scope line, and a
       *sibling* subproof at the same depth is closed (§6.7)
 - [ ] Written with the entry's final atom names (§2.4)
@@ -1063,7 +1111,7 @@ inconsistent blocks depending on which handout was open at the time.
 | # | Conflict | Resolution |
 | --- | --- | --- |
 | 1 | Lecture 10 line 418 cites reiteration as bare `R, 1`; everywhere else it is `\Reit`. | **Use `\Reit`.** The bare `R` is a slip — it is in a schema, not a worked proof, and the Notation Guide lists `\Reit` in the definitive macro set. Worth fixing in the handout. |
-| 2 | Lecture 9 writes line ranges as `2\text{--}3`; Lecture 10 writes `4-6`. | **Use `\text{--}`.** An en dash is right for a range and a hyphen sets too short — this one is visible in the output. Lecture 10's is the outlier (one line, `\DisjE,1,4-6,7-9`). |
+| 2 | Lecture 9 writes line ranges as `2\text{--}3`; Lecture 10 writes `4-6`. | **Lecture 10 was right, and this guide had it backwards until 2026-08-30.** An en dash *is* right for a range — but inside `\by` you get one by writing a plain hyphen, because `\ndref` converts it. `\text{--}` is correct only in the older inline spelling, which is no longer used anywhere (§6.3). |
 | 3 | Lecture 9 spaces cites (`\ConjE, 1`); Lecture 10 does not (`\CondE,2,4`). | **Source-only; no visible difference.** Math mode supplies its own space after a comma. Use the tight form for consistency. |
 | 4 | Lecture 3 shows a `c1 c2 c3` column-index row; no other table has one. | **Omit**, unless the entry's prose refers to a column by number (§4.3). |
 | 5 | Restall's negated-disjunction and negated-conditional tree diagrams are misprinted; two of his worked trees carry errors. | **This guide's §5.3 table wins**, per Lecture 6's own footnote. |

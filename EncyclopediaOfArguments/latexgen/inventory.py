@@ -31,6 +31,7 @@ from formula import Node, canonical, parse, to_ascii, unparse
 
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE.parent / "Argument Form Inventory (2026-08-28).md"
+LOG = HERE.parent / "IMPORT_LOG.md"
 DB = HERE.parents[1] / "assets/arguments/argument-db.json"
 
 TURNSTILES = ("⊢ND", "⊬ND", "⊨", "⊭", "⊢", "⊬", "∴")
@@ -113,8 +114,28 @@ PROBLEM_SET = re.compile(r"\bPS\d")
 METHOD_WORDS = {"table": "table", "tree": "tree", "nd": "nd"}
 
 
-def problem_sets(where: str) -> dict[str, str]:
-    """`PS2.2a (table); PS5.2 (ND)` into `{"table": "PS2.2a", "nd": "PS5.2"}`."""
+def problem_sets(row: dict) -> dict[str, str]:
+    """Which methods this form has been set in, as `{method: locus}`.
+
+    The inventory says it two ways. §1's grid is positional -- Form, Verdict,
+    Table, Tree, ND -- so the column a locus sits in names the method. §§2-7
+    put everything in one "where" column and name the method in parentheses:
+    `PS2.8a (table); PS4.2a (tree)`. Both are read here, because getting this
+    wrong means offering a student the very tree they were set.
+    """
+    cells = row["cells"]
+    if row["section"].startswith("1.") and len(cells) >= 5:
+        out: dict[str, str] = {}
+        for method, cell in zip(("table", "tree", "nd"), cells[2:5]):
+            hit = re.search(r"\b(PS[\w.]*\d[\w.]*)", cell)
+            if hit:
+                out[method] = hit.group(1).rstrip(".;)")
+        return out
+    return _problem_sets_inline(" ".join(cells[2:]))
+
+
+def _problem_sets_inline(where: str) -> dict[str, str]:
+    """`PS2.8a (table); PS4.2a (tree)` into `{"table": ..., "tree": ...}`."""
     out: dict[str, str] = {}
     for chunk in re.split(r"[;,]", where):
         locus = re.match(r"\s*\*?\*?([A-Za-z0-9.§-]+)", chunk)
@@ -172,7 +193,22 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
         if got:
             banned.add(shape(*got))
 
-    tally = {"rows": 0, "multiple": 0, "unparsable": 0, "quarantined": 0, "known": 0}
+    # A row already judged and logged is settled. Without this every firing
+    # would meet the same rejected row, spend a run re-deciding it, and write
+    # the same line into the log again.
+    settled = set()
+    if LOG.exists():
+        for quoted in re.findall(r"`([^`]+)`", LOG.read_text()):
+            got = split_sequent(quoted)
+            if not got:
+                continue
+            try:
+                settled.add(shape(*got))
+            except Exception:
+                pass
+
+    tally = {"rows": 0, "multiple": 0, "unparsable": 0, "quarantined": 0,
+             "known": 0, "logged": 0}
     out: list[dict] = []
 
     for row in rows_of(text):
@@ -206,6 +242,9 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
         if key in known:
             tally["known"] += 1
             continue
+        if key in settled:
+            tally["logged"] += 1
+            continue
 
         where = " ".join(row["cells"][2:]) if len(row["cells"]) > 2 else ""
         known.add(key)  # so two inventory rows for one form offer it once
@@ -216,7 +255,7 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
                 "conclusion": conclusion,
                 "name": name_of(row),
                 "where": where,
-                "problem_set": problem_sets(where),
+                "problem_set": problem_sets(row),
                 "section": row["section"],
             }
         )
@@ -245,6 +284,7 @@ def main() -> None:
     print(f"  reserved {tally['quarantined']} quarantined (exam material)")
     print(f"  compound {tally['multiple']} rows holding more than one sequent")
     print(f"  unread   {tally['unparsable']} rows whose formulas would not parse")
+    print(f"  settled  {tally['logged']} already judged, in IMPORT_LOG.md")
     print(f"queue      {len(queue)} candidates left")
     for i, c in enumerate(queue[:5]):
         print(f"  {i:3d}  {c['sequent']:44s} {c['name'][:40]}")

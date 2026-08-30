@@ -301,53 +301,59 @@ _RULE_MACRO = {
 }
 
 
-def _cite_text(ln: dict) -> str:
-    """`⊃E,1,3`, `⊃I,2,6`, `∨E,1,2--3,4--5`.
+def _by(ln: dict):
+    r"""The rule macro and its references, for `\by{<rule>}{<refs>}`.
 
-    A rule that discharges **one** subproof cites its first and last line with a
-    comma: `\\CondI,2,6`, `\\NegI,3,6`. That is what the handouts do, twenty
-    times over, and there is no ambiguity to resolve -- the rule name already
-    says a subproof is being discharged.
+    **Premises and assumptions are not cited.** A `\hypo` line carries no
+    justification -- the bar and the `\open` are what mark it -- so this
+    returns nothing for them.
 
-    A rule that discharges **two** needs the en dash, because `∨E,1,2,3,4,5`
-    would not say which pairs go together. So `\\DisjE` and `\\BicondI` take
-    ranges and nothing else does.
+    References use a **plain hyphen** for a range. `\by` passes them through
+    `\ndref`, which walks the string, turns `-` into a proper en dash and puts
+    the space after each comma itself; `\text{--}` is right only in the older
+    inline spelling, which had no `\ndref` to do the work.
+
+    A rule discharging **one** subproof cites its first and last line with a
+    comma -- `⊃I, 2, 6` -- since the rule name already says a subproof is being
+    discharged. One discharging **two** needs the ranges: `∨E, 1, 2-3, 4-5`
+    would otherwise be five numbers with no way to tell which pairs go
+    together.
     """
     if ln["rule"] in ("Pr", "As"):
-        return ""
+        return None
     bits = [str(c) for c in ln.get("cites", [])]
     subs = ln.get("subs", [])
     if len(subs) == 1:
         bits += [str(n) for n in subs[0]]
     else:
-        bits += [f"{a}\\text{{--}}{b}" for a, b in subs]
-    return _RULE_MACRO[ln["rule"]] + "," + ",".join(bits)
+        bits += [f"{a}-{b}" for a, b in subs]
+    return _RULE_MACRO[ln["rule"]], ",".join(bits)
 
 
 def render_proof(proof: list[dict]) -> str:
-    """A `fitch` derivation, with the justification column padded to align."""
+    r"""A `fitch` derivation, with its justifications in the third column.
+
+    `nd` is a three-column array -- line number, formula, justification -- and
+    `\by` fills the third. That is why every citation lines up without a single
+    hand-tuned `\quad`: the column sizes itself to its widest entry.
+
+    This used to set the citation *inside* the formula argument, padded with
+    `\mathmakebox` to the width of the widest formula in the proof. It worked,
+    but it measured the citation as part of the *formula* column, which made
+    every display far wider than it needed to be. Do not mix the two spellings
+    in one display: a single inline citation among `\by` ones roughly triples
+    the width.
+
+    The scope lines are drawn from the scope *path*, not the depth: two sibling
+    subproofs sit at the same depth with nothing between them, and opening and
+    closing on depth alone runs them into one.
+    """
     from formula import latex
 
-    body = [latex(ln["f"]) for ln in proof]
-    cites = [_cite_text(ln) for ln in proof]
-
-    # The house style puts the citation inside the formula argument, so the
-    # justification column has to be aligned by hand. The handouts pad with
-    # \qquad by eye, which leaves the column ragged whenever the formulas differ
-    # in width. Setting every formula in a box as wide as the widest one in this
-    # proof registers the column exactly, at no cost to how the formula reads.
-    widest = max(body, key=len) if body else ""
-    slot = f"\\widthof{{${widest}$}}"
-
-    # The scope lines are drawn from the scope *path*, not from the depth. Two
-    # sibling subproofs -- the halves of a biconditional proof, the cases of a
-    # proof by cases -- sit at the same depth with nothing between them, so
-    # opening and closing on depth changes alone runs them together into one
-    # scope line and the second assumption appears to be inside the first case.
     scope = scopes(proof)
     out = ["\\begin{align*}", "\\begin{nd}"]
     prev: tuple = ()
-    for ln, tex, cite in zip(proof, body, cites):
+    for ln in proof:
         here = scope[ln["n"]]
         shared = 0
         while (
@@ -359,12 +365,13 @@ def render_proof(proof: list[dict]) -> str:
         out += ["\\close"] * (len(prev) - shared)
         out += ["\\open"] * (len(here) - shared)
         prev = here
-        cmd = "\\hypo" if ln["rule"] in ("Pr", "As") else "\\have"
-        if cite:
-            boxed = f"\\mathmakebox[{slot}][l]{{{tex}}}"
-            out.append(f"{cmd}{{{ln['n']}}}{{{boxed}\\quad {cite}}}")
+
+        tex = latex(ln["f"])
+        by = _by(ln)
+        if by is None:
+            out.append(f"\\hypo{{{ln['n']}}}{{{tex}}}")
         else:
-            out.append(f"{cmd}{{{ln['n']}}}{{{tex}}}")
+            out.append(f"\\have{{{ln['n']}}}{{{tex}}}\\by{{{by[0]}}}{{{by[1]}}}")
     out += ["\\close"] * len(prev)
     out += ["\\end{nd}", "\\end{align*}"]
     return "\n".join(out)
