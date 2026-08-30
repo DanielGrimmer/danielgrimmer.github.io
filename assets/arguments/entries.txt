@@ -80,3 +80,6 @@ conjunction-with-its-own-negation
 biconditional-with-its-own-negation
 conjunction-with-redundant-conditional
 modus-ponens-premises-conjoined
+conditional-alone
+disjunction-as-conditional
+biconditional-as-agreement
