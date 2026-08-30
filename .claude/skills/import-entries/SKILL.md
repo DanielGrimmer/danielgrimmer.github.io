@@ -77,12 +77,42 @@ python3 inventory.py --next 3
 The queue is recomputed from the inventory and the database every time, so
 there is no progress file to fall out of step. A candidate carries its
 `sequent`, `premises`, `conclusion`, the inventory's `name` and `where`, the
-`section` it sits in, and a `problem_set` map (see §5).
+`section` it sits in, a `source`, and a `problem_set` map (see §5).
 
 `--status` also counts what the queue refuses: rows already in the database,
 quarantined exam rows, rows holding more than one sequent, and rows whose
 formulas will not parse. Those last two are work for a person; log them (§7)
 rather than trying to force them.
+
+### Which inventory
+
+**Work the course inventory until it is empty, then the imports.**
+
+```bash
+python3 inventory.py --status --source imports
+python3 inventory.py --next 3 --source imports
+```
+
+`--source course` is the default and covers what this year's course does. When
+its queue reaches zero, switch: `--source imports` reads
+`Argument Form Inventory — Imports (2026-08-28).md`, which is Restall's
+propositional chapters, last year's papers, and a brainstormed candidate list.
+Do not mix sources within one firing — the provenance rules differ and keeping
+a run to one source keeps the commit legible.
+
+**Read §11c of the style guide before the first imports run.** It is short and
+it is the whole difference. In brief: Restall rows cite Restall's *Logic* with
+a chapter-and-exercise `locus`; archive rows say **2025** in the `work` so they
+do not read as this year's; **nothing in the file is a practice lock**, and
+`inventory.py` correctly writes an empty `problem_set` for every row.
+
+**The brainstorm section has no source, and that is a stopping condition.** An
+entry needs at least one appearance and a test enforces it. Where the inventory
+names a champion — Stalnaker and Lewis for conditional excluded middle, Curry
+for the Curry sequent, Ross for Ross's paradox, or a Restall exercise it flags
+as *"already Restall"* — cite the champion and import normally. Where it names
+none, **log the row (§8) and take the next one.** Do not promote "a form worth
+having" into an appearance; that is manufacturing provenance under a new name.
 
 ## 3. Compute the structured data
 

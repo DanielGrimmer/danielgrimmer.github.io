@@ -1014,7 +1014,10 @@ test('the compact table keeps the rows that carry the argument', () => {
 test('a course quote is a passage we hold, not a sentence about the course', () => {
   const corpus = readFileSync(new URL('../EncyclopediaOfArguments/SOURCE_QUOTES.md', import.meta.url), 'utf8');
   const flat = corpus.split(/\s+/).join(' ');
-  const courseWork = /lecture|problem set|\bPS\s*\d|study guide|midterm|handout/i;
+  // Restall and last year's papers count too: the routine works from the
+  // inventories, which summarise those sources rather than reproducing them.
+  const courseWork =
+    /lecture|problem set|\bPS\s*\d|study guide|midterm|handout|restall|old-ps|old-exam|last year/i;
 
   let checked = 0;
   for (const e of entries) {
