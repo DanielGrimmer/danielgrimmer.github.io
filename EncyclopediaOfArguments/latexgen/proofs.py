@@ -885,3 +885,39 @@ PROOFS["buried-conjunct"] = [
     _l(4, "q & ~r", "CondE", 0, [1, 3]),
     _l(5, "~r", "ConjE", 0, [4]),
 ]
+
+# ----------------------------------------- inconsistent-biconditional-explosion
+# The premise alone is a contradiction, so the goal never actually drives the
+# proof: assume p (outer, for CondI), the biconditional immediately hands back
+# ~p, and that pair is available to close off any inner assumption -- here q,
+# discharged straight to ~q by NegI. Nothing about the conclusion's shape
+# matters; it could have been any formula.
+PROOFS["inconsistent-biconditional-explosion"] = [
+    P(1, "~p = p"),
+    _l(2, "p", "As", 1),
+    _l(3, "~p", "BicondE", 1, [1, 2]),
+    _l(4, "q", "As", 2),
+    _l(5, "p", "Reit", 2, [2]),
+    _l(6, "!", "FalsumI", 2, [5, 3]),
+    _l(7, "~q", "NegI", 1, subs=[[4, 6]]),
+    _l(8, "p > ~q", "CondI", 0, subs=[[2, 7]]),
+]
+
+# ------------------------------------------------------- classical-reductio-chain
+# The only step not dictated by a rule's own shape: `q` is not itself a
+# negation, so assuming ~q to get it is the classical move Lecture 10 flags.
+# Everything either side of that reductio is a straight run of CondE/ConjE.
+PROOFS["classical-reductio-chain"] = [
+    P(1, "p > (q > r)"),
+    P(2, "~q > ~p"),
+    P(3, "s & p"),
+    _l(4, "p", "ConjE", 0, [3]),
+    _l(5, "~q", "As", 1),
+    _l(6, "~p", "CondE", 1, [2, 5]),
+    _l(7, "p", "Reit", 1, [4]),
+    _l(8, "!", "FalsumI", 1, [7, 6]),
+    _l(9, "~~q", "NegI", 0, subs=[[5, 8]]),
+    _l(10, "q", "NegE", 0, [9]),
+    _l(11, "q > r", "CondE", 0, [1, 4]),
+    _l(12, "r", "CondE", 0, [11, 10]),
+]

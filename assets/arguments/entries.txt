@@ -65,3 +65,6 @@ importation
 absorption
 negated-conditional-intro
 buried-conjunct
+inconsistent-biconditional-explosion
+classical-reductio-chain
+disjunction-not-conjunction
