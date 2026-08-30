@@ -1210,6 +1210,106 @@ entry 30.
 
 ---
 
+## 14. Difficulty
+
+Three scores per entry, one per method, each `easy`, `medium` or `hard`. They
+are what the practice page's chips filter on, so they are the only thing
+between a student who asked for a hard tree and a trivial one.
+
+**Two of the three are measured, and one is judged.** Tables and trees have no
+insight step: you know what to do from the first row, or from the first
+unresolved formula, and the only question is how much of it there is. So those
+are computed and written by `build.py`, like any other derived field, and
+**must not be hand-edited**. Finding a derivation is not like that, so the `nd`
+score is authored.
+
+`latexgen/difficulty.py --diff` reports any score that departs from the rubric.
+For a table or a tree that can only mean a bug. For a derivation it means an
+author overrode the suggestion, which is allowed — with the reason in
+`course.note`, and the test suite checks that it is there.
+
+### 14.0 The reference student
+
+**Someone who has just been taught the method.** Week 4 for tables, week 6 for
+trees, week 10 for derivations. Each method is judged on its own timeline,
+which is the point of scoring them separately: a form can be a hard table in
+week 4 and an easy derivation in week 10.
+
+### 14.1 Truth tables — truth-functional calls
+
+The work is every connective occurrence, evaluated once per row:
+
+> **calls = (connectives in the premises + connectives in the conclusion) × 2ⁿ**
+
+Not what is *written* — the argument layout prints one value per premise, but
+you still have to evaluate the connectives inside it — and so the layout makes
+no difference to the score, which is right, because it makes no difference to
+the work.
+
+| | calls | |
+| --- | --- | --- |
+| **easy** | up to **48** | three atoms or fewer, or a small formula. A minute or two |
+| **medium** | **49–160** | four or five atoms, or three with a long conclusion |
+| **hard** | over **160** | 32 rows against five connectives, or 16 against eleven. Ten minutes, and one slip anywhere loses it |
+
+### 14.2 Truth trees — rule applications
+
+The work is how many rules you fire. That depends on the order, but the course
+gives a standing order — **non-branching rules first** — and fixing the order
+fixes the count. A rule applied on the trunk counts once, however many branches
+inherit its results, which is exactly why the advice is what it is.
+
+| | applications | |
+| --- | --- | --- |
+| **easy** | up to **3** | the stack, a rule or two, done |
+| **medium** | **4–7** | a page: several forks, or a deep trunk before the first |
+| **hard** | **8 or more** | keeping the page straight is itself the exercise |
+
+`latexgen/derive.py` builds trees in that order, so the count is whatever the
+stored tree contains.
+
+### 14.3 Natural deduction — finding the route
+
+The only method where difficulty is about *finding* something. Length is a
+consequence, not a cause, and the student cannot consult it: they do not know
+the proof is fourteen lines until they have found it. A twelve-line straight
+run of `⊃E` is easy; Peirce's Law would be hard at six.
+
+What makes a derivation hard is how much of it is **dictated by the goal**. A
+goal of `A ⊃ B` names its own rule — assume `A`, aim at `B`. A goal of `∼A`
+names `∼I`. What is not named has to be chosen, and choosing is where students
+stop. Count the triggers:
+
+1. **Proof by cases** (`∨E`). The wall. Nothing in the goal says to do it.
+2. **An undictated reductio** — assuming the negation of something that is not
+   itself a negation. `∼I` on a negation goal is dictated; assuming `∼p` in
+   order to reach `p` is the classical step Lecture 10 makes a point of.
+3. **A subproof inside a subproof.** Nesting is where students close the wrong
+   one.
+4. **Four or more subproofs.**
+5. **More than ten derived lines** — lines that are not premises, since the
+   premises are given.
+
+| | |
+| --- | --- |
+| **easy** | **no trigger.** Every rule is named by the goal, or by a premise waiting to be eliminated |
+| **medium** | **one or two** |
+| **hard** | **three or more** |
+
+An invalid form has no `nd` score; write `null`. `build.py` enforces that.
+
+### 14.4 What difficulty is not
+
+- **Not length.** See above.
+- **Not the verdict.** Invalid forms are not harder than valid ones.
+- **Not how interesting the form is.** That is what `interest` is for.
+- **Not `search_sharpness`**, which is `countermodels / rows` on an invalid
+  form, computed alongside. It is shown on the page — *lower is harder* — and
+  it deliberately does not feed the score: how rare a countermodel is changes
+  how carefully you must read a table, not how long the table takes.
+
+---
+
 ## 13. The prose
 
 The blocks are generated; the prose is not, and it is what makes an entry worth

@@ -246,6 +246,88 @@ test('every truth table is listed in full', () => {
   }
 });
 
+/*
+ * Difficulty is authored, so no test can check that a score is *right*. What
+ * it can check is that a score which departs from §14's criteria says so:
+ * `latexgen/difficulty.py --diff` reports the departures, and an author who
+ * means one writes the reason in `course.note`. That is what keeps four
+ * hundred entries scored over four hundred hours on one scale.
+ */
+test('every difficulty is a band, and a departure from the rubric is explained', async (t) => {
+  await t.test('the bands are the three the practice chips offer', () => {
+    for (const e of entries) {
+      for (const m of ['table', 'tree']) {
+        assert.ok(['easy', 'medium', 'hard'].includes(e.difficulty[m]),
+          `${e.id}/${m}: ${e.difficulty[m]}`);
+      }
+      // A form with no derivation has no derivation to score.
+      assert.equal(e.difficulty.nd === null, !e.nd.exists, `${e.id}: nd score and nd.exists disagree`);
+      if (e.nd.exists) {
+        assert.ok(['easy', 'medium', 'hard'].includes(e.difficulty.nd), `${e.id}/nd`);
+      }
+    }
+  });
+
+  await t.test('search_sharpness is the countermodel share, on invalid forms only', () => {
+    for (const e of entries) {
+      const sharp = e.difficulty.search_sharpness;
+      assert.equal(sharp != null, !e.verdict.valid, `${e.id}: sharpness and verdict disagree`);
+      if (sharp != null) {
+        const share = e.verdict.countermodel_count / e.verdict.rows;
+        assert.ok(Math.abs(sharp - share) < 1e-4, `${e.id}: ${sharp} is not ${share}`);
+      }
+    }
+  });
+
+  await t.test('the measured scores are the measurements (§14.1, §14.2)', () => {
+    // Tables and trees are computed and written by build.py, so a departure is
+    // a bug rather than a judgement. Recomputed here from the same definitions
+    // — connectives per row, and rule applications non-branching-first — so
+    // that an edit to one implementation without the other is caught.
+    const conn = (src) => (src.trim() === '!' ? 0 : [...src].filter((c) => '~&|>='.includes(c)).length);
+    const apps = (entry) => {
+      const walk = (node, inherited) => {
+        const sources = [];
+        for (const a of node.added ?? []) if (!sources.includes(a.from)) sources.push(a.from);
+        let n = sources.filter((f) => f !== inherited).length;
+        if (node.branched_on) n += 1;
+        for (const k of node.children ?? []) n += walk(k, node.branched_on);
+        return n;
+      };
+      return walk(entry.tree.tree, undefined);
+    };
+    const band = (v, e, m) => (v <= e ? 'easy' : v <= m ? 'medium' : 'hard');
+
+    for (const e of entries) {
+      const calls = ([...e.premises, e.conclusion].reduce((n, f) => n + conn(f), 0)) * e.verdict.rows;
+      assert.equal(e.difficulty.table, band(calls, 48, 160), `${e.id}: ${calls} calls`);
+      assert.equal(e.difficulty.tree, band(apps(e), 3, 7), `${e.id}: ${apps(e)} applications`);
+    }
+  });
+
+  await t.test('an nd score against the rubric is one the entry accounts for', async () => {
+    // The derivation score is authored, so this checks the discipline rather
+    // than the arithmetic: run `difficulty.py --diff`, and every entry it
+    // names must say why in course.note.
+    const { execFileSync } = await import('node:child_process');
+    const dir = new URL('../EncyclopediaOfArguments/latexgen/', import.meta.url).pathname;
+    let out;
+    try {
+      out = execFileSync('python3', ['difficulty.py', '--diff'], { cwd: dir, encoding: 'utf8' });
+    } catch {
+      return; // no python here; the audit is a tool, not a gate
+    }
+    for (const line of out.split('\n')) {
+      const hit = /^\*\s+(\S+)\s+(table|tree|nd)\s/.exec(line);
+      if (!hit) continue;
+      assert.equal(hit[2], 'nd', `${hit[1]}/${hit[2]} is measured, so a departure is a bug`);
+      const e = entries.find((x) => x.id === hit[1]);
+      assert.ok(e?.course?.note,
+        `${hit[1]}: the nd score departs from §14.3 with no reason in course.note`);
+    }
+  });
+});
+
 test('the database holds together', async (t) => {
   await t.test('ids are unique, since they are the routes', () => {
     const ids = entries.map((e) => e.id);

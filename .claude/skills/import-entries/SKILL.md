@@ -56,13 +56,23 @@ LaTeX blocks. What you must supply:
 - **`english`** — `{gloss, faithful}`. Ordinary English, no symbols. For a bare
   schema like `p⊃q, p ∴ q` there may be nothing to gloss; then omit it rather
   than inventing a story.
-- **`appearances`** — see §4.
-- **`interest`** — see §4.
-- **`tags`**, **`difficulty`** (one of easy/medium/hard per method — a hard
-  table can be an easy derivation), **`course`** (see §5).
-- **The truth table, tree and verdict data.** Compute them; do not transcribe.
-  `latexgen/tables.py` and `trees.py` build the blocks from the structured
-  data, and `build.py` recomputes every value and stops if one disagrees.
+- **`appearances`** — see §5.
+- **`interest`** — see §5.
+- **`tags`** and **`course`** (see §6).
+- **`difficulty.nd`** only — `easy`, `medium` or `hard`, or `null` on an
+  invalid form. Score it against **§14.3 of the style guide**: count the five
+  triggers; none is easy, one or two medium, three or more hard. **The table
+  and tree scores are not yours to write** — `build.py` computes them from
+  truth-functional calls and rule applications (§14.1, §14.2), and computes
+  `search_sharpness` too. Then check yourself:
+
+  ```bash
+  python3 difficulty.py --diff
+  ```
+
+  It should print nothing. If it names your entry's `nd`, either take its
+  suggestion or say in `course.note` why not; the test suite fails otherwise.
+- **The structured data**, from `derive.py` — see §3.
 - **The derivation**, for a valid form: a new entry in `latexgen/proofs.py`,
   written with the entry's final atom names. `nd.check()` verifies it.
 - For an invalid form, **`nd.note`**: where the attempt at a derivation breaks
@@ -167,8 +177,9 @@ If the queue is empty, say so in the log, do nothing else, and stop.
 2. **`course.quarantined` never reaches the site**, and neither does anything
    the inventory marks `EX`.
 3. **Never hand-edit generated fields.** `display.*`, `truth_table.columns`,
-   `truth_table.latex*`, `tree.latex`, `nd.latex` and the `nd` profile are all
-   written by `build.py`.
+   `truth_table.latex*`, `tree.latex`, `nd.latex`, the `nd` profile, and
+   `difficulty.table` / `.tree` / `.search_sharpness` are all written by
+   `build.py`.
 4. **Never edit `main` directly.** Everything goes to the branch.
 5. **A form with no appearance does not belong here** — but the course is an
    appearance, and saying "this is one of our own worked examples" is an
