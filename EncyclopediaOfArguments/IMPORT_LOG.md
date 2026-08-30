@@ -158,3 +158,46 @@ going to keep needing `svg.py`, rather than re-discovering this each time.
 `node --test "_tests/*.test.mjs"` all clean (511/511). Imports queue: 33
 candidates left of 48 (15 now in the database, up from 12 already there
 before this firing — the pre-existing 12 predate this firing's work).
+
+**2026-08-30, second `imports`-source firing.** Course queue still empty, so
+this firing continued down Restall's Chapter 3 bank where the previous one
+left off: `prefixing` (Ex 3.4.11, `p⊃q ⊢ (r⊃p)⊃(r⊃q)`), `material-
+implication-drill` (Ex 3.4.13, `p ⊢ ∼p⊃q`), and `permutation-converse` (Ex
+3.4.18, `p⊃(q⊃r) ⊢ (p⊃q)⊃r`, **invalid** — the first invalid entry this
+inventory has produced). All three verdicts checked against `derive.py` and
+match Restall's own. Appearances cite `Greg Restall, Logic` with the
+exercise locus, `fidelity: our reconstruction`, no `quote` (§11c). `prefixing`
+also carries a second appearance to last year's archive — §2 names the same
+sequent as `OLD-PS3 Q12`, done there by tree and table, so this entry's ND
+derivation is its third method rather than its first outing; no
+`problem_set` was added for either appearance, since neither is this year's
+course.
+
+`material-implication-drill` is a near-duplicate by derivation shape, not by
+formula, of the existing `negative-paradox` (`∼p ⊢ p⊃r`, Lecture 11): the
+same assume-collide-reductio route, with `∼p` doing by assumption what
+`negative-paradox`'s premise hands over directly. `looks_like: negative-
+paradox`, and `interest` says how they differ. `permutation-converse`
+similarly gets `looks_like: permutation`, being the sharp invalid pair
+Restall poses against it (Ex 3.4.8), and its `interest` also flags the
+near-miss against `exportation`'s valid `(p&q)⊃r` reading of the same
+`p⊃(q⊃r)`.
+
+Both new derivations (`prefixing`, `material-implication-drill`) checked
+against `nd.check()` directly before being written into `proofs.py`.
+`permutation-converse`'s `nd.note` and `countermodel_gloss` were checked
+against the stored countermodels (`{p:F,q:T,r:F}` and `{p:F,q:F,r:F}`) —
+both `q` values, `p` and `r` fixed — before being written down, per this
+file's standing caution about superlatives and countermodel claims.
+
+**The sandbox again had no LaTeX toolchain**, this being a fresh container;
+reinstalled the same packages as the first firing's note, and additionally
+needed `texlive-science` for `stmaryrd.sty` — declared in the block preamble
+(§0.1) but not pulled in by any package on the first firing's install list,
+so it went unnoticed until this firing's `svg.py` run hit it. Worth folding
+into that `session-start-hook` suggestion if one gets written.
+
+`build.py --write`, `python3 difficulty.py --diff` (clean), `svg.py`,
+`svg.py --check`, `inventory.py --locks`, and `node --test
+"_tests/*.test.mjs"` all clean (511/511). Imports queue: 30 candidates left
+of 48 (18 now in the database).

@@ -1546,3 +1546,31 @@ PROOFS["resolution"] = [
     _l(13, "p | r", "DisjE", 1, [2], subs=[[6, 10], [11, 12]]),
     _l(14, "p | r", "DisjE", 0, [1], subs=[[3, 4], [5, 13]]),
 ]
+
+# -------------------------------------------------------------- prefixing
+# Same combinator shape as permutation, one level of nesting attaching a
+# fresh antecedent r instead of swapping the two already there.
+PROOFS["prefixing"] = [
+    P(1, "p > q"),
+    _l(2, "r > p", "As", 1),
+    _l(3, "r", "As", 2),
+    _l(4, "p", "CondE", 2, [2, 3]),
+    _l(5, "q", "CondE", 2, [1, 4]),
+    _l(6, "r > q", "CondI", 1, subs=[[3, 5]]),
+    _l(7, "(r > p) > (r > q)", "CondI", 0, subs=[[2, 6]]),
+]
+
+# ---------------------------------------------------- material-implication-drill
+# Identical shape to negative-paradox's own proof, with ~p doing the work
+# negative-paradox's premise does directly: assume the antecedent, assume
+# the reductio's target negated, collide it with the premise pair, and take
+# the double-negation-elimination route back out.
+PROOFS["material-implication-drill"] = [
+    P(1, "p"),
+    _l(2, "~p", "As", 1),
+    _l(3, "~q", "As", 2),
+    _l(4, "!", "FalsumI", 2, [1, 2]),
+    _l(5, "~~q", "NegI", 1, subs=[[3, 4]]),
+    _l(6, "q", "NegE", 1, [5]),
+    _l(7, "~p > q", "CondI", 0, subs=[[2, 6]]),
+]

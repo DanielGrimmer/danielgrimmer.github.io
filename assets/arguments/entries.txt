@@ -91,3 +91,6 @@ associativity-of-biconditional
 permutation
 contraction-detached
 resolution
+prefixing
+material-implication-drill
+permutation-converse
