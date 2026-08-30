@@ -3,13 +3,17 @@
 Hand-authored in the course's twelve-rule system and checked line by line by
 `nd.check()`, which re-derives the profile rather than trusting it.
 
-Two conventions worth stating, because they shorten several proofs:
+Two conventions worth stating, because they decide several proofs' length:
 
-  * **Reiteration is usually unnecessary.** A formula on an outer scope line
-    stays accessible inside a subproof, so it can be cited directly. The
-    handouts sometimes reiterate anyway, for readability. `lecture8-chain`
-    keeps its `\\Reit` because that proof is Lecture 10's own, verbatim, and it
-    is the one students have seen.
+  * **Reiteration is a rule, not decoration**, and §6.4 of the style guide has
+    the policy the instructor settled on 2026-08-30. In short: citing an outer
+    line as a premise of another rule writes no new formula and is always
+    allowed, so reiteration is never needed for *access*. It is *required*
+    where a formula has to appear again in a new **role** -- as the consequent
+    inside a `⊃I`, as a case's conclusion when that case assumed it, and where
+    a `⊥I`'s contradictory pair includes the subproof's own assumption.
+    `nd.check()` enforces all three, and refuses the converse mistake of
+    reiterating merely so an elimination can cite it locally.
   * **There is no explosion rule.** `\\Exp` is retired, so getting an arbitrary
     formula out of a contradiction always costs the full reductio: assume its
     negation, reach ⊥ again, `NegI`, `NegE`. That is what makes `ex-falso`
@@ -361,10 +365,10 @@ PROOFS["hypothetical-syllogism"] = [
 ]
 
 # ---------------------------------------------------------------- contraposition
-# Both directions by reductio, then ≡I crosses them over. Each half needs the
-# outer half's assumption imported unreiterated, per the guide's ruling in
-# 6.4: the contradiction is not with the reductio's own assumption, so citing
-# it directly (rather than bringing it down with \Reit) is the right call.
+# Both directions by reductio, then ≡I crosses them over. Each half cites the
+# outer half's assumption outward rather than reiterating it: §6.4's pair is
+# not the subproof's own assumption here, which is the case the policy leaves
+# optional.
 PROOFS["contraposition"] = [
     _l(1, "p > q", "As", 1),
     _l(2, "~q", "As", 2),
@@ -406,12 +410,14 @@ PROOFS["de-morgan-disjunction"] = [
     _l(13, "~q", "ConjE", 1, [11]),
     _l(14, "p | q", "As", 2),
     _l(15, "p", "As", 3),
-    _l(16, "!", "FalsumI", 3, [15, 12]),
-    _l(17, "q", "As", 3),
-    _l(18, "!", "FalsumI", 3, [17, 13]),
-    _l(19, "!", "DisjE", 2, [14], [[15, 16], [17, 18]]),
-    _l(20, "~(p | q)", "NegI", 1, subs=[[14, 19]]),
-    _l(21, "(~(p | q)) = (~p & ~q)", "BicondI", 0, subs=[[1, 10], [11, 20]]),
+    _l(16, "p", "Reit", 3, [15]),
+    _l(17, "!", "FalsumI", 3, [16, 12]),
+    _l(18, "q", "As", 3),
+    _l(19, "q", "Reit", 3, [18]),
+    _l(20, "!", "FalsumI", 3, [19, 13]),
+    _l(21, "!", "DisjE", 2, [14], subs=[[15, 17], [18, 20]]),
+    _l(22, "~(p | q)", "NegI", 1, subs=[[14, 21]]),
+    _l(23, "(~(p | q)) = (~p & ~q)", "BicondI", 0, subs=[[1, 10], [11, 22]]),
 ]
 
 # --------------------------------------------------------------- De Morgan II
@@ -568,9 +574,10 @@ PROOFS["excluded-middle"] = [
     _l(4, "!", "FalsumI", 2, [3, 1]),
     _l(5, "~p", "NegI", 1, subs=[[2, 4]]),
     _l(6, "p | ~p", "DisjI", 1, [5]),
-    _l(7, "!", "FalsumI", 1, [6, 1]),
-    _l(8, "~~(p | ~p)", "NegI", 0, subs=[[1, 7]]),
-    _l(9, "p | ~p", "NegE", 0, [8]),
+    _l(7, "~(p | ~p)", "Reit", 1, [1]),
+    _l(8, "!", "FalsumI", 1, [6, 7]),
+    _l(9, "~~(p | ~p)", "NegI", 0, subs=[[1, 8]]),
+    _l(10, "p | ~p", "NegE", 0, [9]),
 ]
 
 # ------------------------------------------------------------ non-contradiction
@@ -621,9 +628,10 @@ PROOFS["paradox-disjunction"] = [
     _l(13, "r", "NegE", 2, [12]),
     _l(14, "p > r", "CondI", 1, subs=[[9, 13]]),
     _l(15, "(q > p) | (p > r)", "DisjI", 1, [14]),
-    _l(16, "!", "FalsumI", 1, [15, 1]),
-    _l(17, "~~((q > p) | (p > r))", "NegI", 0, subs=[[1, 16]]),
-    _l(18, "(q > p) | (p > r)", "NegE", 0, [17]),
+    _l(16, "~((q > p) | (p > r))", "Reit", 1, [1]),
+    _l(17, "!", "FalsumI", 1, [15, 16]),
+    _l(18, "~~((q > p) | (p > r))", "NegI", 0, subs=[[1, 17]]),
+    _l(19, "(q > p) | (p > r)", "NegE", 0, [18]),
 ]
 
 # ----------------------------------------------------------------- the monster
@@ -646,9 +654,10 @@ PROOFS["the-monster"] = [
     _l(13, "q", "NegE", 2, [12]),
     _l(14, "p > q", "CondI", 1, subs=[[9, 13]]),
     _l(15, "(p > q) | (q > p)", "DisjI", 1, [14]),
-    _l(16, "!", "FalsumI", 1, [15, 1]),
-    _l(17, "~~((p > q) | (q > p))", "NegI", 0, subs=[[1, 16]]),
-    _l(18, "(p > q) | (q > p)", "NegE", 0, [17]),
+    _l(16, "~((p > q) | (q > p))", "Reit", 1, [1]),
+    _l(17, "!", "FalsumI", 1, [15, 16]),
+    _l(18, "~~((p > q) | (q > p))", "NegI", 0, subs=[[1, 17]]),
+    _l(19, "(p > q) | (q > p)", "NegE", 0, [18]),
 ]
 
 # -------------------------------------------------------------- positive paradox
@@ -791,8 +800,9 @@ PROOFS["self-undermining-conditional"] = [
     P(1, "c > ~c"),
     _l(2, "c", "As", 1),
     _l(3, "~c", "CondE", 1, [1, 2]),
-    _l(4, "!", "FalsumI", 1, [2, 3]),
-    _l(5, "~c", "NegI", 0, subs=[[2, 4]]),
+    _l(4, "c", "Reit", 1, [2]),
+    _l(5, "!", "FalsumI", 1, [4, 3]),
+    _l(6, "~c", "NegI", 0, subs=[[2, 5]]),
 ]
 
 # --------------------------------------------------------- vacuous validity
@@ -809,16 +819,17 @@ PROOFS["vacuous-validity-unsat-premises"] = [
     _l(3, "~q", "As", 1),
     _l(4, "p", "BicondE", 1, [2, 3]),
     _l(5, "q", "BicondE", 1, [1, 4]),
-    _l(6, "!", "FalsumI", 1, [5, 3]),
-    _l(7, "~~q", "NegI", 0, subs=[[3, 6]]),
-    _l(8, "q", "NegE", 0, [7]),
-    _l(9, "p", "BicondE", 0, [1, 8]),
-    _l(10, "~q", "BicondE", 0, [2, 9]),
-    _l(11, "!", "FalsumI", 0, [8, 10]),
-    _l(12, "~r", "As", 1),
-    _l(13, "!", "Reit", 1, [11]),
-    _l(14, "~~r", "NegI", 0, subs=[[12, 13]]),
-    _l(15, "r", "NegE", 0, [14]),
+    _l(6, "~q", "Reit", 1, [3]),
+    _l(7, "!", "FalsumI", 1, [5, 6]),
+    _l(8, "~~q", "NegI", 0, subs=[[3, 7]]),
+    _l(9, "q", "NegE", 0, [8]),
+    _l(10, "p", "BicondE", 0, [1, 9]),
+    _l(11, "~q", "BicondE", 0, [2, 10]),
+    _l(12, "!", "FalsumI", 0, [9, 11]),
+    _l(13, "~r", "As", 1),
+    _l(14, "!", "Reit", 1, [12]),
+    _l(15, "~~r", "NegI", 0, subs=[[13, 14]]),
+    _l(16, "r", "NegE", 0, [15]),
 ]
 
 # ------------------------------------------------------------ importation-instance
@@ -936,7 +947,8 @@ PROOFS["addition"] = [
 # open and close -- the smallest a valid entry's proof can be.
 PROOFS["conditional-identity"] = [
     _l(1, "p", "As", 1),
-    _l(2, "p > p", "CondI", 0, subs=[[1, 1]]),
+    _l(2, "p", "Reit", 1, [1]),
+    _l(3, "p > p", "CondI", 0, subs=[[1, 2]]),
 ]
 
 # --------------------------------------------------------- bicond-elim-to-cond
@@ -970,9 +982,10 @@ PROOFS["disjunction-with-vacuous-conditional"] = [
     _l(10, "q", "NegE", 2, [9]),
     _l(11, "p > q", "CondI", 1, subs=[[6, 10]]),
     _l(12, "p | (p > q)", "DisjI", 1, [11]),
-    _l(13, "!", "FalsumI", 1, [12, 1]),
-    _l(14, "~~(p | (p > q))", "NegI", 0, subs=[[1, 13]]),
-    _l(15, "p | (p > q)", "NegE", 0, [14]),
+    _l(13, "~(p | (p > q))", "Reit", 1, [1]),
+    _l(14, "!", "FalsumI", 1, [12, 13]),
+    _l(15, "~~(p | (p > q))", "NegI", 0, subs=[[1, 14]]),
+    _l(16, "p | (p > q)", "NegE", 0, [15]),
 ]
 
 # ------------------------------------------------- conjunction-with-its-own-negation
@@ -994,10 +1007,11 @@ PROOFS["biconditional-with-its-own-negation"] = [
     P(1, "p = ~p"),
     _l(2, "p", "As", 1),
     _l(3, "~p", "BicondE", 1, [1, 2]),
-    _l(4, "!", "FalsumI", 1, [2, 3]),
-    _l(5, "~p", "NegI", 0, subs=[[2, 4]]),
-    _l(6, "p", "BicondE", 0, [1, 5]),
-    _l(7, "!", "FalsumI", 0, [6, 5]),
+    _l(4, "p", "Reit", 1, [2]),
+    _l(5, "!", "FalsumI", 1, [4, 3]),
+    _l(6, "~p", "NegI", 0, subs=[[2, 5]]),
+    _l(7, "p", "BicondE", 0, [1, 6]),
+    _l(8, "!", "FalsumI", 0, [7, 6]),
 ]
 
 # ------------------------------------------------------- disjunction-as-conditional
@@ -1025,10 +1039,11 @@ PROOFS["disjunction-as-conditional"] = [
     _l(18, "~~p", "NegI", 2, subs=[[14, 17]]),
     _l(19, "p", "NegE", 2, [18]),
     _l(20, "p | q", "DisjI", 2, [19]),
-    _l(21, "!", "FalsumI", 2, [20, 13]),
-    _l(22, "~~(p | q)", "NegI", 1, subs=[[13, 21]]),
-    _l(23, "p | q", "NegE", 1, [22]),
-    _l(24, "(p | q) = (~p > q)", "BicondI", 0, subs=[[1, 11], [12, 23]]),
+    _l(21, "~(p | q)", "Reit", 2, [13]),
+    _l(22, "!", "FalsumI", 2, [20, 21]),
+    _l(23, "~~(p | q)", "NegI", 1, subs=[[13, 22]]),
+    _l(24, "p | q", "NegE", 1, [23]),
+    _l(25, "(p | q) = (~p > q)", "BicondI", 0, subs=[[1, 11], [12, 24]]),
 ]
 
 # ----------------------------------------------------- biconditional-as-agreement
@@ -1053,71 +1068,76 @@ PROOFS["biconditional-as-agreement"] = [
     _l(13, "q", "BicondE", 2, [1, 12]),
     _l(14, "p & q", "ConjI", 2, [12, 13]),
     _l(15, "(p & q) | (~p & ~q)", "DisjI", 2, [14]),
-    _l(16, "!", "FalsumI", 2, [15, 2]),
-    _l(17, "~~((p & q) | (~p & ~q))", "NegI", 1, subs=[[2, 16]]),
-    _l(18, "(p & q) | (~p & ~q)", "NegE", 1, [17]),
-    _l(19, "p & q", "As", 2),
-    _l(20, "~p | ~q", "As", 3),
-    _l(21, "~p", "As", 4),
-    _l(22, "p", "ConjE", 4, [19]),
-    _l(23, "!", "FalsumI", 4, [22, 21]),
-    _l(24, "~q", "As", 4),
-    _l(25, "q", "ConjE", 4, [19]),
-    _l(26, "!", "FalsumI", 4, [25, 24]),
-    _l(27, "!", "DisjE", 3, [20], subs=[[21, 23], [24, 26]]),
-    _l(28, "~(~p | ~q)", "NegI", 2, subs=[[20, 27]]),
-    _l(29, "~(~p | ~q) | ~(p | q)", "DisjI", 2, [28]),
-    _l(30, "~p & ~q", "As", 2),
-    _l(31, "p | q", "As", 3),
-    _l(32, "p", "As", 4),
-    _l(33, "~p", "ConjE", 4, [30]),
-    _l(34, "!", "FalsumI", 4, [32, 33]),
-    _l(35, "q", "As", 4),
-    _l(36, "~q", "ConjE", 4, [30]),
-    _l(37, "!", "FalsumI", 4, [35, 36]),
-    _l(38, "!", "DisjE", 3, [31], subs=[[32, 34], [35, 37]]),
-    _l(39, "~(p | q)", "NegI", 2, subs=[[31, 38]]),
-    _l(40, "~(~p | ~q) | ~(p | q)", "DisjI", 2, [39]),
-    _l(41, "~(~p | ~q) | ~(p | q)", "DisjE", 1, [18], subs=[[19, 29], [30, 40]]),
-    _l(42, "~(~p | ~q) | ~(p | q)", "As", 1),
-    _l(43, "~(~p | ~q)", "As", 2),
-    _l(44, "~p", "As", 3),
-    _l(45, "~p | ~q", "DisjI", 3, [44]),
-    _l(46, "!", "FalsumI", 3, [45, 43]),
-    _l(47, "~~p", "NegI", 2, subs=[[44, 46]]),
-    _l(48, "p", "NegE", 2, [47]),
-    _l(49, "~q", "As", 3),
+    _l(16, "~((p & q) | (~p & ~q))", "Reit", 2, [2]),
+    _l(17, "!", "FalsumI", 2, [15, 16]),
+    _l(18, "~~((p & q) | (~p & ~q))", "NegI", 1, subs=[[2, 17]]),
+    _l(19, "(p & q) | (~p & ~q)", "NegE", 1, [18]),
+    _l(20, "p & q", "As", 2),
+    _l(21, "~p | ~q", "As", 3),
+    _l(22, "~p", "As", 4),
+    _l(23, "p", "ConjE", 4, [20]),
+    _l(24, "~p", "Reit", 4, [22]),
+    _l(25, "!", "FalsumI", 4, [23, 24]),
+    _l(26, "~q", "As", 4),
+    _l(27, "q", "ConjE", 4, [20]),
+    _l(28, "~q", "Reit", 4, [26]),
+    _l(29, "!", "FalsumI", 4, [27, 28]),
+    _l(30, "!", "DisjE", 3, [21], subs=[[22, 25], [26, 29]]),
+    _l(31, "~(~p | ~q)", "NegI", 2, subs=[[21, 30]]),
+    _l(32, "~(~p | ~q) | ~(p | q)", "DisjI", 2, [31]),
+    _l(33, "~p & ~q", "As", 2),
+    _l(34, "p | q", "As", 3),
+    _l(35, "p", "As", 4),
+    _l(36, "~p", "ConjE", 4, [33]),
+    _l(37, "p", "Reit", 4, [35]),
+    _l(38, "!", "FalsumI", 4, [37, 36]),
+    _l(39, "q", "As", 4),
+    _l(40, "~q", "ConjE", 4, [33]),
+    _l(41, "q", "Reit", 4, [39]),
+    _l(42, "!", "FalsumI", 4, [41, 40]),
+    _l(43, "!", "DisjE", 3, [34], subs=[[35, 38], [39, 42]]),
+    _l(44, "~(p | q)", "NegI", 2, subs=[[34, 43]]),
+    _l(45, "~(~p | ~q) | ~(p | q)", "DisjI", 2, [44]),
+    _l(46, "~(~p | ~q) | ~(p | q)", "DisjE", 1, [19], subs=[[20, 32], [33, 45]]),
+    _l(47, "~(~p | ~q) | ~(p | q)", "As", 1),
+    _l(48, "~(~p | ~q)", "As", 2),
+    _l(49, "~p", "As", 3),
     _l(50, "~p | ~q", "DisjI", 3, [49]),
-    _l(51, "!", "FalsumI", 3, [50, 43]),
-    _l(52, "~~q", "NegI", 2, subs=[[49, 51]]),
-    _l(53, "q", "NegE", 2, [52]),
-    _l(54, "p", "As", 3),
-    _l(55, "q", "Reit", 3, [53]),
-    _l(56, "q", "As", 3),
-    _l(57, "p", "Reit", 3, [48]),
-    _l(58, "p = q", "BicondI", 2, subs=[[54, 55], [56, 57]]),
-    _l(59, "~(p | q)", "As", 2),
-    _l(60, "p", "As", 3),
-    _l(61, "p | q", "DisjI", 3, [60]),
-    _l(62, "!", "FalsumI", 3, [61, 59]),
-    _l(63, "~p", "NegI", 2, subs=[[60, 62]]),
-    _l(64, "q", "As", 3),
-    _l(65, "p | q", "DisjI", 3, [64]),
-    _l(66, "!", "FalsumI", 3, [65, 59]),
-    _l(67, "~q", "NegI", 2, subs=[[64, 66]]),
-    _l(68, "p", "As", 3),
-    _l(69, "~q", "As", 4),
-    _l(70, "!", "FalsumI", 4, [68, 63]),
-    _l(71, "~~q", "NegI", 3, subs=[[69, 70]]),
-    _l(72, "q", "NegE", 3, [71]),
-    _l(73, "q", "As", 3),
-    _l(74, "~p", "As", 4),
-    _l(75, "!", "FalsumI", 4, [73, 67]),
-    _l(76, "~~p", "NegI", 3, subs=[[74, 75]]),
-    _l(77, "p", "NegE", 3, [76]),
-    _l(78, "p = q", "BicondI", 2, subs=[[68, 72], [73, 77]]),
-    _l(79, "p = q", "DisjE", 1, [42], subs=[[43, 58], [59, 78]]),
-    _l(80, "(p = q) = (~(~p | ~q) | ~(p | q))", "BicondI", 0, subs=[[1, 41], [42, 79]]),
+    _l(51, "!", "FalsumI", 3, [50, 48]),
+    _l(52, "~~p", "NegI", 2, subs=[[49, 51]]),
+    _l(53, "p", "NegE", 2, [52]),
+    _l(54, "~q", "As", 3),
+    _l(55, "~p | ~q", "DisjI", 3, [54]),
+    _l(56, "!", "FalsumI", 3, [55, 48]),
+    _l(57, "~~q", "NegI", 2, subs=[[54, 56]]),
+    _l(58, "q", "NegE", 2, [57]),
+    _l(59, "p", "As", 3),
+    _l(60, "q", "Reit", 3, [58]),
+    _l(61, "q", "As", 3),
+    _l(62, "p", "Reit", 3, [53]),
+    _l(63, "p = q", "BicondI", 2, subs=[[59, 60], [61, 62]]),
+    _l(64, "~(p | q)", "As", 2),
+    _l(65, "p", "As", 3),
+    _l(66, "p | q", "DisjI", 3, [65]),
+    _l(67, "!", "FalsumI", 3, [66, 64]),
+    _l(68, "~p", "NegI", 2, subs=[[65, 67]]),
+    _l(69, "q", "As", 3),
+    _l(70, "p | q", "DisjI", 3, [69]),
+    _l(71, "!", "FalsumI", 3, [70, 64]),
+    _l(72, "~q", "NegI", 2, subs=[[69, 71]]),
+    _l(73, "p", "As", 3),
+    _l(74, "~q", "As", 4),
+    _l(75, "!", "FalsumI", 4, [73, 68]),
+    _l(76, "~~q", "NegI", 3, subs=[[74, 75]]),
+    _l(77, "q", "NegE", 3, [76]),
+    _l(78, "q", "As", 3),
+    _l(79, "~p", "As", 4),
+    _l(80, "!", "FalsumI", 4, [78, 72]),
+    _l(81, "~~p", "NegI", 3, subs=[[79, 80]]),
+    _l(82, "p", "NegE", 3, [81]),
+    _l(83, "p = q", "BicondI", 2, subs=[[73, 77], [78, 82]]),
+    _l(84, "p = q", "DisjE", 1, [47], subs=[[48, 63], [64, 83]]),
+    _l(85, "(p = q) = (~(~p | ~q) | ~(p | q))", "BicondI", 0, subs=[[1, 46], [47, 84]]),
 ]
 
 # --------------------------------------------------------------- conditional failure
@@ -1131,30 +1151,31 @@ PROOFS["conditional-failure"] = [
     _l(1, "~(p > q)", "As", 1),
     _l(2, "~p", "As", 2),
     _l(3, "p", "As", 3),
-    _l(4, "!", "FalsumI", 3, [3, 2]),
-    _l(5, "~q", "As", 4),
-    _l(6, "!", "Reit", 4, [4]),
-    _l(7, "~~q", "NegI", 3, subs=[[5, 6]]),
-    _l(8, "q", "NegE", 3, [7]),
-    _l(9, "p > q", "CondI", 2, subs=[[3, 8]]),
-    _l(10, "!", "FalsumI", 2, [9, 1]),
-    _l(11, "~~p", "NegI", 1, subs=[[2, 10]]),
-    _l(12, "p", "NegE", 1, [11]),
-    _l(13, "q", "As", 2),
-    _l(14, "p", "As", 3),
-    _l(15, "q", "Reit", 3, [13]),
-    _l(16, "p > q", "CondI", 2, subs=[[14, 15]]),
-    _l(17, "!", "FalsumI", 2, [16, 1]),
-    _l(18, "~q", "NegI", 1, subs=[[13, 17]]),
-    _l(19, "p & ~q", "ConjI", 1, [12, 18]),
-    _l(20, "p & ~q", "As", 1),
-    _l(21, "p > q", "As", 2),
-    _l(22, "p", "ConjE", 2, [20]),
-    _l(23, "~q", "ConjE", 2, [20]),
-    _l(24, "q", "CondE", 2, [21, 22]),
-    _l(25, "!", "FalsumI", 2, [24, 23]),
-    _l(26, "~(p > q)", "NegI", 1, subs=[[21, 25]]),
-    _l(27, "(~(p > q)) = (p & ~q)", "BicondI", 0, subs=[[1, 19], [20, 26]]),
+    _l(4, "p", "Reit", 3, [3]),
+    _l(5, "!", "FalsumI", 3, [4, 2]),
+    _l(6, "~q", "As", 4),
+    _l(7, "!", "Reit", 4, [5]),
+    _l(8, "~~q", "NegI", 3, subs=[[6, 7]]),
+    _l(9, "q", "NegE", 3, [8]),
+    _l(10, "p > q", "CondI", 2, subs=[[3, 9]]),
+    _l(11, "!", "FalsumI", 2, [10, 1]),
+    _l(12, "~~p", "NegI", 1, subs=[[2, 11]]),
+    _l(13, "p", "NegE", 1, [12]),
+    _l(14, "q", "As", 2),
+    _l(15, "p", "As", 3),
+    _l(16, "q", "Reit", 3, [14]),
+    _l(17, "p > q", "CondI", 2, subs=[[15, 16]]),
+    _l(18, "!", "FalsumI", 2, [17, 1]),
+    _l(19, "~q", "NegI", 1, subs=[[14, 18]]),
+    _l(20, "p & ~q", "ConjI", 1, [13, 19]),
+    _l(21, "p & ~q", "As", 1),
+    _l(22, "p > q", "As", 2),
+    _l(23, "p", "ConjE", 2, [21]),
+    _l(24, "~q", "ConjE", 2, [21]),
+    _l(25, "q", "CondE", 2, [22, 23]),
+    _l(26, "!", "FalsumI", 2, [25, 24]),
+    _l(27, "~(p > q)", "NegI", 1, subs=[[22, 26]]),
+    _l(28, "(~(p > q)) = (p & ~q)", "BicondI", 0, subs=[[1, 20], [21, 27]]),
 ]
 
 # ------------------------------------------------------ vacuous antecedent disjunction
@@ -1170,18 +1191,19 @@ PROOFS["vacuous-antecedent-disjunction"] = [
     _l(4, "!", "FalsumI", 2, [3, 1]),
     _l(5, "~p", "NegI", 1, subs=[[2, 4]]),
     _l(6, "p | ~p", "DisjI", 1, [5]),
-    _l(7, "!", "FalsumI", 1, [6, 1]),
-    _l(8, "~~(p | ~p)", "NegI", 0, subs=[[1, 7]]),
-    _l(9, "p | ~p", "NegE", 0, [8]),
-    _l(10, "~p > (p | q)", "As", 1),
-    _l(11, "p", "As", 2),
-    _l(12, "p | q", "DisjI", 2, [11]),
-    _l(13, "~p", "As", 2),
-    _l(14, "p | q", "CondE", 2, [10, 13]),
-    _l(15, "p | q", "DisjE", 1, [9], subs=[[11, 12], [13, 14]]),
-    _l(16, "p | q", "As", 1),
-    _l(17, "~p", "As", 2),
-    _l(18, "p | q", "Reit", 2, [16]),
-    _l(19, "~p > (p | q)", "CondI", 1, subs=[[17, 18]]),
-    _l(20, "(~p > (p | q)) = (p | q)", "BicondI", 0, subs=[[10, 15], [16, 19]]),
+    _l(7, "~(p | ~p)", "Reit", 1, [1]),
+    _l(8, "!", "FalsumI", 1, [6, 7]),
+    _l(9, "~~(p | ~p)", "NegI", 0, subs=[[1, 8]]),
+    _l(10, "p | ~p", "NegE", 0, [9]),
+    _l(11, "~p > (p | q)", "As", 1),
+    _l(12, "p", "As", 2),
+    _l(13, "p | q", "DisjI", 2, [12]),
+    _l(14, "~p", "As", 2),
+    _l(15, "p | q", "CondE", 2, [11, 14]),
+    _l(16, "p | q", "DisjE", 1, [10], subs=[[12, 13], [14, 15]]),
+    _l(17, "p | q", "As", 1),
+    _l(18, "~p", "As", 2),
+    _l(19, "p | q", "Reit", 2, [17]),
+    _l(20, "~p > (p | q)", "CondI", 1, subs=[[18, 19]]),
+    _l(21, "(~p > (p | q)) = (p | q)", "BicondI", 0, subs=[[11, 16], [17, 20]]),
 ]

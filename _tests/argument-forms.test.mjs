@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 
 const db = JSON.parse(readFileSync(new URL('../assets/arguments/argument-db.json', import.meta.url)));
 const entries = db.entries;
+const BANDS = ['easy', 'medium', 'hard', 'extremely hard'];
 
 /*
  * One parser, two alphabets, and the precedence the database itself declares in
@@ -254,17 +255,29 @@ test('every truth table is listed in full', () => {
  * hundred entries scored over four hundred hours on one scale.
  */
 test('every difficulty is a band, and a departure from the rubric is explained', async (t) => {
-  await t.test('the bands are the three the practice chips offer', () => {
+  await t.test('the bands are the four the practice chips offer', () => {
     for (const e of entries) {
       for (const m of ['table', 'tree']) {
-        assert.ok(['easy', 'medium', 'hard'].includes(e.difficulty[m]),
-          `${e.id}/${m}: ${e.difficulty[m]}`);
+        assert.ok(BANDS.includes(e.difficulty[m]), `${e.id}/${m}: ${e.difficulty[m]}`);
       }
       // A form with no derivation has no derivation to score.
       assert.equal(e.difficulty.nd === null, !e.nd.exists, `${e.id}: nd score and nd.exists disagree`);
       if (e.nd.exists) {
-        assert.ok(['easy', 'medium', 'hard'].includes(e.difficulty.nd), `${e.id}/nd`);
+        assert.ok(BANDS.includes(e.difficulty.nd), `${e.id}/nd`);
       }
+    }
+  });
+
+  await t.test('the top band stays rare enough to mean something', () => {
+    // `extremely hard` is a warning label rather than a fourth slice: it says
+    // an item will eat an evening, which stops being information the moment a
+    // dozen entries wear it. Calibrated at two or three per method; if a new
+    // import pushes a method past four, the threshold has drifted and wants
+    // raising rather than the entry excusing.
+    for (const m of ['table', 'tree', 'nd']) {
+      const worn = entries.filter((e) => e.difficulty[m] === 'extremely hard');
+      assert.ok(worn.length >= 1 && worn.length <= 4,
+        `${m}: ${worn.length} entries are extremely hard (${worn.map((e) => e.id).join(', ')})`);
     }
   });
 
@@ -296,12 +309,12 @@ test('every difficulty is a band, and a departure from the rubric is explained',
       };
       return walk(entry.tree.tree, undefined);
     };
-    const band = (v, e, m) => (v <= e ? 'easy' : v <= m ? 'medium' : 'hard');
+    const band = (v, e, m, x) => (v >= x ? 'extremely hard' : v <= e ? 'easy' : v <= m ? 'medium' : 'hard');
 
     for (const e of entries) {
       const calls = ([...e.premises, e.conclusion].reduce((n, f) => n + conn(f), 0)) * e.verdict.rows;
-      assert.equal(e.difficulty.table, band(calls, 48, 160), `${e.id}: ${calls} calls`);
-      assert.equal(e.difficulty.tree, band(apps(e), 3, 7), `${e.id}: ${apps(e)} applications`);
+      assert.equal(e.difficulty.table, band(calls, 48, 160, 256), `${e.id}: ${calls} calls`);
+      assert.equal(e.difficulty.tree, band(apps(e), 3, 7, 16), `${e.id}: ${apps(e)} applications`);
     }
   });
 
@@ -581,7 +594,7 @@ test('the practice page has a well-formed problem set', async (t) => {
 
   await t.test('every offered pair carries a difficulty', () => {
     for (const [id, m, level] of pairs) {
-      assert.ok(['easy', 'medium', 'hard'].includes(level), `${id}/${m}: difficulty is ${level}`);
+      assert.ok(BANDS.includes(level), `${id}/${m}: difficulty is ${level}`);
     }
   });
 

@@ -36,7 +36,10 @@ const METHODS = [
   { key: "tree", label: "Truth trees", verb: "truth tree" },
   { key: "nd", label: "Natural deduction", verb: "natural deduction" },
 ];
-const LEVELS = ["easy", "medium", "hard"];
+// The top band is a warning label rather than a fourth slice: only a handful
+// of entries per method wear it, so a practice set restricted to it is very
+// short by design.
+const LEVELS = ["easy", "medium", "hard", "extremely hard"];
 
 const root = document.getElementById("ae-practice");
 if (root) start();

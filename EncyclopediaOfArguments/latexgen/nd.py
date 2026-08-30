@@ -297,6 +297,57 @@ def check(proof: list[dict], premises: list[str], conclusion: str) -> dict:
             + " — a derived line no later line uses does not belong in the proof"
         )
 
+    # Reiteration, per the course policy settled 2026-08-30. `\Reit` is a rule,
+    # not decoration: a line that copies an accessible formula is a logical
+    # step, and it is *required* wherever a formula has to appear again in a
+    # new logical role. Citing outward is not reiterating -- naming an outer
+    # line as a premise of another rule writes no new formula and is always
+    # allowed -- so the rule is about roles, never about access.
+    opener: dict[tuple, int] = {}
+    for ln in proof:
+        sc = tuple(scope[ln["n"]])
+        if ln["rule"] == "As" and sc not in opener:
+            opener[sc] = ln["n"]
+
+    for ln in proof:
+        # A ⊥I whose contradictory pair includes its own subproof's assumption
+        # asks that one line be both the assumption and half of a
+        # contradiction. Write it again and cite the copy.
+        if ln["rule"] == "FalsumI":
+            own = opener.get(tuple(scope[ln["n"]]))
+            if own is not None and own in (ln.get("cites") or []):
+                raise ProofError(
+                    f"line {ln['n']}: ⊥I cites line {own}, which is this "
+                    f"subproof's own assumption — reiterate it and cite the "
+                    f"reiteration instead"
+                )
+        # A subproof discharged as [a, a] is one line standing as both its
+        # assumption and its conclusion. `⊃I, n, n` is illegal; `A ⊃ A` is
+        # proved by assuming A, reiterating it, then discharging.
+        for a, b in ln.get("subs") or []:
+            if a == b:
+                raise ProofError(
+                    f"line {ln['n']}: {ln['rule']} discharges the one-line "
+                    f"subproof [{a},{a}] — that line cannot be both the "
+                    f"assumption and the conclusion; reiterate it"
+                )
+
+    # The converse: a reiteration written only so that an elimination could
+    # cite it locally. The course does not do this — it cites outward — and
+    # ten such lines were removed from its own materials on 2026-08-30.
+    ELIMINATIONS = {"CondE", "ConjE", "DisjE", "BicondE", "NegE"}
+    closers = {b for ln in proof for a, b in (ln.get("subs") or [])}
+    for ln in proof:
+        if ln["rule"] != "Reit" or ln["n"] in closers:
+            continue
+        citers = [x for x in proof if ln["n"] in (x.get("cites") or [])]
+        if citers and all(c["rule"] in ELIMINATIONS for c in citers):
+            raise ProofError(
+                f"line {ln['n']}: this reiteration exists only so "
+                f"{citers[0]['rule']} could cite it locally — delete it and "
+                f"cite line {(ln.get('cites') or ['?'])[0]} outward instead"
+            )
+
     last = proof[-1]
     if depth[last["n"]] != 0:
         raise ProofError("the proof ends inside a subproof")

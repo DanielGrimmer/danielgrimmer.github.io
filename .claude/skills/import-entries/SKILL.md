@@ -163,9 +163,13 @@ all four LaTeX blocks. What you must supply:
 - **`appearances`** — see §5.
 - **`interest`** — see §5.
 - **`tags`** and **`course`** (see §6).
-- **`difficulty.nd`** only — `easy`, `medium` or `hard`, or `null` on an
-  invalid form. Score it against **§14.3 of the style guide**: count the five
-  triggers; none is easy, one or two medium, three or more hard. **The table
+- **`difficulty.nd`** only — `easy`, `medium`, `hard` or `extremely hard`, or
+  `null` on an invalid form. Score it against **§14.3 of the style guide**:
+  count the five triggers; none is easy, one or two medium, three or more hard.
+  **`extremely hard` needs all five triggers *and* a proof of 29+ lines**, and
+  it is a warning label rather than a fourth band — two or three entries per
+  method wear it, and the test suite fails at five. If your entry would be the
+  fifth, the threshold has drifted: say so rather than scoring around it. **The table
   and tree scores are not yours to write** — `build.py` computes them from
   truth-functional calls and rule applications (§14.1, §14.2), and computes
   `search_sharpness` too. Then check yourself:
@@ -178,8 +182,14 @@ all four LaTeX blocks. What you must supply:
   suggestion or say in `course.note` why not; the test suite fails otherwise.
 - **The structured data**, from `derive.py` — see §3.
 - **The derivation**, for a valid form: a new entry in `latexgen/proofs.py`,
-  written with the entry's final atom names. `nd.check()` verifies it, and it
-  now refuses a proof with a **dead line** — a derived line that nothing later
+  written with the entry's final atom names. **Read §6.4 of the style guide
+  before writing one** — reiteration is a rule, not decoration, and
+  `nd.check()` enforces the policy in both directions: it refuses a proof
+  missing a required reiteration (a `⊥I` citing its own subproof's assumption,
+  a one-line subproof discharged by `⊃I`/`≡I`/`∨E`) and one carrying a
+  forbidden reiteration (written only so an elimination could cite it locally —
+  cite outward instead). `nd.check()` also refuses a proof with a **dead
+  line** — a derived line that nothing later
   cites and no rule discharges (§6.5). The trap is ⊥: there is no explosion
   rule, so reaching a contradiction never gives you a formula on the spot.
   Open a subproof on the negation of what you want and reach ⊥ *inside* it;

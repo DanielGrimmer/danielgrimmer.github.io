@@ -199,11 +199,23 @@ def recolour(svg: str, tag: str) -> str:
     return svg
 
 
-def build(only: str | None = None) -> list[str]:
+def build(only: str | None = None, force: bool = False) -> list[str]:
     db = json.loads(DB.read_text())
     OUT.mkdir(parents=True, exist_ok=True)
     index: dict[str, str] = {}
     written: list[str] = []
+
+    # A block whose digest is unchanged is not recompiled. Two reasons, and the
+    # second is the one that bites: it is far quicker, and dvisvgm does not
+    # emit its glyph `<defs>` in a stable order, so recompiling an untouched
+    # block rewrites the file with the same paths in a different sequence. The
+    # SVGs are committed artifacts, so that churn lands in the diff of every
+    # pull request and buries the blocks that really did change. `--force`
+    # recompiles regardless, for when the preamble or this file changes.
+    try:
+        previous = json.loads((OUT / "index.json").read_text())
+    except (FileNotFoundError, ValueError):
+        previous = {}
 
     with tempfile.TemporaryDirectory() as tmp:
         work = Path(tmp)
@@ -215,9 +227,13 @@ def build(only: str | None = None) -> list[str]:
                 if not block:
                     continue
                 name = f"{entry['id']}-{method}.svg"
+                key = f"{entry['id']}|{method}"
+                stamp = digest(block)
+                index[key] = stamp
+                if not force and previous.get(key) == stamp and (OUT / name).exists():
+                    continue
                 svg = to_svg(block, db, work, f"{entry['id']}-{method}")
                 (OUT / name).write_text(svg)
-                index[f"{entry['id']}|{method}"] = digest(block)
                 written.append(name)
 
     if not only:
@@ -252,6 +268,8 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="recompile every block, not only the changed ones")
     args = ap.parse_args()
 
     if args.check:
@@ -259,9 +277,10 @@ def main() -> None:
         print("\n".join(stale) if stale else "every SVG is current")
         sys.exit(1 if stale else 0)
 
-    written = build(args.only)
+    written = build(args.only, force=args.force)
     total = sum((OUT / n).stat().st_size for n in written)
-    print(f"wrote {len(written)} SVGs, {total / 1024:.0f} KB total, into {OUT}")
+    print(f"wrote {len(written)} SVGs, {total / 1024:.0f} KB total, into {OUT}"
+          if written else "every SVG was already current; nothing recompiled")
 
 
 if __name__ == "__main__":

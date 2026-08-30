@@ -823,45 +823,83 @@ the difference between fitting and not.
   line 8 is `p`, line 7 is `\Neg p` — so the *formula* order governs, not the
   line order.
 
-### 6.4 When to reiterate
+### 6.4 Reiteration
 
-`\Reit` is never *required* — a formula on an outer scope line stays accessible
-inside a subproof and can be cited directly, which is what Lecture 9's
-accessibility rule says. So reiteration is a choice about clarity, and the house
-rule is: **reiterate wherever it makes a line's logical role visible, and not
-merely to bring an outer formula within reach.**
+*Settled with the instructor 2026-08-30. The course's rule is `\Reit`, printed
+**R** and cited `R, n`.*
 
-Two situations meet that test, and both occur in the database.
+**Reiteration is a rule, not decoration.** Every line except a fresh assumption
+needs a justification, and a line that *copies* an accessible formula is a
+logical step whose justification is `R`. So reiteration is **required wherever a
+formula has to appear again in a new logical role**, and optional everywhere
+else.
 
-**1. A subproof whose conclusion is its own assumption.** In a proof by cases,
-if you assume `q` and `q` is what that case has to deliver, write it twice:
+**Citing is not reiterating**, and this is the distinction to get right first,
+because it decides how many lines a proof has. Naming an accessible outer line
+as a premise of another rule — `\FalsumI,4,2` or `\CondE,1,3` from inside a
+subproof — writes no new formula; that line's justification is `⊥I` or `⊃E` and
+no reiteration has occurred. Reaching outward like this is always allowed.
+Writing a *fresh line that copies* an accessible formula is a reiteration and is
+justified `R, n`. Reiteration can never make citable something that was not
+already citable, which is why it is never needed for **access**, only for
+**role**.
+
+**Required, and `nd.check()` refuses a proof without it:**
+
+| Situation | Why it is forced |
+| --- | --- |
+| `⊃I` | the consequent must be produced *inside* the subproof that assumes the antecedent. `⊃I, n, n` is illegal, so `A ⊃ A` is proved by assuming `A`, reiterating it, then discharging |
+| `≡I` | the same shape, in both directions |
+| `∨E` where a case assumption *is* the case's conclusion | assume `q`, reiterate `q`, close the case: the two occurrences are the assumption and the conclusion |
+| `⊥I` where one half of the contradictory pair *is* that subproof's own assumption | the assumption and the half-of-a-contradiction are two roles. Reiterate, and let `⊥I` cite the **reiteration**, not the assumption line |
+
+That last is the one a generator gets wrong, so, written out:
 
 ```latex
 \open
-\hypo{5}{w}
-\have{6}{w\quad \Reit,5}
+\hypo{4}{p}                        % case assumption
+\have{5}{p}\by{\Reit}{4}           % required
+\have{6}{\Falsum}\by{\FalsumI}{5,2}  % cites 5, NOT 4
 \close
 ```
 
-Line 5 is the assumption `\DisjE` licenses; line 6 is what the case concludes.
-They are the same formula doing two different jobs, and a one-line subproof
-would have a single line playing both. `distributed-knowledge-repaired` has two
-of these.
+**Optional, and the course does it anyway.** Drawing a contradiction together
+before `⊥I` when *neither* half is the subproof's assumption. Not required, but
+it reads as the contradiction happening under that assumption's watch, which is
+what earns it the blame when `∼I` discharges it — and it matches the English
+commentary beside each proof in the handouts. `peirce-law` line 5 and
+`distributed-knowledge-repaired` line 10 leave such a pair citing outward, and
+that is equally correct. **Rule of thumb: where the prose would say "But
+recall…", the proof reiterates.**
 
-**2. A reductio that contradicts its own assumption.** When the ⊥ comes from the
-subproof's assumption together with something just derived, bring the assumption
-back down immediately before `\FalsumI`, so both halves of the contradiction
-stand together at the point of use. This is what Lecture 10's Kant proof does at
-line 8 — assume `p`, derive `∼p`, reiterate `p`, `⊥`. `peirce-law` and
-`russell-schema` take the same shape.
+**Optional, and the course does *not* do it.** Pulling a premise into a subproof
+so that an *elimination* can apply locally:
 
-**What does not meet the test.** Reiterating an outer premise simply because it
-is several scopes up. That is locality, not role, and Lecture 9 teaches the
-accessibility rule precisely so a student can read such a citation. Two proofs
-have a ⊥ whose pair is imported entirely from shallower scopes — `peirce-law`
-line 5 and `distributed-knowledge-repaired` line 10 — and those are left citing
-directly. It is a judgement call and could go the other way; if you want the
-contradiction visible inside every subderivation, say so and both change.
+```latex
+\hypo{1}{p\Cond q}
+\open
+\hypo{2}{p}
+\have{3}{p\Cond q}\by{\Reit}{1}    % don't
+\have{4}{q}\by{\CondE}{3,2}
+```
+
+Write `\CondE,1,2` and drop line 3. Ten such lines were removed from the
+course's own materials on 2026-08-30. The only exception there is two very long
+proofs — the Drinker's Paradox and 1+1=2 — where keeping the working material
+local is worth the line; a practice problem is never that long, so **cite
+outward, always**. `nd.check()` refuses a reiteration whose only citers are
+eliminations.
+
+**The self-check `nd.check()` runs**, and which every authored proof must pass:
+
+1. Does any `⊥I` cite a line that is the assumption of the subproof it sits in?
+   → insert a reiteration and cite that instead.
+2. Does any `⊃I` / `≡I` / `∨E` case discharge a one-line subproof? → it needs a
+   reiteration to close on.
+3. Does any reiteration exist only so an elimination could cite it locally? →
+   delete it and cite outward.
+4. Does every non-assumption line carry a justification? → a line that copies an
+   earlier formula is justified `R`.
 
 ### 6.5 The classical reductio pattern
 
@@ -1360,9 +1398,10 @@ entry 30.
 
 ## 14. Difficulty
 
-Three scores per entry, one per method, each `easy`, `medium` or `hard`. They
-are what the practice page's chips filter on, so they are the only thing
-between a student who asked for a hard tree and a trivial one.
+Three scores per entry, one per method, each `easy`, `medium`, `hard` or
+`extremely hard`. They are what the practice page's chips filter on, so they
+are the only thing between a student who asked for a hard tree and a trivial
+one.
 
 **Two of the three are measured, and one is judged.** Tables and trees have no
 insight step: you know what to do from the first row, or from the first
@@ -1376,15 +1415,38 @@ For a table or a tree that can only mean a bug. For a derivation it means an
 author overrode the suggestion, which is allowed — with the reason in
 `course.note`, and the test suite checks that it is there.
 
+### 14.-0.5 `extremely hard` is a warning label, not a fourth band
+
+The first three sort the work a student is expected to do. The fourth says
+something different: *this one will eat an evening*. It is calibrated so that
+only **two or three entries per method** ever wear it, because that is what
+makes it informative — a label a dozen entries carry has stopped warning
+anyone of anything.
+
+| Method | Threshold | Wearing it |
+| --- | --- | --- |
+| table | 256 truth-functional calls | the two Dutch-book lecture forms, at 320 and 384 |
+| tree | 16 rule applications | `finite-choice-2x2` at 22, `biconditional-as-agreement` at 16 |
+| nd | all five triggers **and** 29+ lines | `biconditional-as-agreement` at 85 lines, `material-conditional` and `de-morgan-conjunction` at 29 |
+
+The derivation's top band needs the two signals together because neither is
+enough alone: five triggers say the route is hard to find, and length says the
+finding is not the only difficulty. `ND_EXTREME_LINES` is the constant.
+
+**If a method's top band passes four entries, raise the threshold** — do not
+excuse the entries. The test suite fails at five, which is the reminder. This
+is the one boundary that is *not* governed by the numerical-balance rule
+below: it is meant to be lopsided.
+
 ### 14.-1 The boundaries are provisional
 
-The four thresholds below (48 and 160 calls; 3 and 7 applications) were set
-against thirty-five entries, which is not enough to place a boundary. They are
-four constants at the top of `difficulty.py` and moving one is a one-line
-change followed by `build.py --write`; nothing else in the codebase knows them.
+The thresholds below (48/160/256 calls; 3/7/16 applications) were set against
+thirty-five entries, which is not enough to place a boundary. They are
+constants at the top of `difficulty.py` and moving one is a one-line change
+followed by `build.py --write`; nothing else in the codebase knows them.
 
-**The rule for moving them, once the database is populated, is numerical
-balance.** A scale whose middle band holds four fifths of the entries is not
+**The rule for moving the lower three, once the database is populated, is
+numerical balance** (the top one is governed by §14.-0.5 instead). A scale whose middle band holds four fifths of the entries is not
 telling a student anything, and neither is a `hard` chip that draws from three
 problems. `difficulty.py --balance` prints the current distribution beside the
 thresholds that would divide the entries into three roughly equal parts, for
