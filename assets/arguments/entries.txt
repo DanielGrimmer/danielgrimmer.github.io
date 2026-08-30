@@ -38,3 +38,6 @@ modus-tollens
 denying-the-antecedent
 hypothetical-syllogism
 contraposition
+de-morgan-disjunction
+de-morgan-conjunction
+material-conditional

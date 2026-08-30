@@ -383,3 +383,109 @@ PROOFS["contraposition"] = [
     _l(15, "p > q", "CondI", 1, subs=[[9, 14]]),
     _l(16, "(p > q) = (~q > ~p)", "BicondI", 0, subs=[[1, 7], [8, 15]]),
 ]
+
+# ---------------------------------------------------------------- De Morgan I
+# -> direction: two dictated reductios (assume the disjunct, collide with the
+# outer negated disjunction, cited directly since it is still accessible).
+# <- direction: the disjunction is assumed outright (also dictated -- that is
+# what \NegI asks for on a negation goal) and eliminated by cases, each case
+# colliding with one conjunct of the outer premise.
+PROOFS["de-morgan-disjunction"] = [
+    _l(1, "~(p | q)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p | q", "DisjI", 2, [2]),
+    _l(4, "!", "FalsumI", 2, [3, 1]),
+    _l(5, "~p", "NegI", 1, subs=[[2, 4]]),
+    _l(6, "q", "As", 2),
+    _l(7, "p | q", "DisjI", 2, [6]),
+    _l(8, "!", "FalsumI", 2, [7, 1]),
+    _l(9, "~q", "NegI", 1, subs=[[6, 8]]),
+    _l(10, "~p & ~q", "ConjI", 1, [5, 9]),
+    _l(11, "~p & ~q", "As", 1),
+    _l(12, "~p", "ConjE", 1, [11]),
+    _l(13, "~q", "ConjE", 1, [11]),
+    _l(14, "p | q", "As", 2),
+    _l(15, "p", "As", 3),
+    _l(16, "!", "FalsumI", 3, [15, 12]),
+    _l(17, "q", "As", 3),
+    _l(18, "!", "FalsumI", 3, [17, 13]),
+    _l(19, "!", "DisjE", 2, [14], [[15, 16], [17, 18]]),
+    _l(20, "~(p | q)", "NegI", 1, subs=[[14, 19]]),
+    _l(21, "(~(p | q)) = (~p & ~q)", "BicondI", 0, subs=[[1, 10], [11, 20]]),
+]
+
+# --------------------------------------------------------------- De Morgan II
+# -> direction is the one that needs the indirect route: assume the negation
+# of the goal disjunction, prise `p` and `q` back out of the double negations
+# that forces, then collide the two with the premise. <- direction is the
+# routine half: eliminate the disjunction by cases, one reductio per case.
+PROOFS["de-morgan-conjunction"] = [
+    _l(1, "~(p & q)", "As", 1),
+    _l(2, "~(~p | ~q)", "As", 2),
+    _l(3, "~p", "As", 3),
+    _l(4, "~p | ~q", "DisjI", 3, [3]),
+    _l(5, "!", "FalsumI", 3, [4, 2]),
+    _l(6, "~~p", "NegI", 2, subs=[[3, 5]]),
+    _l(7, "p", "NegE", 2, [6]),
+    _l(8, "~q", "As", 3),
+    _l(9, "~p | ~q", "DisjI", 3, [8]),
+    _l(10, "!", "FalsumI", 3, [9, 2]),
+    _l(11, "~~q", "NegI", 2, subs=[[8, 10]]),
+    _l(12, "q", "NegE", 2, [11]),
+    _l(13, "p & q", "ConjI", 2, [7, 12]),
+    _l(14, "!", "FalsumI", 2, [13, 1]),
+    _l(15, "~~(~p | ~q)", "NegI", 1, subs=[[2, 14]]),
+    _l(16, "~p | ~q", "NegE", 1, [15]),
+    _l(17, "~p | ~q", "As", 1),
+    _l(18, "~p", "As", 2),
+    _l(19, "p & q", "As", 3),
+    _l(20, "p", "ConjE", 3, [19]),
+    _l(21, "!", "FalsumI", 3, [20, 18]),
+    _l(22, "~(p & q)", "NegI", 2, subs=[[19, 21]]),
+    _l(23, "~q", "As", 2),
+    _l(24, "p & q", "As", 3),
+    _l(25, "q", "ConjE", 3, [24]),
+    _l(26, "!", "FalsumI", 3, [25, 23]),
+    _l(27, "~(p & q)", "NegI", 2, subs=[[24, 26]]),
+    _l(28, "~(p & q)", "DisjE", 1, [17], [[18, 22], [23, 27]]),
+    _l(29, "(~(p & q)) = (~p | ~q)", "BicondI", 0, subs=[[1, 16], [17, 28]]),
+]
+
+# --------------------------------------------------------- material conditional
+# -> direction is indirect for the same reason as De Morgan II's hard half:
+# `~p | q` names no rule to aim at, so its negation is assumed instead.
+# <- direction eliminates the disjunction by cases; the second case needs a
+# \Reit because \CondI's consequent must be derived inside the p-subproof, not
+# merely accessible from it.
+PROOFS["material-conditional"] = [
+    _l(1, "p > q", "As", 1),
+    _l(2, "~(~p | q)", "As", 2),
+    _l(3, "~p", "As", 3),
+    _l(4, "~p | q", "DisjI", 3, [3]),
+    _l(5, "!", "FalsumI", 3, [4, 2]),
+    _l(6, "~~p", "NegI", 2, subs=[[3, 5]]),
+    _l(7, "p", "NegE", 2, [6]),
+    _l(8, "q", "As", 3),
+    _l(9, "~p | q", "DisjI", 3, [8]),
+    _l(10, "!", "FalsumI", 3, [9, 2]),
+    _l(11, "~q", "NegI", 2, subs=[[8, 10]]),
+    _l(12, "q", "CondE", 2, [1, 7]),
+    _l(13, "!", "FalsumI", 2, [12, 11]),
+    _l(14, "~~(~p | q)", "NegI", 1, subs=[[2, 13]]),
+    _l(15, "~p | q", "NegE", 1, [14]),
+    _l(16, "~p | q", "As", 1),
+    _l(17, "~p", "As", 2),
+    _l(18, "p", "As", 3),
+    _l(19, "!", "FalsumI", 3, [18, 17]),
+    _l(20, "~q", "As", 4),
+    _l(21, "!", "FalsumI", 4, [18, 17]),
+    _l(22, "~~q", "NegI", 3, subs=[[20, 21]]),
+    _l(23, "q", "NegE", 3, [22]),
+    _l(24, "p > q", "CondI", 2, subs=[[18, 23]]),
+    _l(25, "q", "As", 2),
+    _l(26, "p", "As", 3),
+    _l(27, "q", "Reit", 3, [25]),
+    _l(28, "p > q", "CondI", 2, subs=[[26, 27]]),
+    _l(29, "p > q", "DisjE", 1, [16], [[17, 24], [25, 28]]),
+    _l(30, "(p > q) = (~p | q)", "BicondI", 0, subs=[[1, 15], [16, 29]]),
+]
