@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 58,
+ "count": 76,
  "entries": [
   {
    "id": "ex-falso",
@@ -38361,6 +38361,680 @@
     "tree": "easy",
     "search_sharpness": 0.25,
     "nd": null
+   }
+  },
+  {
+   "premises": [],
+   "conclusion": "p > (p | q)",
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p ⊃ (p ∨ q)"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $p\\Cond (p\\Disj q)$ \\\\\n        \\hline\n        T & T & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}$ \\\\\n        T & F & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & T & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & F & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{p}\\uv{\\Cond}{M}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $p\\Cond (p\\Disj q)$ \\\\\n        \\hline\n        T & T & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{p}\\uv{\\Cond}{M}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼(p ⊃ (p ∨ q))"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "p",
+       "from": "∼(p ⊃ (p ∨ q))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼(p ∨ q)",
+       "from": "∼(p ⊃ (p ∨ q))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼p",
+       "from": "∼(p ∨ q)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "∼q",
+       "from": "∼(p ∨ q)",
+       "rule": "∼∨"
+      }
+     ],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (p\\Cond (p\\Disj q))$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ \\ckpad $\\Neg (p\\Disj q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg q$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "conditional",
+     "disjunction"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 5,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 0,
+    "countermodel_count": 0,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "id": "addition",
+   "cli_ref": "—",
+   "names": [
+    "Addition",
+    "Disjunctive addition"
+   ],
+   "interest": "The shortest ⊃I over a ∨I the database has: assume `p`, disjoin in `q` for free, discharge -- three lines, one of each rule plus the assumption. Lecture 4 tables it and Lecture 6 trees it as a two-atom tautology, but the derivation was never worked in the handouts, which is a small gap given how little there is to find. A natural first exercise for a student who has just met `∨I` and `⊃I` and wants to see them compose immediately, with nothing to choose along the way.",
+   "english": [
+    {
+     "gloss": "If p, then either p or q.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 4 Handout",
+     "locus": "L4§1 (table); L6§5 (tree)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "proof theory"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [
+     "Lecture 4",
+     "Lecture 6"
+    ],
+    "problem_set": {},
+    "quarantined": false,
+    "note": null,
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 9,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p | q",
+      "rule": "DisjI",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 3,
+      "f": "p > (p | q)",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\have{2}{p\\Disj q}\\by{\\DisjI}{1}\n\\close\n\\have{3}{p\\Cond (p\\Disj q)}\\by{\\CondI}{1,2}\n\\end{nd}\n\\end{align*}",
+    "lines": 3,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "CondI",
+     "DisjI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "p ⊃ (p ∨ q)",
+    "sequent": "⊨ p ⊃ (p ∨ q)"
+   }
+  },
+  {
+   "premises": [],
+   "conclusion": "p > p",
+   "truth_table": {
+    "atoms": [
+     "p"
+    ],
+    "columns": [
+     "p ⊃ p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $p\\Cond p$ \\\\\n        \\hline\n        T & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        F & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $\\phantom{p}\\uv{\\Cond}{M}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $p\\Cond p$ \\\\\n        \\hline\n        T & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        F & $\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $\\phantom{p}\\uv{\\Cond}{M}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 2,
+    "premise_true_rows": 2,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼(p ⊃ p)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "p",
+       "from": "∼(p ⊃ p)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼p",
+       "from": "∼(p ⊃ p)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (p\\Cond p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 1,
+    "premise_count": 0,
+    "connectives": [
+     "conditional"
+    ],
+    "max_formula_depth": 1,
+    "total_formula_size": 3,
+    "table_rows": 2,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 0,
+    "countermodel_count": 0,
+    "premise_true_rows": 2,
+    "idle_premises": []
+   },
+   "id": "conditional-identity",
+   "cli_ref": "—",
+   "names": [
+    "Conditional identity",
+    "Self-implication"
+   ],
+   "interest": "Lecture 3 reaches for `p ⊃ p` before the table or the tree exist to check it, as a constraint any truth-functional reading of `⊃` has to satisfy: whichever connective the conditional turns out to be, this had better come out true. It becomes an ordinary tautology once Lecture 4 tables it, and the midterm practice set's bonus derivation is the shortest a valid entry's proof can be -- the assumption already is the conclusion, so `⊃I` discharges with nothing in between.",
+   "english": [
+    {
+     "gloss": "If p, then p.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 3 Handout",
+     "locus": "used as a constraint on the truth-functional reading of ⊃, before the table method exists to check it",
+     "url": null
+    },
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Midterm Practice Problems",
+     "locus": "P1.3a (tree; bonus ND)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "conditionals"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [
+     "Lecture 3"
+    ],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "P1.3a is midterm practice, not a problem-set question, so nothing here is withheld from the practice page.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 9,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p > p",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        1
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\close\n\\have{2}{p\\Cond p}\\by{\\CondI}{1,1}\n\\end{nd}\n\\end{align*}",
+    "lines": 2,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "CondI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "p ⊃ p",
+    "sequent": "⊨ p ⊃ p"
+   }
+  },
+  {
+   "premises": [],
+   "conclusion": "(p = q) > (p > q)",
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "(p ≡ q) ⊃ (p ⊃ q)"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $(p\\Bicond q)\\Cond (p\\Cond q)$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{p}\\uv{\\Bicond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        T & F & $\\phantom{(}\\phantom{p}\\uv{\\Bicond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}$ \\\\\n        F & T & $\\phantom{(}\\phantom{p}\\uv{\\Bicond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & F & $\\phantom{(}\\phantom{p}\\uv{\\Bicond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Bicond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $(p\\Bicond q)\\Cond (p\\Cond q)$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{p}\\uv{\\Bicond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & $\\phantom{(}\\phantom{p}\\uv{\\Bicond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Bicond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼((p ≡ q) ⊃ (p ⊃ q))"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "p ≡ q",
+       "from": "∼((p ≡ q) ⊃ (p ⊃ q))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼(p ⊃ q)",
+       "from": "∼((p ≡ q) ⊃ (p ⊃ q))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "p",
+       "from": "∼(p ⊃ q)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼q",
+       "from": "∼(p ⊃ q)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "p",
+         "from": "p ≡ q",
+         "rule": "≡"
+        },
+        {
+         "formula": "q",
+         "from": "p ≡ q",
+         "rule": "≡"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "p ≡ q",
+         "rule": "≡"
+        },
+        {
+         "formula": "∼q",
+         "from": "p ≡ q",
+         "rule": "≡"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ≡ q",
+     "branch_rule": "≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((p\\Bicond q)\\Cond (p\\Cond q))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p\\Bicond q$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p\\Cond q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg q$} [.{$p$ \\\\ $q$ \\\\ x} ] [.{$\\Neg p$ \\\\ $\\Neg q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "biconditional",
+     "conditional"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 7,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 2,
+    "tree_branch_depth": 1,
+    "countermodel_count": 0,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "id": "bicond-elim-to-cond",
+   "cli_ref": "—",
+   "names": [
+    "Biconditional elimination as a theorem",
+    "≡ implies ⊃"
+   ],
+   "interest": "One direction of `≡E` restated as a standing theorem rather than a rule applied to a premise: whatever `p` and `q` are, if they agree in truth value then `p` alone is enough to get `q`. The proof nests one `⊃I` inside another -- assume the biconditional, then assume `p`, cross over with `≡E`, discharge twice -- the one place in an otherwise rule-dictated route where a student has to keep track of which subproof they are meant to be closing.",
+   "english": [
+    {
+     "gloss": "If p and q have the same truth value, then p implies q.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Midterm Practice Problems",
+     "locus": "P1.2b (ND)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "conditionals"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": null,
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 9,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p = q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "q",
+      "rule": "BicondE",
+      "depth": 2,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        3
+       ]
+      ]
+     },
+     {
+      "n": 5,
+      "f": "(p = q) > (p > q)",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond q}\n\\open\n\\hypo{2}{p}\n\\have{3}{q}\\by{\\BicondE}{1,2}\n\\close\n\\have{4}{p\\Cond q}\\by{\\CondI}{2,3}\n\\close\n\\have{5}{(p\\Bicond q)\\Cond (p\\Cond q)}\\by{\\CondI}{1,4}\n\\end{nd}\n\\end{align*}",
+    "lines": 5,
+    "max_subproof_depth": 2,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "BicondE",
+     "CondI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "(p ≡ q) ⊃ (p ⊃ q)",
+    "sequent": "⊨ (p ≡ q) ⊃ (p ⊃ q)"
    }
   }
  ],

@@ -921,3 +921,32 @@ PROOFS["classical-reductio-chain"] = [
     _l(11, "q > r", "CondE", 0, [1, 4]),
     _l(12, "r", "CondE", 0, [11, 10]),
 ]
+
+# -------------------------------------------------------------------- addition
+# The shortest ⊃I over a ∨I in the database: assume p, disjoin in q for free,
+# discharge. No reductio, no second premise -- one line each way.
+PROOFS["addition"] = [
+    _l(1, "p", "As", 1),
+    _l(2, "p | q", "DisjI", 1, [1]),
+    _l(3, "p > (p | q)", "CondI", 0, subs=[[1, 2]]),
+]
+
+# ------------------------------------------------------------- conditional-identity
+# The assumption already is the conclusion, so ⊃I fires with nothing between
+# open and close -- the smallest a valid entry's proof can be.
+PROOFS["conditional-identity"] = [
+    _l(1, "p", "As", 1),
+    _l(2, "p > p", "CondI", 0, subs=[[1, 1]]),
+]
+
+# --------------------------------------------------------- bicond-elim-to-cond
+# Assume the biconditional (for the outer ⊃I), then p (for the inner ⊃I), and
+# ≡E crosses straight from p to q -- one subproof nested inside the other, the
+# only choice this proof has to make.
+PROOFS["bicond-elim-to-cond"] = [
+    _l(1, "p = q", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "q", "BicondE", 2, [1, 2]),
+    _l(4, "p > q", "CondI", 1, subs=[[2, 3]]),
+    _l(5, "(p = q) > (p > q)", "CondI", 0, subs=[[1, 4]]),
+]
