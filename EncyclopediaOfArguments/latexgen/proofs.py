@@ -488,3 +488,87 @@ PROOFS["material-conditional"] = [
     _l(28, "p > q", "DisjE", 1, [16], [[17, 23], [24, 27]]),
     _l(29, "(p > q) = (~p | q)", "BicondI", 0, subs=[[1, 15], [16, 28]]),
 ]
+
+# ------------------------------------------------------ distribution, in full
+# The one-directional `distribution` proof is lines 1-10 of the -> half here,
+# verbatim; the <- half is its mirror, and BicondI joins them without needing
+# an intermediate CondI on either side (matching the two De Morgan proofs
+# above).
+PROOFS["distribution-conjunction"] = [
+    _l(1, "p & (q | r)", "As", 1),
+    _l(2, "p", "ConjE", 1, [1]),
+    _l(3, "q | r", "ConjE", 1, [1]),
+    _l(4, "q", "As", 2),
+    _l(5, "p & q", "ConjI", 2, [2, 4]),
+    _l(6, "(p & q) | (p & r)", "DisjI", 2, [5]),
+    _l(7, "r", "As", 2),
+    _l(8, "p & r", "ConjI", 2, [2, 7]),
+    _l(9, "(p & q) | (p & r)", "DisjI", 2, [8]),
+    _l(10, "(p & q) | (p & r)", "DisjE", 1, [3], [[4, 6], [7, 9]]),
+    _l(11, "(p & q) | (p & r)", "As", 1),
+    _l(12, "p & q", "As", 2),
+    _l(13, "p", "ConjE", 2, [12]),
+    _l(14, "q", "ConjE", 2, [12]),
+    _l(15, "q | r", "DisjI", 2, [14]),
+    _l(16, "p & (q | r)", "ConjI", 2, [13, 15]),
+    _l(17, "p & r", "As", 2),
+    _l(18, "p", "ConjE", 2, [17]),
+    _l(19, "r", "ConjE", 2, [17]),
+    _l(20, "q | r", "DisjI", 2, [19]),
+    _l(21, "p & (q | r)", "ConjI", 2, [18, 20]),
+    _l(22, "p & (q | r)", "DisjE", 1, [11], [[12, 16], [17, 21]]),
+    _l(23, "(p & (q | r)) = ((p & q) | (p & r))", "BicondI", 0,
+       subs=[[1, 10], [11, 22]]),
+]
+
+# -------------------------------------------------------- distribution, dual
+# -> direction is the routine half: one case split on the premise. <- is the
+# one that costs something -- `p | q` alone does not name a disjunct, and the
+# `q` case needs a second, nested case split on `p | r` before `q & r` can be
+# assembled, three subproofs deep before the derivation closes.
+PROOFS["distribution-disjunction"] = [
+    _l(1, "p | (q & r)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p | q", "DisjI", 2, [2]),
+    _l(4, "p | r", "DisjI", 2, [2]),
+    _l(5, "(p | q) & (p | r)", "ConjI", 2, [3, 4]),
+    _l(6, "q & r", "As", 2),
+    _l(7, "q", "ConjE", 2, [6]),
+    _l(8, "r", "ConjE", 2, [6]),
+    _l(9, "p | q", "DisjI", 2, [7]),
+    _l(10, "p | r", "DisjI", 2, [8]),
+    _l(11, "(p | q) & (p | r)", "ConjI", 2, [9, 10]),
+    _l(12, "(p | q) & (p | r)", "DisjE", 1, [1], [[2, 5], [6, 11]]),
+    _l(13, "(p | q) & (p | r)", "As", 1),
+    _l(14, "p | q", "ConjE", 1, [13]),
+    _l(15, "p | r", "ConjE", 1, [13]),
+    _l(16, "p", "As", 2),
+    _l(17, "p | (q & r)", "DisjI", 2, [16]),
+    _l(18, "q", "As", 2),
+    _l(19, "p", "As", 3),
+    _l(20, "p | (q & r)", "DisjI", 3, [19]),
+    _l(21, "r", "As", 3),
+    _l(22, "q & r", "ConjI", 3, [18, 21]),
+    _l(23, "p | (q & r)", "DisjI", 3, [22]),
+    _l(24, "p | (q & r)", "DisjE", 2, [15], [[19, 20], [21, 23]]),
+    _l(25, "p | (q & r)", "DisjE", 1, [14], [[16, 17], [18, 24]]),
+    _l(26, "(p | (q & r)) = ((p | q) & (p | r))", "BicondI", 0,
+       subs=[[1, 12], [13, 25]]),
+]
+
+# ---------------------------------------------------------- excluded middle
+# The goal names no rule -- `p | ~p` is neither a conditional nor a negation
+# -- so the reductio's own assumption, `~(p | ~p)`, is chosen rather than
+# read off the connective. Two nested reductios, the inner one dictated
+# (the goal `~p` names `NegI`), the outer one not.
+PROOFS["excluded-middle"] = [
+    _l(1, "~(p | ~p)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p | ~p", "DisjI", 2, [2]),
+    _l(4, "!", "FalsumI", 2, [3, 1]),
+    _l(5, "~p", "NegI", 1, subs=[[2, 4]]),
+    _l(6, "p | ~p", "DisjI", 1, [5]),
+    _l(7, "!", "FalsumI", 1, [6, 1]),
+    _l(8, "~~(p | ~p)", "NegI", 0, subs=[[1, 7]]),
+    _l(9, "p | ~p", "NegE", 0, [8]),
+]

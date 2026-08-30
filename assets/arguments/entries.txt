@@ -41,3 +41,6 @@ contraposition
 de-morgan-disjunction
 de-morgan-conjunction
 material-conditional
+distribution-conjunction
+distribution-disjunction
+excluded-middle

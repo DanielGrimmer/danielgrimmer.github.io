@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 43,
+ "count": 46,
  "entries": [
   {
    "id": "ex-falso",
@@ -26104,6 +26104,1734 @@
     "premises": [],
     "conclusion": "(p ⊃ q) ≡ (∼p ∨ q)",
     "sequent": "⊨ (p ⊃ q) ≡ (∼p ∨ q)"
+   }
+  },
+  {
+   "premises": [],
+   "conclusion": "(p & (q | r)) = ((p & q) | (p & r))",
+   "verdict": {
+    "valid": true,
+    "rows": 8,
+    "premise_true_rows": 8,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q",
+     "r"
+    ],
+    "columns": [
+     "(p & (q ∨ r)) ≡ ((p & q) ∨ (p & r))"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $p$ & $q$ & $r$ & $(p\\Conj (q\\Disj r))\\Bicond ((p\\Conj q)\\Disj (p\\Conj r))$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{q}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{q}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{(}\\phantom{q}\\uv{\\Disj}{.}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{q}\\phantom{)}\\uv{\\Disj}{.}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $p$ & $q$ & $r$ & $(p\\Conj (q\\Disj r))\\Bicond ((p\\Conj q)\\Disj (p\\Conj r))$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{(}\\phantom{q}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{q}\\phantom{)}\\uv{\\Disj}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{(}\\phantom{q}\\uv{\\Disj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{q}\\phantom{)}\\uv{\\Disj}{F}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{(}\\phantom{q}\\uv{\\Disj}{.}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{q}\\phantom{)}\\uv{\\Disj}{.}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼((p & (q ∨ r)) ≡ ((p & q) ∨ (p & r)))"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "p & (q ∨ r)",
+         "from": "∼((p & (q ∨ r)) ≡ ((p & q) ∨ (p & r)))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "∼((p & q) ∨ (p & r))",
+         "from": "∼((p & (q ∨ r)) ≡ ((p & q) ∨ (p & r)))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "p",
+         "from": "p & (q ∨ r)",
+         "rule": "&"
+        },
+        {
+         "formula": "q ∨ r",
+         "from": "p & (q ∨ r)",
+         "rule": "&"
+        },
+        {
+         "formula": "∼(p & q)",
+         "from": "∼((p & q) ∨ (p & r))",
+         "rule": "∼∨"
+        },
+        {
+         "formula": "∼(p & r)",
+         "from": "∼((p & q) ∨ (p & r))",
+         "rule": "∼∨"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "q",
+           "from": "q ∨ r",
+           "rule": "∨"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼p",
+             "from": "∼(p & q)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "∼q",
+             "from": "∼(p & q)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "∼(p & q)",
+         "branch_rule": "∼&"
+        },
+        {
+         "added": [
+          {
+           "formula": "r",
+           "from": "q ∨ r",
+           "rule": "∨"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼p",
+             "from": "∼(p & q)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "∼q",
+             "from": "∼(p & q)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [
+            {
+             "added": [
+              {
+               "formula": "∼p",
+               "from": "∼(p & r)",
+               "rule": "∼&"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            },
+            {
+             "added": [
+              {
+               "formula": "∼r",
+               "from": "∼(p & r)",
+               "rule": "∼&"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            }
+           ],
+           "status": null,
+           "branched_on": "∼(p & r)",
+           "branch_rule": "∼&"
+          }
+         ],
+         "status": null,
+         "branched_on": "∼(p & q)",
+         "branch_rule": "∼&"
+        }
+       ],
+       "status": null,
+       "branched_on": "q ∨ r",
+       "branch_rule": "∨"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼(p & (q ∨ r))",
+         "from": "∼((p & (q ∨ r)) ≡ ((p & q) ∨ (p & r)))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "(p & q) ∨ (p & r)",
+         "from": "∼((p & (q ∨ r)) ≡ ((p & q) ∨ (p & r)))",
+         "rule": "∼≡"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p",
+           "from": "∼(p & (q ∨ r))",
+           "rule": "∼&"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "p & q",
+             "from": "(p & q) ∨ (p & r)",
+             "rule": "∨"
+            },
+            {
+             "formula": "p",
+             "from": "p & q",
+             "rule": "&"
+            },
+            {
+             "formula": "q",
+             "from": "p & q",
+             "rule": "&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "p & r",
+             "from": "(p & q) ∨ (p & r)",
+             "rule": "∨"
+            },
+            {
+             "formula": "p",
+             "from": "p & r",
+             "rule": "&"
+            },
+            {
+             "formula": "r",
+             "from": "p & r",
+             "rule": "&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "(p & q) ∨ (p & r)",
+         "branch_rule": "∨"
+        },
+        {
+         "added": [
+          {
+           "formula": "∼(q ∨ r)",
+           "from": "∼(p & (q ∨ r))",
+           "rule": "∼&"
+          },
+          {
+           "formula": "∼q",
+           "from": "∼(q ∨ r)",
+           "rule": "∼∨"
+          },
+          {
+           "formula": "∼r",
+           "from": "∼(q ∨ r)",
+           "rule": "∼∨"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "p & q",
+             "from": "(p & q) ∨ (p & r)",
+             "rule": "∨"
+            },
+            {
+             "formula": "p",
+             "from": "p & q",
+             "rule": "&"
+            },
+            {
+             "formula": "q",
+             "from": "p & q",
+             "rule": "&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "p & r",
+             "from": "(p & q) ∨ (p & r)",
+             "rule": "∨"
+            },
+            {
+             "formula": "p",
+             "from": "p & r",
+             "rule": "&"
+            },
+            {
+             "formula": "r",
+             "from": "p & r",
+             "rule": "&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "(p & q) ∨ (p & r)",
+         "branch_rule": "∨"
+        }
+       ],
+       "status": null,
+       "branched_on": "∼(p & (q ∨ r))",
+       "branch_rule": "∼&"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼((p & (q ∨ r)) ≡ ((p & q) ∨ (p & r)))",
+     "branch_rule": "∼≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 9,
+    "branch_depth": 4,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((p\\Conj (q\\Disj r))\\Bicond ((p\\Conj q)\\Disj (p\\Conj r)))$\\quad\\checkmark} [.{\\ckpad $p\\Conj (q\\Disj r)$\\quad\\checkmark \\\\ \\ckpad $\\Neg ((p\\Conj q)\\Disj (p\\Conj r))$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ \\ckpad $q\\Disj r$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $\\Neg (p\\Conj q)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p\\Conj r)$\\quad\\checkmark} [.{$q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg q$ \\\\ x} ] ] [.{$r$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg r$ \\\\ x} ] ] ] ] [.{\\ckpad $\\Neg (p\\Conj (q\\Disj r))$\\quad\\checkmark \\\\ \\ckpad $(p\\Conj q)\\Disj (p\\Conj r)$\\quad\\checkmark} [.{$\\Neg p$} [.{\\ckpad $p\\Conj q$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $q$ \\\\ x} ] [.{\\ckpad $p\\Conj r$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $r$ \\\\ x} ] ] [.{\\ckpad $\\Neg (q\\Disj r)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg q$ \\\\ $\\Neg r$} [.{\\ckpad $p\\Conj q$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $q$ \\\\ x} ] [.{\\ckpad $p\\Conj r$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $r$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 3,
+    "premise_count": 0,
+    "connectives": [
+     "biconditional",
+     "conjunction",
+     "disjunction"
+    ],
+    "max_formula_depth": 3,
+    "total_formula_size": 13,
+    "table_rows": 8,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 9,
+    "tree_branch_depth": 4,
+    "countermodel_count": 0,
+    "premise_true_rows": 8,
+    "idle_premises": []
+   },
+   "id": "distribution-conjunction",
+   "cli_ref": "—",
+   "names": [
+    "Full distribution (∧ over ∨)",
+    "Distribution biconditional",
+    "Conjunction distributes over disjunction"
+   ],
+   "interest": "The full biconditional behind the one-directional `distribution` entry: not just that `p & (q ∨ r)` yields `(p & q) ∨ (p & r)`, but that the two say the same thing. Proving it needs both conditionals joined by biconditional introduction, and each half is its own case split on a disjunction -- the forward half splits on `q ∨ r`, the reverse on `(p & q) ∨ (p & r)` -- so the derivation runs to the length its shape demands rather than its statement's. Lecture 9 works both directions together; `distribution` isolates the forward half alone, for the discussion of where distribution fails in the quantum lattice, the two are worth reading together for what the biconditional adds back.",
+   "english": [
+    {
+     "gloss": "'p, and either q or r' says just what 'either (p and q), or (p and r)' says.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 9 Handout",
+     "locus": "L9 (both directions)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "algebra of logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [
+     "Lecture 9"
+    ],
+    "quarantined": false,
+    "note": "PS3.1's tree exercise sets only the → half, in the one-directional form that is the `distribution` entry; it is not a fair withhold against this biconditional, so no problem_set entry is recorded here.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "looks_like": "distribution",
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p & (q | r)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 3,
+      "f": "q | r",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 4,
+      "f": "q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 5,
+      "f": "p & q",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       2,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "(p & q) | (p & r)",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "r",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 8,
+      "f": "p & r",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       2,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "(p & q) | (p & r)",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "(p & q) | (p & r)",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       3
+      ],
+      "subs": [
+       [
+        4,
+        6
+       ],
+       [
+        7,
+        9
+       ]
+      ]
+     },
+     {
+      "n": 11,
+      "f": "(p & q) | (p & r)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 12,
+      "f": "p & q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 13,
+      "f": "p",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       12
+      ]
+     },
+     {
+      "n": 14,
+      "f": "q",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       12
+      ]
+     },
+     {
+      "n": 15,
+      "f": "q | r",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       14
+      ]
+     },
+     {
+      "n": 16,
+      "f": "p & (q | r)",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       13,
+       15
+      ]
+     },
+     {
+      "n": 17,
+      "f": "p & r",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 18,
+      "f": "p",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       17
+      ]
+     },
+     {
+      "n": 19,
+      "f": "r",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       17
+      ]
+     },
+     {
+      "n": 20,
+      "f": "q | r",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       19
+      ]
+     },
+     {
+      "n": 21,
+      "f": "p & (q | r)",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       18,
+       20
+      ]
+     },
+     {
+      "n": 22,
+      "f": "p & (q | r)",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       11
+      ],
+      "subs": [
+       [
+        12,
+        16
+       ],
+       [
+        17,
+        21
+       ]
+      ]
+     },
+     {
+      "n": 23,
+      "f": "(p & (q | r)) = ((p & q) | (p & r))",
+      "rule": "BicondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        10
+       ],
+       [
+        11,
+        22
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Conj (q\\Disj r)}\n\\have{2}{p}\\by{\\ConjE}{1}\n\\have{3}{q\\Disj r}\\by{\\ConjE}{1}\n\\open\n\\hypo{4}{q}\n\\have{5}{p\\Conj q}\\by{\\ConjI}{2,4}\n\\have{6}{(p\\Conj q)\\Disj (p\\Conj r)}\\by{\\DisjI}{5}\n\\close\n\\open\n\\hypo{7}{r}\n\\have{8}{p\\Conj r}\\by{\\ConjI}{2,7}\n\\have{9}{(p\\Conj q)\\Disj (p\\Conj r)}\\by{\\DisjI}{8}\n\\close\n\\have{10}{(p\\Conj q)\\Disj (p\\Conj r)}\\by{\\DisjE}{3,4-6,7-9}\n\\close\n\\open\n\\hypo{11}{(p\\Conj q)\\Disj (p\\Conj r)}\n\\open\n\\hypo{12}{p\\Conj q}\n\\have{13}{p}\\by{\\ConjE}{12}\n\\have{14}{q}\\by{\\ConjE}{12}\n\\have{15}{q\\Disj r}\\by{\\DisjI}{14}\n\\have{16}{p\\Conj (q\\Disj r)}\\by{\\ConjI}{13,15}\n\\close\n\\open\n\\hypo{17}{p\\Conj r}\n\\have{18}{p}\\by{\\ConjE}{17}\n\\have{19}{r}\\by{\\ConjE}{17}\n\\have{20}{q\\Disj r}\\by{\\DisjI}{19}\n\\have{21}{p\\Conj (q\\Disj r)}\\by{\\ConjI}{18,20}\n\\close\n\\have{22}{p\\Conj (q\\Disj r)}\\by{\\DisjE}{11,12-16,17-21}\n\\close\n\\have{23}{(p\\Conj (q\\Disj r))\\Bicond ((p\\Conj q)\\Disj (p\\Conj r))}\\by{\\BicondI}{1-10,11-22}\n\\end{nd}\n\\end{align*}",
+    "lines": 23,
+    "max_subproof_depth": 2,
+    "subproof_count": 6,
+    "assumption_count": 6,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "BicondI",
+     "ConjE",
+     "ConjI",
+     "DisjE",
+     "DisjI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "hard",
+    "table": "easy",
+    "tree": "hard"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "(p & (q ∨ r)) ≡ ((p & q) ∨ (p & r))",
+    "sequent": "⊨ (p & (q ∨ r)) ≡ ((p & q) ∨ (p & r))"
+   }
+  },
+  {
+   "premises": [],
+   "conclusion": "(p | (q & r)) = ((p | q) & (p | r))",
+   "verdict": {
+    "valid": true,
+    "rows": 8,
+    "premise_true_rows": 8,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q",
+     "r"
+    ],
+    "columns": [
+     "(p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r))"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $p$ & $q$ & $r$ & $(p\\Disj (q\\Conj r))\\Bicond ((p\\Disj q)\\Conj (p\\Disj r))$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{(}\\phantom{q}\\uv{\\Conj}{.}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}\\uv{\\Conj}{.}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $p$ & $q$ & $r$ & $(p\\Disj (q\\Conj r))\\Bicond ((p\\Disj q)\\Conj (p\\Disj r))$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{(}\\phantom{q}\\uv{\\Conj}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{(}\\phantom{q}\\uv{\\Conj}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{(}\\phantom{q}\\uv{\\Conj}{.}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}\\uv{\\Conj}{.}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼((p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r)))"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "p ∨ (q & r)",
+         "from": "∼((p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r)))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "∼((p ∨ q) & (p ∨ r))",
+         "from": "∼((p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r)))",
+         "rule": "∼≡"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "p",
+           "from": "p ∨ (q & r)",
+           "rule": "∨"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼(p ∨ q)",
+             "from": "∼((p ∨ q) & (p ∨ r))",
+             "rule": "∼&"
+            },
+            {
+             "formula": "∼p",
+             "from": "∼(p ∨ q)",
+             "rule": "∼∨"
+            },
+            {
+             "formula": "∼q",
+             "from": "∼(p ∨ q)",
+             "rule": "∼∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "∼(p ∨ r)",
+             "from": "∼((p ∨ q) & (p ∨ r))",
+             "rule": "∼&"
+            },
+            {
+             "formula": "∼p",
+             "from": "∼(p ∨ r)",
+             "rule": "∼∨"
+            },
+            {
+             "formula": "∼r",
+             "from": "∼(p ∨ r)",
+             "rule": "∼∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "∼((p ∨ q) & (p ∨ r))",
+         "branch_rule": "∼&"
+        },
+        {
+         "added": [
+          {
+           "formula": "q & r",
+           "from": "p ∨ (q & r)",
+           "rule": "∨"
+          },
+          {
+           "formula": "q",
+           "from": "q & r",
+           "rule": "&"
+          },
+          {
+           "formula": "r",
+           "from": "q & r",
+           "rule": "&"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼(p ∨ q)",
+             "from": "∼((p ∨ q) & (p ∨ r))",
+             "rule": "∼&"
+            },
+            {
+             "formula": "∼p",
+             "from": "∼(p ∨ q)",
+             "rule": "∼∨"
+            },
+            {
+             "formula": "∼q",
+             "from": "∼(p ∨ q)",
+             "rule": "∼∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "∼(p ∨ r)",
+             "from": "∼((p ∨ q) & (p ∨ r))",
+             "rule": "∼&"
+            },
+            {
+             "formula": "∼p",
+             "from": "∼(p ∨ r)",
+             "rule": "∼∨"
+            },
+            {
+             "formula": "∼r",
+             "from": "∼(p ∨ r)",
+             "rule": "∼∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "∼((p ∨ q) & (p ∨ r))",
+         "branch_rule": "∼&"
+        }
+       ],
+       "status": null,
+       "branched_on": "p ∨ (q & r)",
+       "branch_rule": "∨"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼(p ∨ (q & r))",
+         "from": "∼((p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r)))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "(p ∨ q) & (p ∨ r)",
+         "from": "∼((p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r)))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "∼p",
+         "from": "∼(p ∨ (q & r))",
+         "rule": "∼∨"
+        },
+        {
+         "formula": "∼(q & r)",
+         "from": "∼(p ∨ (q & r))",
+         "rule": "∼∨"
+        },
+        {
+         "formula": "p ∨ q",
+         "from": "(p ∨ q) & (p ∨ r)",
+         "rule": "&"
+        },
+        {
+         "formula": "p ∨ r",
+         "from": "(p ∨ q) & (p ∨ r)",
+         "rule": "&"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼q",
+           "from": "∼(q & r)",
+           "rule": "∼&"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "p",
+             "from": "p ∨ q",
+             "rule": "∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "q",
+             "from": "p ∨ q",
+             "rule": "∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "p ∨ q",
+         "branch_rule": "∨"
+        },
+        {
+         "added": [
+          {
+           "formula": "∼r",
+           "from": "∼(q & r)",
+           "rule": "∼&"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "p",
+             "from": "p ∨ q",
+             "rule": "∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "q",
+             "from": "p ∨ q",
+             "rule": "∨"
+            }
+           ],
+           "children": [
+            {
+             "added": [
+              {
+               "formula": "p",
+               "from": "p ∨ r",
+               "rule": "∨"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            },
+            {
+             "added": [
+              {
+               "formula": "r",
+               "from": "p ∨ r",
+               "rule": "∨"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            }
+           ],
+           "status": null,
+           "branched_on": "p ∨ r",
+           "branch_rule": "∨"
+          }
+         ],
+         "status": null,
+         "branched_on": "p ∨ q",
+         "branch_rule": "∨"
+        }
+       ],
+       "status": null,
+       "branched_on": "∼(q & r)",
+       "branch_rule": "∼&"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼((p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r)))",
+     "branch_rule": "∼≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 9,
+    "branch_depth": 4,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((p\\Disj (q\\Conj r))\\Bicond ((p\\Disj q)\\Conj (p\\Disj r)))$\\quad\\checkmark} [.{\\ckpad $p\\Disj (q\\Conj r)$\\quad\\checkmark \\\\ \\ckpad $\\Neg ((p\\Disj q)\\Conj (p\\Disj r))$\\quad\\checkmark} [.{$p$} [.{\\ckpad $\\Neg (p\\Disj q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg q$ \\\\ x} ] [.{\\ckpad $\\Neg (p\\Disj r)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg r$ \\\\ x} ] ] [.{\\ckpad $q\\Conj r$\\quad\\checkmark \\\\ $\\vert$ \\\\ $q$ \\\\ $r$} [.{\\ckpad $\\Neg (p\\Disj q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg q$ \\\\ x} ] [.{\\ckpad $\\Neg (p\\Disj r)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg r$ \\\\ x} ] ] ] [.{\\ckpad $\\Neg (p\\Disj (q\\Conj r))$\\quad\\checkmark \\\\ \\ckpad $(p\\Disj q)\\Conj (p\\Disj r)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ \\ckpad $\\Neg (q\\Conj r)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p\\Disj q$\\quad\\checkmark \\\\ \\ckpad $p\\Disj r$\\quad\\checkmark} [.{$\\Neg q$} [.{$p$ \\\\ x} ] [.{$q$ \\\\ x} ] ] [.{$\\Neg r$} [.{$p$ \\\\ x} ] [.{$q$} [.{$p$ \\\\ x} ] [.{$r$ \\\\ x} ] ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 3,
+    "premise_count": 0,
+    "connectives": [
+     "biconditional",
+     "conjunction",
+     "disjunction"
+    ],
+    "max_formula_depth": 3,
+    "total_formula_size": 13,
+    "table_rows": 8,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 9,
+    "tree_branch_depth": 4,
+    "countermodel_count": 0,
+    "premise_true_rows": 8,
+    "idle_premises": []
+   },
+   "id": "distribution-disjunction",
+   "cli_ref": "—",
+   "names": [
+    "Full distribution (∨ over ∧)",
+    "Disjunction distributes over conjunction",
+    "Distribution biconditional (dual)"
+   ],
+   "interest": "The dual law, and the harder of the two directions to find. Forward, `p ∨ (q & r)` gives `(p ∨ q) & (p ∨ r)` by a single case split. Backward is the one that costs something: `p ∨ q` alone does not say which disjunct to run, and inside the case where only `q` is settled, the second premise `p ∨ r` forces a further case split before `q & r` can even be assembled -- three subproofs deep before the derivation closes. Set twice on problem sets, working the two directions apart -- unlike `distribution-conjunction`, which Lecture 9 works as one biconditional directly.",
+   "english": [
+    {
+     "gloss": "'Either p, or both q and r' says just what 'both (p or q), and (p or r)' says.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Problem Set 4",
+     "locus": "PS4.3e, PS4.4b (each direction set separately)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "algebra of logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {
+     "nd": "PS4.3e"
+    },
+    "quarantined": false,
+    "note": "Also set as PS4.4b, working the other direction; the inventory records PS4.3e as the locus.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "looks_like": "distribution-conjunction",
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p | (q & r)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p | q",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "p | r",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 5,
+      "f": "(p | q) & (p | r)",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       3,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "q & r",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "r",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 9,
+      "f": "p | q",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       7
+      ]
+     },
+     {
+      "n": 10,
+      "f": "p | r",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 11,
+      "f": "(p | q) & (p | r)",
+      "rule": "ConjI",
+      "depth": 2,
+      "cites": [
+       9,
+       10
+      ]
+     },
+     {
+      "n": 12,
+      "f": "(p | q) & (p | r)",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       1
+      ],
+      "subs": [
+       [
+        2,
+        5
+       ],
+       [
+        6,
+        11
+       ]
+      ]
+     },
+     {
+      "n": 13,
+      "f": "(p | q) & (p | r)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 14,
+      "f": "p | q",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       13
+      ]
+     },
+     {
+      "n": 15,
+      "f": "p | r",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       13
+      ]
+     },
+     {
+      "n": 16,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 17,
+      "f": "p | (q & r)",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       16
+      ]
+     },
+     {
+      "n": 18,
+      "f": "q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 19,
+      "f": "p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 20,
+      "f": "p | (q & r)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       19
+      ]
+     },
+     {
+      "n": 21,
+      "f": "r",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 22,
+      "f": "q & r",
+      "rule": "ConjI",
+      "depth": 3,
+      "cites": [
+       18,
+       21
+      ]
+     },
+     {
+      "n": 23,
+      "f": "p | (q & r)",
+      "rule": "DisjI",
+      "depth": 3,
+      "cites": [
+       22
+      ]
+     },
+     {
+      "n": 24,
+      "f": "p | (q & r)",
+      "rule": "DisjE",
+      "depth": 2,
+      "cites": [
+       15
+      ],
+      "subs": [
+       [
+        19,
+        20
+       ],
+       [
+        21,
+        23
+       ]
+      ]
+     },
+     {
+      "n": 25,
+      "f": "p | (q & r)",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       14
+      ],
+      "subs": [
+       [
+        16,
+        17
+       ],
+       [
+        18,
+        24
+       ]
+      ]
+     },
+     {
+      "n": 26,
+      "f": "(p | (q & r)) = ((p | q) & (p | r))",
+      "rule": "BicondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        12
+       ],
+       [
+        13,
+        25
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Disj (q\\Conj r)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj q}\\by{\\DisjI}{2}\n\\have{4}{p\\Disj r}\\by{\\DisjI}{2}\n\\have{5}{(p\\Disj q)\\Conj (p\\Disj r)}\\by{\\ConjI}{3,4}\n\\close\n\\open\n\\hypo{6}{q\\Conj r}\n\\have{7}{q}\\by{\\ConjE}{6}\n\\have{8}{r}\\by{\\ConjE}{6}\n\\have{9}{p\\Disj q}\\by{\\DisjI}{7}\n\\have{10}{p\\Disj r}\\by{\\DisjI}{8}\n\\have{11}{(p\\Disj q)\\Conj (p\\Disj r)}\\by{\\ConjI}{9,10}\n\\close\n\\have{12}{(p\\Disj q)\\Conj (p\\Disj r)}\\by{\\DisjE}{1,2-5,6-11}\n\\close\n\\open\n\\hypo{13}{(p\\Disj q)\\Conj (p\\Disj r)}\n\\have{14}{p\\Disj q}\\by{\\ConjE}{13}\n\\have{15}{p\\Disj r}\\by{\\ConjE}{13}\n\\open\n\\hypo{16}{p}\n\\have{17}{p\\Disj (q\\Conj r)}\\by{\\DisjI}{16}\n\\close\n\\open\n\\hypo{18}{q}\n\\open\n\\hypo{19}{p}\n\\have{20}{p\\Disj (q\\Conj r)}\\by{\\DisjI}{19}\n\\close\n\\open\n\\hypo{21}{r}\n\\have{22}{q\\Conj r}\\by{\\ConjI}{18,21}\n\\have{23}{p\\Disj (q\\Conj r)}\\by{\\DisjI}{22}\n\\close\n\\have{24}{p\\Disj (q\\Conj r)}\\by{\\DisjE}{15,19-20,21-23}\n\\close\n\\have{25}{p\\Disj (q\\Conj r)}\\by{\\DisjE}{14,16-17,18-24}\n\\close\n\\have{26}{(p\\Disj (q\\Conj r))\\Bicond ((p\\Disj q)\\Conj (p\\Disj r))}\\by{\\BicondI}{1-12,13-25}\n\\end{nd}\n\\end{align*}",
+    "lines": 26,
+    "max_subproof_depth": 3,
+    "subproof_count": 8,
+    "assumption_count": 8,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "BicondI",
+     "ConjE",
+     "ConjI",
+     "DisjE",
+     "DisjI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "hard",
+    "table": "easy",
+    "tree": "hard"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "(p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r))",
+    "sequent": "⊨ (p ∨ (q & r)) ≡ ((p ∨ q) & (p ∨ r))"
+   }
+  },
+  {
+   "premises": [],
+   "conclusion": "p | ~p",
+   "verdict": {
+    "valid": true,
+    "rows": 2,
+    "premise_true_rows": 2,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p"
+    ],
+    "columns": [
+     "p ∨ ∼p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $p\\Disj \\Neg p$ \\\\\n        \\hline\n        T & $\\phantom{p}\\uv{\\Disj}{T}\\uv{\\Neg}{F}\\phantom{p}$ \\\\\n        F & $\\phantom{p}\\uv{\\Disj}{T}\\uv{\\Neg}{T}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $\\phantom{p}\\uv{\\Disj}{M}\\uv{\\Neg}{.}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $p\\Disj \\Neg p$ \\\\\n        \\hline\n        T & $\\phantom{p}\\uv{\\Disj}{T}\\uv{\\Neg}{F}\\phantom{p}$ \\\\\n        F & $\\phantom{p}\\uv{\\Disj}{T}\\uv{\\Neg}{T}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $\\phantom{p}\\uv{\\Disj}{M}\\uv{\\Neg}{.}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼(p ∨ ∼p)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼p",
+       "from": "∼(p ∨ ∼p)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "∼∼p",
+       "from": "∼(p ∨ ∼p)",
+       "rule": "∼∨"
+      }
+     ],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (p\\Disj \\Neg p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg \\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 1,
+    "premise_count": 0,
+    "connectives": [
+     "disjunction",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 4,
+    "table_rows": 2,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 0,
+    "countermodel_count": 0,
+    "premise_true_rows": 2,
+    "idle_premises": []
+   },
+   "id": "excluded-middle",
+   "cli_ref": "—",
+   "names": [
+    "Law of Excluded Middle",
+    "LEM",
+    "Tertium non datur"
+   ],
+   "interest": "No premises, and the first goal students meet that does not name its own rule: `p ∨ ∼p` is neither a conditional nor a negation, so neither `⊃I` nor `∼I` applies to it directly, and the assumption that starts the proof -- `∼(p ∨ ∼p)` -- has to be chosen rather than read off the connective. Two nested reductios later it falls out, the smallest example in the database of a goal that gives no hint of its own derivation. Lecture 10 proves it as that showcase; the study guide and PS5.6 return to it as a step inside a larger proof, never as the exercise itself.",
+   "english": [
+    {
+     "gloss": "Either p, or it is not the case that p.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 10 Handout",
+     "locus": "L10§3; SG-CQ2; posed at L13.1-at-home; PS5.6 (component)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "bivalence"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [
+     "Lecture 10"
+    ],
+    "problem_set": {
+     "nd": "PS5.6"
+    },
+    "quarantined": false,
+    "note": "PS5.6 uses this as one component inside a larger derivation, not as a standalone 'derive p ∨ ∼p' exercise.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~(p | ~p)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p | ~p",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       3,
+       1
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p | ~p",
+      "rule": "DisjI",
+      "depth": 1,
+      "cites": [
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       6,
+       1
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~~(p | ~p)",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        7
+       ]
+      ]
+     },
+     {
+      "n": 9,
+      "f": "p | ~p",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       8
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj \\Neg p)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj \\Neg p}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\have{6}{p\\Disj \\Neg p}\\by{\\DisjI}{5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,1}\n\\close\n\\have{8}{\\Neg \\Neg (p\\Disj \\Neg p)}\\by{\\NegI}{1,7}\n\\have{9}{p\\Disj \\Neg p}\\by{\\NegE}{8}\n\\end{nd}\n\\end{align*}",
+    "lines": 9,
+    "max_subproof_depth": 2,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "DisjI",
+     "FalsumI",
+     "NegE",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "p ∨ ∼p",
+    "sequent": "⊨ p ∨ ∼p"
    }
   }
  ],
