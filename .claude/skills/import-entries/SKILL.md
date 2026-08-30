@@ -42,10 +42,16 @@ merge parents**, so it cannot be fooled by regenerating the manifest from a
 damaged database. Run it while the merge is still open — before you resolve
 anything — and again after committing it.
 
-`entries.txt` itself will often conflict, which is the file working as
-intended: one id per line conflicts where the JSON quietly does not. **Never
-resolve it by hand.** Resolve the database first, then `build.py --write`
-rewrites the manifest from it.
+Two generated files conflict routinely, and **neither is ever resolved by
+hand**: `assets/arguments/entries.txt`, which is the manifest working as
+intended (one id per line conflicts where the JSON quietly does not), and
+`assets/arguments/svg/index.json`, the block-hash index. Resolve the database
+first, then regenerate both:
+
+```bash
+cd EncyclopediaOfArguments/latexgen && python3 build.py --write && python3 svg.py
+git add -A
+```
 
 **If entries are reported lost, the database is what got damaged.** Take this
 branch's copy wholesale and let the build reapply `main`'s changes:
