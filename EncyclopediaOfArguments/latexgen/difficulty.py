@@ -32,6 +32,12 @@ from formula import parse
 
 DB = Path(__file__).resolve().parents[2] / "assets/arguments/argument-db.json"
 
+# The four boundaries. Provisional, and meant to be moved -- they were set
+# against thirty-five entries, which is not enough to place one. Nothing else
+# knows them, so changing one here and rerunning `build.py --write` is the
+# whole edit. `--balance` reports what would divide the database into thirds;
+# see §14.-1 of the style guide for when to take its advice and when not to.
+
 # Truth-functional evaluations. A couple of seconds each, so roughly a minute
 # and a half, then five; past that a table is an endurance test.
 TABLE_EASY, TABLE_MEDIUM = 48, 160
@@ -146,11 +152,51 @@ def apply(db: dict) -> list:
     return notes
 
 
+def balance() -> None:
+    """The distribution, against the thresholds that would even it out.
+
+    Only the two measured methods have thresholds to move. The derivation
+    score counts triggers, so its shape is a fact about the proofs rather than
+    a dial -- if it comes out lopsided the answer is a better trigger, not a
+    different cut.
+    """
+    db = json.loads(DB.read_text())
+    entries = db["entries"]
+    n = len(entries)
+
+    for method, measure, cuts in (
+        ("table", table_calls, (TABLE_EASY, TABLE_MEDIUM)),
+        ("tree", tree_applications, (TREE_EASY, TREE_MEDIUM)),
+    ):
+        values = sorted(measure(e) for e in entries)
+        counts = {"easy": 0, "medium": 0, "hard": 0}
+        for e in entries:
+            counts[band(measure(e), *cuts)] += 1
+        thirds = (values[n // 3], values[2 * n // 3])
+        print(f"{method:6s} at {cuts[0]}/{cuts[1]}: "
+              f"{counts['easy']} easy, {counts['medium']} medium, {counts['hard']} hard"
+              f"   |  thirds would fall at {thirds[0]}/{thirds[1]}")
+        print(f"       spread: {values[0]} to {values[-1]}, median {values[n // 2]}")
+
+    counts = {"easy": 0, "medium": 0, "hard": 0}
+    for e in entries:
+        if e["difficulty"].get("nd"):
+            counts[e["difficulty"]["nd"]] += 1
+    print(f"nd     counted, not cut: {counts['easy']} easy, {counts['medium']} medium, "
+          f"{counts['hard']} hard — a lopsided shape here wants a better trigger, "
+          f"not a different boundary")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--diff", action="store_true")
     ap.add_argument("--audit", action="store_true")
+    ap.add_argument("--balance", action="store_true")
     args = ap.parse_args()
+
+    if args.balance:
+        balance()
+        return
 
     db = json.loads(DB.read_text())
     off = 0

@@ -1228,12 +1228,27 @@ For a table or a tree that can only mean a bug. For a derivation it means an
 author overrode the suggestion, which is allowed — with the reason in
 `course.note`, and the test suite checks that it is there.
 
+### 14.-1 The boundaries are provisional
+
+The four thresholds below (48 and 160 calls; 3 and 7 applications) were set
+against thirty-five entries, which is not enough to place a boundary. They are
+four constants at the top of `difficulty.py` and moving one is a one-line
+change followed by `build.py --write`; nothing else in the codebase knows them.
+
+**The rule for moving them, once the database is populated, is numerical
+balance.** A scale whose middle band holds four fifths of the entries is not
+telling a student anything, and neither is a `hard` chip that draws from three
+problems. `difficulty.py --balance` prints the current distribution beside the
+thresholds that would divide the entries into three roughly equal parts, for
+each method. It is a report, not an instruction: a boundary that lands where
+the work genuinely jumps is worth keeping even if the thirds come out uneven.
+
 ### 14.0 The reference student
 
-**Someone who has just been taught the method.** Week 4 for tables, week 6 for
-trees, week 10 for derivations. Each method is judged on its own timeline,
-which is the point of scoring them separately: a form can be a hard table in
-week 4 and an easy derivation in week 10.
+**Someone who has just been taught the method.** Tables are Lecture 4, trees
+Lecture 6, derivations Lecture 10 — lecture numbers, not weeks. Each method is
+judged on its own timeline, which is the point of scoring them separately: a
+form can be a hard table at Lecture 4 and an easy derivation at Lecture 10.
 
 ### 14.1 Truth tables — truth-functional calls
 
