@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 46,
+ "count": 58,
  "entries": [
   {
    "id": "ex-falso",
@@ -31462,6 +31462,1254 @@
     "conclusion": "r ∨ s",
     "sequent": "p ∨ q, p ⊃ r, q ⊃ s  ⊨ r ∨ s"
    }
+  },
+  {
+   "id": "hypothetical-syllogism-3link",
+   "cli_ref": "—",
+   "names": [
+    "Three-link hypothetical syllogism",
+    "3-link HS"
+   ],
+   "premises": [
+    "p > q",
+    "q > r",
+    "r > s"
+   ],
+   "conclusion": "p > s",
+   "interest": "The same assume-and-discharge move as `hypothetical-syllogism`, run one extra time before `⊃I` closes it out: three conditionals chained instead of two. This is the literal form PS5.1 sets, which is why the shorter two-premise entry already withholds itself from the derivation draw -- a student who has built this tree has already built that one as a sub-routine along the way. It earns an entry of its own rather than a footnote on the shorter chain because the table and the tree are genuinely a size larger, and the practice page should be able to offer either length.",
+   "english": [
+    {
+     "gloss": "If p then q, and if q then r, and if r then s; so, if p then s.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Problem Set 5",
+     "locus": "PS5.1 (ND)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "proof theory"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {
+     "nd": "PS5.1"
+    },
+    "quarantined": false,
+    "note": "This is the three-link chain that hypothetical-syllogism's own course.note refers to: that two-premise entry is withheld from the nd draw because PS5.1 sets this longer form instead, and solving this one already drills the same ⊃E-then-discharge move twice over.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 9,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p > q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "q > r",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "r > s",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 5,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "r",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "s",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       3,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "p > s",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        4,
+        7
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond q}\n\\hypo{2}{q\\Cond r}\n\\hypo{3}{r\\Cond s}\n\\open\n\\hypo{4}{p}\n\\have{5}{q}\\by{\\CondE}{1,4}\n\\have{6}{r}\\by{\\CondE}{2,5}\n\\have{7}{s}\\by{\\CondE}{3,6}\n\\close\n\\have{8}{p\\Cond s}\\by{\\CondI}{4,7}\n\\end{nd}\n\\end{align*}",
+    "lines": 8,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 16,
+    "premise_true_rows": 5,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q",
+     "r",
+     "s"
+    ],
+    "columns": [
+     "p ⊃ q",
+     "q ⊃ r",
+     "r ⊃ s",
+     "p ⊃ s"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "T",
+       "s": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "T",
+       "s": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "F",
+       "s": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "F",
+       "s": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "T",
+       "s": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "T",
+       "s": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "F",
+       "s": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "F",
+       "s": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "T",
+       "s": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "T",
+       "s": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "F",
+       "s": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "F",
+       "s": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "T",
+       "s": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "T",
+       "s": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "F",
+       "s": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "F",
+       "s": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\qquad r \\qquad s \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Cond q \\qquad q\\Cond r \\qquad r\\Cond s \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p\\Cond s \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{F} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{F} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{F} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{F} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{F} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{F} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{F} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{F} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\qquad r \\qquad s \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Cond q \\qquad q\\Cond r \\qquad r\\Cond s \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p\\Cond s \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{F} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{F} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{F} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{T} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\qquad \\uv{r}{F} \\qquad \\uv{s}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\qquad \\uv{q\\Cond r}{T} \\qquad \\uv{r\\Cond s}{T} \\quad$ & $\\quad \\uv{p\\Cond s}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "p ⊃ q",
+     "q ⊃ r",
+     "r ⊃ s",
+     "∼(p ⊃ s)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "p",
+       "from": "∼(p ⊃ s)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼s",
+       "from": "∼(p ⊃ s)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "p ⊃ q",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "q",
+         "from": "p ⊃ q",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼q",
+           "from": "q ⊃ r",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "r",
+           "from": "q ⊃ r",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼r",
+             "from": "r ⊃ s",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "s",
+             "from": "r ⊃ s",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "r ⊃ s",
+         "branch_rule": "⊃"
+        }
+       ],
+       "status": null,
+       "branched_on": "q ⊃ r",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ⊃ q",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 4,
+    "branch_depth": 3,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Cond q$\\quad\\checkmark \\\\ \\ckpad $\\qquad q\\Cond r$\\quad\\checkmark \\\\ \\ckpad $\\qquad r\\Cond s$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (p\\Cond s)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg s$} [.{$\\Neg p$ \\\\ x} ] [.{$q$} [.{$\\Neg q$ \\\\ x} ] [.{$r$} [.{$\\Neg r$ \\\\ x} ] [.{$s$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p > q",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "q > r",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "r > s",
+     "index": 2,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 4,
+    "premise_count": 3,
+    "connectives": [
+     "conditional"
+    ],
+    "max_formula_depth": 1,
+    "total_formula_size": 12,
+    "table_rows": 16,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 4,
+    "tree_branch_depth": 3,
+    "countermodel_count": 0,
+    "premise_true_rows": 5,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "medium",
+    "tree": "medium"
+   },
+   "display": {
+    "premises": [
+     "p ⊃ q",
+     "q ⊃ r",
+     "r ⊃ s"
+    ],
+    "conclusion": "p ⊃ s",
+    "sequent": "p ⊃ q, q ⊃ r, r ⊃ s  ⊨ p ⊃ s"
+   },
+   "looks_like": "hypothetical-syllogism"
+  },
+  {
+   "id": "double-consequent-reductio",
+   "cli_ref": "—",
+   "names": [
+    "Double-consequent reductio"
+   ],
+   "premises": [
+    "~p > q",
+    "~p > ~q"
+   ],
+   "conclusion": "p",
+   "interest": "A one-assumption reductio: assume `∼p`, and both premises hand back a conclusion and its own negation, so `⊥` falls out before anything else happens. Lecture 10 poses it right after Kant's argument as a smaller exhibit of the same shape -- the whole proof is `⊃E` twice, `⊥I` once, and a discharge -- but with a positive conclusion rather than a negation, so `∼I` has to be followed by `∼E` to strip the double negative, which `lecture8-chain` never needs.",
+   "english": [
+    {
+     "gloss": "If not p then q, and if not p then not q; so, p.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 10 Handout",
+     "locus": "L10§3 (ND)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "proof theory"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [
+     "Lecture 10"
+    ],
+    "problem_set": {},
+    "quarantined": false,
+    "note": null,
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "the derivation needs ∼I and ∼E, so no earlier than Lecture 10"
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~p > q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~p > ~q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "~p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 4,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       3
+      ]
+     },
+     {
+      "n": 6,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       4,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        3,
+        6
+       ]
+      ]
+     },
+     {
+      "n": 8,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       7
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{\\Neg p\\Cond q}\n\\hypo{2}{\\Neg p\\Cond \\Neg q}\n\\open\n\\hypo{3}{\\Neg p}\n\\have{4}{q}\\by{\\CondE}{1,3}\n\\have{5}{\\Neg q}\\by{\\CondE}{2,3}\n\\have{6}{\\Falsum}\\by{\\FalsumI}{4,5}\n\\close\n\\have{7}{\\Neg \\Neg p}\\by{\\NegI}{3,6}\n\\have{8}{p}\\by{\\NegE}{7}\n\\end{nd}\n\\end{align*}",
+    "lines": 8,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "CondE",
+     "FalsumI",
+     "NegE",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 2,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "∼p ⊃ q",
+     "∼p ⊃ ∼q",
+     "p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg p\\Cond q \\qquad \\Neg p\\Cond \\Neg q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\qquad \\uv{\\Neg p\\Cond \\Neg q}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\qquad \\uv{\\Neg p\\Cond \\Neg q}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\qquad \\uv{\\Neg p\\Cond \\Neg q}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{F} \\qquad \\uv{\\Neg p\\Cond \\Neg q}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg p\\Cond q \\qquad \\Neg p\\Cond \\Neg q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\qquad \\uv{\\Neg p\\Cond \\Neg q}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\qquad \\uv{\\Neg p\\Cond \\Neg q}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\qquad \\uv{\\Neg p\\Cond \\Neg q}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{F} \\qquad \\uv{\\Neg p\\Cond \\Neg q}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼p ⊃ q",
+     "∼p ⊃ ∼q",
+     "∼p"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼∼p",
+         "from": "∼p ⊃ q",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "q",
+         "from": "∼p ⊃ q",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼∼p",
+           "from": "∼p ⊃ ∼q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "∼q",
+           "from": "∼p ⊃ ∼q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "∼p ⊃ ∼q",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼p ⊃ q",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 3,
+    "branch_depth": 2,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad \\Neg p\\Cond q$\\quad\\checkmark \\\\ \\ckpad $\\qquad \\Neg p\\Cond \\Neg q$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg p$} [.{$\\Neg \\Neg p$ \\\\ x} ] [.{$q$} [.{$\\Neg \\Neg p$ \\\\ x} ] [.{$\\Neg q$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "~p > q",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "~p > ~q",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 2,
+    "connectives": [
+     "conditional",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 10,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 3,
+    "tree_branch_depth": 2,
+    "countermodel_count": 0,
+    "premise_true_rows": 2,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [
+     "∼p ⊃ q",
+     "∼p ⊃ ∼q"
+    ],
+    "conclusion": "p",
+    "sequent": "∼p ⊃ q, ∼p ⊃ ∼q  ⊨ p"
+   }
+  },
+  {
+   "id": "disjunctive-syllogism",
+   "cli_ref": "—",
+   "names": [
+    "Disjunctive syllogism",
+    "Modus tollendo ponens"
+   ],
+   "premises": [
+    "p | q",
+    "~p"
+   ],
+   "conclusion": "q",
+   "interest": "One of the oldest named forms in the course, and worked in all three methods at Lecture 13 after appearing informally at Lecture 11. There is no dedicated elimination rule for it in the twelve-rule system, so the derivation has to earn `q` the hard way inside a case split: assume `p`, collide it with `∼p` for `⊥`, then a nested reductio on `∼q` gets `q` out of the contradiction; the other case is trivial, since assuming `q` already gives the goal. It is worth setting beside `affirming-a-disjunct` -- same two premises in shape, but that entry affirms a disjunct instead of denying one, and the difference between the two is the whole lesson.",
+   "english": [
+    {
+     "gloss": "Either p or q; and not p; so, q.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 11 Handout",
+     "locus": "L11 Fork 2 (ND, plus a ⊥E variant)",
+     "url": null
+    },
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Lecture 13 Handout",
+     "locus": "L13.2 (worked in all three methods)",
+     "url": null
+    },
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Study Guide",
+     "locus": "SG-CQ3 (ND posed)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "proof theory"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [
+     "Lecture 11",
+     "Lecture 13"
+    ],
+    "problem_set": {},
+    "quarantined": false,
+    "note": null,
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "the derivation needs ∼I and ∼E, so no earlier than Lecture 10"
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p | q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 4,
+      "f": "~q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       3,
+       2
+      ]
+     },
+     {
+      "n": 6,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        4,
+        5
+       ]
+      ]
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 9,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "q",
+      "rule": "DisjE",
+      "depth": 0,
+      "cites": [
+       1
+      ],
+      "subs": [
+       [
+        3,
+        7
+       ],
+       [
+        8,
+        9
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Disj q}\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{3,2}\n\\close\n\\have{6}{\\Neg \\Neg q}\\by{\\NegI}{4,5}\n\\have{7}{q}\\by{\\NegE}{6}\n\\close\n\\open\n\\hypo{8}{q}\n\\have{9}{q}\\by{\\Reit}{8}\n\\close\n\\have{10}{q}\\by{\\DisjE}{1,3-7,8-9}\n\\end{nd}\n\\end{align*}",
+    "lines": 10,
+    "max_subproof_depth": 2,
+    "subproof_count": 3,
+    "assumption_count": 3,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "DisjE",
+     "FalsumI",
+     "NegE",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p ∨ q",
+     "∼p",
+     "q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Disj q \\qquad \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\qquad \\uv{\\Neg p}{F} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\qquad \\uv{\\Neg p}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\qquad \\uv{\\Neg p}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj q}{F} \\qquad \\uv{\\Neg p}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Disj q \\qquad \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\qquad \\uv{\\Neg p}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\qquad \\uv{\\Neg p}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj q}{F} \\qquad \\uv{\\Neg p}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "p ∨ q",
+     "∼p",
+     "∼q"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "p",
+         "from": "p ∨ q",
+         "rule": "∨"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "q",
+         "from": "p ∨ q",
+         "rule": "∨"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ∨ q",
+     "branch_rule": "∨"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Disj q$\\quad\\checkmark \\\\ $\\qquad \\Neg p$ \\\\ $\\Neg A:\\quad \\Neg q$} [.{$p$ \\\\ x} ] [.{$q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p | q",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "~p",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 2,
+    "connectives": [
+     "disjunction",
+     "negation"
+    ],
+    "max_formula_depth": 1,
+    "total_formula_size": 6,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 2,
+    "tree_branch_depth": 1,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "nd": "hard",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [
+     "p ∨ q",
+     "∼p"
+    ],
+    "conclusion": "q",
+    "sequent": "p ∨ q, ∼p  ⊨ q"
+   },
+   "looks_like": "affirming-a-disjunct"
   }
  ],
  "latex_requires": [

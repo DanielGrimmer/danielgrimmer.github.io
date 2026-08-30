@@ -718,3 +718,52 @@ PROOFS["constructive-dilemma"] = [
     _l(9, "r | s", "DisjI", 1, [8]),
     _l(10, "r | s", "DisjE", 0, [1], subs=[[4, 6], [7, 9]]),
 ]
+
+# --------------------------------------------------- three-link hypothetical syllogism
+# hypothetical-syllogism's own move, run once more: assume p, fire ⊃E three
+# times down the chain, discharge. Nothing new happens, which is the point --
+# PS5.1 sets this one and not the two-premise form for exactly that reason.
+PROOFS["hypothetical-syllogism-3link"] = [
+    P(1, "p > q"),
+    P(2, "q > r"),
+    P(3, "r > s"),
+    _l(4, "p", "As", 1),
+    _l(5, "q", "CondE", 1, [1, 4]),
+    _l(6, "r", "CondE", 1, [2, 5]),
+    _l(7, "s", "CondE", 1, [3, 6]),
+    _l(8, "p > s", "CondI", 0, subs=[[4, 7]]),
+]
+
+# ------------------------------------------------------ double-consequent reductio
+# Assume ~p and both premises hand back a formula and its own negation, so ⊥
+# is one CondE apiece away. The conclusion is positive, though, so ~I's
+# double negative needs ~E to strip it -- the one thing lecture8-chain, whose
+# goal is already a negation, never has to do.
+PROOFS["double-consequent-reductio"] = [
+    P(1, "~p > q"),
+    P(2, "~p > ~q"),
+    _l(3, "~p", "As", 1),
+    _l(4, "q", "CondE", 1, [1, 3]),
+    _l(5, "~q", "CondE", 1, [2, 3]),
+    _l(6, "!", "FalsumI", 1, [4, 5]),
+    _l(7, "~~p", "NegI", 0, subs=[[3, 6]]),
+    _l(8, "p", "NegE", 0, [7]),
+]
+
+# ------------------------------------------------------------- disjunctive syllogism
+# No dedicated elimination rule for ∨ plus a denied disjunct, so the case
+# split earns q the hard way: assume p, collide it with ~p for ⊥, then a
+# reductio nested inside that case strips the ⊥ down to q. The other case is
+# trivial -- assuming q already gives the goal, so Reit is the whole of it.
+PROOFS["disjunctive-syllogism"] = [
+    P(1, "p | q"),
+    P(2, "~p"),
+    _l(3, "p", "As", 1),
+    _l(4, "~q", "As", 2),
+    _l(5, "!", "FalsumI", 2, [3, 2]),
+    _l(6, "~~q", "NegI", 1, subs=[[4, 5]]),
+    _l(7, "q", "NegE", 1, [6]),
+    _l(8, "q", "As", 1),
+    _l(9, "q", "Reit", 1, [8]),
+    _l(10, "q", "DisjE", 0, [1], subs=[[3, 7], [8, 9]]),
+]

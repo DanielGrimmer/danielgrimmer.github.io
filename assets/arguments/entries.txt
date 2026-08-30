@@ -53,3 +53,6 @@ negative-paradox
 lecture9-first-derivation
 lecture9-proof-by-cases
 constructive-dilemma
+hypothetical-syllogism-3link
+double-consequent-reductio
+disjunctive-syllogism
