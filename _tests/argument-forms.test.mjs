@@ -822,14 +822,29 @@ test('the compact table keeps the rows that carry the argument', () => {
       .filter((l) => l.includes('\\uv{') || /^\s+[TF] &/.test(l))
       .filter((l) => !l.includes('}{M}') && !l.includes('}{.}')).length;
     assert.ok(kept >= 1, `${e.id}: the compact table kept no rows`);
-    assert.ok(kept < rows.length || rows.length <= 4,
-      `${e.id}: the compact table kept all ${rows.length} rows`);
+
     if (kept < rows.length) {
-      assert.match(compact, /\\vdots/, `${e.id}: rows elided with no \\vdots to say so`);
+      assert.match(compact, /\\vdots/, `${e.id}: rows elided with no vdots to say so`);
+    } else {
+      // Nothing elided means the two views are the same table, and the site
+      // drops the switch rather than offer a button that changes nothing.
+      assert.equal(compact, e.truth_table.latex, `${e.id}: kept every row but is not the full table`);
     }
+
     // What it keeps, by shape.
-    const cms = rows.filter((r) => r.countermodel).length;
-    if (cms) assert.equal(kept, cms, `${e.id}: ${kept} rows kept for ${cms} countermodels`);
-    else if (!e.premises.length) assert.equal(kept, 1, `${e.id}: a tautology keeps its top row`);
+    const values = (r) => Object.values(r.assignment);
+    const ends = rows.filter((r) => values(r).every((v) => v === 'T') || values(r).every((v) => v === 'F')).length;
+    const live = rows.filter((r) => r.premises_all_true).length;
+    const fails = rows.filter((r) => r.conclusion === 'F').length;
+    if (!e.premises.length) {
+      // A claimed theorem keeps the ends when the conclusion never fails, and
+      // otherwise exactly the rows where it does.
+      assert.equal(kept, fails || ends, `${e.id}: a premise-less claim keeps the wrong rows`);
+    } else if (!live) {
+      assert.equal(kept, ends, `${e.id}: unsatisfiable premises should keep the ends`);
+    } else {
+      const wrong = rows.filter((r) => r.premises_all_true || r.conclusion === 'F').length;
+      assert.equal(kept, wrong, `${e.id}: ${kept} rows kept, ${wrong} where something could go wrong`);
+    }
   }
 });

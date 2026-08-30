@@ -64,6 +64,87 @@ function svgFigure(entry, method, fallback) {
   );
 }
 
+/*
+ * The truth table, in two views.
+ *
+ * The full table is the one that establishes anything, because a truth table
+ * is an exhaustive check, so it is what the panel opens on. But sixty-four
+ * rows is a lot to hold at once, and the rows a reader actually has to look at
+ * are far fewer: the ones where the conclusion is false, and the ones where
+ * every premise is true. `truth_table.latex_compact` is that portion, with a
+ * ⋮ for each stretch left out, and this is the switch between them.
+ *
+ * The switch starts hidden and `hydrateSvgs` reveals it, because the compact
+ * view exists only as typeset LaTeX -- there is no HTML fallback for it, and
+ * offering a button that produces nothing would be worse than not offering it.
+ */
+function tableViews(entry, fallback) {
+  const tt = entry.truth_table || {};
+  // Where nothing was elided the two views are the same table, and a button
+  // that changes nothing is worse than no button. Three entries are like this:
+  // every row is a row the reader has to check.
+  if (!tt.latex_compact || tt.latex_compact === tt.latex) {
+    return svgFigure(entry, "table", fallback);
+  }
+
+  const id = escapeHtml(entry.id);
+  return (
+    `<div class="ae-views" data-ae-views="${id}" hidden>` +
+    `<button type="button" class="ae-view-btn ae-view-on" data-view="table" aria-pressed="true">Full table</button>` +
+    `<button type="button" class="ae-view-btn" data-view="table-compact" aria-pressed="false">Key rows</button>` +
+    `</div>` +
+    `<div data-ae-view="table">${svgFigure(entry, "table", fallback)}</div>` +
+    `<div data-ae-view="table-compact" hidden>` +
+    svgFigure(entry, "table-compact", "<!---->") +
+    `<p class="ae-alt">${compactNote(entry)} Only the full table settles the ` +
+    `question — a truth table is an exhaustive check.</p>` +
+    `</div>`
+  );
+}
+
+/*
+ * What the compact view kept, in this entry's case. It mirrors
+ * `tables.compact_filter`, which has four branches, and a caption naming only
+ * one of them would be wrong on eleven entries.
+ */
+function compactNote(entry) {
+  const rows = asArray(entry.truth_table?.rows);
+  const live = rows.some((r) => r.premises_all_true);
+  if (!asArray(entry._premises).length) {
+    return entry.verdict?.valid
+      ? `The top and bottom rows — every atom true, then every atom false — with ` +
+        `the rest elided. A claimed tautology is true on every row, so no row ` +
+        `singles itself out.`
+      : `The rows where the conclusion is false: this form's countermodels, and ` +
+        `all that is needed to refute it.`;
+  }
+  if (!live) {
+    return `The top and bottom rows — every atom true, then every atom false — ` +
+      `with the rest elided. Nothing satisfies these premises, so there is no ` +
+      `live row to point at.`;
+  }
+  return `The rows where the conclusion is false, and the rows where every ` +
+    `premise is true — the two ways an argument can go wrong, and their ` +
+    `overlap is a countermodel. Everything else is elided.`;
+}
+
+/* Flip one entry's table between its two views. */
+document.addEventListener("click", (ev) => {
+  const btn = ev.target.closest?.(".ae-view-btn");
+  if (!btn) return;
+  const bar = btn.closest(".ae-views");
+  const panel = bar?.parentElement;
+  if (!panel) return;
+  for (const b of bar.querySelectorAll(".ae-view-btn")) {
+    const on = b === btn;
+    b.setAttribute("aria-pressed", String(on));
+    b.classList.toggle("ae-view-on", on);
+  }
+  for (const view of panel.querySelectorAll("[data-ae-view]")) {
+    view.hidden = view.dataset.aeView !== btn.dataset.view;
+  }
+});
+
 /**
  * Swap every SVG slot under `root` for its typeset picture.
  *
@@ -88,6 +169,13 @@ export function hydrateSvgs(root) {
         if (at < 0) return;
         el.innerHTML = text.slice(at);
         el.dataset.aeSvgDone = "1";
+        // The switch is only worth offering once the view behind it exists.
+        if (name.endsWith("-table-compact")) {
+          const id = name.slice(0, -"-table-compact".length);
+          for (const bar of root.querySelectorAll(`[data-ae-views="${CSS.escape(id)}"]`)) {
+            bar.hidden = false;
+          }
+        }
       } catch {
         // Keep the fallback.
       }
@@ -1091,9 +1179,8 @@ function buildTruthTable(entry) {
       // the HTML table only -- the typeset table marks nothing, exactly as it
       // does in the handout. So the legend goes inside the fallback and leaves
       // with it. The countermodels themselves are named in the verdict.
-      svgFigure(
+      tableViews(
         entry,
-        "table",
         `<div class="ae-table-wrap"><table class="ae-tt"><thead>${head}</thead><tbody>${body}</tbody></table></div>` +
           legend,
       ),

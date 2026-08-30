@@ -424,20 +424,27 @@ But sixty-four rows is more than a page of a four-page handout, so each entry
 also carries a **compact table** at `truth_table.latex_compact` — Lecture 8's
 "portion of a truth table", with a `\vdots` standing in for every stretch left
 out. It is a companion, never a substitute: an entry has both, the website
-shows the full one, and a handout takes whichever fits.
+offers a **Full table / Key rows** switch between them, and a handout takes
+whichever fits.
 
-What it keeps, in order of precedence:
+What it keeps:
 
 | The entry | Rows kept | Why |
 | --- | --- | --- |
-| has a countermodel | the countermodels | They are what refutes it — one row in sixty-four, on the Dutch book form |
-| has no premises and is valid | the top row | A claimed tautology has no premises to make true, so no row singles itself out |
-| has premises satisfiable by some row | the rows where every premise is true | Those are the rows validity is *about*, and the conclusion holds in each |
-| has premises nothing satisfies | the bottom row | Every contradiction claim, and the vacuously valid `ex-falso` |
+| an argument whose premises something satisfies | every row where **the conclusion is false**, and every row where **all the premises are true** | Those are the two ways it could go wrong: a false conclusion, in which case a premise had better be false too; and all-true premises, in which case the conclusion had better be true. Their intersection is a countermodel, and a reader who checks the union has checked the argument |
+| a premise-less claim that is valid | the **top and bottom rows** — all atoms true, all atoms false | A claimed tautology is true on every row, so no row singles itself out; the ends stand in for all of them |
+| a premise-less claim that is not | the rows where the conclusion is false | Which are exactly its countermodels |
+| premises nothing can satisfy | the **top and bottom rows** | Every contradiction claim, and the vacuously valid `ex-falso`. There is no live row to point at |
 
-The rules are written as predicates on the *model*, not the row number, so they
-do not depend on the order the atoms come out in: the top row is the one where
-every atom is true, the bottom row the one where none is.
+The rules are predicates on the *model*, not the row number, so they do not
+depend on the order the atoms come out in: the top row is the one where every
+atom is true, the bottom row the one where none is.
+
+**The compact table is sometimes the full table**, and that is not a fault. On
+`russell-schema`, `distributed-knowledge` and `total-not-determined` every row
+is a row the reader has to check, so nothing is elided and the two blocks come
+out byte-identical — which is how the website knows to drop the switch rather
+than offer a button that changes nothing.
 
 ### 4.5a Every row, always (the full table)
 

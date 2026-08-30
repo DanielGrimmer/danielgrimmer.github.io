@@ -33,7 +33,7 @@ metrics are computed from the formulas; nothing is asserted on authority.
 | `browse.js` | The catalogue controller: search, facets, and the `#/<id>` routes |
 | `practice.js` | The random draw and its shuffled bag |
 | `encyclopedia.css` | All styles, scoped to `.ae-scope` |
-| `svg/` | The typeset LaTeX, one SVG per (form, method), plus `index.json` — a build artifact, see below |
+| `svg/` | The typeset LaTeX, one SVG per (form, view) — table, compact table, tree, derivation — plus `index.json`; a build artifact, see below |
 
 The pages are `_pages/arguments.md` (the overview, and the navbar dropdown parent),
 `_pages/argumentsbrowse.md` and `_pages/argumentspractice.md`.
@@ -48,7 +48,7 @@ LaTeX and the output is committed here, one file per (form, method):
 
 ```
 cd EncyclopediaOfArguments/latexgen
-python3 svg.py              # regenerate all 88
+python3 svg.py              # regenerate all 123
 python3 svg.py --only peirce-law
 python3 svg.py --check      # is anything stale?
 ```

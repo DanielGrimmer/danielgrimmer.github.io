@@ -270,19 +270,29 @@ def compact_filter(entry: dict):
 
     A compact table cannot establish anything -- only the full one does that,
     because a truth table is an exhaustive check -- so what it keeps is the
-    rows a reader would point at:
+    rows a reader has to look at anyway.
 
-      * **a countermodel, where there is one.** It is what refutes the
-        argument, and on the Dutch book form it is one row in sixty-four;
-      * **the rows where every premise is true**, for a valid argument. Those
-        are the rows validity is *about*, and the conclusion holds in each;
-      * **the top row** for a claimed tautology, which has no premises to make
-        true and so no rows to single out;
-      * **the bottom row** where the premises cannot all be true at once --
-        every contradiction claim, and the vacuously valid `ex-falso`.
+    For an ordinary argument those are the rows where something could go
+    wrong, and there are two ways it could: a row where the **conclusion is
+    false**, in which case one of the premises had better be false too, and a
+    row where **every premise is true**, in which case the conclusion had
+    better be true. Their intersection is a countermodel. So the compact table
+    keeps the union, and a reader who checks those rows has checked the
+    argument.
 
-    Written as predicates on the model rather than on the row index, so it does
-    not depend on the order the atoms happen to come out in: the top row is the
+    Where that question does not arise the table keeps its **top and bottom
+    rows** -- all atoms true, all atoms false -- with the rest elided between
+    them. That is the case for a claimed tautology, which has no premises to
+    make true and so no row that singles itself out, and for premises nothing
+    can satisfy, where there is no live row to show. In both the compact table
+    is an illustration of the shape of the thing, not an argument.
+
+    The one remaining case is a premise-less claim that is *not* a tautology:
+    there the rows where the conclusion is false are exactly the countermodels,
+    and they are the point.
+
+    Written as predicates on the model rather than on the row index, so nothing
+    depends on the order the atoms happen to come out in: the top row is the
     one where every atom is true, the bottom row the one where none is.
     """
     prem = [parse(p)[0] for p in entry["premises"]]
@@ -299,17 +309,25 @@ def compact_filter(entry: dict):
     def live(m):
         return all(evaluate(r, m) for r in prem)
 
-    def countermodel(m):
-        return live(m) and concl is not None and not evaluate(concl, m)
+    def concl_false(m):
+        return concl is not None and not evaluate(concl, m)
+
+    def ends(m):
+        return all(m.values()) or not any(m.values())
 
     every = models(atoms)
-    if any(countermodel(m) for m in every):
-        return countermodel
+
     if not prem:
-        return lambda m: all(m.values())
-    if any(live(m) for m in every):
-        return live
-    return lambda m: not any(m.values())
+        # A claimed theorem. Valid means the conclusion is true on every row,
+        # so no row stands out and the ends stand in for all of them.
+        return ends if all(not concl_false(m) for m in every) else concl_false
+
+    if not any(live(m) for m in every):
+        # Nothing satisfies the premises -- every contradiction claim, and the
+        # vacuously valid `ex-falso`. There is no live row to point at.
+        return ends
+
+    return lambda m: live(m) or concl_false(m)
 
 
 def table_block(entry: dict, compact: bool = False) -> str:
