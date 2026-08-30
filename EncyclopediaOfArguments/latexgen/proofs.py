@@ -1448,3 +1448,69 @@ PROOFS["orange-blossom"] = [
     _l(8, "b", "NegE", 1, [7]),
     _l(9, "j > b", "CondI", 0, subs=[[2, 8]]),
 ]
+
+# ---------------------------------------------------- antecedent-strengthening
+# Assume the stronger antecedent, split it, and eliminate. Every rule is
+# dictated by the goal, so nothing about this proof is interesting -- which is
+# the point next to its converse, whose countermodel is the real exhibit.
+PROOFS["antecedent-strengthening"] = [
+    P(1, "p > q"),
+    _l(2, "p & r", "As", 1),
+    _l(3, "p", "ConjE", 1, [2]),
+    _l(4, "q", "CondE", 1, [1, 3]),
+    _l(5, "(p & r) > q", "CondI", 0, subs=[[2, 4]]),
+]
+
+# --------------------------------------------------------- redundant-disjunct
+# The ⊃I-toward-BicondI half is dictated: assume (p|q)>p, assume q, build the
+# disjunction, eliminate. The other half needs ∨E because p, unlike q, is not
+# an assumption to eliminate against -- the case that assumes p has to
+# reiterate it to close, per §6.4's rule for a case whose assumption is its
+# own conclusion.
+PROOFS["redundant-disjunct"] = [
+    _l(1, "(p | q) > p", "As", 1),
+    _l(2, "q", "As", 2),
+    _l(3, "p | q", "DisjI", 2, [2]),
+    _l(4, "p", "CondE", 2, [1, 3]),
+    _l(5, "q > p", "CondI", 1, subs=[[2, 4]]),
+    _l(6, "q > p", "As", 1),
+    _l(7, "p | q", "As", 2),
+    _l(8, "p", "As", 3),
+    _l(9, "p", "Reit", 3, [8]),
+    _l(10, "q", "As", 3),
+    _l(11, "p", "CondE", 3, [6, 10]),
+    _l(12, "p", "DisjE", 2, [7], subs=[[8, 9], [10, 11]]),
+    _l(13, "(p | q) > p", "CondI", 1, subs=[[7, 12]]),
+    _l(14, "((p | q) > p) = (q > p)", "BicondI", 0, subs=[[1, 5], [6, 13]]),
+]
+
+# ----------------------------------------------------- two-switches-lightbulb
+# The same shape as `the-monster`, minus its symmetry: the reductio derives
+# ~p alone (assuming p and q together trips the premise to r, which already
+# secures the disjunction) and never needs a matching argument for ~q. From
+# ~p, p>r is vacuous -- assume p, contradict ~p, and take r out of that
+# contradiction the only way the system allows, via a nested reductio on ~r,
+# since there is no explosion rule to shortcut it.
+PROOFS["two-switches-lightbulb"] = [
+    P(1, "(p & q) > r"),
+    _l(2, "~((p > r) | (q > r))", "As", 1),
+    _l(3, "p", "As", 2),
+    _l(4, "q", "As", 3),
+    _l(5, "p & q", "ConjI", 3, [3, 4]),
+    _l(6, "r", "CondE", 3, [1, 5]),
+    _l(7, "q > r", "CondI", 2, subs=[[4, 6]]),
+    _l(8, "(p > r) | (q > r)", "DisjI", 2, [7]),
+    _l(9, "!", "FalsumI", 2, [8, 2]),
+    _l(10, "~p", "NegI", 1, subs=[[3, 9]]),
+    _l(11, "p", "As", 2),
+    _l(12, "~r", "As", 3),
+    _l(13, "!", "FalsumI", 3, [11, 10]),
+    _l(14, "~~r", "NegI", 2, subs=[[12, 13]]),
+    _l(15, "r", "NegE", 2, [14]),
+    _l(16, "p > r", "CondI", 1, subs=[[11, 15]]),
+    _l(17, "(p > r) | (q > r)", "DisjI", 1, [16]),
+    _l(18, "~((p > r) | (q > r))", "Reit", 1, [2]),
+    _l(19, "!", "FalsumI", 1, [17, 18]),
+    _l(20, "~~((p > r) | (q > r))", "NegI", 0, subs=[[2, 19]]),
+    _l(21, "(p > r) | (q > r)", "NegE", 0, [20]),
+]

@@ -28,6 +28,7 @@ be offered a second time). The reason column says which.
 | 2026-08-30 | `p∨q, p ∴ ∼q` (inventory name: "Affirming a disjunct") | Duplicates `affirming-a-disjunct` already in the database (`f∨d, d ∴ ∼f`) — same form, renamed atoms, per §6's own worked example of exactly this pair. |
 | 2026-08-30 | `(p&q)&∼p` (inventory name: "contradiction") | Not skipped — imported as `conjunction-with-its-own-negation`, but reshaped as `(p&q)&∼p ⊢ ⊥` rather than the bare `⊨ (p&q)&∼p` reading `split_sequent` gives a turnstile-free row by default. The row's own annotation names the derivation target directly — **ND untouched (`⊢ND ⊥` in 4 lines)** — which only makes sense if the goal is `⊥`, not the formula; §11c calls this the author's judgement to make. Logged so the row is not re-offered under a shape the database does not carry. |
 | 2026-08-30 | `p≡q ≡ ∼(∼p∨∼q)∨∼(p∨q)` (locus PS2.4c) | Duplicates `biconditional-as-agreement` already in the database, which carries this exact claim from this exact locus (`(p = q) = (~(~p \| ~q) \| ~(p \| q))`). The row is genuinely ambiguous unbracketed — `≡` is right-associative in `split_sequent`, so the raw row parses as `p ≡ (q ≡ X)` rather than the intended `(p ≡ q) ≡ X` — and the queue's shape-based dedup does not see through that, offering the row again under the wrong bracketing. It is the same form under the reading the course actually poses. |
+| 2026-08-30 | `p≡q, p≡∼q ⊢ ∼p` (OLD-PS3 Q11) | Same unsatisfiable premise pair as `vacuous-validity-unsat-premises` already in the database (`p = q, p = ~q`), differing only in the arbitrary conclusion drawn from the contradiction (`∼p` here, `r` there) — the inventory's own note calls it "the tree version of our PS2.2d table item", i.e. the identical lesson in a different method, not a different form. Importing it would restate `vacuous-validity-unsat-premises` under a second conclusion letter rather than teach anything new. |
 
 ## Resolved
 
@@ -290,5 +291,54 @@ of 48 (24 now in the database).
 **The sandbox again had no LaTeX toolchain in this fresh container**;
 reinstalled `texlive-latex-base texlive-latex-extra
 texlive-fonts-recommended texlive-pictures texlive-science dvisvgm` via
+`apt-get`, matching every prior firing's note. The `session-start-hook`
+suggestion from those notes is still open.
+
+**2026-08-30, fifth `imports`-source firing.** Course queue confirmed empty
+again. Three from the imports queue: `antecedent-strengthening` (OLD-PS2
+Q2(b), `p⊃q ⊨ (p&r)⊃q`, valid), `redundant-disjunct` (OLD-PS5 Q6, `⊢
+((p∨q)⊃p)≡(q⊃p)`, valid, an ungraded bonus there), and
+`two-switches-lightbulb` (Restall Ch 6 p.65, `(p&q)⊃r ⊨ (p⊃r)∨(q⊃r)`, valid
+— the overlap §1 already flags: "already Restall p.65 (two-switches
+lightbulb) — import with his vehicle"). One row skipped as a duplicate and
+logged in the table above (`p≡q, p≡∼q ⊢ ∼p`).
+
+`antecedent-strengthening` completes the pair `antecedent-strengthening-
+converse` was left waiting for four firings ago: `looks_like` set both ways,
+and the converse's `course.note` and `interest` updated to drop the "not yet
+imported" caveat and name it directly.
+
+`redundant-disjunct`'s derivation needed `∨E` for one direction of the
+`BicondI` (the other is dictated — assume `q`, build the disjunction,
+eliminate) — the case that assumes `p` has to reiterate it to close, per
+§6.4's rule for a case whose assumption is its own conclusion.
+`difficulty.py --diff` caught that its `nd` was scored `medium` by hand when
+the rubric says `hard`: the "more than ten derived lines" trigger counts
+every non-`Pr` line, assumptions included, not just the lines that derive
+something new, and the six assumptions across two nested `BicondI` halves
+push a 14-line proof over that count. Took the rubric's suggestion rather
+than argue `course.note`.
+
+`two-switches-lightbulb`'s derivation does not split symmetrically on `p`
+and `q` the way the tautology form might suggest: it rules out `p` alone
+(assuming `p` and `q` together already trips the premise to `r`, which
+would secure the disjunction outright, so the reductio rules `p` out on its
+own) and then builds `p⊃r` vacuously from that `∼p`, never touching `q`
+directly. The technique — force one disjunct's negation, squeeze the other
+out of the contradiction — is the same one `the-monster`'s proof already
+uses; said so in `interest` and in `course.note` as a pairing suggestion,
+without setting `looks_like`, since the two forms differ in more than
+letters (one carries a premise, the other is a bare tautology).
+
+`build.py --write`, `python3 difficulty.py --diff` (clean after the
+`redundant-disjunct` correction), `svg.py`, `svg.py --check`,
+`inventory.py --locks`, and `node --test "_tests/*.test.mjs"` all clean
+(512/512). `extremely hard` (nd) count unchanged at 3. Imports queue: 21
+candidates left of 48 (27 now in the database).
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled `texlive-latex-base texlive-latex-recommended
+texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
+texlive-humanities texlive-science texlive-fonts-recommended` via
 `apt-get`, matching every prior firing's note. The `session-start-hook`
 suggestion from those notes is still open.

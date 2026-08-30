@@ -100,3 +100,6 @@ conditional-crossover
 disguised-converse
 orange-blossom
 antecedent-strengthening-converse
+antecedent-strengthening
+redundant-disjunct
+two-switches-lightbulb
