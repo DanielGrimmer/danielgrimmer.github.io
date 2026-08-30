@@ -43,12 +43,34 @@ quarantined exam rows, rows holding more than one sequent, and rows whose
 formulas will not parse. Those last two are work for a person; log them (§7)
 rather than trying to force them.
 
-## 3. Write the entry
+## 3. Compute the structured data
 
-Add it to `assets/arguments/argument-db.json` following §7 of the style guide.
-What the build will fix for you: atom names, parentheses, the display strings,
-the truth-table columns, the tree node formulas, the `nd` profile, and all four
-LaTeX blocks. What you must supply:
+**Never hand-write a truth table or a tableau.** `latexgen/derive.py` computes
+them from the sequent — the table, the verdict and its countermodels, the
+tableau with every `from` link, the branch models, the metrics and the premise
+analysis — and it reproduces all 35 of the original entries exactly, so it is
+the thing to trust.
+
+```python
+import sys; sys.path.insert(0, "EncyclopediaOfArguments/latexgen")
+from derive import derive
+d = derive(["p > q", "~q"], "~p")
+# d["verdict"], d["truth_table"], d["tree"], d["metrics"], d["premise_analysis"]
+```
+
+Write the entry by taking those wholesale and adding the prose around them.
+`python3 derive.py "p > q" "~q" --conclusion "~p"` prints the lot if you would
+rather look first, and `--check` re-verifies it against the existing database.
+
+Omit `canonical`: it is an identity scheme from an upstream generator and
+nothing on the site reads it. Route on `id`.
+
+## 4. Write the prose
+
+Add the entry to `assets/arguments/argument-db.json` following §7 of the style
+guide. What the build will fix for you: atom names, parentheses, the display
+strings, the truth-table columns, the tree node formulas, the `nd` profile, and
+all four LaTeX blocks. What you must supply:
 
 - **`id`** — a short kebab-case slug, unique. It is the route; never change one.
 - **`premises` / `conclusion`** — from the candidate, in ASCII.
@@ -56,19 +78,17 @@ LaTeX blocks. What you must supply:
 - **`english`** — `{gloss, faithful}`. Ordinary English, no symbols. For a bare
   schema like `p⊃q, p ∴ q` there may be nothing to gloss; then omit it rather
   than inventing a story.
-- **`appearances`** — see §4.
-- **`interest`** — see §4.
+- **`appearances`** — see §5.
+- **`interest`** — see §5.
 - **`tags`**, **`difficulty`** (one of easy/medium/hard per method — a hard
-  table can be an easy derivation), **`course`** (see §5).
-- **The truth table, tree and verdict data.** Compute them; do not transcribe.
-  `latexgen/tables.py` and `trees.py` build the blocks from the structured
-  data, and `build.py` recomputes every value and stops if one disagrees.
+  table can be an easy derivation), **`course`** (see §6).
+- **The structured data**, from `derive.py` — see §3.
 - **The derivation**, for a valid form: a new entry in `latexgen/proofs.py`,
   written with the entry's final atom names. `nd.check()` verifies it.
 - For an invalid form, **`nd.note`**: where the attempt at a derivation breaks
   down. "No derivation" alone is a wasted field.
 
-## 4. Provenance, when the source is the course
+## 5. Provenance, when the source is the course
 
 Most of this inventory has no philosophical champion behind it. **That is fine
 and you should say so plainly.** The course itself is the appearance:
@@ -91,7 +111,7 @@ proof by cases is built on."* Do not manufacture philosophical significance. A
 short honest note is worth more than an invented one, and these can be
 deepened later.
 
-## 5. `course`, and what must not be practised
+## 6. `course`, and what must not be practised
 
 ```json
 "course": {
@@ -106,8 +126,9 @@ deepened later.
 **`problem_set` is load-bearing.** A form set as graded work is not a fair
 random draw *in that method* — the student has already been asked to build that
 very tree — so `practice.js` drops that pair. The other methods stay open.
-Copy the candidate's `problem_set` map verbatim; it is derived from the
-inventory's own "where" column.
+Copy the candidate's `problem_set` map; it is derived mechanically from the
+inventory's own "where" column and errs toward withholding, so drop an entry
+from it if the locus plainly is not a set question and say so in `course.note`.
 
 **Exam appearances are not recorded** and are free to practise: the site is
 unreachable during the exam and there is far too much of it to memorise. The
@@ -119,7 +140,7 @@ them, and if you meet one another way, `course.quarantined: true`.
 if one exists, either skip the row (log it) or set `looks_like` to the entry it
 resembles and say in `interest` how they differ.
 
-## 6. Build, verify, push
+## 7. Build, verify, push
 
 ```bash
 cd EncyclopediaOfArguments/latexgen
@@ -143,7 +164,7 @@ git push -u origin claude/inventory-import
 The PR body should say what the queue looks like now (`inventory.py --status`)
 and list what was skipped this run.
 
-## 7. When a row will not go in
+## 8. When a row will not go in
 
 Skip it and record it in `EncyclopediaOfArguments/IMPORT_LOG.md` — one line,
 the sequent, and the reason. Never import something half-met, and never stop

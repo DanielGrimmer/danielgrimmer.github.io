@@ -113,8 +113,28 @@ PROBLEM_SET = re.compile(r"\bPS\d")
 METHOD_WORDS = {"table": "table", "tree": "tree", "nd": "nd"}
 
 
-def problem_sets(where: str) -> dict[str, str]:
-    """`PS2.2a (table); PS5.2 (ND)` into `{"table": "PS2.2a", "nd": "PS5.2"}`."""
+def problem_sets(row: dict) -> dict[str, str]:
+    """Which methods this form has been set in, as `{method: locus}`.
+
+    The inventory says it two ways. §1's grid is positional -- Form, Verdict,
+    Table, Tree, ND -- so the column a locus sits in names the method. §§2-7
+    put everything in one "where" column and name the method in parentheses:
+    `PS2.8a (table); PS4.2a (tree)`. Both are read here, because getting this
+    wrong means offering a student the very tree they were set.
+    """
+    cells = row["cells"]
+    if row["section"].startswith("1.") and len(cells) >= 5:
+        out: dict[str, str] = {}
+        for method, cell in zip(("table", "tree", "nd"), cells[2:5]):
+            hit = re.search(r"\b(PS[\w.]*\d[\w.]*)", cell)
+            if hit:
+                out[method] = hit.group(1).rstrip(".;)")
+        return out
+    return _problem_sets_inline(" ".join(cells[2:]))
+
+
+def _problem_sets_inline(where: str) -> dict[str, str]:
+    """`PS2.8a (table); PS4.2a (tree)` into `{"table": ..., "tree": ...}`."""
     out: dict[str, str] = {}
     for chunk in re.split(r"[;,]", where):
         locus = re.match(r"\s*\*?\*?([A-Za-z0-9.§-]+)", chunk)
@@ -216,7 +236,7 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
                 "conclusion": conclusion,
                 "name": name_of(row),
                 "where": where,
-                "problem_set": problem_sets(where),
+                "problem_set": problem_sets(row),
                 "section": row["section"],
             }
         )

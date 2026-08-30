@@ -325,3 +325,24 @@ PROOFS["assertion-t"] = [
     _l(4, "(p > q) > q", "CondI", 1, subs=[[2, 3]]),
     _l(5, "p > ((p > q) > q)", "CondI", 0, subs=[[1, 4]]),
 ]
+
+# --------------------------------------------------------------- modus ponens
+# The rule the whole system is built around: one application of ⊃E.
+PROOFS["modus-ponens"] = [
+    P(1, "p > q"),
+    P(2, "p"),
+    _l(3, "q", "CondE", 0, [1, 2]),
+]
+
+# -------------------------------------------------------------- modus tollens
+# An easy table and a harder proof: there is no one-step rule, so the argument
+# has to be made by reductio -- assume p, reach q, collide it with ~q.
+PROOFS["modus-tollens"] = [
+    P(1, "p > q"),
+    P(2, "~q"),
+    _l(3, "p", "As", 1),
+    _l(4, "q", "CondE", 1, [1, 3]),
+    _l(5, "~q", "Reit", 1, [2]),
+    _l(6, "!", "FalsumI", 1, [4, 5]),
+    _l(7, "~p", "NegI", 0, [], [[3, 6]]),
+]
