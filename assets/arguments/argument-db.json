@@ -384,12 +384,15 @@
      "Lecture 11"
     ],
     "quarantined": false,
-    "note": "⚠ Its intuitionistic status is NOT in the SEP intuitionistic-logic entry; cite it as a textbook result.",
+    "note": "⚠ Its intuitionistic status is NOT in the SEP intuitionistic-logic entry; cite it as a textbook result. PS5.7 sets the derivation as a bonus question, so nd is withheld from practice; the table and the tree are untouched by the course and stay on offer.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
      "nd": 11,
      "note": "falsum appears, so no earlier than Lecture 10"
+    },
+    "problem_set": {
+     "nd": "PS5.7"
     }
    },
    "nd": {
@@ -6420,12 +6423,15 @@
    "course": {
     "used_in": [],
     "quarantined": false,
-    "note": "⚠ The qt-quantlog entry contains NO physical example; do not attribute the two-slit case to it. Its ND proof is the standard ∨E showcase.",
+    "note": "⚠ The qt-quantlog entry contains NO physical example; do not attribute the two-slit case to it. Its ND proof is the standard ∨E showcase. PS3.1 sets this very conditional as a tree exercise, so the tree is withheld.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
      "nd": 11,
      "note": null
+    },
+    "problem_set": {
+     "tree": "PS3.1"
     }
    },
    "nd": {
@@ -9106,7 +9112,7 @@
    ],
    "conclusion": "v > o",
    "interest": "**The shared Lecture 7/8 worked example**, and a good illustration of tuning a form to a teaching job without damaging it. It strengthens `dutch-book-is-ought`'s third premise from `(b&k) ⊃ l` to `(b&k) ⊃ (l & d)`, where `d` = you are also in for a difficult conversation. Three things follow. The premise is now strictly **stronger** (verified: it entails the original), so the argument failing is more striking, not less. The countermodel is still **unique**, now one row in sixty-four rather than one in thirty-two. And the open branch now carries a **conjunction** to resolve, so the walk up that branch in Lecture 7 illustrates four tree rules rather than three, and its lowest complex formula is a *descendant* rather than a root -- which is the shape the handout's induction wants.",
-   "countermodel_gloss": "The single open branch is an agent who violates the probability axioms, whose odds really are fixed by her degrees of belief, against whom a bookie really can make book, who really is open to a sure loss **and** a difficult conversation --- and who is nonetheless under no obligation to change her mind. Every descriptive premise holds; the normative conclusion fails. Adding `l ⊃ o` closes the tree (verified).",
+   "countermodel_gloss": "The single open branch is an agent who violates the probability axioms, whose odds really are fixed by her degrees of belief, against whom a bookie really can make book, who really is open to a sure loss **and** a difficult conversation -- and who is nonetheless under no obligation to change her mind. Every descriptive premise holds; the normative conclusion fails. Adding `l ⊃ o` closes the tree (verified).",
    "english": [
     {
      "gloss": "Your degrees of belief fix which betting odds you find acceptable. If your betting odds violate the probability axioms, a cunning bettor can make a Dutch book against those odds. If your degrees of belief fix your odds and a bettor can make book against them, then you are open to a sure loss and a difficult conversation. Therefore, if your degrees of belief violate the probability axioms, you ought to change them.",
@@ -20383,7 +20389,7 @@
     "l > o"
    ],
    "conclusion": "v > o",
-   "interest": "The classroom form with the normative bridge `l ⊃ o` supplied. **Lecture 7 sets this as the follow-up exercise** --- \"Add that as a fourth premise, `l ⊃ o`, and the tree closes. (Try it.)\" All four premises are load-bearing, and note that `d` is carried through the derivation without ever being used: the difficult conversation is real but idle, which is worth a remark when the tree closes.",
+   "interest": "The classroom form with the normative bridge `l ⊃ o` supplied. **Lecture 7 sets this as the follow-up exercise** -- \"Add that as a fourth premise, `l ⊃ o`, and the tree closes. (Try it.)\" All four premises are load-bearing, and note that `d` is carried through the derivation without ever being used: the difficult conversation is real but idle, which is worth a remark when the tree closes.",
    "english": [],
    "appearances": [
     {
@@ -22034,7 +22040,7 @@
     "~(h & c)"
    ],
    "conclusion": "w",
-   "interest": "The two-witness argument becomes valid the moment you add the premise every reader supplied without noticing: **a person is in one place at a time.** Three atoms, and the whole point is the contrast with the invalid original --- the open branch there set `h = T` and `c = T`, which is absurd about people and perfectly fine about sentence letters. **The cleanest \"invisible premise made visible\" pair in the catalogue.** The ND proof is a good `∨E` workout with a reductio nested inside it.",
+   "interest": "The two-witness argument becomes valid the moment you add the premise every reader supplied without noticing: **a person is in one place at a time.** Three atoms, and the whole point is the contrast with the invalid original -- the open branch there set `h = T` and `c = T`, which is absurd about people and perfectly fine about sentence letters. **The cleanest \"invisible premise made visible\" pair in the catalogue.** The ND proof is a good `∨E` workout with a reductio nested inside it.",
    "english": [
     {
      "gloss": "Ann knows Bea is at home or at work; Cal knows she is at work or at the cafe; and nobody is in two places at once. So she is at work.",
@@ -26540,7 +26546,7 @@
     "Distribution biconditional",
     "Conjunction distributes over disjunction"
    ],
-   "interest": "The full biconditional behind the one-directional `distribution` entry: not just that `p & (q ∨ r)` yields `(p & q) ∨ (p & r)`, but that the two say the same thing. Proving it needs both conditionals joined by biconditional introduction, and each half is its own case split on a disjunction -- the forward half splits on `q ∨ r`, the reverse on `(p & q) ∨ (p & r)` -- so the derivation runs to the length its shape demands rather than its statement's. Lecture 9 works both directions together; `distribution` isolates the forward half alone, for the discussion of where distribution fails in the quantum lattice, the two are worth reading together for what the biconditional adds back.",
+   "interest": "The full biconditional behind the one-directional `distribution` entry: not just that `p & (q ∨ r)` yields `(p & q) ∨ (p & r)`, but that the two say the same thing. Proving it needs both conditionals joined by biconditional introduction, and each half is its own case split on a disjunction -- the forward half splits on `q ∨ r`, the reverse on `(p & q) ∨ (p & r)` -- so the derivation runs to the length its shape demands rather than its statement's. Lecture 9 works both directions together; `distribution` isolates the forward half alone, for the discussion of where distribution fails in the quantum lattice. The two are worth reading side by side for what the biconditional adds back.",
    "english": [
     {
      "gloss": "'p, and either q or r' says just what 'either (p and q), or (p and r)' says.",
@@ -26571,12 +26577,15 @@
      "Lecture 9"
     ],
     "quarantined": false,
-    "note": "PS3.1's tree exercise sets only the → half, in the one-directional form that is the `distribution` entry; it is not a fair withhold against this biconditional, so no problem_set entry is recorded here.",
+    "note": "PS3.1 sets the → half as a tree, in the one-directional form that is the `distribution` entry. Drawing the tree for this biconditional builds that tree as its forward half, so the tree is withheld here too. Strictly a different sequent, and the call could go the other way — but the table and the derivation are both untouched by the problem sets and stay on offer.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
      "nd": 10,
      "note": null
+    },
+    "problem_set": {
+     "tree": "PS3.1"
     }
    },
    "looks_like": "distribution",
@@ -28490,7 +28499,7 @@
    "names": [
     "Paradox disjunction"
    ],
-   "interest": "A tautology built from two paradoxes of material implication at once: whichever of `p` and `∼p` holds, one disjunct comes out true for free -- `q⊃p` if `p`, `p⊃r` if `∼p` -- and Lecture 11 only sketches the table before the derivation is set as the real content of PS5.6. The proof is the longest in the database by trigger count: an undictated reductio on the whole disjunction, a subproof nested inside that subproof to pull `r` out of a contradiction (there is no explosion rule, so that step cannot be skipped), five subproofs across eighteen lines. It is classically valid but not intuitionistically: a two-node Kripke model with `p` false at the root and true one step up falsifies both disjuncts at once, one at each world.",
+   "interest": "A tautology built from two paradoxes of material implication at once: whichever of `p` and `∼p` holds, one disjunct comes out true for free -- `q⊃p` if `p`, `p⊃r` if `∼p` -- and Lecture 11 only sketches the table before the derivation is set as the real content of PS5.6. The proof is long for a theorem with nothing given: an undictated reductio on the whole disjunction, a subproof nested inside that subproof to pull `r` out of a contradiction (there is no explosion rule, so that step cannot be skipped), five subproofs across eighteen lines. It is classically valid but not intuitionistically: a two-node Kripke model with `p` false at the root and true one step up falsifies both disjuncts at once, one at each world.",
    "english": [
     {
      "gloss": "Either if q then p, or if p then r.",
@@ -29297,7 +29306,7 @@
      "faithful": true
     }
    ],
-   "interest": "One half of the two paradoxes of material implication -- already anticipated in `modus-ponens`'s own commentary, which names both in passing. If `p` holds outright, it does not matter what `q` says: `q⊃p` is guaranteed, because a conditional with a true consequent cannot be made false by any antecedent. That is exactly the shape relevance logicians point to when they reject `⊃` as a model of 'if...then': the premise `p` never gets used in a way that has anything to do with `q`, and a relevant logic that requires the antecedent and consequent to share subject matter refuses this instance whatever `p` and `q` are. The derivation is the easiest in the database that is not a bare premise citation: the goal `q⊃p` names `⊃I` outright, and the premise is already sitting there to reiterate.",
+   "interest": "One half of the two paradoxes of material implication -- already anticipated in `modus-ponens`'s own commentary, which names both in passing. If `p` holds outright, it does not matter what `q` says: `q⊃p` is guaranteed, because a conditional with a true consequent cannot be made false by any antecedent. That is exactly the shape relevance logicians point to when they reject `⊃` as a model of 'if...then': the premise `p` never gets used in a way that has anything to do with `q`, and a relevant logic that requires the antecedent and consequent to share subject matter refuses this instance whatever `p` and `q` are. The derivation is four lines and scores no difficulty triggers at all, which only `modus-ponens` beats: the goal `q⊃p` names `⊃I` outright, and the premise is already sitting there to reiterate.",
    "appearances": [
     {
      "type": "used",
@@ -30852,7 +30861,7 @@
     "q > s"
    ],
    "conclusion": "r | s",
-   "interest": "The classical constructive dilemma, and the database's second `∨E` proof after `lecture9-proof-by-cases` -- but a harder one to see coming, because the split is not sitting in a premise already boxed up as a conjunction: it is `p ∨ q` itself, and each conditional has to fire inside its own subproof before `∨I` reassembles the disjunction on the far side. Lecture 10 sets it right after the three-link chain in `hypothetical-syllogism`, so the same two-line trick -- assume, apply `⊃E`, and cite -- turns out to have a forked version once the antecedent is disjunctive rather than given outright.",
+   "interest": "The classical constructive dilemma, and the database's second `∨E` proof after `lecture9-proof-by-cases` -- but a harder one to see coming, because the split is not sitting in a premise already boxed up as a conjunction: it is `p ∨ q` itself, and each conditional has to fire inside its own subproof before `∨I` reassembles the disjunction on the far side. Lecture 10 sets it in the same section as `hypothetical-syllogism`, so the same two-line trick -- assume, apply `⊃E`, and cite -- turns out to have a forked version once the antecedent is disjunctive rather than given outright.",
    "english": [
     {
      "gloss": "Either p or q; if p then r; if q then s; so either r or s.",
@@ -31476,7 +31485,7 @@
     "r > s"
    ],
    "conclusion": "p > s",
-   "interest": "The same assume-and-discharge move as `hypothetical-syllogism`, run one extra time before `⊃I` closes it out: three conditionals chained instead of two. This is the literal form PS5.1 sets, which is why the shorter two-premise entry already withholds itself from the derivation draw -- a student who has built this tree has already built that one as a sub-routine along the way. It earns an entry of its own rather than a footnote on the shorter chain because the table and the tree are genuinely a size larger, and the practice page should be able to offer either length.",
+   "interest": "The same assume-and-discharge move as `hypothetical-syllogism`, run one extra time before `⊃I` closes it out: three conditionals chained instead of two. This is the literal form PS5.1 sets, which is why the shorter two-premise entry already withholds itself from the derivation draw -- a student who has built this derivation has already built that one as a sub-routine along the way. It earns an entry of its own rather than a footnote on the shorter chain because the table and the tree are genuinely a size larger, and the practice page should be able to offer either length.",
    "english": [
     {
      "gloss": "If p then q, and if q then r, and if r then s; so, if p then s.",
@@ -35979,7 +35988,7 @@
     "~p = p"
    ],
    "conclusion": "p > ~q",
-   "interest": "`∼p ≡ p` says p and its own negation always agree — which they never do, so the premise is unsatisfiable all by itself, no second premise required. The argument is valid vacuously: every branch of the tree closes on the biconditional alone, before the conclusion `p ⊃ ∼q` is ever consulted, and the same would hold whatever formula stood in its place. Compare `ex-falso`, whose contradiction `p & ∼p` announces itself in the connective; here the same collapse hides inside a biconditional, so the derivation has to force p and ∼p apart with ≡-elimination before the reductio can even start. Compare also `vacuous-validity-unsat-premises`, which reaches the same vacuous verdict by pitting two individually satisfiable biconditionals against each other — one alone suffices here.",
+   "interest": "`∼p ≡ p` says p and its own negation always agree — which they never do, so the premise is unsatisfiable all by itself, no second premise required. The argument is valid vacuously: every branch of the tree closes on a pair the biconditional alone puts there, and nothing the negated conclusion decomposes into is used to close anything -- the same would hold whatever formula stood in its place. Compare `ex-falso`, whose contradiction `p & ∼p` announces itself in the connective; here the same collapse hides inside a biconditional, so the derivation has to force p and ∼p apart with ≡-elimination before the reductio can even start. Compare also `vacuous-validity-unsat-premises`, which reaches the same vacuous verdict by pitting two individually satisfiable biconditionals against each other — one alone suffices here.",
    "english": [
     {
      "gloss": "Not p if and only if p; so, if p then not q.",
@@ -37209,7 +37218,7 @@
     "q | ~r"
    ],
    "conclusion": "p > s",
-   "interest": "The problem sets' own repeat exhibit, run three times across two sets exactly as `lecture7-incumbent` is the lecture handouts' repeat exhibit -- a different formula doing the same job for a different audience. Two rows out of sixteen defeat it, and they are not the same row: PS3.5 stops at `p=T,q=T,r=T,s=F`, PS4.1's guided walk adds `p=T,q=T,r=F,s=F`, so a student who only ever checks the first countermodel a course hands them has not checked the argument. The tree opens on both non-branching steps from the negated conditional before it forks, which is what makes it a fair worked example rather than a needle hunt.",
+   "interest": "The problem sets' own repeat exhibit, run three times across two sets exactly as `lecture7-incumbent` is the lecture handouts' repeat exhibit -- a different formula doing the same job for a different audience. Two rows out of sixteen defeat it, and they are not near neighbours: `p=T,q=T,r=T,s=F` and `p=T,q=F,r=F,s=F` disagree about both `q` and `r`. The inventory records the first as the one the course walks through, so a student who stops at the countermodel they were handed has found half of what is there. The tree opens on both non-branching steps from the negated conditional before it forks, which is what makes it a fair worked example rather than a needle hunt.",
    "countermodel_gloss": "`p = T, q = T, r = T, s = F` and its twin `p = T, q = F, r = F, s = F`: either way `p` holds and `s` fails while the two premises still come out true, because each has a second disjunct that lets it survive without `p` forcing `s`.",
    "english": [],
    "appearances": [

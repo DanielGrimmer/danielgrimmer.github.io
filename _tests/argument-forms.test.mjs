@@ -1032,3 +1032,121 @@ test('a course quote is a passage we hold, not a sentence about the course', () 
   }
   assert.ok(checked > 0, 'no course quotes were checked -- the test has stopped looking');
 });
+
+
+// The practice lock, checked from the other end. `inventory.py --status` looks
+// forward -- which inventory rows are not entries yet. This looks back: a form
+// can reach the database from somewhere else entirely (peirce-law and
+// distribution both came in from the SEP) and then nothing ever compares it
+// against the inventory row that sets it, so the lock is never written and the
+// practice page offers a student the exercise they were graded on. Both of
+// those had happened by the time this test was written.
+test('no entry offers a method the problem sets already set', () => {
+  const inventory = readFileSync(
+    new URL('../EncyclopediaOfArguments/Argument Form Inventory (2026-08-28).md', import.meta.url), 'utf8');
+
+  // Section 1 is a positional grid -- Form, Verdict, Table, Tree, ND -- so the
+  // column a locus sits in names the method. The later sections put everything
+  // in one "where" column and name the method in parentheses. Read both, the
+  // way inventory.py's problem_sets() does.
+  const rows = [];
+  let section = '';
+  for (const line of inventory.split('\n')) {
+    if (line.startsWith('## ')) section = line.slice(3).trim();
+    if (!line.startsWith('|')) continue;
+    const cells = line.trim().replace(/^\||\|$/g, '').split('|').map((c) => c.trim());
+    if (cells.length < 2 || /^[-: ]*$/.test(cells.join(''))) continue;
+    if (cells[0] === 'Form' || cells[0] === 'Sequent') continue;
+    rows.push({ section, cells });
+  }
+
+  const setsOf = (row) => {
+    const out = {};
+    if (row.section.startsWith('1.') && row.cells.length >= 5) {
+      ['table', 'tree', 'nd'].forEach((method, i) => {
+        const hit = /\b(PS[\w.]*\d[\w.]*)/.exec(row.cells[2 + i]);
+        if (hit) out[method] = hit[1].replace(/[.;)]+$/, '');
+      });
+      return out;
+    }
+    for (const chunk of row.cells.slice(2).join(' ').split(/[;,]/)) {
+      const locus = /^\s*\*?\*?([A-Za-z0-9.§-]+)/.exec(chunk);
+      if (!locus || !/^PS\d/.test(locus[1])) continue;
+      const inside = /\(([^)]*)\)/.exec(chunk);
+      const text = (inside ? inside[1] : chunk).toLowerCase();
+      const found = text.includes('all three') ? ['table', 'tree', 'nd']
+        : ['table', 'tree', 'nd'].filter((m) => text.includes(m));
+      for (const m of found) if (!(m in out)) out[m] = locus[1];
+    }
+    return out;
+  };
+
+  const TURNSTILES = ['⊢ND', '⊬ND', '⊨', '⊭', '⊢', '⊬', '∴'];
+  const split = (text) => {
+    const body = text.trim();
+    for (const t of TURNSTILES) {
+      const at = body.indexOf(t);
+      if (at === -1) continue;
+      const left = body.slice(0, at).trim();
+      const right = body.slice(at + t.length).trim();
+      return {
+        premises: left ? left.split(',').map((s) => s.trim()).filter(Boolean) : [],
+        // A one-sided turnstile -- `X ⊢` -- says the premises are inconsistent,
+        // which the database records as a ⊥ conclusion.
+        conclusion: right || '⊥',
+      };
+    }
+    // No turnstile at all: sections 4 and 5 list theorems, tautologies and
+    // equivalences as bare formulas, which is a claim with no premises. Missing
+    // this is how PS3.1's tree of the distribution conditional stayed invisible.
+    return body ? { premises: [], conclusion: body } : null;
+  };
+
+  // Two sequents have the same shape when they differ only in which atoms they
+  // use and in the order of the premises -- which is the comparison the
+  // importer makes, and the one that matters here: PS3.1's tree is the same
+  // exercise whatever the letters are called.
+  const shape = (premises, conclusion, alphabet) => {
+    const rename = new Map();
+    const relabel = (s) => s.replace(/[A-Za-z](_[A-Za-z0-9]+)?/g, (atom) => {
+      if (!rename.has(atom)) rename.set(atom, `a${rename.size}`);
+      return rename.get(atom);
+    });
+    // The conclusion is relabelled first so that two sequents whose premises
+    // are listed in different orders still agree: the sorted premises alone
+    // would let the numbering drift with the order.
+    const c = relabel(printed(conclusion, alphabet));
+    return `${premises.map((p) => relabel(printed(p, alphabet))).sort().join(' , ')} :: ${c}`;
+  };
+
+  const byShape = new Map();
+  for (const e of entries) {
+    const k = shape(e.premises, e.conclusion, ASCII);
+    if (!byShape.has(k)) byShape.set(k, []);
+    byShape.get(k).push(e);
+  }
+
+  const gaps = new Set();
+  let matched = 0;
+  for (const row of rows) {
+    const sets = setsOf(row);
+    if (!Object.keys(sets).length) continue;
+    for (const quoted of row.cells[0].match(/`[^`]+`/g) ?? []) {
+      const seq = split(quoted.slice(1, -1));
+      if (!seq) continue;
+      let k;
+      try { k = shape(seq.premises, seq.conclusion, GLYPH); } catch { continue; }
+      for (const e of byShape.get(k) ?? []) {
+        matched += 1;
+        for (const [method, locus] of Object.entries(sets)) {
+          if (!(e.course?.problem_set ?? {})[method]) {
+            gaps.add(`${e.id}: ${method} is on offer, but ${locus} set it`);
+          }
+        }
+      }
+    }
+  }
+
+  assert.ok(matched > 0, 'no inventory row matched any entry -- the test has stopped looking');
+  assert.deepEqual([...gaps], [], 'the practice page would hand a student graded work');
+});

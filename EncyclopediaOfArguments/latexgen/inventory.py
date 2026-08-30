@@ -262,12 +262,72 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
     return out, tally
 
 
+def lock_gaps() -> list[dict]:
+    """Methods the practice page offers that a problem set already set.
+
+    `candidates()` looks forward -- which rows are not yet entries. This looks
+    back: for every row the inventory records as set on a problem set, is the
+    entry that carries that form actually withholding that method? A form can
+    reach the database from somewhere else entirely (`peirce-law` came in from
+    the SEP, `distribution` likewise) and then nothing ever compares it against
+    the row that sets it, so the lock is never written and the practice page
+    hands a student the exercise they were graded on.
+
+    Matching is by `shape`, so a row and an entry line up through renamed atoms
+    and reordered premises. A row whose form is not in the database yet is not
+    a gap -- it is a candidate, and `candidates()` has it.
+    """
+    text = SOURCE.read_text()
+    db = json.loads(DB.read_text())
+    by_shape: dict[tuple, list[dict]] = {}
+    for entry in db["entries"]:
+        try:
+            by_shape.setdefault(shape(entry["premises"], entry["conclusion"]), []).append(entry)
+        except Exception:
+            continue
+
+    seen, gaps = set(), []
+    for row in rows_of(text):
+        sets = problem_sets(row)
+        if not sets:
+            continue
+        for quoted in re.findall(r"`([^`]+)`", row["cells"][0]):
+            got = split_sequent(quoted)
+            if not got:
+                continue
+            try:
+                key = shape(*got)
+            except Exception:
+                continue
+            for entry in by_shape.get(key, []):
+                lock = entry["course"].get("problem_set") or {}
+                for method, locus in sets.items():
+                    if lock.get(method) or (entry["id"], method) in seen:
+                        continue
+                    seen.add((entry["id"], method))
+                    gaps.append({"id": entry["id"], "method": method,
+                                 "locus": locus, "row": quoted,
+                                 "name": name_of(row)})
+    return gaps
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--status", action="store_true")
     ap.add_argument("--next", type=int, metavar="N")
     ap.add_argument("--show", type=int, metavar="INDEX")
+    ap.add_argument("--locks", action="store_true",
+                    help="methods on offer that a problem set already set")
     args = ap.parse_args()
+
+    if args.locks:
+        gaps = lock_gaps()
+        for g in gaps:
+            print(f"  {g['id']:34s} {g['method']:5s} on offer, but set at "
+                  f"{g['locus']:9s}  ({g['row']})")
+        print(f"{len(gaps)} practicable methods the inventory records as "
+              f"problem-set questions")
+        raise SystemExit(1 if gaps else 0)
 
     queue, tally = candidates()
 

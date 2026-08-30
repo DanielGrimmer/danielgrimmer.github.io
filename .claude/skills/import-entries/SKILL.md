@@ -227,12 +227,28 @@ them, and if you meet one another way, `course.quarantined: true`.
 if one exists, either skip the row (log it) or set `looks_like` to the entry it
 resembles and say in `interest` how they differ.
 
+**And check the locks that are already there**, not only the one you are
+writing:
+
+```bash
+python3 EncyclopediaOfArguments/latexgen/inventory.py --locks
+```
+
+It walks every inventory row that records a problem-set question, matches it to
+the entry carrying that form by shape, and names any method still on offer.
+This catches what §6 above cannot: a form that reached the database from
+somewhere else entirely, so that nothing ever compared it against the row that
+sets it. `peirce-law` and `distribution` both came in from the SEP and both sat
+on the practice page for weeks as questions PS5.7 and PS3.1 had set. If it names
+an entry, write the lock — including on entries you did not import.
+
 ## 7. Build, verify, push
 
 ```bash
 cd EncyclopediaOfArguments/latexgen
 python3 build.py --write     # normalise, generate, verify
 python3 svg.py               # typeset — 4 blocks per entry
+python3 inventory.py --locks # nothing on offer that a problem set set
 cd ../.. && node --test "_tests/*.test.mjs"
 ```
 
