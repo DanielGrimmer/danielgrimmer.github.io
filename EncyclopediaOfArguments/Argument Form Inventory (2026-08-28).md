@@ -165,7 +165,7 @@ L12 bridge, and "countermodel, then conclude ⊬ND" is its own question type
 | `p&(q∨r) ≡ (p&q)∨(p&r)` | L9§3 (ND both); PS3.1 (tree, → as conditional); **table untouched** |
 | `p∨(q&r) ≡ (p∨q)&(p∨r)` | PS4.3e + 4.4b (ND both); **table/tree untouched** |
 | `∼(p⊃q) ≡ p&∼q` | PS3.4 (tree); P1.1a (instance) |
-| `p≡(q≡r) ≡ (p≡q)≡r` (associativity of ≡) | P1.4 (table) |
+| `(p≡(q≡r)) ≡ ((p≡q)≡r)` (associativity of ≡) | P1.4 (table) |
 | `(p∨q)&∼(p&q) ≡ p⊕q` (XOR) | L3§2 (table) |
 | `(∼p⊃(p∨q)) ≡ p∨q` | PS1.8c (table) |
 | `p&q ≡ (p&q)&(s∨∼s)`; `p&q ≡ ((p&q)∨r)&((p&q)∨∼r)` | L4 (stated); PS2.1f (table) |

@@ -901,6 +901,42 @@ eliminations.
 4. Does every non-assumption line carry a justification? → a line that copies an
    earlier formula is justified `R`.
 
+### 6.4a When a derivation is not carried
+
+**A valid entry has a proof.** The one exception is a form whose derivation is
+so long that carrying it would mislead rather than teach, and it is declared,
+not implied:
+
+```json
+"nd": { "exists": false, "proof_omitted": true,
+        "note": "why the derivation is not carried" }
+```
+
+`associativity-of-biconditional` is the case that created the rule.
+`(p ≡ (q ≡ r)) ≡ ((p ≡ q) ≡ r)` is an eight-row table anyone can check, but the
+twelve rules have no explosion and no excluded middle as a primitive, so every
+route forces an exhaustive three-atom case split with each instance of
+`A ∨ ∼A` proved inline: past 260 lines, ninety subproofs, six deep. That is a
+fact about the proof system rather than about the theorem, and a 260-line
+derivation is not something to set, draw as practice, or print. P1.4 set it as
+a table, which is the right method for it.
+
+The bar is high on purpose, because *no proof written* is exactly what a lazy
+import looks like:
+
+- `build.py` refuses the flag without an `nd.note`, and refuses it on an entry
+  that also has a derivation in `proofs.py` — one or the other.
+- The test suite caps how many entries may wear it. If it spreads, the reason
+  is being used as an excuse.
+- `difficulty.nd` must be `null`: no derivation carried, no derivation score.
+- The practice page never offers it, because `nd.exists` is false.
+
+**This is not the escape hatch for a proof you could not find.** A derivation
+that is merely hard is the entry doing its job — `paradox-disjunction` and the
+De Morgan biconditionals are all long and all carried. Reach for this only when
+the length comes from the *system* rather than the theorem, and say which in
+the note.
+
 ### 6.5 The classical reductio pattern
 
 The commonest shape in the database. It is **not** a basic rule and must be

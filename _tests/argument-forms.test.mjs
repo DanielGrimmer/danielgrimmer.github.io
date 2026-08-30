@@ -382,8 +382,18 @@ test('the database holds together', async (t) => {
     }
   });
 
-  await t.test('a proof exists exactly when the argument is valid', () => {
+  await t.test('a proof exists exactly when the argument is valid, or says why not', () => {
     for (const e of entries) {
+      // The one exception is a valid form whose derivation is deliberately not
+      // carried, which must say so in the data and explain itself. It exists
+      // because the twelve rules can make a short theorem's proof enormous —
+      // a fact about the system, not about the entry — and a 260-line
+      // derivation is not something to print or draw as practice.
+      if (e.verdict.valid && e.nd.proof_omitted) {
+        assert.equal(e.nd.exists, false, `${e.id}: proof_omitted but nd.exists`);
+        assert.ok(e.nd.note, `${e.id}: proof_omitted with no nd.note saying why`);
+        continue;
+      }
       assert.equal(e.nd.exists, e.verdict.valid, `${e.id}`);
       // An invalid entry earns its keep by saying where the attempt breaks down.
       if (!e.verdict.valid) assert.ok(e.nd.note, `${e.id} is invalid but has no nd.note`);
@@ -470,8 +480,22 @@ test('every entry carries its method blocks', async (t) => {
 
   await t.test('a proof exactly when the argument is valid', () => {
     for (const e of entries) {
-      assert.equal(!!e.nd.latex, e.verdict.valid, `${e.id}: nd.latex should track validity`);
-      assert.equal(!!e.nd.proof, e.verdict.valid, `${e.id}: nd.proof should track validity`);
+      const carried = e.verdict.valid && !e.nd.proof_omitted;
+      assert.equal(!!e.nd.latex, carried, `${e.id}: nd.latex should track validity`);
+      assert.equal(!!e.nd.proof, carried, `${e.id}: nd.proof should track validity`);
+    }
+  });
+
+  await t.test('an omitted proof stays the rare exception it is meant to be', () => {
+    // "No proof written" is exactly what a lazy import looks like, so this is
+    // capped rather than trusted: if it starts spreading, the reason is being
+    // used as an excuse and wants looking at rather than raising.
+    const omitted = entries.filter((e) => e.nd.proof_omitted);
+    assert.ok(omitted.length <= 2,
+      `${omitted.length} entries omit their derivation (${omitted.map((e) => e.id).join(', ')})`);
+    for (const e of omitted) {
+      assert.ok(e.verdict.valid, `${e.id}: proof_omitted on an invalid entry means nothing`);
+      assert.equal(e.difficulty.nd, null, `${e.id}: no derivation carried, so no derivation score`);
     }
   });
 

@@ -350,7 +350,37 @@ def build(db: dict) -> tuple[dict, list[str]]:
         entry["truth_table"]["latex_compact"] = table_block(entry, compact=True)
         entry["tree"]["latex"] = tree_block(entry)
 
-        if entry["verdict"]["valid"]:
+        if entry["verdict"]["valid"] and entry["nd"].get("proof_omitted"):
+            # A valid form whose derivation is deliberately not carried. The
+            # only case so far is `associativity-of-biconditional`, where the
+            # twelve rules -- no explosion, no excluded middle as a primitive
+            # -- force an exhaustive three-atom case split with each instance
+            # of `A ∨ ∼A` proved inline, and the proof runs past 260 lines.
+            # That is a fact about the system rather than about the theorem,
+            # and a 260-line derivation is not something to set, draw as
+            # practice, or print.
+            #
+            # The bar is deliberately high, because "no proof written" is
+            # exactly what a lazy import looks like. The flag must be set by
+            # hand and `nd.note` must say why; the test suite additionally
+            # refuses to let this become common.
+            if not entry["nd"].get("note"):
+                raise SystemExit(
+                    f"{eid}: nd.proof_omitted with no nd.note — say why the "
+                    f"derivation is not carried"
+                )
+            if PROOFS.get(eid) is not None:
+                raise SystemExit(
+                    f"{eid}: nd.proof_omitted, but proofs.py has a derivation "
+                    f"for it — drop one or the other"
+                )
+            entry["nd"]["exists"] = False
+            for k in ("proof", "latex", "lines", "max_subproof_depth",
+                      "subproof_count", "assumption_count",
+                      "uses_indirect_proof", "rules_used", "checked_by"):
+                entry["nd"].pop(k, None)
+
+        elif entry["verdict"]["valid"]:
             proof = PROOFS.get(eid)
             if proof is None:
                 raise SystemExit(f"{eid}: valid but no proof written")

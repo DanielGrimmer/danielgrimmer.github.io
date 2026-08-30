@@ -194,6 +194,11 @@ all four LaTeX blocks. What you must supply:
   rule, so reaching a contradiction never gives you a formula on the spot.
   Open a subproof on the negation of what you want and reach ⊥ *inside* it;
   do not reach ⊥ first and then reach it again under the assumption.
+- **Do not reach for `nd.proof_omitted`** to get past a derivation you could
+  not find. It is for a valid form whose proof the *system* makes enormous —
+  §6.4a, one entry so far — and `build.py` refuses it without a reason, the
+  test suite caps how many entries carry it, and a merely hard derivation is
+  the entry doing its job.
 - For an invalid form, **`nd.note`**: where the attempt at a derivation breaks
   down. "No derivation" alone is a wasted field.
 
