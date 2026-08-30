@@ -25,31 +25,40 @@ git merge --no-edit origin/main          # keep up with main
 
 If the branch has been merged and deleted, start it again from `origin/main`.
 
-**⚠ Check the merge did not eat an entry.** `argument-db.json` is one large
-file that both branches edit — this branch appends entries at the end, `main`
-rewrites derived values throughout — and git will line-merge that, *report
-success*, and silently drop an entry. It has already happened once, costing two
-imported forms. So after every merge:
+**⚠ Check the merge did not eat an entry. Every time.**
+
+`argument-db.json` is one large file that both branches edit — this branch
+appends entries at the end, `main` rewrites derived values throughout — and git
+will line-merge that, *report success*, and silently drop an entry. It has
+already happened once, costing two imported forms that nothing noticed until
+they were looked for by name.
 
 ```bash
-node --test "_tests/*.test.mjs" 2>&1 | grep -E "manifest|not ok"
+python3 EncyclopediaOfArguments/latexgen/manifest.py --check-merge
 ```
 
-`assets/arguments/entries.txt` is one id per line, which merges correctly where
-the JSON does not, and the test compares the two. **If it fails, the JSON is
-what got damaged, not the manifest.** Recover by taking this branch's copy of
-the database wholesale and letting the build reapply `main`'s changes:
+It compares the database against `assets/arguments/entries.txt` **as of both
+merge parents**, so it cannot be fooled by regenerating the manifest from a
+damaged database. Run it while the merge is still open — before you resolve
+anything — and again after committing it.
+
+`entries.txt` itself will often conflict, which is the file working as
+intended: one id per line conflicts where the JSON quietly does not. **Never
+resolve it by hand.** Resolve the database first, then `build.py --write`
+rewrites the manifest from it.
+
+**If entries are reported lost, the database is what got damaged.** Take this
+branch's copy wholesale and let the build reapply `main`'s changes:
 
 ```bash
-git checkout --theirs . 2>/dev/null; git show origin/claude/inventory-import:assets/arguments/argument-db.json > assets/arguments/argument-db.json
+git show origin/claude/inventory-import:assets/arguments/argument-db.json > assets/arguments/argument-db.json
 cd EncyclopediaOfArguments/latexgen && python3 build.py --write
 ```
 
 Everything `main` changes about an existing entry is derived and `build.py`
-recomputes it; what only this branch has is the entries themselves, so this
-direction loses nothing. The one thing it will not restore is an authored
-`difficulty.nd` that `main` changed — check `python3 difficulty.py --diff`
-afterwards.
+recomputes it, so this direction loses nothing — except an authored
+`difficulty.nd` that `main` changed, which `python3 difficulty.py --diff` will
+then report.
 
 ## 2. Take the next candidates
 
