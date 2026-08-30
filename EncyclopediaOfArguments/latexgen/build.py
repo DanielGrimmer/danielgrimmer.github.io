@@ -30,6 +30,7 @@ from formula import (
     subformula_index,
     to_ascii,
 )
+from difficulty import apply as apply_difficulty
 from nd import ProofError, check, render_proof
 from proofs import PROOFS
 from tables import table_block
@@ -368,6 +369,12 @@ def build(db: dict) -> tuple[dict, list[str]]:
             # nd.note says where the attempt breaks down.
             entry["nd"].pop("proof", None)
             entry["nd"].pop("latex", None)
+
+    # Table and tree difficulty are measurements, not judgements (§14), so
+    # they are written here like any other derived field and can never drift
+    # from the blocks they describe. The `nd` score is left alone: finding a
+    # proof is not a countable thing, and that one is authored.
+    notes += apply_difficulty(db)
 
     db["latex_requires"] = PREAMBLE
     db["latex_macros"] = {"uv": UV, "treebox": TREEBOX, "tabbox": TABBOX}
