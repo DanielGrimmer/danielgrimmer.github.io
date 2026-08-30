@@ -154,15 +154,22 @@ recompute, whose tree node is not a subformula, or whose proof does not check;
 `svg.py` fails on LaTeX that will not compile; the tests check the rest. **Do
 not push with any of them red** — fix or drop the entry.
 
-Then commit and push, and open the pull request if there is not one already:
+Then commit and push:
 
 ```bash
 git add -A && git commit -m "Import <n> forms from the course inventory: <names>"
 git push -u origin claude/inventory-import
 ```
 
-The PR body should say what the queue looks like now (`inventory.py --status`)
-and list what was skipped this run.
+There is a standing pull request against `main` and pushing to the branch adds
+to it; **you do not need to open one, and in a Routine firing you cannot** —
+those sessions have no GitHub tools. If the pull request has been merged and
+the branch deleted, restart the branch from `origin/main` (§1), push, and write
+one line in the log saying a new pull request is needed. Daniel opens it.
+
+Say what the queue looks like now (`inventory.py --status`) and what was
+skipped in the commit message, since that is the only report that reaches the
+pull request.
 
 ## 8. When a row will not go in
 
