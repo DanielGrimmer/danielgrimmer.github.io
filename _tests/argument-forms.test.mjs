@@ -508,7 +508,7 @@ test('every entry carries its method blocks', async (t) => {
   await t.test('a falsum conclusion is rendered one-sided, never as a column', () => {
     // ⊥ is a proof-level marker: it belongs on an ND line and nowhere else.
     const falsums = entries.filter((e) => e.conclusion.trim() === '!');
-    assert.equal(falsums.length, 4, 'expected four contradiction entries');
+    assert.equal(falsums.length, 5, 'expected five contradiction entries');
     for (const e of falsums) {
       assert.ok(!e.truth_table.latex.includes('Conclusion'), `${e.id}: table still has a conclusion group`);
       assert.match(e.nd.latex, /\\Falsum/, `${e.id}: the proof should end in ⊥`);
@@ -841,7 +841,7 @@ test('sibling subproofs are drawn, and checked, as two', async (t) => {
  */
 test('an inconsistency claim is not dressed as an argument', () => {
   const claims = entries.filter((e) => e.conclusion === '!');
-  assert.equal(claims.length, 4);
+  assert.equal(claims.length, 5);
   for (const e of claims) {
     assert.ok(e.premises.length, `${e.id}: an inconsistency claim needs premises`);
     assert.ok(!e.truth_table.latex.includes('Conclusion'),

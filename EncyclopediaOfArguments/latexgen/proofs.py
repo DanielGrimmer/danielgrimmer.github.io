@@ -985,3 +985,17 @@ PROOFS["conjunction-with-its-own-negation"] = [
     _l(4, "p", "ConjE", 0, [3]),
     _l(5, "!", "FalsumI", 0, [4, 2]),
 ]
+
+# ------------------------------------------------- biconditional-with-its-own-negation
+# The premise alone is unsatisfiable, but ≡ hides it a level deeper than &
+# does: an assumption of p is needed to pull ~p out with ≡E, then the same
+# biconditional read the other way pulls p back out of that ~p.
+PROOFS["biconditional-with-its-own-negation"] = [
+    P(1, "p = ~p"),
+    _l(2, "p", "As", 1),
+    _l(3, "~p", "BicondE", 1, [1, 2]),
+    _l(4, "!", "FalsumI", 1, [2, 3]),
+    _l(5, "~p", "NegI", 0, subs=[[2, 4]]),
+    _l(6, "p", "BicondE", 0, [1, 5]),
+    _l(7, "!", "FalsumI", 0, [6, 5]),
+]

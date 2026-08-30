@@ -77,3 +77,6 @@ bicond-elim-to-cond
 disjunction-with-vacuous-conditional
 conditional-and-its-counterexample
 conjunction-with-its-own-negation
+biconditional-with-its-own-negation
+conjunction-with-redundant-conditional
+modus-ponens-premises-conjoined
