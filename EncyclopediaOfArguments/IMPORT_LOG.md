@@ -113,3 +113,48 @@ shape no entry carried before. Imported as `lecture6-satisfiable-set` and
 
 Course inventory queue is now empty (0 candidates). The next firing switches
 to `--source imports` per §11c.
+
+**2026-08-30, first `imports`-source firing.** Course queue confirmed empty
+(`inventory.py --status` — 0 candidates), so this firing worked
+`--source imports` for the first time, taking the top three rows off
+Restall's Chapter 3 bank per §11c: `permutation` (Ex 3.4.8, `p⊃(q⊃r) ⊢
+q⊃(p⊃r)`), `contraction-detached` (Ex 3.4.14, `p⊃(p⊃q) ⊢ p⊃q`), and
+`resolution` (Ex 3.4.16, `p∨q, ∼q∨r ⊢ p∨r`). All three verified valid by
+`derive.py`, matching Restall's own verdicts. Appearances cite `Greg
+Restall, Logic` with the exercise number as `locus`, `fidelity: our
+reconstruction`, no `quote` (§11c — the inventory summarises Restall, it
+does not reproduce him, and `build.py` now checks Restall appearances
+against `SOURCE_QUOTES.md` exactly as it checks the course's). No
+`problem_set`: nothing in this file is a practice lock.
+
+`contraction-detached` is a near-duplicate by content, not by shape, of the
+existing `contraction-w` (`⊢ (p⊃(p⊃q))⊃(p⊃q)`) — the same principle Restall
+poses as a premise-conclusion pair rather than as a theorem. Not the same
+formula, so not skipped, but `looks_like: contraction-w` and `interest`
+says how they differ (one `⊃I` shorter, since the outer conditional arrives
+as a premise instead of needing to be built).
+
+`resolution`'s derivation is the one worth flagging: proving a disjunction
+has no direct route the way `⊃I` gives one, so it costs a full case split
+on the first premise, a second case split nested inside one of those cases,
+and — because there is no explosion rule — a reductio nested inside *that*
+to cash the resulting contradiction out as the wanted disjunction. Five
+subproofs, three deep. Checked against `nd.check()` directly before being
+written into `proofs.py`, the same way the 269-line biconditional proof was
+two firings ago — worth doing again at five subproofs rather than trusting
+hand-counted `subs` ranges.
+
+**The sandbox had no LaTeX toolchain at all** — `svg.py` failed outright,
+`FileNotFoundError: latex`. Installed via `apt-get`:
+`texlive-latex-base texlive-latex-recommended texlive-latex-extra
+texlive-pictures texlive-binaries dvisvgm`, plus, once `fitch.sty` was
+present but `qtree.sty` was not, `texlive-humanities` (`apt-file search
+qtree.sty` found it there — it is not in `texlive-pictures` as the name
+would suggest). This is a fresh container each firing, so the next one
+needs the same install; worth a `session-start-hook` if these firings are
+going to keep needing `svg.py`, rather than re-discovering this each time.
+
+`build.py --write`, `svg.py`, `svg.py --check`, `inventory.py --locks`, and
+`node --test "_tests/*.test.mjs"` all clean (511/511). Imports queue: 33
+candidates left of 48 (15 now in the database, up from 12 already there
+before this firing — the pre-existing 12 predate this firing's work).

@@ -1497,3 +1497,52 @@ PROOFS["associativity-of-biconditional"] = [
     _l(268, "p", "DisjE", 1, [139], subs=[[150, 201], [202, 267]]),
     _l(269, "(p) = (((q) = (r)) = (((p) = (q)) = (r)))", "BicondI", 0, subs=[[1, 128], [129, 268]]),
 ]
+
+# -------------------------------------------------------------- permutation
+# Pure ⊃, no falsum: two nested ⊃I's around two ⊃E's. p is accessible
+# throughout the inner subproof without needing to be reiterated -- it is
+# cited, not copied into a new role.
+PROOFS["permutation"] = [
+    P(1, "p > (q > r)"),
+    _l(2, "q", "As", 1),
+    _l(3, "p", "As", 2),
+    _l(4, "q > r", "CondE", 2, [1, 3]),
+    _l(5, "r", "CondE", 2, [4, 2]),
+    _l(6, "p > r", "CondI", 1, subs=[[3, 5]]),
+    _l(7, "q > (p > r)", "CondI", 0, subs=[[2, 6]]),
+]
+
+# ------------------------------------------------------- contraction-detached
+# Same move as contraction-w's proof, one ⊃I shorter: the outer conditional
+# arrives as a premise rather than as something to be introduced.
+PROOFS["contraction-detached"] = [
+    P(1, "p > (p > q)"),
+    _l(2, "p", "As", 1),
+    _l(3, "p > q", "CondE", 1, [1, 2]),
+    _l(4, "q", "CondE", 1, [3, 2]),
+    _l(5, "p > q", "CondI", 0, subs=[[2, 4]]),
+]
+
+# ------------------------------------------------------------------ resolution
+# Case split on the first premise. The p-case is immediate (∨I). The q-case
+# needs a second case split on the second premise: the r-case is immediate
+# (∨I), but the ~q-case contradicts the outer q directly -- and since there
+# is no explosion rule, cashing that contradiction out as p∨r costs a
+# reductio nested one level deeper still (assume ~(p∨r), reach ⊥ again,
+# ~I, ~E). Five subproofs, three of them nested.
+PROOFS["resolution"] = [
+    P(1, "p | q"),
+    P(2, "~q | r"),
+    _l(3, "p", "As", 1),
+    _l(4, "p | r", "DisjI", 1, [3]),
+    _l(5, "q", "As", 1),
+    _l(6, "~q", "As", 2),
+    _l(7, "~(p | r)", "As", 3),
+    _l(8, "!", "FalsumI", 3, [5, 6]),
+    _l(9, "~~(p | r)", "NegI", 2, subs=[[7, 8]]),
+    _l(10, "p | r", "NegE", 2, [9]),
+    _l(11, "r", "As", 2),
+    _l(12, "p | r", "DisjI", 2, [11]),
+    _l(13, "p | r", "DisjE", 1, [2], subs=[[6, 10], [11, 12]]),
+    _l(14, "p | r", "DisjE", 0, [1], subs=[[3, 4], [5, 13]]),
+]

@@ -88,3 +88,6 @@ vacuous-antecedent-disjunction
 lecture6-satisfiable-set
 astrolabe-puzzle
 associativity-of-biconditional
+permutation
+contraction-detached
+resolution
