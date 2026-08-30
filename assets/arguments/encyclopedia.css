@@ -1039,6 +1039,22 @@ button.ae-chip:hover {
   background: var(--ae-desk);
 }
 
+/* A pending provenance is a gap the entry is admitting to, so it is set like
+   the warnings rather than like a quotation: the reader should register that
+   something is missing, not skim past a paragraph shaped like a citation. */
+.ae-app-pending {
+  font-size: 0.9rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 5px;
+  border-left: 2px dotted var(--ae-warn);
+  background: var(--ae-warn-bg);
+  color: var(--ae-warn);
+}
+
+.ae-app-pending p {
+  margin: 0;
+}
+
 .ae-app-verbatim {
   font-family: var(--ae-serif);
   font-style: italic;

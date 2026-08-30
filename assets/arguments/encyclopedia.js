@@ -953,7 +953,24 @@ const APPEARANCE_TYPE = {
  */
 function renderAppearances(entry, spoilers = false) {
   const apps = asArray(entry.appearances);
-  if (!apps.length) return "";
+
+  // An entry with no appearance says so, rather than quietly omitting the
+  // section and reading as finished. These are forms the course's own
+  // brainstorm proposed -- worth carrying, and nobody has yet been credited
+  // with using, discussing or diagnosing one. Saying "pending" on the page is
+  // what keeps that from hardening into a claim that there is no source: the
+  // difference between not yet looked and looked and found nothing is exactly
+  // what an encyclopedia should not blur.
+  if (!apps.length) {
+    if (!entry.appearances_pending) return "";
+    return section(
+      "Where it shows up",
+      `<div class="ae-prose ae-app-pending"><p><strong>Provenance pending.</strong> ` +
+        `This form was proposed for the course rather than drawn from a source, ` +
+        `so nothing is credited here yet. It is carried for the logic; the ` +
+        `attribution is still to be found.</p></div>`,
+    );
+  }
 
   const items = apps
     .map((a) => {
@@ -1697,7 +1714,11 @@ export function renderCard(entry, href) {
   ];
 
   const apps = asArray(entry.appearances);
-  const who = apps.length ? apps[0].who : null;
+  const who = apps.length
+    ? apps[0].who
+    : entry.appearances_pending
+      ? "provenance pending"
+      : null;
 
   return (
     `<a class="ae-card" href="${escapeHtml(href)}">` +

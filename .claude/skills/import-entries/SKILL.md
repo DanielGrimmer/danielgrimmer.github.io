@@ -106,13 +106,24 @@ a chapter-and-exercise `locus`; archive rows say **2025** in the `work` so they
 do not read as this year's; **nothing in the file is a practice lock**, and
 `inventory.py` correctly writes an empty `problem_set` for every row.
 
-**The brainstorm section has no source, and that is a stopping condition.** An
-entry needs at least one appearance and a test enforces it. Where the inventory
-names a champion — Stalnaker and Lewis for conditional excluded middle, Curry
-for the Curry sequent, Ross for Ross's paradox, or a Restall exercise it flags
-as *"already Restall"* — cite the champion and import normally. Where it names
-none, **log the row (§8) and take the next one.** Do not promote "a form worth
-having" into an appearance; that is manufacturing provenance under a new name.
+**The brainstorm section often has no source.** Where the inventory names a
+champion — Stalnaker and Lewis for conditional excluded middle, Curry for the
+Curry sequent, Ross for Ross's paradox, or a Restall exercise it flags as
+*"already Restall"* — cite the champion and import normally.
+
+Where it names none, import the entry anyway with `appearances: []` and
+**`appearances_pending: true`**. The page then prints *Provenance pending*
+where the citations would go and the card says the same in place of a byline,
+so the gap is stated rather than hidden. Two things the test suite will not let
+you do: leave `appearances: []` without the flag, or put the flag on an entry
+that has an appearance.
+
+**The flag is not a shortcut past §13.1.** "Proposed for the course" is not
+something anyone did with the argument, and writing it into an appearance is
+manufacturing provenance under a new name. If you are reaching for a thin
+appearance, use the flag instead — that is what it is for. Say in `interest`
+what kind of source would settle it, since the flag marks work for a person
+with a library rather than a permanent state.
 
 ## 3. Compute the structured data
 

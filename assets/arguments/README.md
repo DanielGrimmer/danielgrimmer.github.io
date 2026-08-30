@@ -16,10 +16,16 @@ Everything the site needs is in this folder. The three Jekyll pages live in
 that an argument is instructive in the abstract — it is that somebody, somewhere
 in the philosophical literature, actually used it, argued about it, or got
 caught out by it. That is what `appearances` records: one entry per episode,
-with a source and usually a URL. *A form with no appearance does not belong
-here.* So this is really a catalogue of episodes in philosophy that happen to
-have a shape — the Dutch book argument, Pollock's pink elephant, the
+with a source and usually a URL. So this is really a catalogue of episodes in
+philosophy that happen to have a shape — the Dutch book argument, Pollock's pink elephant, the
 *ratio*/*obiter* distinction in case law, Curry's paradox, the Axiom of Choice.
+
+A few entries carry `appearances_pending: true` instead. These are forms
+proposed for the course that no one has yet been credited with using, and the
+page prints **Provenance pending** where the citations would go. They are the
+exception the criterion admits to rather than a hole in it: a form that says
+*not yet* is honest in a way that either dropping it or crediting it to nobody
+in particular would not be. Finding one a source is standing work.
 
 **Every verdict is machine-verified.** Truth tables, countermodels, trees and
 metrics are computed from the formulas; nothing is asserted on authority.

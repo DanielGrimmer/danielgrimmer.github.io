@@ -377,9 +377,22 @@ test('the database holds together', async (t) => {
     }
   });
 
-  await t.test('every form has been seen in the wild, which is the inclusion criterion', () => {
+  await t.test('every form has been seen in the wild, or admits that it has not', () => {
     for (const e of entries) {
-      assert.ok(e.appearances?.length, `${e.id} has no appearance and does not belong in the encyclopedia`);
+      // The inclusion criterion used to be an appearance, full stop. It is now
+      // an appearance *or* an explicit `appearances_pending`, which carries the
+      // brainstormed candidates -- forms proposed for the course rather than
+      // drawn from a source. The flag is what keeps that an admission instead
+      // of an omission: the page prints "provenance pending" where the
+      // citations would go, so a reader is told the gap is a gap.
+      if (!e.appearances?.length) {
+        assert.equal(e.appearances_pending, true,
+          `${e.id} has no appearance and is not marked appearances_pending`);
+        continue;
+      }
+      // And the flag is not a decoration on an entry that has provenance.
+      assert.ok(!e.appearances_pending,
+        `${e.id} has ${e.appearances.length} appearance(s) and should not be marked pending`);
       for (const a of e.appearances) {
         assert.ok(['verbatim', 'paraphrase', 'our reconstruction'].includes(a.fidelity), `${e.id}: ${a.fidelity}`);
         assert.ok(['used', 'discussed', 'diagnosed'].includes(a.type), `${e.id}: ${a.type}`);

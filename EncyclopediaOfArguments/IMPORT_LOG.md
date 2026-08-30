@@ -9,21 +9,13 @@ entries and a judgement about which to write; a row whose verdict disagrees
 with the computed table is a question for a person. Both belong here rather
 than in the database.
 
-**Two inventories now feed the queue.** The course inventory is worked first
-and the imports inventory after it, which adds a third standing reason to skip
-a row, and it will be the commonest one: §3 of the imports file is a
-brainstormed candidate list, and a brainstormed form **has no appearance**.
-Nobody has made the argument, published it, or set it — someone thought the
-course should carry it. An entry needs at least one appearance and the test
-suite enforces that, which is the right answer and not an obstacle to work
-around: an encyclopedia of argument forms records arguments people have made.
-
-Where the inventory names a champion for such a row — Stalnaker and Lewis for
-conditional excluded middle, Curry for the Curry sequent, Ross for Ross's
-paradox, or a Restall exercise it flags as *"already Restall"* — that champion
-is the appearance and the row imports normally. Where it names none, the row
-lands here. Reviving one later means finding it a source, not relaxing the
-rule.
+**Two inventories now feed the queue**, the course inventory first and the
+imports inventory after it. A row with no source behind it is **not** a reason
+to land here. §3 of the imports file is a brainstormed candidate list, and
+those forms are imported with `appearances_pending: true`, which prints
+*Provenance pending* on the page where the citations would go. The gap is
+stated rather than hidden, and it is a debt to be paid later by someone with a
+library — not a reason to refuse the form or to invent a source for it.
 
 | Date | Sequent | Why it was skipped |
 | --- | --- | --- |

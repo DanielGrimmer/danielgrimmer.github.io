@@ -1226,8 +1226,9 @@ reaching the site — and what it **repairs**, which the author can leave alone.
 cannot check that it is *right*, or that it belongs here at all:
 
 - **An appearance with a source.** The inclusion criterion is that somebody
-  actually used the argument — a form with no `appearances` entry does not
-  belong in the encyclopedia (see `assets/arguments/README.md`).
+  actually used the argument (see `assets/arguments/README.md`). A form with no
+  champion is carried only with `appearances_pending: true`, which says so on
+  the page — see §13.1 and §11c.
 - **The English gloss**, and whether it is `faithful`.
 - **`interest`** — why this form is worth a student's time.
 - **The three difficulty scores**, one per method; a hard table can be an easy
@@ -1269,17 +1270,32 @@ which case `verbatim` and the entry says so.
 Problem Set 3"` (say the year — otherwise it reads as this year's), `locus` the
 question number as the inventory gives it, `OLD-PS3 Q12`.
 
-**§3 is a brainstorm, and has no source at all.** These are candidate forms
-someone thought the course should carry, not forms anyone has used or
-discussed. An entry needs at least one appearance and the test suite enforces
-it, which is the right answer rather than an obstacle: a form with no
-appearance does not belong in an encyclopedia of arguments people have made.
-Some §3 items do have a champion, and the inventory names them — conditional
-excluded middle is Stalnaker and Lewis, Curry's sequent is Curry, Ross's
-paradox is Ross, and two of them the file itself marks as *"already Restall"*.
-Cite the champion, not the brainstorm. Where there is none — the bivalence
-pigeonhole, double-negation introduction — **log the row and move on**. That is
-what `IMPORT_LOG.md` is for, and it leaves the decision where it belongs.
+**§3 is a brainstorm, and often has no source at all.** These are candidate
+forms someone thought the course should carry. Some do have a champion and the
+inventory names them — conditional excluded middle is Stalnaker and Lewis,
+Curry's sequent is Curry, Ross's paradox is Ross, and two of them the file
+itself marks as *"already Restall"*. **Cite the champion where there is one.**
+
+Where there is none — the bivalence pigeonhole, double-negation introduction —
+the entry is written anyway, with `appearances: []` and
+**`appearances_pending: true`**. That flag is the whole of the concession, and
+it is a narrow one:
+
+- It is an *admission*, not an omission. The page prints **Provenance pending**
+  where the citations would go, styled like the other warnings, and the
+  catalogue card carries the same words in place of a byline. A reader is told
+  the gap is a gap.
+- It never sits on an entry that has an appearance. The test suite fails either
+  way round — a bare `appearances: []` without the flag, and the flag worn by
+  an entry with provenance.
+- It is not a licence to write a thin appearance instead. "Proposed for the
+  course" is not something anyone did with the argument, and dressing it as an
+  appearance is manufacturing provenance under a new name (§13.1). The flag
+  exists precisely so that temptation has an honest alternative.
+
+The debt is meant to be paid. `appearances_pending` marks work for a person
+with a library, not a permanent state, and an entry that carries it should have
+an `interest` that says what kind of source would settle it.
 
 **Nothing in this file is a practice lock.** Restall is a textbook students may
 read at will, and last year's problem sets were set for last year's students.
@@ -1294,12 +1310,19 @@ Restall and last year's papers; it does not reproduce them, and the routine has
 neither book nor paper. `build.py` now checks Restall and archive appearances
 against `SOURCE_QUOTES.md` exactly as it checks the course's.
 
-**Two cautions the file states and an importer must honour.** Chapter 6 uses
+**One caution the file states and an importer must honour.** Chapter 6 uses
 `→`, `□` and `◊`, and Chapter 15's `≠` is identity: none of it is propositional
-and `inventory.py` refuses it. And Restall's Chapter 7 is the chapter students
-are *told not to read* — the forms in it are standard ones the course meets
-elsewhere, so importing them is fine, but do not frame an entry around
-Chapter 7 as though it were assigned reading.
+and `inventory.py` refuses it.
+
+**Chapter 7 is unassigned, and that is what makes it worth mining.** Students
+are told not to read it, so nothing in it can collide with set work — which
+leaves a full natural-deduction chapter of practice problems free to use, and
+it is the richest vein in the file. Its two exercise banks are Ex {7.1}, five
+sequents provable without double-negation elimination, and Ex {7.2}, five that
+need it — a ready-made intuitionistic boundary. Import from it freely. The one
+thing not to do is cite it as *reading*: the locus is `Restall, Logic, Ch 7,
+Ex {7.2}` because that is where the form is, not because a student was sent
+there.
 
 ---
 
@@ -1449,9 +1472,18 @@ words.
 
 ### 13.1 The inclusion criterion, which is a prose criterion
 
-**A form with no `appearances` entry does not belong here.** Not "is
-instructive in the abstract", not "is a nice tree" — somebody actually used it,
-argued about it, or got caught out by it.
+**A form belongs here because somebody used it.** Not "is instructive in the
+abstract", not "is a nice tree" — somebody actually used it, argued about it,
+or got caught out by it, and `appearances` says who.
+
+There is one exception and it is a marked one. The imports inventory's §3 is a
+list of forms proposed for the course, and some have no champion at all. Those
+are carried with `appearances: []` and **`appearances_pending: true`**, which
+prints *Provenance pending* on the page where the citations would go. The
+criterion has not moved; what has changed is that a form can now say **not
+yet** out loud instead of being kept out or given a source it does not have.
+§11c has the rules, and the important one is that the flag is the alternative
+to a thin appearance, never a companion to one.
 
 **The course counts.** A form worked in a lecture, set on a problem set, or
 taken from Restall has an appearance, and it is the honest one: `who: PHIL
@@ -1496,6 +1528,7 @@ where it is true.
 | `english[].faithful` | boolean | `true` if the gloss is what the source argued; `false` if we have straightened it for exposition. Never omit it — an unfaithful gloss presented as faithful is the one lie the format allows |
 | `interest` | 3–6 sentences | Why this form is worth a student's time. The most-read field on the page, and the hardest to write |
 | `appearances[]` | one per episode | Who, where, and in what words. See §13.4 |
+| `appearances_pending` | boolean, or absent | `true` on an entry carried with no source yet, which prints *Provenance pending* on the page and on the card. Never alongside an appearance — the test suite fails both ways round. See §13.1 |
 | `countermodel_gloss` | 1–2 sentences | What the countermodel *means* — not that `p = T, q = F`, which the table already says, but what it is a picture of |
 | `nd.note` | 1–3 sentences | Only on invalid entries: where the attempt at a derivation breaks down. "No derivation" alone is a wasted field; say which rule you reach for and why it will not come |
 | `course.note` | any | **Instructor-facing.** Never rendered as body copy. Scheduling, pairings, things to say in lecture |
