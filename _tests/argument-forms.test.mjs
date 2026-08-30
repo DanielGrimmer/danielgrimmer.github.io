@@ -1003,3 +1003,32 @@ test('the compact table keeps the rows that carry the argument', () => {
     }
   }
 });
+
+// A course appearance's `quote` has to be the handout's words, not ours. The
+// import routine reads the inventory, which is a table of sequents and the
+// problem sets they were set in, so it has no handout prose to quote -- and
+// twice it filled the field with a sentence of its own describing where the
+// form was set, which on the page reads as the source saying that about
+// itself. `build.py` refuses to write such a database; this says the same
+// thing about the one that is checked in, so a hand edit cannot slip past.
+test('a course quote is a passage we hold, not a sentence about the course', () => {
+  const corpus = readFileSync(new URL('../EncyclopediaOfArguments/SOURCE_QUOTES.md', import.meta.url), 'utf8');
+  const flat = corpus.split(/\s+/).join(' ');
+  const courseWork = /lecture|problem set|\bPS\s*\d|study guide|midterm|handout/i;
+
+  let checked = 0;
+  for (const e of entries) {
+    for (const a of e.appearances ?? []) {
+      const quote = (a.quote ?? '').trim();
+      if (!quote) continue;
+      if (a.who !== 'PHIL 1115' && !courseWork.test(a.work ?? '')) continue;
+      checked += 1;
+      assert.ok(
+        flat.includes(quote.split(/\s+/).join(' ')),
+        `${e.id}: this is in no handout we hold, so it is ours, not the source's -- ` +
+          `put it in interest and drop the quote: "${quote}"`
+      );
+    }
+  }
+  assert.ok(checked > 0, 'no course quotes were checked -- the test has stopped looking');
+});

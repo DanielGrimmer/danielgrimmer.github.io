@@ -1415,6 +1415,26 @@ What is still forbidden is manufacturing provenance: an appearance that names a
 philosopher who did not make the argument, or a `quote` that paraphrases a
 source into quotation marks.
 
+**The `quote` field is now closed for course appearances.** Saying the rule was
+not enough -- it was already written here, and two import runs put a sentence
+of our own in the field anyway, describing where the form was set as though the
+handout had said it. The trouble is structural rather than careless: the import
+routine reads the inventory, which is a table of sequents and problem-set
+columns, so it has no handout prose and no way to get any, and the field
+invites a sentence it cannot honestly supply.
+
+So a course quote must appear verbatim in `EncyclopediaOfArguments/SOURCE_QUOTES.md`,
+which holds the handout passages a person has read and copied in. `build.py`
+refuses to write the database otherwise and `_tests/argument-forms.test.mjs`
+says the same of the file on disk; both read `who` and `work`, so renaming the
+source does not evade them. Nothing checks a quote from Restall, the SEP or a
+paper -- nothing in the repository could -- but those come from reading, and
+they are not where this went wrong.
+
+The field being absent costs nothing. Where the form was set is what `work` and
+`locus` say, and everything beyond that belongs in `interest`, in our voice,
+where it is true.
+
 ### 13.2 The fields, and what each is for
 
 | Field | Length | What it does |

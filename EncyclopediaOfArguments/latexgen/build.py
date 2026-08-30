@@ -38,6 +38,7 @@ from trees import tree_block
 
 DB = Path(__file__).resolve().parents[2] / "assets/arguments/argument-db.json"
 MANIFEST = DB.with_name("entries.txt")
+CORPUS = Path(__file__).resolve().parents[1] / "SOURCE_QUOTES.md"
 
 PREAMBLE = [
     "FOL_Yale/notation",
@@ -411,12 +412,62 @@ def build(db: dict) -> tuple[dict, list[str]]:
     return db, notes
 
 
+# A course appearance is one whose source is the course itself, however `who`
+# happens to be spelled. Keying on `who == "PHIL 1115"` alone would let a
+# rename walk straight past the check, so the `work` field is read too.
+_COURSE_WORK = re.compile(
+    r"lecture|problem set|\bPS\s*\d|study guide|midterm|handout", re.I
+)
+
+
+def check_quotes(db: dict) -> None:
+    """Refuse a course quote that is not in SOURCE_QUOTES.md, verbatim.
+
+    The import routine reads the inventory, which is a table of sequents and
+    the problem sets they were set in -- no handout prose. So it has nothing
+    to quote, and a course `quote` it composed is a sentence of ours wearing
+    the handout's voice: on the page it reads as the source saying where it
+    set the form. The style guide forbade this twice over and it happened
+    twice anyway, which is why the rule is enforced here rather than written
+    down again. `SOURCE_QUOTES.md` says how a passage gets added.
+
+    Non-course appearances are not checked. Nothing in the repository could
+    check them, and they are not where this goes wrong: the routine's queue is
+    the course inventory, so the course rows are the ones it writes.
+    """
+    corpus = CORPUS.read_text() if CORPUS.exists() else ""
+    # Verbatim up to line wrapping only -- the corpus wraps its passages as
+    # Markdown quotes and the database stores them on one line.
+    flat = " ".join(corpus.split())
+    bad = []
+    for entry in db["entries"]:
+        for app in entry.get("appearances") or []:
+            quote = (app.get("quote") or "").strip()
+            if not quote:
+                continue
+            if not (app.get("who") == "PHIL 1115"
+                    or _COURSE_WORK.search(app.get("work") or "")):
+                continue
+            if " ".join(quote.split()) not in flat:
+                bad.append(f"  {entry['id']}: {quote}")
+    if bad:
+        raise SystemExit(
+            "these course quotes are in no handout we hold:\n"
+            + "\n".join(bad)
+            + "\n\nA quote is the source's words. If you are describing where "
+            "the form was set,\nthat is what `work` and `locus` are for, and "
+            "the rest belongs in `interest`.\nLeave `quote` out. See "
+            "EncyclopediaOfArguments/SOURCE_QUOTES.md."
+        )
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--write", action="store_true")
     args = ap.parse_args()
 
     db = json.loads(DB.read_text())
+    check_quotes(db)
     db, notes = build(db)
 
     n_tab = sum(1 for e in db["entries"] if e["truth_table"].get("latex"))

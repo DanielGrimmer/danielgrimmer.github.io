@@ -159,14 +159,37 @@ and you should say so plainly.** The course itself is the appearance:
 Use `where` from the candidate for `work` and `locus`. `L` is a lecture, `PS` a
 problem set, `P1`/`P2` the midterm practice sets, `SG` the study guide.
 
-**`quote` holds the source's words or it is absent.** The example above has no
-`quote` because the inventory row is a table cell, not a passage — and that is
-the usual case for a course row. A sentence of your own describing where the
-form was set ("Set by table and tree; the derivation appears only as a
-study-guide question") belongs in `interest` or `course.note`, never inside
-quotation marks attributed to the handout. The inventory's own text *is*
-quotable when the row carries some — the exercise wordings in §5.10 are real
-quotes; a summary you wrote from the row is not. Restall-sourced rows name Restall's *Logic*
+### `quote`: you have nothing to put in it
+
+**Leave it out.** Not as a style preference, but as a fact about what you can
+see. The inventory is a table of sequents and the problem-set columns they were
+set in. It holds no handout prose, and you have no handouts. So there is no
+course passage you are in a position to quote, and a sentence of your own
+describing where the form was set ("Set by table and tree; the derivation
+appears only as a study-guide question") is not a quote of anything: inside
+quotation marks attributed to the handout, it reads as the source saying that
+about itself. What you know about where the form was set goes in `work` and
+`locus`, which exist for it; anything further goes in `interest`, where our own
+voice belongs.
+
+This is enforced rather than merely asked. `build.py` refuses to write the
+database when a course appearance carries a `quote` that is not in
+`EncyclopediaOfArguments/SOURCE_QUOTES.md` verbatim, and
+`_tests/argument-forms.test.mjs` checks the same thing. Both read `who` and
+`work`, so spelling the source differently does not get past them.
+
+**`SOURCE_QUOTES.md` is not yours to add to.** It holds handout passages a
+person has read and copied in. A passage you composed is precisely what the
+check exists to catch, so putting one there to make a build pass defeats the
+only guard on this and is worse than the original mistake. When a build fails
+this way the fix is always to delete the `quote`. Your diff should never touch
+that file:
+
+```bash
+git diff --name-only origin/main...HEAD | grep SOURCE_QUOTES && echo "STOP: revert this"
+```
+
+Restall-sourced rows name Restall's *Logic*
 and the chapter.
 
 `interest` may be as modest as the truth allows — *"One of the course's own
