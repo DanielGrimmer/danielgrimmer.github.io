@@ -47,3 +47,6 @@ excluded-middle
 non-contradiction
 negative-explosion
 paradox-disjunction
+the-monster
+positive-paradox
+negative-paradox

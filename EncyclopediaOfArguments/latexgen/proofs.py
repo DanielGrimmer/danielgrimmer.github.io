@@ -625,3 +625,53 @@ PROOFS["paradox-disjunction"] = [
     _l(17, "~~((q > p) | (p > r))", "NegI", 0, subs=[[1, 16]]),
     _l(18, "(q > p) | (p > r)", "NegE", 0, [17]),
 ]
+
+# ----------------------------------------------------------------- the monster
+# Same trick as paradox-disjunction, on the two-atom case: prove ~p first
+# (the reductio's "if p held, q>p would follow" half), then use that ~p to
+# get p>q the ex-falso way, since there is still no explosion rule.
+PROOFS["the-monster"] = [
+    _l(1, "~((p > q) | (q > p))", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "q", "As", 3),
+    _l(4, "p", "Reit", 3, [2]),
+    _l(5, "q > p", "CondI", 2, subs=[[3, 4]]),
+    _l(6, "(p > q) | (q > p)", "DisjI", 2, [5]),
+    _l(7, "!", "FalsumI", 2, [6, 1]),
+    _l(8, "~p", "NegI", 1, subs=[[2, 7]]),
+    _l(9, "p", "As", 2),
+    _l(10, "~q", "As", 3),
+    _l(11, "!", "FalsumI", 3, [9, 8]),
+    _l(12, "~~q", "NegI", 2, subs=[[10, 11]]),
+    _l(13, "q", "NegE", 2, [12]),
+    _l(14, "p > q", "CondI", 1, subs=[[9, 13]]),
+    _l(15, "(p > q) | (q > p)", "DisjI", 1, [14]),
+    _l(16, "!", "FalsumI", 1, [15, 1]),
+    _l(17, "~~((p > q) | (q > p))", "NegI", 0, subs=[[1, 16]]),
+    _l(18, "(p > q) | (q > p)", "NegE", 0, [17]),
+]
+
+# -------------------------------------------------------------- positive paradox
+# The dictated half of the pair below: the goal names ⊃I outright, and the
+# premise is already the consequent, so nothing but Reit stands between them.
+PROOFS["positive-paradox"] = [
+    P(1, "p"),
+    _l(2, "q", "As", 1),
+    _l(3, "p", "Reit", 1, [1]),
+    _l(4, "q > p", "CondI", 0, subs=[[2, 3]]),
+]
+
+# -------------------------------------------------------------- negative paradox
+# ⊃I names the outer move, but the consequent r is not just sitting there --
+# assuming p collides with the premise ~p, and getting r out of that
+# contradiction costs the same double-negation detour ex-falso needs, since
+# there is no explosion rule to shortcut it.
+PROOFS["negative-paradox"] = [
+    P(1, "~p"),
+    _l(2, "p", "As", 1),
+    _l(3, "~r", "As", 2),
+    _l(4, "!", "FalsumI", 2, [2, 1]),
+    _l(5, "~~r", "NegI", 1, subs=[[3, 4]]),
+    _l(6, "r", "NegE", 1, [5]),
+    _l(7, "p > r", "CondI", 0, subs=[[2, 6]]),
+]
