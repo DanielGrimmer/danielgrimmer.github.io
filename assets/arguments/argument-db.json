@@ -44755,7 +44755,7 @@
    ],
    "premises": [],
    "conclusion": "p = ((q = r) = ((p = q) = r))",
-   "interest": "The biconditional is associative, the way its algebraic cousin XOR is (∼(A⊕B) is another name for A≡B), but the twelve-rule system has no shortcut that sees this the fast way: nothing lets you regroup a chain of ≡s the way `(a+b)+c=a+(b+c)` is just read off addition's own definition. Every route through natural deduction has to fix all three atoms first, since none of the individual biconditionals can be evaluated without knowing where the case split lands. The result is the longest derivation in the database by a wide margin -- 265 lines against a previous longest of 80 -- not because any one step is hard, but because there is no way to avoid the full three-way fork.",
+   "interest": "The biconditional is associative, the way its algebraic cousin XOR is (∼(A⊕B) is another name for A≡B), but the twelve-rule system has no shortcut that sees this the fast way: nothing lets you regroup a chain of ≡s the way `(a+b)+c=a+(b+c)` is just read off addition's own definition. Every route through natural deduction has to fix all three atoms first, since none of the individual biconditionals can be evaluated without knowing where the case split lands. The result is the longest derivation in the database by a wide margin -- 269 lines against a previous longest of 80 -- not because any one step is hard, but because there is no way to avoid the full three-way fork.",
    "appearances": [
     {
      "type": "used",
@@ -44780,7 +44780,7 @@
     "used_in": [],
     "problem_set": {},
     "quarantined": false,
-    "note": "The longest derivation in the database (265 lines against a previous longest of 80). Worth showing as a 'here is what the twelve rules alone can do' exhibit rather than assigning it whole -- consider having students verify a single leaf of the case split instead of the full derivation.",
+    "note": "The longest derivation in the database (269 lines against a previous longest of 80). Worth showing as a 'here is what the twelve rules alone can do' exhibit rather than assigning it whole -- consider having students verify a single leaf of the case split instead of the full derivation.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
@@ -44851,199 +44851,217 @@
      },
      {
       "n": 8,
-      "f": "!",
-      "rule": "FalsumI",
+      "f": "~(q | ~q)",
+      "rule": "Reit",
       "depth": 2,
       "cites": [
-       7,
        2
       ]
      },
      {
       "n": 9,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       7,
+       8
+      ]
+     },
+     {
+      "n": 10,
       "f": "~~(q | ~q)",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
         2,
-        8
+        9
        ]
       ]
      },
      {
-      "n": 10,
+      "n": 11,
       "f": "q | ~q",
       "rule": "NegE",
       "depth": 1,
       "cites": [
-       9
+       10
       ]
      },
      {
-      "n": 11,
+      "n": 12,
       "f": "~(r | ~r)",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 12,
+      "n": 13,
       "f": "r",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 13,
+      "n": 14,
       "f": "r | ~r",
       "rule": "DisjI",
       "depth": 3,
+      "cites": [
+       13
+      ]
+     },
+     {
+      "n": 15,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       14,
+       12
+      ]
+     },
+     {
+      "n": 16,
+      "f": "~r",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        13,
+        15
+       ]
+      ]
+     },
+     {
+      "n": 17,
+      "f": "r | ~r",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       16
+      ]
+     },
+     {
+      "n": 18,
+      "f": "~(r | ~r)",
+      "rule": "Reit",
+      "depth": 2,
       "cites": [
        12
       ]
      },
      {
-      "n": 14,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 3,
-      "cites": [
-       13,
-       11
-      ]
-     },
-     {
-      "n": 15,
-      "f": "~r",
-      "rule": "NegI",
-      "depth": 2,
-      "subs": [
-       [
-        12,
-        14
-       ]
-      ]
-     },
-     {
-      "n": 16,
-      "f": "r | ~r",
-      "rule": "DisjI",
-      "depth": 2,
-      "cites": [
-       15
-      ]
-     },
-     {
-      "n": 17,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 2,
-      "cites": [
-       16,
-       11
-      ]
-     },
-     {
-      "n": 18,
-      "f": "~~(r | ~r)",
-      "rule": "NegI",
-      "depth": 1,
-      "subs": [
-       [
-        11,
-        17
-       ]
-      ]
-     },
-     {
       "n": 19,
-      "f": "r | ~r",
-      "rule": "NegE",
-      "depth": 1,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
       "cites": [
+       17,
        18
       ]
      },
      {
       "n": 20,
-      "f": "q",
-      "rule": "As",
-      "depth": 2
+      "f": "~~(r | ~r)",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        12,
+        19
+       ]
+      ]
      },
      {
       "n": 21,
-      "f": "r",
-      "rule": "As",
-      "depth": 3
+      "f": "r | ~r",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       20
+      ]
      },
      {
       "n": 22,
       "f": "q",
       "rule": "As",
-      "depth": 4
+      "depth": 2
      },
      {
       "n": 23,
       "f": "r",
-      "rule": "Reit",
-      "depth": 4,
-      "cites": [
-       21
-      ]
+      "rule": "As",
+      "depth": 3
      },
      {
       "n": 24,
-      "f": "r",
+      "f": "q",
       "rule": "As",
       "depth": 4
      },
      {
       "n": 25,
-      "f": "q",
+      "f": "r",
       "rule": "Reit",
       "depth": 4,
       "cites": [
-       20
+       23
       ]
      },
      {
       "n": 26,
+      "f": "r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 27,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       22
+      ]
+     },
+     {
+      "n": 28,
       "f": "q = r",
       "rule": "BicondI",
       "depth": 3,
       "subs": [
        [
-        22,
-        23
-       ],
-       [
         24,
         25
+       ],
+       [
+        26,
+        27
        ]
       ]
      },
      {
-      "n": 27,
-      "f": "p",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 28,
-      "f": "q",
-      "rule": "Reit",
-      "depth": 4,
-      "cites": [
-       20
-      ]
-     },
-     {
       "n": 29,
-      "f": "q",
+      "f": "p",
       "rule": "As",
       "depth": 4
      },
      {
       "n": 30,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       22
+      ]
+     },
+     {
+      "n": 31,
+      "f": "q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 32,
       "f": "p",
       "rule": "Reit",
       "depth": 4,
@@ -45052,180 +45070,180 @@
       ]
      },
      {
-      "n": 31,
+      "n": 33,
       "f": "p = q",
       "rule": "BicondI",
       "depth": 3,
       "subs": [
        [
-        27,
-        28
-       ],
-       [
         29,
         30
+       ],
+       [
+        31,
+        32
        ]
       ]
      },
      {
-      "n": 32,
-      "f": "p = q",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 33,
-      "f": "r",
-      "rule": "Reit",
-      "depth": 4,
-      "cites": [
-       21
-      ]
-     },
-     {
       "n": 34,
-      "f": "r",
+      "f": "p = q",
       "rule": "As",
       "depth": 4
      },
      {
       "n": 35,
-      "f": "p = q",
+      "f": "r",
       "rule": "Reit",
       "depth": 4,
       "cites": [
-       31
+       23
       ]
      },
      {
       "n": 36,
+      "f": "r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 37,
+      "f": "p = q",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       33
+      ]
+     },
+     {
+      "n": 38,
       "f": "(p = q) = r",
       "rule": "BicondI",
       "depth": 3,
       "subs": [
        [
-        32,
-        33
-       ],
-       [
         34,
         35
+       ],
+       [
+        36,
+        37
        ]
       ]
      },
      {
-      "n": 37,
-      "f": "q = r",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 38,
-      "f": "(p = q) = r",
-      "rule": "Reit",
-      "depth": 4,
-      "cites": [
-       36
-      ]
-     },
-     {
       "n": 39,
-      "f": "(p = q) = r",
+      "f": "q = r",
       "rule": "As",
       "depth": 4
      },
      {
       "n": 40,
-      "f": "q = r",
+      "f": "(p = q) = r",
       "rule": "Reit",
       "depth": 4,
       "cites": [
-       26
+       38
       ]
      },
      {
       "n": 41,
+      "f": "(p = q) = r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 42,
+      "f": "q = r",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       28
+      ]
+     },
+     {
+      "n": 43,
       "f": "(q = r) = ((p = q) = r)",
       "rule": "BicondI",
       "depth": 3,
       "subs": [
        [
-        37,
-        38
-       ],
-       [
         39,
         40
+       ],
+       [
+        41,
+        42
        ]
       ]
      },
      {
-      "n": 42,
+      "n": 44,
       "f": "~r",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 43,
+      "n": 45,
       "f": "q = r",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 44,
+      "n": 46,
       "f": "r",
       "rule": "BicondE",
       "depth": 4,
       "cites": [
-       43,
-       20
+       45,
+       22
       ]
      },
      {
-      "n": 45,
+      "n": 47,
       "f": "!",
       "rule": "FalsumI",
       "depth": 4,
       "cites": [
-       44,
-       42
+       46,
+       44
       ]
      },
      {
-      "n": 46,
+      "n": 48,
       "f": "~(q = r)",
       "rule": "NegI",
       "depth": 3,
       "subs": [
        [
-        43,
-        45
+        45,
+        47
        ]
       ]
      },
      {
-      "n": 47,
+      "n": 49,
       "f": "p",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 48,
+      "n": 50,
       "f": "q",
       "rule": "Reit",
       "depth": 4,
       "cites": [
-       20
+       22
       ]
      },
      {
-      "n": 49,
+      "n": 51,
       "f": "q",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 50,
+      "n": 52,
       "f": "p",
       "rule": "Reit",
       "depth": 4,
@@ -45234,736 +45252,698 @@
       ]
      },
      {
-      "n": 51,
+      "n": 53,
       "f": "p = q",
       "rule": "BicondI",
       "depth": 3,
       "subs": [
        [
-        47,
-        48
-       ],
-       [
         49,
         50
+       ],
+       [
+        51,
+        52
        ]
       ]
      },
      {
-      "n": 52,
+      "n": 54,
       "f": "(p = q) = r",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 53,
+      "n": 55,
       "f": "r",
       "rule": "BicondE",
       "depth": 4,
       "cites": [
-       52,
-       51
+       54,
+       53
       ]
      },
      {
-      "n": 54,
+      "n": 56,
       "f": "!",
       "rule": "FalsumI",
       "depth": 4,
       "cites": [
-       53,
-       42
+       55,
+       44
       ]
      },
      {
-      "n": 55,
+      "n": 57,
       "f": "~((p = q) = r)",
       "rule": "NegI",
       "depth": 3,
       "subs": [
        [
-        52,
-        54
+        54,
+        56
        ]
       ]
      },
      {
-      "n": 56,
+      "n": 58,
       "f": "q = r",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 57,
+      "n": 59,
       "f": "~((p = q) = r)",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 58,
+      "n": 60,
       "f": "!",
       "rule": "FalsumI",
       "depth": 5,
       "cites": [
-       56,
-       46
+       58,
+       48
       ]
      },
      {
-      "n": 59,
+      "n": 61,
       "f": "~~((p = q) = r)",
       "rule": "NegI",
       "depth": 4,
       "subs": [
        [
-        57,
-        58
+        59,
+        60
        ]
       ]
      },
      {
-      "n": 60,
+      "n": 62,
       "f": "(p = q) = r",
       "rule": "NegE",
       "depth": 4,
       "cites": [
-       59
+       61
       ]
      },
      {
-      "n": 61,
+      "n": 63,
       "f": "(p = q) = r",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 62,
+      "n": 64,
       "f": "~(q = r)",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 63,
+      "n": 65,
       "f": "!",
       "rule": "FalsumI",
       "depth": 5,
       "cites": [
-       61,
-       55
+       63,
+       57
       ]
      },
      {
-      "n": 64,
+      "n": 66,
       "f": "~~(q = r)",
       "rule": "NegI",
       "depth": 4,
       "subs": [
        [
-        62,
-        63
-       ]
-      ]
-     },
-     {
-      "n": 65,
-      "f": "q = r",
-      "rule": "NegE",
-      "depth": 4,
-      "cites": [
-       64
-      ]
-     },
-     {
-      "n": 66,
-      "f": "(q = r) = ((p = q) = r)",
-      "rule": "BicondI",
-      "depth": 3,
-      "subs": [
-       [
-        56,
-        60
-       ],
-       [
-        61,
+        64,
         65
        ]
       ]
      },
      {
       "n": 67,
-      "f": "(q = r) = ((p = q) = r)",
-      "rule": "DisjE",
-      "depth": 2,
+      "f": "q = r",
+      "rule": "NegE",
+      "depth": 4,
       "cites": [
-       19
-      ],
-      "subs": [
-       [
-        21,
-        41
-       ],
-       [
-        42,
-        66
-       ]
+       66
       ]
      },
      {
       "n": 68,
-      "f": "~q",
-      "rule": "As",
-      "depth": 2
-     },
-     {
-      "n": 69,
-      "f": "r",
-      "rule": "As",
-      "depth": 3
-     },
-     {
-      "n": 70,
-      "f": "q = r",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 71,
-      "f": "q",
-      "rule": "BicondE",
-      "depth": 4,
-      "cites": [
-       70,
-       69
-      ]
-     },
-     {
-      "n": 72,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
-      "cites": [
-       71,
-       68
-      ]
-     },
-     {
-      "n": 73,
-      "f": "~(q = r)",
-      "rule": "NegI",
-      "depth": 3,
-      "subs": [
-       [
-        70,
-        72
-       ]
-      ]
-     },
-     {
-      "n": 74,
-      "f": "p = q",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 75,
-      "f": "q",
-      "rule": "BicondE",
-      "depth": 4,
-      "cites": [
-       74,
-       1
-      ]
-     },
-     {
-      "n": 76,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
-      "cites": [
-       75,
-       68
-      ]
-     },
-     {
-      "n": 77,
-      "f": "~(p = q)",
-      "rule": "NegI",
-      "depth": 3,
-      "subs": [
-       [
-        74,
-        76
-       ]
-      ]
-     },
-     {
-      "n": 78,
-      "f": "(p = q) = r",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 79,
-      "f": "p = q",
-      "rule": "BicondE",
-      "depth": 4,
-      "cites": [
-       78,
-       69
-      ]
-     },
-     {
-      "n": 80,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
-      "cites": [
-       79,
-       77
-      ]
-     },
-     {
-      "n": 81,
-      "f": "~((p = q) = r)",
-      "rule": "NegI",
-      "depth": 3,
-      "subs": [
-       [
-        78,
-        80
-       ]
-      ]
-     },
-     {
-      "n": 82,
-      "f": "q = r",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 83,
-      "f": "~((p = q) = r)",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 84,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       82,
-       73
-      ]
-     },
-     {
-      "n": 85,
-      "f": "~~((p = q) = r)",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        83,
-        84
-       ]
-      ]
-     },
-     {
-      "n": 86,
-      "f": "(p = q) = r",
-      "rule": "NegE",
-      "depth": 4,
-      "cites": [
-       85
-      ]
-     },
-     {
-      "n": 87,
-      "f": "(p = q) = r",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 88,
-      "f": "~(q = r)",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 89,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       87,
-       81
-      ]
-     },
-     {
-      "n": 90,
-      "f": "~~(q = r)",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        88,
-        89
-       ]
-      ]
-     },
-     {
-      "n": 91,
-      "f": "q = r",
-      "rule": "NegE",
-      "depth": 4,
-      "cites": [
-       90
-      ]
-     },
-     {
-      "n": 92,
       "f": "(q = r) = ((p = q) = r)",
       "rule": "BicondI",
       "depth": 3,
       "subs": [
        [
-        82,
-        86
+        58,
+        62
        ],
        [
-        87,
+        63,
+        67
+       ]
+      ]
+     },
+     {
+      "n": 69,
+      "f": "(q = r) = ((p = q) = r)",
+      "rule": "DisjE",
+      "depth": 2,
+      "cites": [
+       21
+      ],
+      "subs": [
+       [
+        23,
+        43
+       ],
+       [
+        44,
+        68
+       ]
+      ]
+     },
+     {
+      "n": 70,
+      "f": "~q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 71,
+      "f": "r",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 72,
+      "f": "q = r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 73,
+      "f": "q",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       72,
+       71
+      ]
+     },
+     {
+      "n": 74,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       73,
+       70
+      ]
+     },
+     {
+      "n": 75,
+      "f": "~(q = r)",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        72,
+        74
+       ]
+      ]
+     },
+     {
+      "n": 76,
+      "f": "p = q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 77,
+      "f": "q",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       76,
+       1
+      ]
+     },
+     {
+      "n": 78,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       77,
+       70
+      ]
+     },
+     {
+      "n": 79,
+      "f": "~(p = q)",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        76,
+        78
+       ]
+      ]
+     },
+     {
+      "n": 80,
+      "f": "(p = q) = r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 81,
+      "f": "p = q",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       80,
+       71
+      ]
+     },
+     {
+      "n": 82,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       81,
+       79
+      ]
+     },
+     {
+      "n": 83,
+      "f": "~((p = q) = r)",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        80,
+        82
+       ]
+      ]
+     },
+     {
+      "n": 84,
+      "f": "q = r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 85,
+      "f": "~((p = q) = r)",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 86,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
+      "cites": [
+       84,
+       75
+      ]
+     },
+     {
+      "n": 87,
+      "f": "~~((p = q) = r)",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        85,
+        86
+       ]
+      ]
+     },
+     {
+      "n": 88,
+      "f": "(p = q) = r",
+      "rule": "NegE",
+      "depth": 4,
+      "cites": [
+       87
+      ]
+     },
+     {
+      "n": 89,
+      "f": "(p = q) = r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 90,
+      "f": "~(q = r)",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 91,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
+      "cites": [
+       89,
+       83
+      ]
+     },
+     {
+      "n": 92,
+      "f": "~~(q = r)",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        90,
         91
        ]
       ]
      },
      {
       "n": 93,
-      "f": "~r",
-      "rule": "As",
-      "depth": 3
+      "f": "q = r",
+      "rule": "NegE",
+      "depth": 4,
+      "cites": [
+       92
+      ]
      },
      {
       "n": 94,
-      "f": "q",
-      "rule": "As",
-      "depth": 4
+      "f": "(q = r) = ((p = q) = r)",
+      "rule": "BicondI",
+      "depth": 3,
+      "subs": [
+       [
+        84,
+        88
+       ],
+       [
+        89,
+        93
+       ]
+      ]
      },
      {
       "n": 95,
       "f": "~r",
       "rule": "As",
-      "depth": 5
+      "depth": 3
      },
      {
       "n": 96,
+      "f": "q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 97,
+      "f": "~r",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 98,
       "f": "!",
       "rule": "FalsumI",
       "depth": 5,
       "cites": [
-       94,
-       68
+       96,
+       70
       ]
      },
      {
-      "n": 97,
+      "n": 99,
       "f": "~~r",
       "rule": "NegI",
       "depth": 4,
       "subs": [
        [
-        95,
-        96
+        97,
+        98
        ]
       ]
      },
      {
-      "n": 98,
+      "n": 100,
       "f": "r",
       "rule": "NegE",
       "depth": 4,
       "cites": [
-       97
+       99
       ]
      },
      {
-      "n": 99,
+      "n": 101,
       "f": "r",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 100,
+      "n": 102,
       "f": "~q",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 101,
+      "n": 103,
       "f": "!",
       "rule": "FalsumI",
       "depth": 5,
       "cites": [
-       99,
-       93
+       101,
+       95
       ]
      },
      {
-      "n": 102,
+      "n": 104,
       "f": "~~q",
       "rule": "NegI",
       "depth": 4,
       "subs": [
        [
-        100,
-        101
-       ]
-      ]
-     },
-     {
-      "n": 103,
-      "f": "q",
-      "rule": "NegE",
-      "depth": 4,
-      "cites": [
-       102
-      ]
-     },
-     {
-      "n": 104,
-      "f": "q = r",
-      "rule": "BicondI",
-      "depth": 3,
-      "subs": [
-       [
-        94,
-        98
-       ],
-       [
-        99,
+        102,
         103
        ]
       ]
      },
      {
       "n": 105,
-      "f": "p = q",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 106,
       "f": "q",
-      "rule": "BicondE",
-      "depth": 4,
-      "cites": [
-       105,
-       1
-      ]
-     },
-     {
-      "n": 107,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
-      "cites": [
-       106,
-       68
-      ]
-     },
-     {
-      "n": 108,
-      "f": "~(p = q)",
-      "rule": "NegI",
-      "depth": 3,
-      "subs": [
-       [
-        105,
-        107
-       ]
-      ]
-     },
-     {
-      "n": 109,
-      "f": "p = q",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 110,
-      "f": "~r",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 111,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       109,
-       108
-      ]
-     },
-     {
-      "n": 112,
-      "f": "~~r",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        110,
-        111
-       ]
-      ]
-     },
-     {
-      "n": 113,
-      "f": "r",
       "rule": "NegE",
-      "depth": 4,
-      "cites": [
-       112
-      ]
-     },
-     {
-      "n": 114,
-      "f": "r",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 115,
-      "f": "~(p = q)",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 116,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       114,
-       93
-      ]
-     },
-     {
-      "n": 117,
-      "f": "~~(p = q)",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        115,
-        116
-       ]
-      ]
-     },
-     {
-      "n": 118,
-      "f": "p = q",
-      "rule": "NegE",
-      "depth": 4,
-      "cites": [
-       117
-      ]
-     },
-     {
-      "n": 119,
-      "f": "(p = q) = r",
-      "rule": "BicondI",
-      "depth": 3,
-      "subs": [
-       [
-        109,
-        113
-       ],
-       [
-        114,
-        118
-       ]
-      ]
-     },
-     {
-      "n": 120,
-      "f": "q = r",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 121,
-      "f": "(p = q) = r",
-      "rule": "Reit",
-      "depth": 4,
-      "cites": [
-       119
-      ]
-     },
-     {
-      "n": 122,
-      "f": "(p = q) = r",
-      "rule": "As",
-      "depth": 4
-     },
-     {
-      "n": 123,
-      "f": "q = r",
-      "rule": "Reit",
       "depth": 4,
       "cites": [
        104
       ]
      },
      {
-      "n": 124,
-      "f": "(q = r) = ((p = q) = r)",
+      "n": 106,
+      "f": "q = r",
       "rule": "BicondI",
       "depth": 3,
       "subs": [
        [
-        120,
-        121
+        96,
+        100
        ],
        [
-        122,
-        123
+        101,
+        105
        ]
       ]
      },
      {
-      "n": 125,
-      "f": "(q = r) = ((p = q) = r)",
-      "rule": "DisjE",
-      "depth": 2,
+      "n": 107,
+      "f": "p = q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 108,
+      "f": "q",
+      "rule": "BicondE",
+      "depth": 4,
       "cites": [
-       19
-      ],
+       107,
+       1
+      ]
+     },
+     {
+      "n": 109,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       108,
+       70
+      ]
+     },
+     {
+      "n": 110,
+      "f": "~(p = q)",
+      "rule": "NegI",
+      "depth": 3,
       "subs": [
        [
-        69,
-        92
+        107,
+        109
+       ]
+      ]
+     },
+     {
+      "n": 111,
+      "f": "p = q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 112,
+      "f": "~r",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 113,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
+      "cites": [
+       111,
+       110
+      ]
+     },
+     {
+      "n": 114,
+      "f": "~~r",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        112,
+        113
+       ]
+      ]
+     },
+     {
+      "n": 115,
+      "f": "r",
+      "rule": "NegE",
+      "depth": 4,
+      "cites": [
+       114
+      ]
+     },
+     {
+      "n": 116,
+      "f": "r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 117,
+      "f": "~(p = q)",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 118,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
+      "cites": [
+       116,
+       95
+      ]
+     },
+     {
+      "n": 119,
+      "f": "~~(p = q)",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        117,
+        118
+       ]
+      ]
+     },
+     {
+      "n": 120,
+      "f": "p = q",
+      "rule": "NegE",
+      "depth": 4,
+      "cites": [
+       119
+      ]
+     },
+     {
+      "n": 121,
+      "f": "(p = q) = r",
+      "rule": "BicondI",
+      "depth": 3,
+      "subs": [
+       [
+        111,
+        115
        ],
        [
-        93,
-        124
+        116,
+        120
        ]
+      ]
+     },
+     {
+      "n": 122,
+      "f": "q = r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 123,
+      "f": "(p = q) = r",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       121
+      ]
+     },
+     {
+      "n": 124,
+      "f": "(p = q) = r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 125,
+      "f": "q = r",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       106
       ]
      },
      {
       "n": 126,
       "f": "(q = r) = ((p = q) = r)",
-      "rule": "DisjE",
-      "depth": 1,
-      "cites": [
-       10
-      ],
+      "rule": "BicondI",
+      "depth": 3,
       "subs": [
        [
-        20,
-        67
+        122,
+        123
        ],
        [
-        68,
+        124,
         125
        ]
       ]
@@ -45971,140 +45951,156 @@
      {
       "n": 127,
       "f": "(q = r) = ((p = q) = r)",
+      "rule": "DisjE",
+      "depth": 2,
+      "cites": [
+       21
+      ],
+      "subs": [
+       [
+        71,
+        94
+       ],
+       [
+        95,
+        126
+       ]
+      ]
+     },
+     {
+      "n": 128,
+      "f": "(q = r) = ((p = q) = r)",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       11
+      ],
+      "subs": [
+       [
+        22,
+        69
+       ],
+       [
+        70,
+        127
+       ]
+      ]
+     },
+     {
+      "n": 129,
+      "f": "(q = r) = ((p = q) = r)",
       "rule": "As",
       "depth": 1
      },
      {
-      "n": 128,
+      "n": 130,
       "f": "~(q | ~q)",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 129,
+      "n": 131,
       "f": "q",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 130,
+      "n": 132,
       "f": "q | ~q",
       "rule": "DisjI",
       "depth": 3,
       "cites": [
-       129
+       131
       ]
      },
      {
-      "n": 131,
+      "n": 133,
       "f": "!",
       "rule": "FalsumI",
       "depth": 3,
       "cites": [
-       130,
-       128
+       132,
+       130
       ]
      },
      {
-      "n": 132,
+      "n": 134,
       "f": "~q",
       "rule": "NegI",
       "depth": 2,
       "subs": [
        [
-        129,
-        131
+        131,
+        133
        ]
       ]
      },
      {
-      "n": 133,
+      "n": 135,
       "f": "q | ~q",
       "rule": "DisjI",
       "depth": 2,
       "cites": [
-       132
+       134
       ]
      },
      {
-      "n": 134,
+      "n": 136,
+      "f": "~(q | ~q)",
+      "rule": "Reit",
+      "depth": 2,
+      "cites": [
+       130
+      ]
+     },
+     {
+      "n": 137,
       "f": "!",
       "rule": "FalsumI",
       "depth": 2,
       "cites": [
-       133,
-       128
+       135,
+       136
       ]
      },
      {
-      "n": 135,
+      "n": 138,
       "f": "~~(q | ~q)",
       "rule": "NegI",
       "depth": 1,
       "subs": [
        [
-        128,
-        134
+        130,
+        137
        ]
       ]
      },
      {
-      "n": 136,
+      "n": 139,
       "f": "q | ~q",
       "rule": "NegE",
       "depth": 1,
-      "cites": [
-       135
-      ]
-     },
-     {
-      "n": 137,
-      "f": "~(r | ~r)",
-      "rule": "As",
-      "depth": 2
-     },
-     {
-      "n": 138,
-      "f": "r",
-      "rule": "As",
-      "depth": 3
-     },
-     {
-      "n": 139,
-      "f": "r | ~r",
-      "rule": "DisjI",
-      "depth": 3,
       "cites": [
        138
       ]
      },
      {
       "n": 140,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 3,
-      "cites": [
-       139,
-       137
-      ]
+      "f": "~(r | ~r)",
+      "rule": "As",
+      "depth": 2
      },
      {
       "n": 141,
-      "f": "~r",
-      "rule": "NegI",
-      "depth": 2,
-      "subs": [
-       [
-        138,
-        140
-       ]
-      ]
+      "f": "r",
+      "rule": "As",
+      "depth": 3
      },
      {
       "n": 142,
       "f": "r | ~r",
       "rule": "DisjI",
-      "depth": 2,
+      "depth": 3,
       "cites": [
        141
       ]
@@ -46113,20 +46109,20 @@
       "n": 143,
       "f": "!",
       "rule": "FalsumI",
-      "depth": 2,
+      "depth": 3,
       "cites": [
        142,
-       137
+       140
       ]
      },
      {
       "n": 144,
-      "f": "~~(r | ~r)",
+      "f": "~r",
       "rule": "NegI",
-      "depth": 1,
+      "depth": 2,
       "subs": [
        [
-        137,
+        141,
         143
        ]
       ]
@@ -46134,128 +46130,130 @@
      {
       "n": 145,
       "f": "r | ~r",
-      "rule": "NegE",
-      "depth": 1,
+      "rule": "DisjI",
+      "depth": 2,
       "cites": [
        144
       ]
      },
      {
       "n": 146,
+      "f": "~(r | ~r)",
+      "rule": "Reit",
+      "depth": 2,
+      "cites": [
+       140
+      ]
+     },
+     {
+      "n": 147,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       145,
+       146
+      ]
+     },
+     {
+      "n": 148,
+      "f": "~~(r | ~r)",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        140,
+        147
+       ]
+      ]
+     },
+     {
+      "n": 149,
+      "f": "r | ~r",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       148
+      ]
+     },
+     {
+      "n": 150,
       "f": "q",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 147,
+      "n": 151,
       "f": "r",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 148,
+      "n": 152,
       "f": "~p",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 149,
-      "f": "q",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 150,
-      "f": "r",
-      "rule": "Reit",
-      "depth": 5,
-      "cites": [
-       147
-      ]
-     },
-     {
-      "n": 151,
-      "f": "r",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 152,
-      "f": "q",
-      "rule": "Reit",
-      "depth": 5,
-      "cites": [
-       146
-      ]
-     },
-     {
       "n": 153,
+      "f": "q",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 154,
+      "f": "r",
+      "rule": "Reit",
+      "depth": 5,
+      "cites": [
+       151
+      ]
+     },
+     {
+      "n": 155,
+      "f": "r",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 156,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 5,
+      "cites": [
+       150
+      ]
+     },
+     {
+      "n": 157,
       "f": "q = r",
       "rule": "BicondI",
       "depth": 4,
       "subs": [
        [
-        149,
-        150
+        153,
+        154
        ],
        [
-        151,
-        152
-       ]
-      ]
-     },
-     {
-      "n": 154,
-      "f": "p = q",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 155,
-      "f": "p",
-      "rule": "BicondE",
-      "depth": 5,
-      "cites": [
-       154,
-       146
-      ]
-     },
-     {
-      "n": 156,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       155,
-       148
-      ]
-     },
-     {
-      "n": 157,
-      "f": "~(p = q)",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        154,
+        155,
         156
        ]
       ]
      },
      {
       "n": 158,
-      "f": "(p = q) = r",
+      "f": "p = q",
       "rule": "As",
       "depth": 5
      },
      {
       "n": 159,
-      "f": "p = q",
+      "f": "p",
       "rule": "BicondE",
       "depth": 5,
       "cites": [
        158,
-       147
+       150
       ]
      },
      {
@@ -46265,12 +46263,12 @@
       "depth": 5,
       "cites": [
        159,
-       157
+       152
       ]
      },
      {
       "n": 161,
-      "f": "~((p = q) = r)",
+      "f": "~(p = q)",
       "rule": "NegI",
       "depth": 4,
       "subs": [
@@ -46282,18 +46280,18 @@
      },
      {
       "n": 162,
-      "f": "(q = r) = ((p = q) = r)",
+      "f": "(p = q) = r",
       "rule": "As",
       "depth": 5
      },
      {
       "n": 163,
-      "f": "(p = q) = r",
+      "f": "p = q",
       "rule": "BicondE",
       "depth": 5,
       "cites": [
        162,
-       153
+       151
       ]
      },
      {
@@ -46308,7 +46306,7 @@
      },
      {
       "n": 165,
-      "f": "~((q = r) = ((p = q) = r))",
+      "f": "~((p = q) = r)",
       "rule": "NegI",
       "depth": 4,
       "subs": [
@@ -46320,99 +46318,99 @@
      },
      {
       "n": 166,
+      "f": "(q = r) = ((p = q) = r)",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 167,
+      "f": "(p = q) = r",
+      "rule": "BicondE",
+      "depth": 5,
+      "cites": [
+       166,
+       157
+      ]
+     },
+     {
+      "n": 168,
       "f": "!",
       "rule": "FalsumI",
-      "depth": 4,
+      "depth": 5,
       "cites": [
-       127,
+       167,
        165
       ]
      },
      {
-      "n": 167,
+      "n": 169,
+      "f": "~((q = r) = ((p = q) = r))",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        166,
+        168
+       ]
+      ]
+     },
+     {
+      "n": 170,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       129,
+       169
+      ]
+     },
+     {
+      "n": 171,
       "f": "~~p",
       "rule": "NegI",
       "depth": 3,
       "subs": [
        [
-        148,
-        166
+        152,
+        170
        ]
       ]
      },
      {
-      "n": 168,
+      "n": 172,
       "f": "p",
       "rule": "NegE",
       "depth": 3,
       "cites": [
-       167
+       171
       ]
      },
      {
-      "n": 169,
+      "n": 173,
       "f": "~r",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 170,
+      "n": 174,
       "f": "~p",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 171,
+      "n": 175,
       "f": "q = r",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 172,
+      "n": 176,
       "f": "r",
       "rule": "BicondE",
       "depth": 5,
       "cites": [
-       171,
-       146
-      ]
-     },
-     {
-      "n": 173,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       172,
-       169
-      ]
-     },
-     {
-      "n": 174,
-      "f": "~(q = r)",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        171,
-        173
-       ]
-      ]
-     },
-     {
-      "n": 175,
-      "f": "p = q",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 176,
-      "f": "p",
-      "rule": "BicondE",
-      "depth": 5,
-      "cites": [
        175,
-       146
+       150
       ]
      },
      {
@@ -46422,12 +46420,12 @@
       "depth": 5,
       "cites": [
        176,
-       170
+       173
       ]
      },
      {
       "n": 178,
-      "f": "~(p = q)",
+      "f": "~(q = r)",
       "rule": "NegI",
       "depth": 4,
       "subs": [
@@ -46445,729 +46443,729 @@
      },
      {
       "n": 180,
-      "f": "~r",
-      "rule": "As",
-      "depth": 6
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 5,
+      "cites": [
+       179,
+       150
+      ]
      },
      {
       "n": 181,
       "f": "!",
       "rule": "FalsumI",
-      "depth": 6,
+      "depth": 5,
       "cites": [
-       179,
-       178
+       180,
+       174
       ]
      },
      {
       "n": 182,
-      "f": "~~r",
+      "f": "~(p = q)",
       "rule": "NegI",
-      "depth": 5,
+      "depth": 4,
       "subs": [
        [
-        180,
+        179,
         181
        ]
       ]
      },
      {
       "n": 183,
-      "f": "r",
-      "rule": "NegE",
-      "depth": 5,
+      "f": "p = q",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 184,
+      "f": "~r",
+      "rule": "As",
+      "depth": 6
+     },
+     {
+      "n": 185,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 6,
       "cites": [
+       183,
        182
       ]
      },
      {
-      "n": 184,
+      "n": 186,
+      "f": "~~r",
+      "rule": "NegI",
+      "depth": 5,
+      "subs": [
+       [
+        184,
+        185
+       ]
+      ]
+     },
+     {
+      "n": 187,
+      "f": "r",
+      "rule": "NegE",
+      "depth": 5,
+      "cites": [
+       186
+      ]
+     },
+     {
+      "n": 188,
       "f": "r",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 185,
+      "n": 189,
       "f": "~(p = q)",
       "rule": "As",
       "depth": 6
      },
      {
-      "n": 186,
+      "n": 190,
       "f": "!",
       "rule": "FalsumI",
       "depth": 6,
       "cites": [
-       184,
-       169
+       188,
+       173
       ]
      },
      {
-      "n": 187,
+      "n": 191,
       "f": "~~(p = q)",
       "rule": "NegI",
       "depth": 5,
       "subs": [
        [
-        185,
-        186
+        189,
+        190
        ]
       ]
      },
      {
-      "n": 188,
+      "n": 192,
       "f": "p = q",
       "rule": "NegE",
       "depth": 5,
       "cites": [
-       187
+       191
       ]
      },
      {
-      "n": 189,
+      "n": 193,
       "f": "(p = q) = r",
       "rule": "BicondI",
       "depth": 4,
       "subs": [
        [
-        179,
-        183
+        183,
+        187
        ],
        [
-        184,
-        188
-       ]
-      ]
-     },
-     {
-      "n": 190,
-      "f": "(q = r) = ((p = q) = r)",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 191,
-      "f": "q = r",
-      "rule": "BicondE",
-      "depth": 5,
-      "cites": [
-       190,
-       189
-      ]
-     },
-     {
-      "n": 192,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       191,
-       174
-      ]
-     },
-     {
-      "n": 193,
-      "f": "~((q = r) = ((p = q) = r))",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        190,
+        188,
         192
        ]
       ]
      },
      {
       "n": 194,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
+      "f": "(q = r) = ((p = q) = r)",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 195,
+      "f": "q = r",
+      "rule": "BicondE",
+      "depth": 5,
       "cites": [
-       127,
+       194,
        193
       ]
      },
      {
-      "n": 195,
-      "f": "~~p",
-      "rule": "NegI",
-      "depth": 3,
-      "subs": [
-       [
-        170,
-        194
-       ]
-      ]
-     },
-     {
       "n": 196,
-      "f": "p",
-      "rule": "NegE",
-      "depth": 3,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
       "cites": [
-       195
+       195,
+       178
       ]
      },
      {
       "n": 197,
-      "f": "p",
-      "rule": "DisjE",
-      "depth": 2,
-      "cites": [
-       145
-      ],
+      "f": "~((q = r) = ((p = q) = r))",
+      "rule": "NegI",
+      "depth": 4,
       "subs": [
        [
-        147,
-        168
-       ],
-       [
-        169,
+        194,
         196
        ]
       ]
      },
      {
       "n": 198,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       129,
+       197
+      ]
+     },
+     {
+      "n": 199,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        174,
+        198
+       ]
+      ]
+     },
+     {
+      "n": 200,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 3,
+      "cites": [
+       199
+      ]
+     },
+     {
+      "n": 201,
+      "f": "p",
+      "rule": "DisjE",
+      "depth": 2,
+      "cites": [
+       149
+      ],
+      "subs": [
+       [
+        151,
+        172
+       ],
+       [
+        173,
+        200
+       ]
+      ]
+     },
+     {
+      "n": 202,
       "f": "~q",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 199,
+      "n": 203,
       "f": "r",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 200,
+      "n": 204,
       "f": "~p",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 201,
+      "n": 205,
       "f": "q = r",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 202,
+      "n": 206,
       "f": "q",
       "rule": "BicondE",
       "depth": 5,
       "cites": [
-       201,
-       199
+       205,
+       203
       ]
-     },
-     {
-      "n": 203,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       202,
-       198
-      ]
-     },
-     {
-      "n": 204,
-      "f": "~(q = r)",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        201,
-        203
-       ]
-      ]
-     },
-     {
-      "n": 205,
-      "f": "p",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 206,
-      "f": "~q",
-      "rule": "As",
-      "depth": 6
      },
      {
       "n": 207,
       "f": "!",
       "rule": "FalsumI",
-      "depth": 6,
+      "depth": 5,
       "cites": [
-       205,
-       200
+       206,
+       202
       ]
      },
      {
       "n": 208,
-      "f": "~~q",
+      "f": "~(q = r)",
       "rule": "NegI",
-      "depth": 5,
+      "depth": 4,
       "subs": [
        [
-        206,
+        205,
         207
        ]
       ]
      },
      {
       "n": 209,
+      "f": "p",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 210,
+      "f": "~q",
+      "rule": "As",
+      "depth": 6
+     },
+     {
+      "n": 211,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 6,
+      "cites": [
+       209,
+       204
+      ]
+     },
+     {
+      "n": 212,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 5,
+      "subs": [
+       [
+        210,
+        211
+       ]
+      ]
+     },
+     {
+      "n": 213,
       "f": "q",
       "rule": "NegE",
       "depth": 5,
       "cites": [
-       208
+       212
       ]
      },
      {
-      "n": 210,
+      "n": 214,
       "f": "q",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 211,
+      "n": 215,
       "f": "~p",
       "rule": "As",
       "depth": 6
      },
      {
-      "n": 212,
+      "n": 216,
       "f": "!",
       "rule": "FalsumI",
       "depth": 6,
       "cites": [
-       210,
-       198
+       214,
+       202
       ]
      },
      {
-      "n": 213,
+      "n": 217,
       "f": "~~p",
       "rule": "NegI",
       "depth": 5,
       "subs": [
        [
-        211,
-        212
+        215,
+        216
        ]
       ]
      },
      {
-      "n": 214,
+      "n": 218,
       "f": "p",
       "rule": "NegE",
       "depth": 5,
       "cites": [
-       213
+       217
       ]
      },
      {
-      "n": 215,
+      "n": 219,
       "f": "p = q",
       "rule": "BicondI",
       "depth": 4,
       "subs": [
        [
-        205,
-        209
+        209,
+        213
        ],
        [
-        210,
-        214
+        214,
+        218
        ]
       ]
      },
      {
-      "n": 216,
-      "f": "p = q",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 217,
-      "f": "r",
-      "rule": "Reit",
-      "depth": 5,
-      "cites": [
-       199
-      ]
-     },
-     {
-      "n": 218,
-      "f": "r",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 219,
-      "f": "p = q",
-      "rule": "Reit",
-      "depth": 5,
-      "cites": [
-       215
-      ]
-     },
-     {
       "n": 220,
+      "f": "p = q",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 221,
+      "f": "r",
+      "rule": "Reit",
+      "depth": 5,
+      "cites": [
+       203
+      ]
+     },
+     {
+      "n": 222,
+      "f": "r",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 223,
+      "f": "p = q",
+      "rule": "Reit",
+      "depth": 5,
+      "cites": [
+       219
+      ]
+     },
+     {
+      "n": 224,
       "f": "(p = q) = r",
       "rule": "BicondI",
       "depth": 4,
       "subs": [
        [
-        216,
-        217
+        220,
+        221
        ],
        [
-        218,
-        219
-       ]
-      ]
-     },
-     {
-      "n": 221,
-      "f": "(q = r) = ((p = q) = r)",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 222,
-      "f": "q = r",
-      "rule": "BicondE",
-      "depth": 5,
-      "cites": [
-       221,
-       220
-      ]
-     },
-     {
-      "n": 223,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       222,
-       204
-      ]
-     },
-     {
-      "n": 224,
-      "f": "~((q = r) = ((p = q) = r))",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        221,
+        222,
         223
        ]
       ]
      },
      {
       "n": 225,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
+      "f": "(q = r) = ((p = q) = r)",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 226,
+      "f": "q = r",
+      "rule": "BicondE",
+      "depth": 5,
       "cites": [
-       127,
+       225,
        224
       ]
      },
      {
-      "n": 226,
+      "n": 227,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
+      "cites": [
+       226,
+       208
+      ]
+     },
+     {
+      "n": 228,
+      "f": "~((q = r) = ((p = q) = r))",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        225,
+        227
+       ]
+      ]
+     },
+     {
+      "n": 229,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       129,
+       228
+      ]
+     },
+     {
+      "n": 230,
       "f": "~~p",
       "rule": "NegI",
       "depth": 3,
       "subs": [
        [
-        200,
-        225
+        204,
+        229
        ]
       ]
      },
      {
-      "n": 227,
+      "n": 231,
       "f": "p",
       "rule": "NegE",
       "depth": 3,
       "cites": [
-       226
+       230
       ]
      },
      {
-      "n": 228,
+      "n": 232,
       "f": "~r",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 229,
+      "n": 233,
       "f": "~p",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 230,
+      "n": 234,
       "f": "q",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 231,
+      "n": 235,
       "f": "~r",
       "rule": "As",
       "depth": 6
      },
      {
-      "n": 232,
+      "n": 236,
       "f": "!",
       "rule": "FalsumI",
       "depth": 6,
       "cites": [
-       230,
-       198
+       234,
+       202
       ]
      },
      {
-      "n": 233,
+      "n": 237,
       "f": "~~r",
       "rule": "NegI",
       "depth": 5,
       "subs": [
        [
-        231,
-        232
+        235,
+        236
        ]
       ]
      },
      {
-      "n": 234,
+      "n": 238,
       "f": "r",
       "rule": "NegE",
       "depth": 5,
       "cites": [
-       233
+       237
       ]
      },
      {
-      "n": 235,
+      "n": 239,
       "f": "r",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 236,
+      "n": 240,
       "f": "~q",
       "rule": "As",
       "depth": 6
      },
      {
-      "n": 237,
+      "n": 241,
       "f": "!",
       "rule": "FalsumI",
       "depth": 6,
       "cites": [
-       235,
-       228
+       239,
+       232
       ]
      },
      {
-      "n": 238,
+      "n": 242,
       "f": "~~q",
       "rule": "NegI",
       "depth": 5,
       "subs": [
        [
-        236,
-        237
+        240,
+        241
        ]
       ]
      },
      {
-      "n": 239,
+      "n": 243,
       "f": "q",
       "rule": "NegE",
       "depth": 5,
       "cites": [
-       238
+       242
       ]
      },
      {
-      "n": 240,
+      "n": 244,
       "f": "q = r",
       "rule": "BicondI",
       "depth": 4,
       "subs": [
        [
-        230,
-        234
+        234,
+        238
        ],
        [
-        235,
-        239
-       ]
-      ]
-     },
-     {
-      "n": 241,
-      "f": "p",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 242,
-      "f": "~q",
-      "rule": "As",
-      "depth": 6
-     },
-     {
-      "n": 243,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 6,
-      "cites": [
-       241,
-       229
-      ]
-     },
-     {
-      "n": 244,
-      "f": "~~q",
-      "rule": "NegI",
-      "depth": 5,
-      "subs": [
-       [
-        242,
+        239,
         243
        ]
       ]
      },
      {
       "n": 245,
+      "f": "p",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 246,
+      "f": "~q",
+      "rule": "As",
+      "depth": 6
+     },
+     {
+      "n": 247,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 6,
+      "cites": [
+       245,
+       233
+      ]
+     },
+     {
+      "n": 248,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 5,
+      "subs": [
+       [
+        246,
+        247
+       ]
+      ]
+     },
+     {
+      "n": 249,
       "f": "q",
       "rule": "NegE",
       "depth": 5,
       "cites": [
-       244
+       248
       ]
      },
      {
-      "n": 246,
+      "n": 250,
       "f": "q",
       "rule": "As",
       "depth": 5
      },
      {
-      "n": 247,
+      "n": 251,
       "f": "~p",
       "rule": "As",
       "depth": 6
      },
      {
-      "n": 248,
+      "n": 252,
       "f": "!",
       "rule": "FalsumI",
       "depth": 6,
       "cites": [
-       246,
-       198
+       250,
+       202
       ]
      },
      {
-      "n": 249,
+      "n": 253,
       "f": "~~p",
       "rule": "NegI",
       "depth": 5,
       "subs": [
        [
-        247,
-        248
+        251,
+        252
        ]
       ]
      },
      {
-      "n": 250,
+      "n": 254,
       "f": "p",
       "rule": "NegE",
       "depth": 5,
       "cites": [
-       249
+       253
       ]
      },
      {
-      "n": 251,
+      "n": 255,
       "f": "p = q",
       "rule": "BicondI",
       "depth": 4,
       "subs": [
        [
-        241,
-        245
+        245,
+        249
        ],
        [
-        246,
-        250
-       ]
-      ]
-     },
-     {
-      "n": 252,
-      "f": "(p = q) = r",
-      "rule": "As",
-      "depth": 5
-     },
-     {
-      "n": 253,
-      "f": "r",
-      "rule": "BicondE",
-      "depth": 5,
-      "cites": [
-       252,
-       251
-      ]
-     },
-     {
-      "n": 254,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 5,
-      "cites": [
-       253,
-       228
-      ]
-     },
-     {
-      "n": 255,
-      "f": "~((p = q) = r)",
-      "rule": "NegI",
-      "depth": 4,
-      "subs": [
-       [
-        252,
+        250,
         254
        ]
       ]
      },
      {
       "n": 256,
-      "f": "(q = r) = ((p = q) = r)",
+      "f": "(p = q) = r",
       "rule": "As",
       "depth": 5
      },
      {
       "n": 257,
-      "f": "(p = q) = r",
+      "f": "r",
       "rule": "BicondE",
       "depth": 5,
       "cites": [
        256,
-       240
+       255
       ]
      },
      {
@@ -47177,12 +47175,12 @@
       "depth": 5,
       "cites": [
        257,
-       255
+       232
       ]
      },
      {
       "n": 259,
-      "f": "~((q = r) = ((p = q) = r))",
+      "f": "~((p = q) = r)",
       "rule": "NegI",
       "depth": 4,
       "subs": [
@@ -47194,92 +47192,130 @@
      },
      {
       "n": 260,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 4,
-      "cites": [
-       127,
-       259
-      ]
+      "f": "(q = r) = ((p = q) = r)",
+      "rule": "As",
+      "depth": 5
      },
      {
       "n": 261,
-      "f": "~~p",
-      "rule": "NegI",
-      "depth": 3,
-      "subs": [
-       [
-        229,
-        260
-       ]
+      "f": "(p = q) = r",
+      "rule": "BicondE",
+      "depth": 5,
+      "cites": [
+       260,
+       244
       ]
      },
      {
       "n": 262,
-      "f": "p",
-      "rule": "NegE",
-      "depth": 3,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
       "cites": [
-       261
+       261,
+       259
       ]
      },
      {
       "n": 263,
-      "f": "p",
-      "rule": "DisjE",
-      "depth": 2,
-      "cites": [
-       145
-      ],
+      "f": "~((q = r) = ((p = q) = r))",
+      "rule": "NegI",
+      "depth": 4,
       "subs": [
        [
-        199,
-        227
-       ],
-       [
-        228,
+        260,
         262
        ]
       ]
      },
      {
       "n": 264,
-      "f": "p",
-      "rule": "DisjE",
-      "depth": 1,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
       "cites": [
-       136
-      ],
-      "subs": [
-       [
-        146,
-        197
-       ],
-       [
-        198,
-        263
-       ]
+       129,
+       263
       ]
      },
      {
       "n": 265,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        233,
+        264
+       ]
+      ]
+     },
+     {
+      "n": 266,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 3,
+      "cites": [
+       265
+      ]
+     },
+     {
+      "n": 267,
+      "f": "p",
+      "rule": "DisjE",
+      "depth": 2,
+      "cites": [
+       149
+      ],
+      "subs": [
+       [
+        203,
+        231
+       ],
+       [
+        232,
+        266
+       ]
+      ]
+     },
+     {
+      "n": 268,
+      "f": "p",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       139
+      ],
+      "subs": [
+       [
+        150,
+        201
+       ],
+       [
+        202,
+        267
+       ]
+      ]
+     },
+     {
+      "n": 269,
       "f": "p = ((q = r) = ((p = q) = r))",
       "rule": "BicondI",
       "depth": 0,
       "subs": [
        [
         1,
-        126
+        128
        ],
        [
-        127,
-        264
+        129,
+        268
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\open\n\\hypo{2}{\\Neg (q\\Disj \\Neg q)}\n\\open\n\\hypo{3}{q}\n\\have{4}{q\\Disj \\Neg q}\\by{\\DisjI}{3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,2}\n\\close\n\\have{6}{\\Neg q}\\by{\\NegI}{3,5}\n\\have{7}{q\\Disj \\Neg q}\\by{\\DisjI}{6}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,2}\n\\close\n\\have{9}{\\Neg \\Neg (q\\Disj \\Neg q)}\\by{\\NegI}{2,8}\n\\have{10}{q\\Disj \\Neg q}\\by{\\NegE}{9}\n\\open\n\\hypo{11}{\\Neg (r\\Disj \\Neg r)}\n\\open\n\\hypo{12}{r}\n\\have{13}{r\\Disj \\Neg r}\\by{\\DisjI}{12}\n\\have{14}{\\Falsum}\\by{\\FalsumI}{13,11}\n\\close\n\\have{15}{\\Neg r}\\by{\\NegI}{12,14}\n\\have{16}{r\\Disj \\Neg r}\\by{\\DisjI}{15}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{16,11}\n\\close\n\\have{18}{\\Neg \\Neg (r\\Disj \\Neg r)}\\by{\\NegI}{11,17}\n\\have{19}{r\\Disj \\Neg r}\\by{\\NegE}{18}\n\\open\n\\hypo{20}{q}\n\\open\n\\hypo{21}{r}\n\\open\n\\hypo{22}{q}\n\\have{23}{r}\\by{\\Reit}{21}\n\\close\n\\open\n\\hypo{24}{r}\n\\have{25}{q}\\by{\\Reit}{20}\n\\close\n\\have{26}{q\\Bicond r}\\by{\\BicondI}{22-23,24-25}\n\\open\n\\hypo{27}{p}\n\\have{28}{q}\\by{\\Reit}{20}\n\\close\n\\open\n\\hypo{29}{q}\n\\have{30}{p}\\by{\\Reit}{1}\n\\close\n\\have{31}{p\\Bicond q}\\by{\\BicondI}{27-28,29-30}\n\\open\n\\hypo{32}{p\\Bicond q}\n\\have{33}{r}\\by{\\Reit}{21}\n\\close\n\\open\n\\hypo{34}{r}\n\\have{35}{p\\Bicond q}\\by{\\Reit}{31}\n\\close\n\\have{36}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{32-33,34-35}\n\\open\n\\hypo{37}{q\\Bicond r}\n\\have{38}{(p\\Bicond q)\\Bicond r}\\by{\\Reit}{36}\n\\close\n\\open\n\\hypo{39}{(p\\Bicond q)\\Bicond r}\n\\have{40}{q\\Bicond r}\\by{\\Reit}{26}\n\\close\n\\have{41}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{37-38,39-40}\n\\close\n\\open\n\\hypo{42}{\\Neg r}\n\\open\n\\hypo{43}{q\\Bicond r}\n\\have{44}{r}\\by{\\BicondE}{43,20}\n\\have{45}{\\Falsum}\\by{\\FalsumI}{44,42}\n\\close\n\\have{46}{\\Neg (q\\Bicond r)}\\by{\\NegI}{43,45}\n\\open\n\\hypo{47}{p}\n\\have{48}{q}\\by{\\Reit}{20}\n\\close\n\\open\n\\hypo{49}{q}\n\\have{50}{p}\\by{\\Reit}{1}\n\\close\n\\have{51}{p\\Bicond q}\\by{\\BicondI}{47-48,49-50}\n\\open\n\\hypo{52}{(p\\Bicond q)\\Bicond r}\n\\have{53}{r}\\by{\\BicondE}{52,51}\n\\have{54}{\\Falsum}\\by{\\FalsumI}{53,42}\n\\close\n\\have{55}{\\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{52,54}\n\\open\n\\hypo{56}{q\\Bicond r}\n\\open\n\\hypo{57}{\\Neg ((p\\Bicond q)\\Bicond r)}\n\\have{58}{\\Falsum}\\by{\\FalsumI}{56,46}\n\\close\n\\have{59}{\\Neg \\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{57,58}\n\\have{60}{(p\\Bicond q)\\Bicond r}\\by{\\NegE}{59}\n\\close\n\\open\n\\hypo{61}{(p\\Bicond q)\\Bicond r}\n\\open\n\\hypo{62}{\\Neg (q\\Bicond r)}\n\\have{63}{\\Falsum}\\by{\\FalsumI}{61,55}\n\\close\n\\have{64}{\\Neg \\Neg (q\\Bicond r)}\\by{\\NegI}{62,63}\n\\have{65}{q\\Bicond r}\\by{\\NegE}{64}\n\\close\n\\have{66}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{56-60,61-65}\n\\close\n\\have{67}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\DisjE}{19,21-41,42-66}\n\\close\n\\open\n\\hypo{68}{\\Neg q}\n\\open\n\\hypo{69}{r}\n\\open\n\\hypo{70}{q\\Bicond r}\n\\have{71}{q}\\by{\\BicondE}{70,69}\n\\have{72}{\\Falsum}\\by{\\FalsumI}{71,68}\n\\close\n\\have{73}{\\Neg (q\\Bicond r)}\\by{\\NegI}{70,72}\n\\open\n\\hypo{74}{p\\Bicond q}\n\\have{75}{q}\\by{\\BicondE}{74,1}\n\\have{76}{\\Falsum}\\by{\\FalsumI}{75,68}\n\\close\n\\have{77}{\\Neg (p\\Bicond q)}\\by{\\NegI}{74,76}\n\\open\n\\hypo{78}{(p\\Bicond q)\\Bicond r}\n\\have{79}{p\\Bicond q}\\by{\\BicondE}{78,69}\n\\have{80}{\\Falsum}\\by{\\FalsumI}{79,77}\n\\close\n\\have{81}{\\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{78,80}\n\\open\n\\hypo{82}{q\\Bicond r}\n\\open\n\\hypo{83}{\\Neg ((p\\Bicond q)\\Bicond r)}\n\\have{84}{\\Falsum}\\by{\\FalsumI}{82,73}\n\\close\n\\have{85}{\\Neg \\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{83,84}\n\\have{86}{(p\\Bicond q)\\Bicond r}\\by{\\NegE}{85}\n\\close\n\\open\n\\hypo{87}{(p\\Bicond q)\\Bicond r}\n\\open\n\\hypo{88}{\\Neg (q\\Bicond r)}\n\\have{89}{\\Falsum}\\by{\\FalsumI}{87,81}\n\\close\n\\have{90}{\\Neg \\Neg (q\\Bicond r)}\\by{\\NegI}{88,89}\n\\have{91}{q\\Bicond r}\\by{\\NegE}{90}\n\\close\n\\have{92}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{82-86,87-91}\n\\close\n\\open\n\\hypo{93}{\\Neg r}\n\\open\n\\hypo{94}{q}\n\\open\n\\hypo{95}{\\Neg r}\n\\have{96}{\\Falsum}\\by{\\FalsumI}{94,68}\n\\close\n\\have{97}{\\Neg \\Neg r}\\by{\\NegI}{95,96}\n\\have{98}{r}\\by{\\NegE}{97}\n\\close\n\\open\n\\hypo{99}{r}\n\\open\n\\hypo{100}{\\Neg q}\n\\have{101}{\\Falsum}\\by{\\FalsumI}{99,93}\n\\close\n\\have{102}{\\Neg \\Neg q}\\by{\\NegI}{100,101}\n\\have{103}{q}\\by{\\NegE}{102}\n\\close\n\\have{104}{q\\Bicond r}\\by{\\BicondI}{94-98,99-103}\n\\open\n\\hypo{105}{p\\Bicond q}\n\\have{106}{q}\\by{\\BicondE}{105,1}\n\\have{107}{\\Falsum}\\by{\\FalsumI}{106,68}\n\\close\n\\have{108}{\\Neg (p\\Bicond q)}\\by{\\NegI}{105,107}\n\\open\n\\hypo{109}{p\\Bicond q}\n\\open\n\\hypo{110}{\\Neg r}\n\\have{111}{\\Falsum}\\by{\\FalsumI}{109,108}\n\\close\n\\have{112}{\\Neg \\Neg r}\\by{\\NegI}{110,111}\n\\have{113}{r}\\by{\\NegE}{112}\n\\close\n\\open\n\\hypo{114}{r}\n\\open\n\\hypo{115}{\\Neg (p\\Bicond q)}\n\\have{116}{\\Falsum}\\by{\\FalsumI}{114,93}\n\\close\n\\have{117}{\\Neg \\Neg (p\\Bicond q)}\\by{\\NegI}{115,116}\n\\have{118}{p\\Bicond q}\\by{\\NegE}{117}\n\\close\n\\have{119}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{109-113,114-118}\n\\open\n\\hypo{120}{q\\Bicond r}\n\\have{121}{(p\\Bicond q)\\Bicond r}\\by{\\Reit}{119}\n\\close\n\\open\n\\hypo{122}{(p\\Bicond q)\\Bicond r}\n\\have{123}{q\\Bicond r}\\by{\\Reit}{104}\n\\close\n\\have{124}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{120-121,122-123}\n\\close\n\\have{125}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\DisjE}{19,69-92,93-124}\n\\close\n\\have{126}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\DisjE}{10,20-67,68-125}\n\\close\n\\open\n\\hypo{127}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\open\n\\hypo{128}{\\Neg (q\\Disj \\Neg q)}\n\\open\n\\hypo{129}{q}\n\\have{130}{q\\Disj \\Neg q}\\by{\\DisjI}{129}\n\\have{131}{\\Falsum}\\by{\\FalsumI}{130,128}\n\\close\n\\have{132}{\\Neg q}\\by{\\NegI}{129,131}\n\\have{133}{q\\Disj \\Neg q}\\by{\\DisjI}{132}\n\\have{134}{\\Falsum}\\by{\\FalsumI}{133,128}\n\\close\n\\have{135}{\\Neg \\Neg (q\\Disj \\Neg q)}\\by{\\NegI}{128,134}\n\\have{136}{q\\Disj \\Neg q}\\by{\\NegE}{135}\n\\open\n\\hypo{137}{\\Neg (r\\Disj \\Neg r)}\n\\open\n\\hypo{138}{r}\n\\have{139}{r\\Disj \\Neg r}\\by{\\DisjI}{138}\n\\have{140}{\\Falsum}\\by{\\FalsumI}{139,137}\n\\close\n\\have{141}{\\Neg r}\\by{\\NegI}{138,140}\n\\have{142}{r\\Disj \\Neg r}\\by{\\DisjI}{141}\n\\have{143}{\\Falsum}\\by{\\FalsumI}{142,137}\n\\close\n\\have{144}{\\Neg \\Neg (r\\Disj \\Neg r)}\\by{\\NegI}{137,143}\n\\have{145}{r\\Disj \\Neg r}\\by{\\NegE}{144}\n\\open\n\\hypo{146}{q}\n\\open\n\\hypo{147}{r}\n\\open\n\\hypo{148}{\\Neg p}\n\\open\n\\hypo{149}{q}\n\\have{150}{r}\\by{\\Reit}{147}\n\\close\n\\open\n\\hypo{151}{r}\n\\have{152}{q}\\by{\\Reit}{146}\n\\close\n\\have{153}{q\\Bicond r}\\by{\\BicondI}{149-150,151-152}\n\\open\n\\hypo{154}{p\\Bicond q}\n\\have{155}{p}\\by{\\BicondE}{154,146}\n\\have{156}{\\Falsum}\\by{\\FalsumI}{155,148}\n\\close\n\\have{157}{\\Neg (p\\Bicond q)}\\by{\\NegI}{154,156}\n\\open\n\\hypo{158}{(p\\Bicond q)\\Bicond r}\n\\have{159}{p\\Bicond q}\\by{\\BicondE}{158,147}\n\\have{160}{\\Falsum}\\by{\\FalsumI}{159,157}\n\\close\n\\have{161}{\\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{158,160}\n\\open\n\\hypo{162}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\have{163}{(p\\Bicond q)\\Bicond r}\\by{\\BicondE}{162,153}\n\\have{164}{\\Falsum}\\by{\\FalsumI}{163,161}\n\\close\n\\have{165}{\\Neg ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\NegI}{162,164}\n\\have{166}{\\Falsum}\\by{\\FalsumI}{127,165}\n\\close\n\\have{167}{\\Neg \\Neg p}\\by{\\NegI}{148,166}\n\\have{168}{p}\\by{\\NegE}{167}\n\\close\n\\open\n\\hypo{169}{\\Neg r}\n\\open\n\\hypo{170}{\\Neg p}\n\\open\n\\hypo{171}{q\\Bicond r}\n\\have{172}{r}\\by{\\BicondE}{171,146}\n\\have{173}{\\Falsum}\\by{\\FalsumI}{172,169}\n\\close\n\\have{174}{\\Neg (q\\Bicond r)}\\by{\\NegI}{171,173}\n\\open\n\\hypo{175}{p\\Bicond q}\n\\have{176}{p}\\by{\\BicondE}{175,146}\n\\have{177}{\\Falsum}\\by{\\FalsumI}{176,170}\n\\close\n\\have{178}{\\Neg (p\\Bicond q)}\\by{\\NegI}{175,177}\n\\open\n\\hypo{179}{p\\Bicond q}\n\\open\n\\hypo{180}{\\Neg r}\n\\have{181}{\\Falsum}\\by{\\FalsumI}{179,178}\n\\close\n\\have{182}{\\Neg \\Neg r}\\by{\\NegI}{180,181}\n\\have{183}{r}\\by{\\NegE}{182}\n\\close\n\\open\n\\hypo{184}{r}\n\\open\n\\hypo{185}{\\Neg (p\\Bicond q)}\n\\have{186}{\\Falsum}\\by{\\FalsumI}{184,169}\n\\close\n\\have{187}{\\Neg \\Neg (p\\Bicond q)}\\by{\\NegI}{185,186}\n\\have{188}{p\\Bicond q}\\by{\\NegE}{187}\n\\close\n\\have{189}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{179-183,184-188}\n\\open\n\\hypo{190}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\have{191}{q\\Bicond r}\\by{\\BicondE}{190,189}\n\\have{192}{\\Falsum}\\by{\\FalsumI}{191,174}\n\\close\n\\have{193}{\\Neg ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\NegI}{190,192}\n\\have{194}{\\Falsum}\\by{\\FalsumI}{127,193}\n\\close\n\\have{195}{\\Neg \\Neg p}\\by{\\NegI}{170,194}\n\\have{196}{p}\\by{\\NegE}{195}\n\\close\n\\have{197}{p}\\by{\\DisjE}{145,147-168,169-196}\n\\close\n\\open\n\\hypo{198}{\\Neg q}\n\\open\n\\hypo{199}{r}\n\\open\n\\hypo{200}{\\Neg p}\n\\open\n\\hypo{201}{q\\Bicond r}\n\\have{202}{q}\\by{\\BicondE}{201,199}\n\\have{203}{\\Falsum}\\by{\\FalsumI}{202,198}\n\\close\n\\have{204}{\\Neg (q\\Bicond r)}\\by{\\NegI}{201,203}\n\\open\n\\hypo{205}{p}\n\\open\n\\hypo{206}{\\Neg q}\n\\have{207}{\\Falsum}\\by{\\FalsumI}{205,200}\n\\close\n\\have{208}{\\Neg \\Neg q}\\by{\\NegI}{206,207}\n\\have{209}{q}\\by{\\NegE}{208}\n\\close\n\\open\n\\hypo{210}{q}\n\\open\n\\hypo{211}{\\Neg p}\n\\have{212}{\\Falsum}\\by{\\FalsumI}{210,198}\n\\close\n\\have{213}{\\Neg \\Neg p}\\by{\\NegI}{211,212}\n\\have{214}{p}\\by{\\NegE}{213}\n\\close\n\\have{215}{p\\Bicond q}\\by{\\BicondI}{205-209,210-214}\n\\open\n\\hypo{216}{p\\Bicond q}\n\\have{217}{r}\\by{\\Reit}{199}\n\\close\n\\open\n\\hypo{218}{r}\n\\have{219}{p\\Bicond q}\\by{\\Reit}{215}\n\\close\n\\have{220}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{216-217,218-219}\n\\open\n\\hypo{221}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\have{222}{q\\Bicond r}\\by{\\BicondE}{221,220}\n\\have{223}{\\Falsum}\\by{\\FalsumI}{222,204}\n\\close\n\\have{224}{\\Neg ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\NegI}{221,223}\n\\have{225}{\\Falsum}\\by{\\FalsumI}{127,224}\n\\close\n\\have{226}{\\Neg \\Neg p}\\by{\\NegI}{200,225}\n\\have{227}{p}\\by{\\NegE}{226}\n\\close\n\\open\n\\hypo{228}{\\Neg r}\n\\open\n\\hypo{229}{\\Neg p}\n\\open\n\\hypo{230}{q}\n\\open\n\\hypo{231}{\\Neg r}\n\\have{232}{\\Falsum}\\by{\\FalsumI}{230,198}\n\\close\n\\have{233}{\\Neg \\Neg r}\\by{\\NegI}{231,232}\n\\have{234}{r}\\by{\\NegE}{233}\n\\close\n\\open\n\\hypo{235}{r}\n\\open\n\\hypo{236}{\\Neg q}\n\\have{237}{\\Falsum}\\by{\\FalsumI}{235,228}\n\\close\n\\have{238}{\\Neg \\Neg q}\\by{\\NegI}{236,237}\n\\have{239}{q}\\by{\\NegE}{238}\n\\close\n\\have{240}{q\\Bicond r}\\by{\\BicondI}{230-234,235-239}\n\\open\n\\hypo{241}{p}\n\\open\n\\hypo{242}{\\Neg q}\n\\have{243}{\\Falsum}\\by{\\FalsumI}{241,229}\n\\close\n\\have{244}{\\Neg \\Neg q}\\by{\\NegI}{242,243}\n\\have{245}{q}\\by{\\NegE}{244}\n\\close\n\\open\n\\hypo{246}{q}\n\\open\n\\hypo{247}{\\Neg p}\n\\have{248}{\\Falsum}\\by{\\FalsumI}{246,198}\n\\close\n\\have{249}{\\Neg \\Neg p}\\by{\\NegI}{247,248}\n\\have{250}{p}\\by{\\NegE}{249}\n\\close\n\\have{251}{p\\Bicond q}\\by{\\BicondI}{241-245,246-250}\n\\open\n\\hypo{252}{(p\\Bicond q)\\Bicond r}\n\\have{253}{r}\\by{\\BicondE}{252,251}\n\\have{254}{\\Falsum}\\by{\\FalsumI}{253,228}\n\\close\n\\have{255}{\\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{252,254}\n\\open\n\\hypo{256}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\have{257}{(p\\Bicond q)\\Bicond r}\\by{\\BicondE}{256,240}\n\\have{258}{\\Falsum}\\by{\\FalsumI}{257,255}\n\\close\n\\have{259}{\\Neg ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\NegI}{256,258}\n\\have{260}{\\Falsum}\\by{\\FalsumI}{127,259}\n\\close\n\\have{261}{\\Neg \\Neg p}\\by{\\NegI}{229,260}\n\\have{262}{p}\\by{\\NegE}{261}\n\\close\n\\have{263}{p}\\by{\\DisjE}{145,199-227,228-262}\n\\close\n\\have{264}{p}\\by{\\DisjE}{136,146-197,198-263}\n\\close\n\\have{265}{p\\Bicond ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\BicondI}{1-126,127-264}\n\\end{nd}\n\\end{align*}",
-    "lines": 265,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p}\n\\open\n\\hypo{2}{\\Neg (q\\Disj \\Neg q)}\n\\open\n\\hypo{3}{q}\n\\have{4}{q\\Disj \\Neg q}\\by{\\DisjI}{3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,2}\n\\close\n\\have{6}{\\Neg q}\\by{\\NegI}{3,5}\n\\have{7}{q\\Disj \\Neg q}\\by{\\DisjI}{6}\n\\have{8}{\\Neg (q\\Disj \\Neg q)}\\by{\\Reit}{2}\n\\have{9}{\\Falsum}\\by{\\FalsumI}{7,8}\n\\close\n\\have{10}{\\Neg \\Neg (q\\Disj \\Neg q)}\\by{\\NegI}{2,9}\n\\have{11}{q\\Disj \\Neg q}\\by{\\NegE}{10}\n\\open\n\\hypo{12}{\\Neg (r\\Disj \\Neg r)}\n\\open\n\\hypo{13}{r}\n\\have{14}{r\\Disj \\Neg r}\\by{\\DisjI}{13}\n\\have{15}{\\Falsum}\\by{\\FalsumI}{14,12}\n\\close\n\\have{16}{\\Neg r}\\by{\\NegI}{13,15}\n\\have{17}{r\\Disj \\Neg r}\\by{\\DisjI}{16}\n\\have{18}{\\Neg (r\\Disj \\Neg r)}\\by{\\Reit}{12}\n\\have{19}{\\Falsum}\\by{\\FalsumI}{17,18}\n\\close\n\\have{20}{\\Neg \\Neg (r\\Disj \\Neg r)}\\by{\\NegI}{12,19}\n\\have{21}{r\\Disj \\Neg r}\\by{\\NegE}{20}\n\\open\n\\hypo{22}{q}\n\\open\n\\hypo{23}{r}\n\\open\n\\hypo{24}{q}\n\\have{25}{r}\\by{\\Reit}{23}\n\\close\n\\open\n\\hypo{26}{r}\n\\have{27}{q}\\by{\\Reit}{22}\n\\close\n\\have{28}{q\\Bicond r}\\by{\\BicondI}{24-25,26-27}\n\\open\n\\hypo{29}{p}\n\\have{30}{q}\\by{\\Reit}{22}\n\\close\n\\open\n\\hypo{31}{q}\n\\have{32}{p}\\by{\\Reit}{1}\n\\close\n\\have{33}{p\\Bicond q}\\by{\\BicondI}{29-30,31-32}\n\\open\n\\hypo{34}{p\\Bicond q}\n\\have{35}{r}\\by{\\Reit}{23}\n\\close\n\\open\n\\hypo{36}{r}\n\\have{37}{p\\Bicond q}\\by{\\Reit}{33}\n\\close\n\\have{38}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{34-35,36-37}\n\\open\n\\hypo{39}{q\\Bicond r}\n\\have{40}{(p\\Bicond q)\\Bicond r}\\by{\\Reit}{38}\n\\close\n\\open\n\\hypo{41}{(p\\Bicond q)\\Bicond r}\n\\have{42}{q\\Bicond r}\\by{\\Reit}{28}\n\\close\n\\have{43}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{39-40,41-42}\n\\close\n\\open\n\\hypo{44}{\\Neg r}\n\\open\n\\hypo{45}{q\\Bicond r}\n\\have{46}{r}\\by{\\BicondE}{45,22}\n\\have{47}{\\Falsum}\\by{\\FalsumI}{46,44}\n\\close\n\\have{48}{\\Neg (q\\Bicond r)}\\by{\\NegI}{45,47}\n\\open\n\\hypo{49}{p}\n\\have{50}{q}\\by{\\Reit}{22}\n\\close\n\\open\n\\hypo{51}{q}\n\\have{52}{p}\\by{\\Reit}{1}\n\\close\n\\have{53}{p\\Bicond q}\\by{\\BicondI}{49-50,51-52}\n\\open\n\\hypo{54}{(p\\Bicond q)\\Bicond r}\n\\have{55}{r}\\by{\\BicondE}{54,53}\n\\have{56}{\\Falsum}\\by{\\FalsumI}{55,44}\n\\close\n\\have{57}{\\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{54,56}\n\\open\n\\hypo{58}{q\\Bicond r}\n\\open\n\\hypo{59}{\\Neg ((p\\Bicond q)\\Bicond r)}\n\\have{60}{\\Falsum}\\by{\\FalsumI}{58,48}\n\\close\n\\have{61}{\\Neg \\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{59,60}\n\\have{62}{(p\\Bicond q)\\Bicond r}\\by{\\NegE}{61}\n\\close\n\\open\n\\hypo{63}{(p\\Bicond q)\\Bicond r}\n\\open\n\\hypo{64}{\\Neg (q\\Bicond r)}\n\\have{65}{\\Falsum}\\by{\\FalsumI}{63,57}\n\\close\n\\have{66}{\\Neg \\Neg (q\\Bicond r)}\\by{\\NegI}{64,65}\n\\have{67}{q\\Bicond r}\\by{\\NegE}{66}\n\\close\n\\have{68}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{58-62,63-67}\n\\close\n\\have{69}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\DisjE}{21,23-43,44-68}\n\\close\n\\open\n\\hypo{70}{\\Neg q}\n\\open\n\\hypo{71}{r}\n\\open\n\\hypo{72}{q\\Bicond r}\n\\have{73}{q}\\by{\\BicondE}{72,71}\n\\have{74}{\\Falsum}\\by{\\FalsumI}{73,70}\n\\close\n\\have{75}{\\Neg (q\\Bicond r)}\\by{\\NegI}{72,74}\n\\open\n\\hypo{76}{p\\Bicond q}\n\\have{77}{q}\\by{\\BicondE}{76,1}\n\\have{78}{\\Falsum}\\by{\\FalsumI}{77,70}\n\\close\n\\have{79}{\\Neg (p\\Bicond q)}\\by{\\NegI}{76,78}\n\\open\n\\hypo{80}{(p\\Bicond q)\\Bicond r}\n\\have{81}{p\\Bicond q}\\by{\\BicondE}{80,71}\n\\have{82}{\\Falsum}\\by{\\FalsumI}{81,79}\n\\close\n\\have{83}{\\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{80,82}\n\\open\n\\hypo{84}{q\\Bicond r}\n\\open\n\\hypo{85}{\\Neg ((p\\Bicond q)\\Bicond r)}\n\\have{86}{\\Falsum}\\by{\\FalsumI}{84,75}\n\\close\n\\have{87}{\\Neg \\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{85,86}\n\\have{88}{(p\\Bicond q)\\Bicond r}\\by{\\NegE}{87}\n\\close\n\\open\n\\hypo{89}{(p\\Bicond q)\\Bicond r}\n\\open\n\\hypo{90}{\\Neg (q\\Bicond r)}\n\\have{91}{\\Falsum}\\by{\\FalsumI}{89,83}\n\\close\n\\have{92}{\\Neg \\Neg (q\\Bicond r)}\\by{\\NegI}{90,91}\n\\have{93}{q\\Bicond r}\\by{\\NegE}{92}\n\\close\n\\have{94}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{84-88,89-93}\n\\close\n\\open\n\\hypo{95}{\\Neg r}\n\\open\n\\hypo{96}{q}\n\\open\n\\hypo{97}{\\Neg r}\n\\have{98}{\\Falsum}\\by{\\FalsumI}{96,70}\n\\close\n\\have{99}{\\Neg \\Neg r}\\by{\\NegI}{97,98}\n\\have{100}{r}\\by{\\NegE}{99}\n\\close\n\\open\n\\hypo{101}{r}\n\\open\n\\hypo{102}{\\Neg q}\n\\have{103}{\\Falsum}\\by{\\FalsumI}{101,95}\n\\close\n\\have{104}{\\Neg \\Neg q}\\by{\\NegI}{102,103}\n\\have{105}{q}\\by{\\NegE}{104}\n\\close\n\\have{106}{q\\Bicond r}\\by{\\BicondI}{96-100,101-105}\n\\open\n\\hypo{107}{p\\Bicond q}\n\\have{108}{q}\\by{\\BicondE}{107,1}\n\\have{109}{\\Falsum}\\by{\\FalsumI}{108,70}\n\\close\n\\have{110}{\\Neg (p\\Bicond q)}\\by{\\NegI}{107,109}\n\\open\n\\hypo{111}{p\\Bicond q}\n\\open\n\\hypo{112}{\\Neg r}\n\\have{113}{\\Falsum}\\by{\\FalsumI}{111,110}\n\\close\n\\have{114}{\\Neg \\Neg r}\\by{\\NegI}{112,113}\n\\have{115}{r}\\by{\\NegE}{114}\n\\close\n\\open\n\\hypo{116}{r}\n\\open\n\\hypo{117}{\\Neg (p\\Bicond q)}\n\\have{118}{\\Falsum}\\by{\\FalsumI}{116,95}\n\\close\n\\have{119}{\\Neg \\Neg (p\\Bicond q)}\\by{\\NegI}{117,118}\n\\have{120}{p\\Bicond q}\\by{\\NegE}{119}\n\\close\n\\have{121}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{111-115,116-120}\n\\open\n\\hypo{122}{q\\Bicond r}\n\\have{123}{(p\\Bicond q)\\Bicond r}\\by{\\Reit}{121}\n\\close\n\\open\n\\hypo{124}{(p\\Bicond q)\\Bicond r}\n\\have{125}{q\\Bicond r}\\by{\\Reit}{106}\n\\close\n\\have{126}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{122-123,124-125}\n\\close\n\\have{127}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\DisjE}{21,71-94,95-126}\n\\close\n\\have{128}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\DisjE}{11,22-69,70-127}\n\\close\n\\open\n\\hypo{129}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\open\n\\hypo{130}{\\Neg (q\\Disj \\Neg q)}\n\\open\n\\hypo{131}{q}\n\\have{132}{q\\Disj \\Neg q}\\by{\\DisjI}{131}\n\\have{133}{\\Falsum}\\by{\\FalsumI}{132,130}\n\\close\n\\have{134}{\\Neg q}\\by{\\NegI}{131,133}\n\\have{135}{q\\Disj \\Neg q}\\by{\\DisjI}{134}\n\\have{136}{\\Neg (q\\Disj \\Neg q)}\\by{\\Reit}{130}\n\\have{137}{\\Falsum}\\by{\\FalsumI}{135,136}\n\\close\n\\have{138}{\\Neg \\Neg (q\\Disj \\Neg q)}\\by{\\NegI}{130,137}\n\\have{139}{q\\Disj \\Neg q}\\by{\\NegE}{138}\n\\open\n\\hypo{140}{\\Neg (r\\Disj \\Neg r)}\n\\open\n\\hypo{141}{r}\n\\have{142}{r\\Disj \\Neg r}\\by{\\DisjI}{141}\n\\have{143}{\\Falsum}\\by{\\FalsumI}{142,140}\n\\close\n\\have{144}{\\Neg r}\\by{\\NegI}{141,143}\n\\have{145}{r\\Disj \\Neg r}\\by{\\DisjI}{144}\n\\have{146}{\\Neg (r\\Disj \\Neg r)}\\by{\\Reit}{140}\n\\have{147}{\\Falsum}\\by{\\FalsumI}{145,146}\n\\close\n\\have{148}{\\Neg \\Neg (r\\Disj \\Neg r)}\\by{\\NegI}{140,147}\n\\have{149}{r\\Disj \\Neg r}\\by{\\NegE}{148}\n\\open\n\\hypo{150}{q}\n\\open\n\\hypo{151}{r}\n\\open\n\\hypo{152}{\\Neg p}\n\\open\n\\hypo{153}{q}\n\\have{154}{r}\\by{\\Reit}{151}\n\\close\n\\open\n\\hypo{155}{r}\n\\have{156}{q}\\by{\\Reit}{150}\n\\close\n\\have{157}{q\\Bicond r}\\by{\\BicondI}{153-154,155-156}\n\\open\n\\hypo{158}{p\\Bicond q}\n\\have{159}{p}\\by{\\BicondE}{158,150}\n\\have{160}{\\Falsum}\\by{\\FalsumI}{159,152}\n\\close\n\\have{161}{\\Neg (p\\Bicond q)}\\by{\\NegI}{158,160}\n\\open\n\\hypo{162}{(p\\Bicond q)\\Bicond r}\n\\have{163}{p\\Bicond q}\\by{\\BicondE}{162,151}\n\\have{164}{\\Falsum}\\by{\\FalsumI}{163,161}\n\\close\n\\have{165}{\\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{162,164}\n\\open\n\\hypo{166}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\have{167}{(p\\Bicond q)\\Bicond r}\\by{\\BicondE}{166,157}\n\\have{168}{\\Falsum}\\by{\\FalsumI}{167,165}\n\\close\n\\have{169}{\\Neg ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\NegI}{166,168}\n\\have{170}{\\Falsum}\\by{\\FalsumI}{129,169}\n\\close\n\\have{171}{\\Neg \\Neg p}\\by{\\NegI}{152,170}\n\\have{172}{p}\\by{\\NegE}{171}\n\\close\n\\open\n\\hypo{173}{\\Neg r}\n\\open\n\\hypo{174}{\\Neg p}\n\\open\n\\hypo{175}{q\\Bicond r}\n\\have{176}{r}\\by{\\BicondE}{175,150}\n\\have{177}{\\Falsum}\\by{\\FalsumI}{176,173}\n\\close\n\\have{178}{\\Neg (q\\Bicond r)}\\by{\\NegI}{175,177}\n\\open\n\\hypo{179}{p\\Bicond q}\n\\have{180}{p}\\by{\\BicondE}{179,150}\n\\have{181}{\\Falsum}\\by{\\FalsumI}{180,174}\n\\close\n\\have{182}{\\Neg (p\\Bicond q)}\\by{\\NegI}{179,181}\n\\open\n\\hypo{183}{p\\Bicond q}\n\\open\n\\hypo{184}{\\Neg r}\n\\have{185}{\\Falsum}\\by{\\FalsumI}{183,182}\n\\close\n\\have{186}{\\Neg \\Neg r}\\by{\\NegI}{184,185}\n\\have{187}{r}\\by{\\NegE}{186}\n\\close\n\\open\n\\hypo{188}{r}\n\\open\n\\hypo{189}{\\Neg (p\\Bicond q)}\n\\have{190}{\\Falsum}\\by{\\FalsumI}{188,173}\n\\close\n\\have{191}{\\Neg \\Neg (p\\Bicond q)}\\by{\\NegI}{189,190}\n\\have{192}{p\\Bicond q}\\by{\\NegE}{191}\n\\close\n\\have{193}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{183-187,188-192}\n\\open\n\\hypo{194}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\have{195}{q\\Bicond r}\\by{\\BicondE}{194,193}\n\\have{196}{\\Falsum}\\by{\\FalsumI}{195,178}\n\\close\n\\have{197}{\\Neg ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\NegI}{194,196}\n\\have{198}{\\Falsum}\\by{\\FalsumI}{129,197}\n\\close\n\\have{199}{\\Neg \\Neg p}\\by{\\NegI}{174,198}\n\\have{200}{p}\\by{\\NegE}{199}\n\\close\n\\have{201}{p}\\by{\\DisjE}{149,151-172,173-200}\n\\close\n\\open\n\\hypo{202}{\\Neg q}\n\\open\n\\hypo{203}{r}\n\\open\n\\hypo{204}{\\Neg p}\n\\open\n\\hypo{205}{q\\Bicond r}\n\\have{206}{q}\\by{\\BicondE}{205,203}\n\\have{207}{\\Falsum}\\by{\\FalsumI}{206,202}\n\\close\n\\have{208}{\\Neg (q\\Bicond r)}\\by{\\NegI}{205,207}\n\\open\n\\hypo{209}{p}\n\\open\n\\hypo{210}{\\Neg q}\n\\have{211}{\\Falsum}\\by{\\FalsumI}{209,204}\n\\close\n\\have{212}{\\Neg \\Neg q}\\by{\\NegI}{210,211}\n\\have{213}{q}\\by{\\NegE}{212}\n\\close\n\\open\n\\hypo{214}{q}\n\\open\n\\hypo{215}{\\Neg p}\n\\have{216}{\\Falsum}\\by{\\FalsumI}{214,202}\n\\close\n\\have{217}{\\Neg \\Neg p}\\by{\\NegI}{215,216}\n\\have{218}{p}\\by{\\NegE}{217}\n\\close\n\\have{219}{p\\Bicond q}\\by{\\BicondI}{209-213,214-218}\n\\open\n\\hypo{220}{p\\Bicond q}\n\\have{221}{r}\\by{\\Reit}{203}\n\\close\n\\open\n\\hypo{222}{r}\n\\have{223}{p\\Bicond q}\\by{\\Reit}{219}\n\\close\n\\have{224}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{220-221,222-223}\n\\open\n\\hypo{225}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\have{226}{q\\Bicond r}\\by{\\BicondE}{225,224}\n\\have{227}{\\Falsum}\\by{\\FalsumI}{226,208}\n\\close\n\\have{228}{\\Neg ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\NegI}{225,227}\n\\have{229}{\\Falsum}\\by{\\FalsumI}{129,228}\n\\close\n\\have{230}{\\Neg \\Neg p}\\by{\\NegI}{204,229}\n\\have{231}{p}\\by{\\NegE}{230}\n\\close\n\\open\n\\hypo{232}{\\Neg r}\n\\open\n\\hypo{233}{\\Neg p}\n\\open\n\\hypo{234}{q}\n\\open\n\\hypo{235}{\\Neg r}\n\\have{236}{\\Falsum}\\by{\\FalsumI}{234,202}\n\\close\n\\have{237}{\\Neg \\Neg r}\\by{\\NegI}{235,236}\n\\have{238}{r}\\by{\\NegE}{237}\n\\close\n\\open\n\\hypo{239}{r}\n\\open\n\\hypo{240}{\\Neg q}\n\\have{241}{\\Falsum}\\by{\\FalsumI}{239,232}\n\\close\n\\have{242}{\\Neg \\Neg q}\\by{\\NegI}{240,241}\n\\have{243}{q}\\by{\\NegE}{242}\n\\close\n\\have{244}{q\\Bicond r}\\by{\\BicondI}{234-238,239-243}\n\\open\n\\hypo{245}{p}\n\\open\n\\hypo{246}{\\Neg q}\n\\have{247}{\\Falsum}\\by{\\FalsumI}{245,233}\n\\close\n\\have{248}{\\Neg \\Neg q}\\by{\\NegI}{246,247}\n\\have{249}{q}\\by{\\NegE}{248}\n\\close\n\\open\n\\hypo{250}{q}\n\\open\n\\hypo{251}{\\Neg p}\n\\have{252}{\\Falsum}\\by{\\FalsumI}{250,202}\n\\close\n\\have{253}{\\Neg \\Neg p}\\by{\\NegI}{251,252}\n\\have{254}{p}\\by{\\NegE}{253}\n\\close\n\\have{255}{p\\Bicond q}\\by{\\BicondI}{245-249,250-254}\n\\open\n\\hypo{256}{(p\\Bicond q)\\Bicond r}\n\\have{257}{r}\\by{\\BicondE}{256,255}\n\\have{258}{\\Falsum}\\by{\\FalsumI}{257,232}\n\\close\n\\have{259}{\\Neg ((p\\Bicond q)\\Bicond r)}\\by{\\NegI}{256,258}\n\\open\n\\hypo{260}{(q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r)}\n\\have{261}{(p\\Bicond q)\\Bicond r}\\by{\\BicondE}{260,244}\n\\have{262}{\\Falsum}\\by{\\FalsumI}{261,259}\n\\close\n\\have{263}{\\Neg ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\NegI}{260,262}\n\\have{264}{\\Falsum}\\by{\\FalsumI}{129,263}\n\\close\n\\have{265}{\\Neg \\Neg p}\\by{\\NegI}{233,264}\n\\have{266}{p}\\by{\\NegE}{265}\n\\close\n\\have{267}{p}\\by{\\DisjE}{149,203-231,232-266}\n\\close\n\\have{268}{p}\\by{\\DisjE}{139,150-201,202-267}\n\\close\n\\have{269}{p\\Bicond ((q\\Bicond r)\\Bicond ((p\\Bicond q)\\Bicond r))}\\by{\\BicondI}{1-128,129-268}\n\\end{nd}\n\\end{align*}",
+    "lines": 269,
     "max_subproof_depth": 6,
     "subproof_count": 90,
     "assumption_count": 90,
@@ -47298,9 +47334,9 @@
     "checked_by": "latexgen/nd.py"
    },
    "difficulty": {
-    "nd": "hard",
+    "nd": "extremely hard",
     "table": "easy",
-    "tree": "hard"
+    "tree": "extremely hard"
    },
    "truth_table": {
     "atoms": [

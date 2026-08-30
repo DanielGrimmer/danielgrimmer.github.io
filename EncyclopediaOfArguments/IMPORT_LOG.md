@@ -56,11 +56,24 @@ only for want of a derivation), and with the elided root it is refused by name.
 The 152-line derivation the firing had already written by hand is the
 remaining work.
 
-**2026-08-30, later firing: the derivation is written.** 265 lines, not 152 —
+**2026-08-30, later firing: the derivation is written.** 269 lines, not 152 —
 two directions of ≡I, each forking on the two atoms its own assumption does
 not already fix, eight leaves in total. Imported as
 `associativity-of-biconditional`. It is now the longest derivation in the
-database by a wide margin (previous longest: 80 lines).
+database by a wide margin (previous longest: 80 lines), and its authored
+`difficulty.nd` is `extremely hard` under the band a concurrent firing added
+while this one was in progress (all five §14.3 triggers, well past the
+29-line floor).
+
+Assembled and checked outside the repo first (a small Python builder driving
+`nd.check()` directly, one case per possible polarity pairing of a `≡`
+node's two sides), then serialised into `proofs.py` — by hand at this length
+invites exactly the invisible line-number slip §6.7 warns about. Merging
+this firing's branch against a concurrent one picked up a same-day policy
+change to `\Reit` (a `⊥I` may not cite its own subproof's opening assumption
+directly; reiterate it first), which the excluded-middle pattern this proof
+leans on four times over was written before. Re-checked and fixed in the
+generator rather than by hand for the same reason.
 
 Writing it surfaced a real bug rather than a style question, and it needed a
 second tooling change: `derive.py`'s `countermodel` flag was computed as
