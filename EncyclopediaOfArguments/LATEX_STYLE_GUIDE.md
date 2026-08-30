@@ -912,14 +912,22 @@ not implied:
         "note": "why the derivation is not carried" }
 ```
 
-`associativity-of-biconditional` is the case that created the rule.
-`(p ≡ (q ≡ r)) ≡ ((p ≡ q) ≡ r)` is an eight-row table anyone can check, but the
-twelve rules have no explosion and no excluded middle as a primitive, so every
-route forces an exhaustive three-atom case split with each instance of
-`A ∨ ∼A` proved inline: past 260 lines, ninety subproofs, six deep. That is a
-fact about the proof system rather than about the theorem, and a 260-line
-derivation is not something to set, draw as practice, or print. P1.4 set it as
-a table, which is the right method for it.
+**No entry currently uses it, and the story of why is the point.**
+`associativity-of-biconditional` created the rule: its first derivation ran to
+269 lines, ninety subproofs, six deep, and that looked like a fact about the
+twelve rules — no explosion, no excluded middle as a primitive, so a
+three-atom biconditional chain must fork exhaustively with every instance of
+`A ∨ ∼A` proved inline.
+
+It was not a fact about the rules. It was a fact about that proof. Written
+structurally — `≡I` both ways, and a reductio only where a case would
+otherwise be needed — the same theorem takes **77 lines**, and the entry now
+carries it. The 269-line version was brute force wearing the costume of
+necessity.
+
+So before reaching for this flag, **write the proof again**. A derivation that
+looks impossible at 260 lines is far more likely to be badly structured than
+genuinely enormous, and the flag will happily preserve the mistake.
 
 The bar is high on purpose, because *no proof written* is exactly what a lazy
 import looks like:
@@ -932,10 +940,11 @@ import looks like:
 - The practice page never offers it, because `nd.exists` is false.
 
 **This is not the escape hatch for a proof you could not find.** A derivation
-that is merely hard is the entry doing its job — `paradox-disjunction` and the
-De Morgan biconditionals are all long and all carried. Reach for this only when
-the length comes from the *system* rather than the theorem, and say which in
-the note.
+that is merely hard is the entry doing its job — `paradox-disjunction`, the De
+Morgan biconditionals and the 77-line associativity proof are all long and all
+carried. Reach for this only when the length comes from the *system* rather
+than from how the proof was written, and say which in the note. On the only
+occasion anyone has believed that, they were wrong.
 
 ### 6.5 The classical reductio pattern
 

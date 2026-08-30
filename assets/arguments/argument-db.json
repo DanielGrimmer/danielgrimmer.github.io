@@ -44755,7 +44755,7 @@
    ],
    "premises": [],
    "conclusion": "(p = (q = r)) = ((p = q) = r)",
-   "interest": "The biconditional is associative, the way its algebraic cousin XOR is (`∼(A⊕B)` is another name for `A≡B`), so a chain of `≡`s can be regrouped freely and the eight-row table shows it at a glance. The derivation is the surprise: the twelve rules have no shortcut that sees the regrouping, and with no explosion rule and no excluded middle as a primitive, every route has to fix all three atoms first and prove each instance of `A ∨ ∼A` inline along the way. It runs past 260 lines -- which says nothing about the theorem and a good deal about the system, and is why this one is a table exercise. Compare `distribution-conjunction`, the other regrouping law the course sets, where the derivation is long but still a page.",
+   "interest": "The biconditional is associative, the way its algebraic cousin XOR is (`∼(A⊕B)` is another name for `A≡B`), so a chain of `≡`s regroups freely and the eight-row table shows it at a glance. The derivation is where the course's twelve rules make you work for it. Both directions go by `≡I`, and in each one the hard half is not taking a biconditional apart but *manufacturing* one: with no excluded middle to appeal to and no explosion rule, every \"now suppose the other case\" has to be written out as its own reductio. Building `q ≡ r` from `∼q` and `∼r` costs ten lines; building `p ≡ q` from a contradiction on one side and `≡E` on the other costs nine. At 77 lines it is the second longest derivation in the database, behind `biconditional-as-agreement` at 85 -- and the length is a fact about the proof system rather than about the theorem, since a truth table settles the same claim in eight rows. It scores `hard` rather than `extremely hard` for a reason worth noticing: nothing here is difficult to *find*. Every step is named by the goal in front of it. The difficulty is stamina.",
    "appearances": [
     {
      "type": "used",
@@ -44780,7 +44780,7 @@
     "used_in": [],
     "problem_set": {},
     "quarantined": false,
-    "note": "P1.4 set this as a table only, which is the right method for it: the derivation exists but runs past 260 lines in the course's rules, so it is not carried (nd.proof_omitted). Nothing is withheld from practice — the table and the tree are both free to draw.",
+    "note": "P1.4 set this as a table. The derivation is carried too, at 77 lines — long, but a page rather than an endurance test, and nothing is withheld from practice.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
@@ -44789,12 +44789,755 @@
     }
    },
    "nd": {
-    "exists": false,
-    "proof_omitted": true,
-    "note": "Valid, and derivable — but not at a length worth carrying. The twelve rules have no explosion and no excluded middle as a primitive, so a three-atom biconditional chain forces an exhaustive case split with every instance of `A ∨ ∼A` proved inline: past 260 lines, ninety subproofs, six deep. That is a fact about the proof system rather than about the theorem, and it is why `≡` is regrouped by table here. Verify it with the table, or derive a single leaf of the split."
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p = (q = r)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p = q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "~r",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 4,
+      "f": "p",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 5,
+      "f": "q",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       2,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "q = r",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       1,
+       4
+      ]
+     },
+     {
+      "n": 7,
+      "f": "r",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       6,
+       5
+      ]
+     },
+     {
+      "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       7,
+       3
+      ]
+     },
+     {
+      "n": 9,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        4,
+        8
+       ]
+      ]
+     },
+     {
+      "n": 10,
+      "f": "q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 11,
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       2,
+       10
+      ]
+     },
+     {
+      "n": 12,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       11,
+       9
+      ]
+     },
+     {
+      "n": 13,
+      "f": "~q",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        10,
+        12
+       ]
+      ]
+     },
+     {
+      "n": 14,
+      "f": "q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 15,
+      "f": "~r",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 16,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
+      "cites": [
+       14,
+       13
+      ]
+     },
+     {
+      "n": 17,
+      "f": "~~r",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        15,
+        16
+       ]
+      ]
+     },
+     {
+      "n": 18,
+      "f": "r",
+      "rule": "NegE",
+      "depth": 4,
+      "cites": [
+       17
+      ]
+     },
+     {
+      "n": 19,
+      "f": "r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 20,
+      "f": "~q",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 21,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
+      "cites": [
+       19,
+       3
+      ]
+     },
+     {
+      "n": 22,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        20,
+        21
+       ]
+      ]
+     },
+     {
+      "n": 23,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 4,
+      "cites": [
+       22
+      ]
+     },
+     {
+      "n": 24,
+      "f": "q = r",
+      "rule": "BicondI",
+      "depth": 3,
+      "subs": [
+       [
+        14,
+        18
+       ],
+       [
+        19,
+        23
+       ]
+      ]
+     },
+     {
+      "n": 25,
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 3,
+      "cites": [
+       1,
+       24
+      ]
+     },
+     {
+      "n": 26,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       25,
+       9
+      ]
+     },
+     {
+      "n": 27,
+      "f": "~~r",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        3,
+        26
+       ]
+      ]
+     },
+     {
+      "n": 28,
+      "f": "r",
+      "rule": "NegE",
+      "depth": 2,
+      "cites": [
+       27
+      ]
+     },
+     {
+      "n": 29,
+      "f": "r",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 30,
+      "f": "p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 31,
+      "f": "q = r",
+      "rule": "BicondE",
+      "depth": 3,
+      "cites": [
+       1,
+       30
+      ]
+     },
+     {
+      "n": 32,
+      "f": "q",
+      "rule": "BicondE",
+      "depth": 3,
+      "cites": [
+       31,
+       29
+      ]
+     },
+     {
+      "n": 33,
+      "f": "q",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 34,
+      "f": "q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 35,
+      "f": "r",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       29
+      ]
+     },
+     {
+      "n": 36,
+      "f": "r",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 37,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       33
+      ]
+     },
+     {
+      "n": 38,
+      "f": "q = r",
+      "rule": "BicondI",
+      "depth": 3,
+      "subs": [
+       [
+        34,
+        35
+       ],
+       [
+        36,
+        37
+       ]
+      ]
+     },
+     {
+      "n": 39,
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 3,
+      "cites": [
+       1,
+       38
+      ]
+     },
+     {
+      "n": 40,
+      "f": "p = q",
+      "rule": "BicondI",
+      "depth": 2,
+      "subs": [
+       [
+        30,
+        32
+       ],
+       [
+        33,
+        39
+       ]
+      ]
+     },
+     {
+      "n": 41,
+      "f": "(p = q) = r",
+      "rule": "BicondI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        28
+       ],
+       [
+        29,
+        40
+       ]
+      ]
+     },
+     {
+      "n": 42,
+      "f": "(p = q) = r",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 43,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 44,
+      "f": "q",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 45,
+      "f": "p",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 46,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       44
+      ]
+     },
+     {
+      "n": 47,
+      "f": "q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 48,
+      "f": "p",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       43
+      ]
+     },
+     {
+      "n": 49,
+      "f": "p = q",
+      "rule": "BicondI",
+      "depth": 3,
+      "subs": [
+       [
+        45,
+        46
+       ],
+       [
+        47,
+        48
+       ]
+      ]
+     },
+     {
+      "n": 50,
+      "f": "r",
+      "rule": "BicondE",
+      "depth": 3,
+      "cites": [
+       42,
+       49
+      ]
+     },
+     {
+      "n": 51,
+      "f": "r",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 52,
+      "f": "p = q",
+      "rule": "BicondE",
+      "depth": 3,
+      "cites": [
+       42,
+       51
+      ]
+     },
+     {
+      "n": 53,
+      "f": "q",
+      "rule": "BicondE",
+      "depth": 3,
+      "cites": [
+       52,
+       43
+      ]
+     },
+     {
+      "n": 54,
+      "f": "q = r",
+      "rule": "BicondI",
+      "depth": 2,
+      "subs": [
+       [
+        44,
+        50
+       ],
+       [
+        51,
+        53
+       ]
+      ]
+     },
+     {
+      "n": 55,
+      "f": "q = r",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 56,
+      "f": "~p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 57,
+      "f": "p = q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 58,
+      "f": "r",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       42,
+       57
+      ]
+     },
+     {
+      "n": 59,
+      "f": "q",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       55,
+       58
+      ]
+     },
+     {
+      "n": 60,
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       57,
+       59
+      ]
+     },
+     {
+      "n": 61,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 4,
+      "cites": [
+       60,
+       56
+      ]
+     },
+     {
+      "n": 62,
+      "f": "~(p = q)",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        57,
+        61
+       ]
+      ]
+     },
+     {
+      "n": 63,
+      "f": "p",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 64,
+      "f": "~q",
+      "rule": "As",
+      "depth": 5
+     },
+     {
+      "n": 65,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 5,
+      "cites": [
+       63,
+       56
+      ]
+     },
+     {
+      "n": 66,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 4,
+      "subs": [
+       [
+        64,
+        65
+       ]
+      ]
+     },
+     {
+      "n": 67,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 4,
+      "cites": [
+       66
+      ]
+     },
+     {
+      "n": 68,
+      "f": "q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 69,
+      "f": "r",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       55,
+       68
+      ]
+     },
+     {
+      "n": 70,
+      "f": "p = q",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       42,
+       69
+      ]
+     },
+     {
+      "n": 71,
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 4,
+      "cites": [
+       70,
+       68
+      ]
+     },
+     {
+      "n": 72,
+      "f": "p = q",
+      "rule": "BicondI",
+      "depth": 3,
+      "subs": [
+       [
+        63,
+        67
+       ],
+       [
+        68,
+        71
+       ]
+      ]
+     },
+     {
+      "n": 73,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       72,
+       62
+      ]
+     },
+     {
+      "n": 74,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        56,
+        73
+       ]
+      ]
+     },
+     {
+      "n": 75,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 2,
+      "cites": [
+       74
+      ]
+     },
+     {
+      "n": 76,
+      "f": "p = (q = r)",
+      "rule": "BicondI",
+      "depth": 1,
+      "subs": [
+       [
+        43,
+        54
+       ],
+       [
+        55,
+        75
+       ]
+      ]
+     },
+     {
+      "n": 77,
+      "f": "(p = (q = r)) = ((p = q) = r)",
+      "rule": "BicondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        41
+       ],
+       [
+        42,
+        76
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Bicond (q\\Bicond r)}\n\\open\n\\hypo{2}{p\\Bicond q}\n\\open\n\\hypo{3}{\\Neg r}\n\\open\n\\hypo{4}{p}\n\\have{5}{q}\\by{\\BicondE}{2,4}\n\\have{6}{q\\Bicond r}\\by{\\BicondE}{1,4}\n\\have{7}{r}\\by{\\BicondE}{6,5}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,3}\n\\close\n\\have{9}{\\Neg p}\\by{\\NegI}{4,8}\n\\open\n\\hypo{10}{q}\n\\have{11}{p}\\by{\\BicondE}{2,10}\n\\have{12}{\\Falsum}\\by{\\FalsumI}{11,9}\n\\close\n\\have{13}{\\Neg q}\\by{\\NegI}{10,12}\n\\open\n\\hypo{14}{q}\n\\open\n\\hypo{15}{\\Neg r}\n\\have{16}{\\Falsum}\\by{\\FalsumI}{14,13}\n\\close\n\\have{17}{\\Neg \\Neg r}\\by{\\NegI}{15,16}\n\\have{18}{r}\\by{\\NegE}{17}\n\\close\n\\open\n\\hypo{19}{r}\n\\open\n\\hypo{20}{\\Neg q}\n\\have{21}{\\Falsum}\\by{\\FalsumI}{19,3}\n\\close\n\\have{22}{\\Neg \\Neg q}\\by{\\NegI}{20,21}\n\\have{23}{q}\\by{\\NegE}{22}\n\\close\n\\have{24}{q\\Bicond r}\\by{\\BicondI}{14-18,19-23}\n\\have{25}{p}\\by{\\BicondE}{1,24}\n\\have{26}{\\Falsum}\\by{\\FalsumI}{25,9}\n\\close\n\\have{27}{\\Neg \\Neg r}\\by{\\NegI}{3,26}\n\\have{28}{r}\\by{\\NegE}{27}\n\\close\n\\open\n\\hypo{29}{r}\n\\open\n\\hypo{30}{p}\n\\have{31}{q\\Bicond r}\\by{\\BicondE}{1,30}\n\\have{32}{q}\\by{\\BicondE}{31,29}\n\\close\n\\open\n\\hypo{33}{q}\n\\open\n\\hypo{34}{q}\n\\have{35}{r}\\by{\\Reit}{29}\n\\close\n\\open\n\\hypo{36}{r}\n\\have{37}{q}\\by{\\Reit}{33}\n\\close\n\\have{38}{q\\Bicond r}\\by{\\BicondI}{34-35,36-37}\n\\have{39}{p}\\by{\\BicondE}{1,38}\n\\close\n\\have{40}{p\\Bicond q}\\by{\\BicondI}{30-32,33-39}\n\\close\n\\have{41}{(p\\Bicond q)\\Bicond r}\\by{\\BicondI}{2-28,29-40}\n\\close\n\\open\n\\hypo{42}{(p\\Bicond q)\\Bicond r}\n\\open\n\\hypo{43}{p}\n\\open\n\\hypo{44}{q}\n\\open\n\\hypo{45}{p}\n\\have{46}{q}\\by{\\Reit}{44}\n\\close\n\\open\n\\hypo{47}{q}\n\\have{48}{p}\\by{\\Reit}{43}\n\\close\n\\have{49}{p\\Bicond q}\\by{\\BicondI}{45-46,47-48}\n\\have{50}{r}\\by{\\BicondE}{42,49}\n\\close\n\\open\n\\hypo{51}{r}\n\\have{52}{p\\Bicond q}\\by{\\BicondE}{42,51}\n\\have{53}{q}\\by{\\BicondE}{52,43}\n\\close\n\\have{54}{q\\Bicond r}\\by{\\BicondI}{44-50,51-53}\n\\close\n\\open\n\\hypo{55}{q\\Bicond r}\n\\open\n\\hypo{56}{\\Neg p}\n\\open\n\\hypo{57}{p\\Bicond q}\n\\have{58}{r}\\by{\\BicondE}{42,57}\n\\have{59}{q}\\by{\\BicondE}{55,58}\n\\have{60}{p}\\by{\\BicondE}{57,59}\n\\have{61}{\\Falsum}\\by{\\FalsumI}{60,56}\n\\close\n\\have{62}{\\Neg (p\\Bicond q)}\\by{\\NegI}{57,61}\n\\open\n\\hypo{63}{p}\n\\open\n\\hypo{64}{\\Neg q}\n\\have{65}{\\Falsum}\\by{\\FalsumI}{63,56}\n\\close\n\\have{66}{\\Neg \\Neg q}\\by{\\NegI}{64,65}\n\\have{67}{q}\\by{\\NegE}{66}\n\\close\n\\open\n\\hypo{68}{q}\n\\have{69}{r}\\by{\\BicondE}{55,68}\n\\have{70}{p\\Bicond q}\\by{\\BicondE}{42,69}\n\\have{71}{p}\\by{\\BicondE}{70,68}\n\\close\n\\have{72}{p\\Bicond q}\\by{\\BicondI}{63-67,68-71}\n\\have{73}{\\Falsum}\\by{\\FalsumI}{72,62}\n\\close\n\\have{74}{\\Neg \\Neg p}\\by{\\NegI}{56,73}\n\\have{75}{p}\\by{\\NegE}{74}\n\\close\n\\have{76}{p\\Bicond (q\\Bicond r)}\\by{\\BicondI}{43-54,55-75}\n\\close\n\\have{77}{(p\\Bicond (q\\Bicond r))\\Bicond ((p\\Bicond q)\\Bicond r)}\\by{\\BicondI}{1-41,42-76}\n\\end{nd}\n\\end{align*}",
+    "lines": 77,
+    "max_subproof_depth": 5,
+    "subproof_count": 26,
+    "assumption_count": 26,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "BicondE",
+     "BicondI",
+     "FalsumI",
+     "NegE",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
    },
    "difficulty": {
-    "nd": null,
+    "nd": "hard",
     "table": "easy",
     "tree": "extremely hard"
    },
