@@ -56,3 +56,6 @@ constructive-dilemma
 hypothetical-syllogism-3link
 double-consequent-reductio
 disjunctive-syllogism
+contraposition-bakery
+self-undermining-conditional
+vacuous-validity-unsat-premises

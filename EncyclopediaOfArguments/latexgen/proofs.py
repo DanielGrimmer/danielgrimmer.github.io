@@ -767,3 +767,56 @@ PROOFS["disjunctive-syllogism"] = [
     _l(9, "q", "Reit", 1, [8]),
     _l(10, "q", "DisjE", 0, [1], subs=[[3, 7], [8, 9]]),
 ]
+
+# ---------------------------------------------------- contraposition instance
+# One conditional-introduction wrapped around one reductio: the assumption
+# ~l opens the outer subproof, and reaching its goal ~b costs a second,
+# nested subproof (assume b, collide it with the premise's l, discharge).
+PROOFS["contraposition-bakery"] = [
+    P(1, "b > l"),
+    _l(2, "~l", "As", 1),
+    _l(3, "b", "As", 2),
+    _l(4, "l", "CondE", 2, [1, 3]),
+    _l(5, "!", "FalsumI", 2, [4, 2]),
+    _l(6, "~b", "NegI", 1, subs=[[3, 5]]),
+    _l(7, "~l > ~b", "CondI", 0, subs=[[2, 6]]),
+]
+
+# ------------------------------------------------- self-undermining conditional
+# The premise alone supplies both halves of its own contradiction: assume c,
+# the premise hands back ~c immediately, and the assumption is right there to
+# collide with it. No second premise is needed the way double-consequent-
+# reductio needs one.
+PROOFS["self-undermining-conditional"] = [
+    P(1, "c > ~c"),
+    _l(2, "c", "As", 1),
+    _l(3, "~c", "CondE", 1, [1, 2]),
+    _l(4, "!", "FalsumI", 1, [2, 3]),
+    _l(5, "~c", "NegI", 0, subs=[[2, 4]]),
+]
+
+# --------------------------------------------------------- vacuous validity
+# The premises are jointly unsatisfiable but neither is alone, so the
+# contradiction has to be manufactured rather than read off directly: a
+# reductio on ~q collects p and q together (each biconditional handing the
+# other its matching side), which then hands back p and ~q the same way a
+# second time for the unconditional collision. From there it is the same
+# explosion every vacuously-valid entry needs, since \Exp is retired: assume
+# the negation of the target, reiterate the contradiction, close it out.
+PROOFS["vacuous-validity-unsat-premises"] = [
+    P(1, "p = q"),
+    P(2, "p = ~q"),
+    _l(3, "~q", "As", 1),
+    _l(4, "p", "BicondE", 1, [2, 3]),
+    _l(5, "q", "BicondE", 1, [1, 4]),
+    _l(6, "!", "FalsumI", 1, [5, 3]),
+    _l(7, "~~q", "NegI", 0, subs=[[3, 6]]),
+    _l(8, "q", "NegE", 0, [7]),
+    _l(9, "p", "BicondE", 0, [1, 8]),
+    _l(10, "~q", "BicondE", 0, [2, 9]),
+    _l(11, "!", "FalsumI", 0, [8, 10]),
+    _l(12, "~r", "As", 1),
+    _l(13, "!", "Reit", 1, [11]),
+    _l(14, "~~r", "NegI", 0, subs=[[12, 13]]),
+    _l(15, "r", "NegE", 0, [14]),
+]
