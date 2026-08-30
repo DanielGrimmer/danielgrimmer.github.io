@@ -83,3 +83,5 @@ modus-ponens-premises-conjoined
 conditional-alone
 disjunction-as-conditional
 biconditional-as-agreement
+conditional-failure
+vacuous-antecedent-disjunction

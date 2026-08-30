@@ -42568,6 +42568,1052 @@
     "conclusion": "(p ≡ q) ≡ (∼(∼p ∨ ∼q) ∨ ∼(p ∨ q))",
     "sequent": "⊨ (p ≡ q) ≡ (∼(∼p ∨ ∼q) ∨ ∼(p ∨ q))"
    }
+  },
+  {
+   "id": "conditional-failure",
+   "cli_ref": "—",
+   "premises": [],
+   "conclusion": "~(p > q) = (p & ~q)",
+   "names": [
+    "Conditional failure"
+   ],
+   "english": [
+    {
+     "gloss": "'If it's raining, the ground is wet' fails to hold just when it's raining and the ground isn't wet.",
+     "faithful": true
+    }
+   ],
+   "interest": "The one-directional `negated-conditional-intro` already in the database goes just from `p & ∼q` to `∼(p ⊃ q)`; this is the full biconditional, so the derivation needs the harder direction too -- reading `∼(p ⊃ q)` back out into its two conjuncts, each by its own indirect route, since neither `p` nor `∼q` is what a negated conditional hands over directly. It is the mirror of `material-conditional`: where that entry restates a true conditional as a disjunction, this restates a false one as a conjunction, and together the pair say that `⊃` was never doing anything `&` and `∼` could not do on their own.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Problem Set 3 and the midterm practice problems",
+     "locus": "PS3.4 (tree); P1.1a (instance)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "conditionals"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {
+     "tree": "PS3.4"
+    },
+    "quarantined": false,
+    "note": null,
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "∼(p ⊃ q) ≡ (p & ∼q)"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $\\Neg (p\\Cond q)\\Bicond (p\\Conj \\Neg q)$ \\\\\n        \\hline\n        T & T & $\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}$ \\\\\n        T & F & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{T}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & T & $\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}$ \\\\\n        F & F & $\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\uv{\\Neg}{.}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\uv{\\Neg}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $\\Neg (p\\Cond q)\\Bicond (p\\Conj \\Neg q)$ \\\\\n        \\hline\n        T & T & $\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & $\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Conj}{F}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\uv{\\Neg}{.}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{p}\\uv{\\Conj}{.}\\uv{\\Neg}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼(∼(p ⊃ q) ≡ (p & ∼q))"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼(p ⊃ q)",
+         "from": "∼(∼(p ⊃ q) ≡ (p & ∼q))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "∼(p & ∼q)",
+         "from": "∼(∼(p ⊃ q) ≡ (p & ∼q))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "p",
+         "from": "∼(p ⊃ q)",
+         "rule": "∼⊃"
+        },
+        {
+         "formula": "∼q",
+         "from": "∼(p ⊃ q)",
+         "rule": "∼⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p",
+           "from": "∼(p & ∼q)",
+           "rule": "∼&"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "∼∼q",
+           "from": "∼(p & ∼q)",
+           "rule": "∼&"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "∼(p & ∼q)",
+       "branch_rule": "∼&"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼∼(p ⊃ q)",
+         "from": "∼(∼(p ⊃ q) ≡ (p & ∼q))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "p & ∼q",
+         "from": "∼(∼(p ⊃ q) ≡ (p & ∼q))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "p ⊃ q",
+         "from": "∼∼(p ⊃ q)",
+         "rule": "∼∼"
+        },
+        {
+         "formula": "p",
+         "from": "p & ∼q",
+         "rule": "&"
+        },
+        {
+         "formula": "∼q",
+         "from": "p & ∼q",
+         "rule": "&"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p",
+           "from": "p ⊃ q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "q",
+           "from": "p ⊃ q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "p ⊃ q",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼(∼(p ⊃ q) ≡ (p & ∼q))",
+     "branch_rule": "∼≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 4,
+    "branch_depth": 2,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (\\Neg (p\\Cond q)\\Bicond (p\\Conj \\Neg q))$\\quad\\checkmark} [.{\\ckpad $\\Neg (p\\Cond q)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p\\Conj \\Neg q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg \\Neg q$ \\\\ x} ] ] [.{\\ckpad $\\Neg \\Neg (p\\Cond q)$\\quad\\checkmark \\\\ \\ckpad $p\\Conj \\Neg q$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p\\Cond q$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg q$} [.{$\\Neg p$ \\\\ x} ] [.{$q$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "biconditional",
+     "conditional",
+     "conjunction",
+     "negation"
+    ],
+    "max_formula_depth": 3,
+    "total_formula_size": 9,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 4,
+    "tree_branch_depth": 2,
+    "countermodel_count": 0,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~(p > q)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "~p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 4,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       3,
+       2
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~q",
+      "rule": "As",
+      "depth": 4
+     },
+     {
+      "n": 6,
+      "f": "!",
+      "rule": "Reit",
+      "depth": 4,
+      "cites": [
+       4
+      ]
+     },
+     {
+      "n": 7,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 3,
+      "subs": [
+       [
+        5,
+        6
+       ]
+      ]
+     },
+     {
+      "n": 8,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 3,
+      "cites": [
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 2,
+      "subs": [
+       [
+        3,
+        8
+       ]
+      ]
+     },
+     {
+      "n": 10,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       9,
+       1
+      ]
+     },
+     {
+      "n": 11,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        10
+       ]
+      ]
+     },
+     {
+      "n": 12,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       11
+      ]
+     },
+     {
+      "n": 13,
+      "f": "q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 14,
+      "f": "p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 15,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 3,
+      "cites": [
+       13
+      ]
+     },
+     {
+      "n": 16,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 2,
+      "subs": [
+       [
+        14,
+        15
+       ]
+      ]
+     },
+     {
+      "n": 17,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       16,
+       1
+      ]
+     },
+     {
+      "n": 18,
+      "f": "~q",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        13,
+        17
+       ]
+      ]
+     },
+     {
+      "n": 19,
+      "f": "p & ~q",
+      "rule": "ConjI",
+      "depth": 1,
+      "cites": [
+       12,
+       18
+      ]
+     },
+     {
+      "n": 20,
+      "f": "p & ~q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 21,
+      "f": "p > q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 22,
+      "f": "p",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       20
+      ]
+     },
+     {
+      "n": 23,
+      "f": "~q",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       20
+      ]
+     },
+     {
+      "n": 24,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       21,
+       22
+      ]
+     },
+     {
+      "n": 25,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       24,
+       23
+      ]
+     },
+     {
+      "n": 26,
+      "f": "~(p > q)",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        21,
+        25
+       ]
+      ]
+     },
+     {
+      "n": 27,
+      "f": "~(p > q) = (p & ~q)",
+      "rule": "BicondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        19
+       ],
+       [
+        20,
+        26
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Cond q)}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,2}\n\\open\n\\hypo{5}{\\Neg q}\n\\have{6}{\\Falsum}\\by{\\Reit}{4}\n\\close\n\\have{7}{\\Neg \\Neg q}\\by{\\NegI}{5,6}\n\\have{8}{q}\\by{\\NegE}{7}\n\\close\n\\have{9}{p\\Cond q}\\by{\\CondI}{3,8}\n\\have{10}{\\Falsum}\\by{\\FalsumI}{9,1}\n\\close\n\\have{11}{\\Neg \\Neg p}\\by{\\NegI}{2,10}\n\\have{12}{p}\\by{\\NegE}{11}\n\\open\n\\hypo{13}{q}\n\\open\n\\hypo{14}{p}\n\\have{15}{q}\\by{\\Reit}{13}\n\\close\n\\have{16}{p\\Cond q}\\by{\\CondI}{14,15}\n\\have{17}{\\Falsum}\\by{\\FalsumI}{16,1}\n\\close\n\\have{18}{\\Neg q}\\by{\\NegI}{13,17}\n\\have{19}{p\\Conj \\Neg q}\\by{\\ConjI}{12,18}\n\\close\n\\open\n\\hypo{20}{p\\Conj \\Neg q}\n\\open\n\\hypo{21}{p\\Cond q}\n\\have{22}{p}\\by{\\ConjE}{20}\n\\have{23}{\\Neg q}\\by{\\ConjE}{20}\n\\have{24}{q}\\by{\\CondE}{21,22}\n\\have{25}{\\Falsum}\\by{\\FalsumI}{24,23}\n\\close\n\\have{26}{\\Neg (p\\Cond q)}\\by{\\NegI}{21,25}\n\\close\n\\have{27}{\\Neg (p\\Cond q)\\Bicond (p\\Conj \\Neg q)}\\by{\\BicondI}{1-19,20-26}\n\\end{nd}\n\\end{align*}",
+    "lines": 27,
+    "max_subproof_depth": 4,
+    "subproof_count": 8,
+    "assumption_count": 8,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "BicondI",
+     "CondE",
+     "CondI",
+     "ConjE",
+     "ConjI",
+     "FalsumI",
+     "NegE",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "∼(p ⊃ q) ≡ (p & ∼q)",
+    "sequent": "⊨ ∼(p ⊃ q) ≡ (p & ∼q)"
+   },
+   "difficulty": {
+    "table": "easy",
+    "tree": "medium",
+    "nd": "hard"
+   }
+  },
+  {
+   "id": "vacuous-antecedent-disjunction",
+   "cli_ref": "—",
+   "premises": [],
+   "conclusion": "(~p > (p | q)) = (p | q)",
+   "names": [
+    "Vacuous antecedent, absorbed"
+   ],
+   "english": [
+    {
+     "gloss": "'If it's not raining, then it's raining or it's cold' says just what 'it's raining or it's cold' says.",
+     "faithful": true
+    }
+   ],
+   "interest": "Unpacking the conditional materially gives `p ∨ (p ∨ q)`, which idempotence of `∨` collapses straight back to `p ∨ q` -- the antecedent `∼p` is doing no work the consequent was not already carrying. PS1.8c sets only the table, where every row simply comes out true and the redundancy is invisible; the derivation is where it shows up. The `⊂` half is trivial, a straight reiteration of the given disjunction into a discharged assumption, but recovering `p ∨ q` from the conditional needs a case split on `p`, since `∨` names no rule to aim at directly.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "PHIL 1115",
+     "work": "Problem Set 1",
+     "locus": "PS1.8c (table)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "course apparatus",
+     "conditionals"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {
+     "table": "PS1.8c"
+    },
+    "quarantined": false,
+    "note": null,
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "(∼p ⊃ (p ∨ q)) ≡ (p ∨ q)"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $(\\Neg p\\Cond (p\\Disj q))\\Bicond (p\\Disj q)$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\uv{\\Neg}{F}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}$ \\\\\n        T & F & $\\phantom{(}\\uv{\\Neg}{F}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & T & $\\phantom{(}\\uv{\\Neg}{T}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}$ \\\\\n        F & F & $\\phantom{(}\\uv{\\Neg}{T}\\phantom{p}\\uv{\\Cond}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\uv{\\Neg}{.}\\phantom{p}\\uv{\\Cond}{.}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $(\\Neg p\\Cond (p\\Disj q))\\Bicond (p\\Disj q)$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\uv{\\Neg}{F}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\phantom{q}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & $\\phantom{(}\\uv{\\Neg}{T}\\phantom{p}\\uv{\\Cond}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{T}\\phantom{(}\\phantom{p}\\uv{\\Disj}{F}\\phantom{q}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\uv{\\Neg}{.}\\phantom{p}\\uv{\\Cond}{.}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}\\phantom{)}\\uv{\\Bicond}{M}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\phantom{q}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼((∼p ⊃ (p ∨ q)) ≡ (p ∨ q))"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼p ⊃ (p ∨ q)",
+         "from": "∼((∼p ⊃ (p ∨ q)) ≡ (p ∨ q))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "∼(p ∨ q)",
+         "from": "∼((∼p ⊃ (p ∨ q)) ≡ (p ∨ q))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "∼p",
+         "from": "∼(p ∨ q)",
+         "rule": "∼∨"
+        },
+        {
+         "formula": "∼q",
+         "from": "∼(p ∨ q)",
+         "rule": "∼∨"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼∼p",
+           "from": "∼p ⊃ (p ∨ q)",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "p ∨ q",
+           "from": "∼p ⊃ (p ∨ q)",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "p",
+             "from": "p ∨ q",
+             "rule": "∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "q",
+             "from": "p ∨ q",
+             "rule": "∨"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "p ∨ q",
+         "branch_rule": "∨"
+        }
+       ],
+       "status": null,
+       "branched_on": "∼p ⊃ (p ∨ q)",
+       "branch_rule": "⊃"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼(∼p ⊃ (p ∨ q))",
+         "from": "∼((∼p ⊃ (p ∨ q)) ≡ (p ∨ q))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "p ∨ q",
+         "from": "∼((∼p ⊃ (p ∨ q)) ≡ (p ∨ q))",
+         "rule": "∼≡"
+        },
+        {
+         "formula": "∼p",
+         "from": "∼(∼p ⊃ (p ∨ q))",
+         "rule": "∼⊃"
+        },
+        {
+         "formula": "∼(p ∨ q)",
+         "from": "∼(∼p ⊃ (p ∨ q))",
+         "rule": "∼⊃"
+        },
+        {
+         "formula": "∼p",
+         "from": "∼(p ∨ q)",
+         "rule": "∼∨"
+        },
+        {
+         "formula": "∼q",
+         "from": "∼(p ∨ q)",
+         "rule": "∼∨"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "p",
+           "from": "p ∨ q",
+           "rule": "∨"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "q",
+           "from": "p ∨ q",
+           "rule": "∨"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "p ∨ q",
+       "branch_rule": "∨"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼((∼p ⊃ (p ∨ q)) ≡ (p ∨ q))",
+     "branch_rule": "∼≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 5,
+    "branch_depth": 3,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((\\Neg p\\Cond (p\\Disj q))\\Bicond (p\\Disj q))$\\quad\\checkmark} [.{\\ckpad $\\Neg p\\Cond (p\\Disj q)$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p\\Disj q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg q$} [.{$\\Neg \\Neg p$ \\\\ x} ] [.{\\ckpad $p\\Disj q$\\quad\\checkmark} [.{$p$ \\\\ x} ] [.{$q$ \\\\ x} ] ] ] [.{\\ckpad $\\Neg (\\Neg p\\Cond (p\\Disj q))$\\quad\\checkmark \\\\ \\ckpad $p\\Disj q$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ \\ckpad $\\Neg (p\\Disj q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg q$} [.{$p$ \\\\ x} ] [.{$q$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "biconditional",
+     "conditional",
+     "disjunction",
+     "negation"
+    ],
+    "max_formula_depth": 3,
+    "total_formula_size": 10,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 5,
+    "tree_branch_depth": 3,
+    "countermodel_count": 0,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~(p | ~p)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p | ~p",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       3,
+       1
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p | ~p",
+      "rule": "DisjI",
+      "depth": 1,
+      "cites": [
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       6,
+       1
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~~(p | ~p)",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        7
+       ]
+      ]
+     },
+     {
+      "n": 9,
+      "f": "p | ~p",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~p > (p | q)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 11,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 12,
+      "f": "p | q",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       11
+      ]
+     },
+     {
+      "n": 13,
+      "f": "~p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 14,
+      "f": "p | q",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       10,
+       13
+      ]
+     },
+     {
+      "n": 15,
+      "f": "p | q",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       9
+      ],
+      "subs": [
+       [
+        11,
+        12
+       ],
+       [
+        13,
+        14
+       ]
+      ]
+     },
+     {
+      "n": 16,
+      "f": "p | q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 17,
+      "f": "~p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 18,
+      "f": "p | q",
+      "rule": "Reit",
+      "depth": 2,
+      "cites": [
+       16
+      ]
+     },
+     {
+      "n": 19,
+      "f": "~p > (p | q)",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        17,
+        18
+       ]
+      ]
+     },
+     {
+      "n": 20,
+      "f": "(~p > (p | q)) = (p | q)",
+      "rule": "BicondI",
+      "depth": 0,
+      "subs": [
+       [
+        10,
+        15
+       ],
+       [
+        16,
+        19
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj \\Neg p)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj \\Neg p}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\have{6}{p\\Disj \\Neg p}\\by{\\DisjI}{5}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,1}\n\\close\n\\have{8}{\\Neg \\Neg (p\\Disj \\Neg p)}\\by{\\NegI}{1,7}\n\\have{9}{p\\Disj \\Neg p}\\by{\\NegE}{8}\n\\open\n\\hypo{10}{\\Neg p\\Cond (p\\Disj q)}\n\\open\n\\hypo{11}{p}\n\\have{12}{p\\Disj q}\\by{\\DisjI}{11}\n\\close\n\\open\n\\hypo{13}{\\Neg p}\n\\have{14}{p\\Disj q}\\by{\\CondE}{10,13}\n\\close\n\\have{15}{p\\Disj q}\\by{\\DisjE}{9,11-12,13-14}\n\\close\n\\open\n\\hypo{16}{p\\Disj q}\n\\open\n\\hypo{17}{\\Neg p}\n\\have{18}{p\\Disj q}\\by{\\Reit}{16}\n\\close\n\\have{19}{\\Neg p\\Cond (p\\Disj q)}\\by{\\CondI}{17,18}\n\\close\n\\have{20}{(\\Neg p\\Cond (p\\Disj q))\\Bicond (p\\Disj q)}\\by{\\BicondI}{10-15,16-19}\n\\end{nd}\n\\end{align*}",
+    "lines": 20,
+    "max_subproof_depth": 2,
+    "subproof_count": 7,
+    "assumption_count": 7,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "BicondI",
+     "CondE",
+     "CondI",
+     "DisjE",
+     "DisjI",
+     "FalsumI",
+     "NegE",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "(∼p ⊃ (p ∨ q)) ≡ (p ∨ q)",
+    "sequent": "⊨ (∼p ⊃ (p ∨ q)) ≡ (p ∨ q)"
+   },
+   "difficulty": {
+    "table": "easy",
+    "tree": "medium",
+    "nd": "hard"
+   }
   }
  ],
  "latex_requires": [

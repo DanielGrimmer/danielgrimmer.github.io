@@ -1119,3 +1119,69 @@ PROOFS["biconditional-as-agreement"] = [
     _l(79, "p = q", "DisjE", 1, [42], subs=[[43, 58], [59, 78]]),
     _l(80, "(p = q) = (~(~p | ~q) | ~(p | q))", "BicondI", 0, subs=[[1, 41], [42, 79]]),
 ]
+
+# --------------------------------------------------------------- conditional failure
+# ~(p⊃q) is exactly the condition under which a conditional fails. The -> half
+# derives p and ~q one at a time, each by the vacuous-truth pattern (assume
+# the negation of the target; note p and ~p already collide; dig the target
+# back out of that with a nested reductio). The <- half is the three-line
+# reductio already on file as negated-conditional-intro, folded into the
+# other side of ≡I.
+PROOFS["conditional-failure"] = [
+    _l(1, "~(p > q)", "As", 1),
+    _l(2, "~p", "As", 2),
+    _l(3, "p", "As", 3),
+    _l(4, "!", "FalsumI", 3, [3, 2]),
+    _l(5, "~q", "As", 4),
+    _l(6, "!", "Reit", 4, [4]),
+    _l(7, "~~q", "NegI", 3, subs=[[5, 6]]),
+    _l(8, "q", "NegE", 3, [7]),
+    _l(9, "p > q", "CondI", 2, subs=[[3, 8]]),
+    _l(10, "!", "FalsumI", 2, [9, 1]),
+    _l(11, "~~p", "NegI", 1, subs=[[2, 10]]),
+    _l(12, "p", "NegE", 1, [11]),
+    _l(13, "q", "As", 2),
+    _l(14, "p", "As", 3),
+    _l(15, "q", "Reit", 3, [13]),
+    _l(16, "p > q", "CondI", 2, subs=[[14, 15]]),
+    _l(17, "!", "FalsumI", 2, [16, 1]),
+    _l(18, "~q", "NegI", 1, subs=[[13, 17]]),
+    _l(19, "p & ~q", "ConjI", 1, [12, 18]),
+    _l(20, "p & ~q", "As", 1),
+    _l(21, "p > q", "As", 2),
+    _l(22, "p", "ConjE", 2, [20]),
+    _l(23, "~q", "ConjE", 2, [20]),
+    _l(24, "q", "CondE", 2, [21, 22]),
+    _l(25, "!", "FalsumI", 2, [24, 23]),
+    _l(26, "~(p > q)", "NegI", 1, subs=[[21, 25]]),
+    _l(27, "(~(p > q)) = (p & ~q)", "BicondI", 0, subs=[[1, 19], [20, 26]]),
+]
+
+# ------------------------------------------------------ vacuous antecedent disjunction
+# The <- half is trivial -- assume ~p, reiterate the already-given p∨q,
+# ⊃I closes it. The -> half is the one that earns the entry's keep: nothing
+# about the goal p∨q names a rule, so it is proved by cases on p itself
+# (built here as its own excluded-middle instance): case p, ∨I finishes in
+# one step; case ~p, the premise's own ⊃E hands back p∨q directly.
+PROOFS["vacuous-antecedent-disjunction"] = [
+    _l(1, "~(p | ~p)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p | ~p", "DisjI", 2, [2]),
+    _l(4, "!", "FalsumI", 2, [3, 1]),
+    _l(5, "~p", "NegI", 1, subs=[[2, 4]]),
+    _l(6, "p | ~p", "DisjI", 1, [5]),
+    _l(7, "!", "FalsumI", 1, [6, 1]),
+    _l(8, "~~(p | ~p)", "NegI", 0, subs=[[1, 7]]),
+    _l(9, "p | ~p", "NegE", 0, [8]),
+    _l(10, "~p > (p | q)", "As", 1),
+    _l(11, "p", "As", 2),
+    _l(12, "p | q", "DisjI", 2, [11]),
+    _l(13, "~p", "As", 2),
+    _l(14, "p | q", "CondE", 2, [10, 13]),
+    _l(15, "p | q", "DisjE", 1, [9], subs=[[11, 12], [13, 14]]),
+    _l(16, "p | q", "As", 1),
+    _l(17, "~p", "As", 2),
+    _l(18, "p | q", "Reit", 2, [16]),
+    _l(19, "~p > (p | q)", "CondI", 1, subs=[[17, 18]]),
+    _l(20, "(~p > (p | q)) = (p | q)", "BicondI", 0, subs=[[10, 15], [16, 19]]),
+]
