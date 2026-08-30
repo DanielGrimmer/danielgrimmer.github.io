@@ -507,11 +507,17 @@ test('every entry carries its method blocks', async (t) => {
 
   await t.test('a falsum conclusion is rendered one-sided, never as a column', () => {
     // ⊥ is a proof-level marker: it belongs on an ND line and nowhere else.
+    // Not every contradiction claim is true -- a jointly satisfiable set
+    // reads `X ⊬ND`, and has an `nd.note` in place of a proof (§13.2).
     const falsums = entries.filter((e) => e.conclusion.trim() === '!');
-    assert.equal(falsums.length, 5, 'expected five contradiction entries');
+    assert.equal(falsums.length, 7, 'expected seven contradiction entries');
     for (const e of falsums) {
       assert.ok(!e.truth_table.latex.includes('Conclusion'), `${e.id}: table still has a conclusion group`);
-      assert.match(e.nd.latex, /\\Falsum/, `${e.id}: the proof should end in ⊥`);
+      if (e.verdict.valid) {
+        assert.match(e.nd.latex, /\\Falsum/, `${e.id}: the proof should end in ⊥`);
+      } else {
+        assert.ok(e.nd.note, `${e.id}: a satisfiable set needs an nd.note in place of a proof`);
+      }
     }
   });
 
@@ -841,7 +847,7 @@ test('sibling subproofs are drawn, and checked, as two', async (t) => {
  */
 test('an inconsistency claim is not dressed as an argument', () => {
   const claims = entries.filter((e) => e.conclusion === '!');
-  assert.equal(claims.length, 5);
+  assert.equal(claims.length, 7);
   for (const e of claims) {
     assert.ok(e.premises.length, `${e.id}: an inconsistency claim needs premises`);
     assert.ok(!e.truth_table.latex.includes('Conclusion'),
@@ -1010,6 +1016,11 @@ test('the compact table keeps the rows that carry the argument', () => {
       assert.equal(kept, fails || ends, `${e.id}: a premise-less claim keeps the wrong rows`);
     } else if (!live) {
       assert.equal(kept, ends, `${e.id}: unsatisfiable premises should keep the ends`);
+    } else if (e.conclusion.trim() === '!') {
+      // A falsum conclusion reads 'F' on every row (§6.6), so "the conclusion
+      // is false" is true everywhere and points at nothing. The only rows
+      // where a satisfiable set's claim could be wrong are its live ones.
+      assert.equal(kept, live, `${e.id}: a satisfiable set should keep only its live rows`);
     } else {
       const wrong = rows.filter((r) => r.premises_all_true || r.conclusion === 'F').length;
       assert.equal(kept, wrong, `${e.id}: ${kept} rows kept, ${wrong} where something could go wrong`);

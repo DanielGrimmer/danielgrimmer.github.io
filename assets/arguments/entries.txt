@@ -85,3 +85,6 @@ disjunction-as-conditional
 biconditional-as-agreement
 conditional-failure
 vacuous-antecedent-disjunction
+lecture6-satisfiable-set
+astrolabe-puzzle
+associativity-of-biconditional

@@ -85,7 +85,12 @@ def truth_table(prem: list[Node], concl: Node | None, atoms: list[str]) -> dict:
                 "premises": ["T" if v else "F" for v in vals],
                 "conclusion": "F" if c is None else ("T" if c else "F"),
                 "premises_all_true": live,
-                "countermodel": live and c is False,
+                # A falsum conclusion is false on every row (§2.2), so a live
+                # row -- one where every premise holds -- is a countermodel to
+                # X ⊢ ⊥ exactly as a false-conclusion row is to any other
+                # argument. `c is None` marks that case; `c is False` the
+                # ordinary one.
+                "countermodel": live and (c is False or c is None),
             }
         )
     return {"atoms": list(atoms), "columns": [], "rows": rows}
@@ -276,7 +281,7 @@ def derive(premises: list[str], conclusion: str) -> dict:
         without = [
             m for m in models(atoms)
             if all(evaluate(r, m) for r in rest)
-            and (concl is not None and not evaluate(concl, m))
+            and (concl is None or not evaluate(concl, m))
         ]
         analysis.append(
             {

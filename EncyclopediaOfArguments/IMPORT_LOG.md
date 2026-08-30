@@ -49,3 +49,48 @@ Verified both ways round: with a canonical root the entry builds (and fails
 only for want of a derivation), and with the elided root it is refused by name.
 The 152-line derivation the firing had already written by hand is the
 remaining work.
+
+**2026-08-30, later firing: the derivation is written.** 265 lines, not 152 —
+two directions of ≡I, each forking on the two atoms its own assumption does
+not already fix, eight leaves in total. Imported as
+`associativity-of-biconditional`. It is now the longest derivation in the
+database by a wide margin (previous longest: 80 lines).
+
+Writing it surfaced a real bug rather than a style question, and it needed a
+second tooling change: `derive.py`'s `countermodel` flag was computed as
+`live and c is False`, where `c` is `None` (not `False`) for a falsum
+conclusion — so a satisfiable premise set with a `!` conclusion always came
+back `verdict.valid: True`, whatever the premises actually were. Every
+falsum-conclusion entry on file so far happens to be a genuine inconsistency
+(where the bug is invisible: no live row exists either way), so nothing
+caught it until this firing's other two rows needed it to work correctly.
+Fixed by treating `c is None` the same as `c is False` for this purpose, in
+both the table's `countermodel` flag and `derive()`'s own `premise_analysis`.
+`derive.py --check` still reproduces all existing entries.
+
+Two entries from the course inventory's §5 needed the fix: `{p&q, ~p|~r,
+~q|s}` (L6§2, tree, motivating example) and the astrolabe puzzle `{a|b, b>a,
+~(a&c)}` (PS3.3, tree) are both *satisfiable* claims — `X ⊬ND ⊥` — which is a
+shape no entry carried before. Imported as `lecture6-satisfiable-set` and
+`astrolabe-puzzle`. Two consequences worth recording:
+
+- `_tests/argument-forms.test.mjs` had two spots that assumed every
+  falsum-conclusion entry is valid (a hardcoded count, and an unconditional
+  `nd.latex` match) — true of the five that existed, but not of these two.
+  Updated both to branch on `verdict.valid` and to expect seven. A third spot
+  (the compact-table shape test) assumed a falsum conclusion's `conclusion:
+  'F'` column varies row to row the way an ordinary conclusion's does; it
+  doesn't (§6.6 — ⊥ reads false on every row), so for a *satisfiable*
+  falsum-conclusion entry the test now checks against the live rows alone,
+  matching what `tables.py`'s own `compact_filter` already computed.
+- The astrolabe puzzle's problem-set locus (`PS3.3`, tree) did not reach
+  `course.problem_set` automatically: `inventory.py`'s `problem_sets()` reads
+  the "where" text from `row["cells"][2:]`, which is right for a three-plus
+  column table but empty for §5's two-column `Claim | Where (method)` format,
+  where the locus sits in `cells[1]`. Set by hand from the raw row instead of
+  fixing the parser, since this section only has the two rows above and a
+  parser change was more machinery than the fact warranted; `inventory.py
+  --locks` confirms the lock is correctly honoured either way.
+
+Course inventory queue is now empty (0 candidates). The next firing switches
+to `--source imports` per §11c.
