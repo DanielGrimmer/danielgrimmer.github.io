@@ -1430,3 +1430,21 @@ PROOFS["conditional-crossover"] = [
     _l(26, "(j > d) | (e > c)", "DisjI", 1, [25]),
     _l(27, "(j > d) | (e > c)", "DisjE", 0, [12], subs=[[13, 18], [19, 26]]),
 ]
+
+# --------------------------------------------------------- orange-blossom
+# Assume j, then reductio on ~b: j & ~b (citing the outer j directly, no
+# reiteration needed -- it is access, not role) trips the premise to ~j,
+# which contradicts the very j just cited. Neither half of that contradiction
+# is this subproof's own assumption (~b is), so nd.check() asks for no
+# reiteration before the FalsumI.
+PROOFS["orange-blossom"] = [
+    P(1, "(j & ~b) > ~j"),
+    _l(2, "j", "As", 1),
+    _l(3, "~b", "As", 2),
+    _l(4, "j & ~b", "ConjI", 2, [2, 3]),
+    _l(5, "~j", "CondE", 2, [1, 4]),
+    _l(6, "!", "FalsumI", 2, [2, 5]),
+    _l(7, "~~b", "NegI", 1, subs=[[3, 6]]),
+    _l(8, "b", "NegE", 1, [7]),
+    _l(9, "j > b", "CondI", 0, subs=[[2, 8]]),
+]

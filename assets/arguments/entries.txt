@@ -97,3 +97,6 @@ permutation-converse
 converse-error
 peirce-detached
 conditional-crossover
+disguised-converse
+orange-blossom
+antecedent-strengthening-converse

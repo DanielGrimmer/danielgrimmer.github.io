@@ -249,3 +249,46 @@ texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
 texlive-humanities texlive-science` via `apt-get`, matching the two prior
 firings' notes. The `session-start-hook` suggestion from those two notes is
 still open.
+
+**2026-08-30, fourth `imports`-source firing.** Course queue still empty;
+continued mining Restall's Chapter 3 bank ("What is worth mining") and last
+year's archive ("Also worth taking"): `disguised-converse` (Ex 3.6,
+`∼(b&∼s) ∴ s⊃b`, **invalid** — the material conditional `b⊃s` written as a
+negated conjunction, concluding its own converse), `orange-blossom` (Ex 3.5,
+`(j&∼b)⊃∼j ∴ j⊃b`, valid — Restall's "counterintuitively valid" advertising
+example), and `antecedent-strengthening-converse` (OLD-PS3 Q10,
+`((p&q)⊃r)⊃(p⊃r)`, **not a tautology** — the converse of antecedent
+strengthening, whose valid direction, `p⊃q ⊨ (p&r)⊃q`, is itself still
+queued as an import candidate). All three verdicts and countermodels
+checked against `derive.py` before writing.
+
+`disguised-converse` gets `looks_like: converse-error`: the premise
+`∼(b&∼s)` is `converse-error`'s own conditional dressed in a negated-
+conjunction spelling, and `interest` also reports that the entry's own
+`premise_analysis` marks the premise `idle` — the countermodel to `s⊃b`
+alone survives untouched with the premise added back.
+
+`orange-blossom` gets `looks_like: contraction-detached`: unpacked with
+`exportation` and `contraposition` (both already separate entries), the
+premise `(j&∼b)⊃∼j` is exactly `contraction-detached`'s own antecedent
+pattern, `j⊃(j⊃b)`, in disguise — checked against a brute-force truth-table
+script before it went into `interest`, not just asserted. Its derivation
+(assume `j`, then a nested reductio on `∼b`) is 9 lines with two triggers
+(an undictated reductio, a subproof inside a subproof) — `medium`, matching
+`difficulty.py`'s own suggestion.
+
+`antecedent-strengthening-converse` has no partner to set `looks_like`
+against yet — the valid principle it is a converse of is still an
+unimported imports-queue candidate (`p⊃q ⊨ (p&r)⊃q`) — so `course.note`
+says so, for whoever imports that one next to link them.
+
+`build.py --write`, `python3 difficulty.py --diff` (clean), `svg.py`,
+`svg.py --check`, `inventory.py --locks`, and `node --test
+"_tests/*.test.mjs"` all clean (512/512). Imports queue: 24 candidates left
+of 48 (24 now in the database).
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled `texlive-latex-base texlive-latex-extra
+texlive-fonts-recommended texlive-pictures texlive-science dvisvgm` via
+`apt-get`, matching every prior firing's note. The `session-start-hook`
+suggestion from those notes is still open.
