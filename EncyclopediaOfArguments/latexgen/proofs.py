@@ -572,3 +572,56 @@ PROOFS["excluded-middle"] = [
     _l(8, "~~(p | ~p)", "NegI", 0, subs=[[1, 7]]),
     _l(9, "p | ~p", "NegE", 0, [8]),
 ]
+
+# ------------------------------------------------------------ non-contradiction
+# The dual of excluded-middle, but not its equal in difficulty: the goal is
+# already a negation, so ∼I is dictated the moment the assumption opens, and
+# one subproof is the whole proof.
+PROOFS["non-contradiction"] = [
+    _l(1, "p & ~p", "As", 1),
+    _l(2, "p", "ConjE", 1, [1]),
+    _l(3, "~p", "ConjE", 1, [1]),
+    _l(4, "!", "FalsumI", 1, [2, 3]),
+    _l(5, "~(p & ~p)", "NegI", 0, subs=[[1, 4]]),
+]
+
+# ------------------------------------------------------------- negative explosion
+# Same premise as ex-falso, opposite polarity of goal -- and that is exactly
+# why it needs none of ex-falso's machinery. ~q names NegI directly, so there
+# is no double negation to peel off afterwards: assume q, reach the same
+# contradiction the premise already carries, done.
+PROOFS["negative-explosion"] = [
+    P(1, "p & ~p"),
+    _l(2, "q", "As", 1),
+    _l(3, "p", "ConjE", 1, [1]),
+    _l(4, "~p", "ConjE", 1, [1]),
+    _l(5, "!", "FalsumI", 1, [3, 4]),
+    _l(6, "~q", "NegI", 0, subs=[[2, 5]]),
+]
+
+# -------------------------------------------------------------- paradox disjunction
+# An undictated reductio on the whole disjunction, and each disjunct then has
+# to be built from scratch inside it. The second half is the harder one: ~p
+# gives a contradiction with any assumed p, but ~Exp means r cannot just be
+# read off it -- a second, nested reductio (assume ~r) is needed to turn that
+# contradiction into r itself.
+PROOFS["paradox-disjunction"] = [
+    _l(1, "~((q > p) | (p > r))", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "q", "As", 3),
+    _l(4, "p", "Reit", 3, [2]),
+    _l(5, "q > p", "CondI", 2, subs=[[3, 4]]),
+    _l(6, "(q > p) | (p > r)", "DisjI", 2, [5]),
+    _l(7, "!", "FalsumI", 2, [6, 1]),
+    _l(8, "~p", "NegI", 1, subs=[[2, 7]]),
+    _l(9, "p", "As", 2),
+    _l(10, "~r", "As", 3),
+    _l(11, "!", "FalsumI", 3, [9, 8]),
+    _l(12, "~~r", "NegI", 2, subs=[[10, 11]]),
+    _l(13, "r", "NegE", 2, [12]),
+    _l(14, "p > r", "CondI", 1, subs=[[9, 13]]),
+    _l(15, "(q > p) | (p > r)", "DisjI", 1, [14]),
+    _l(16, "!", "FalsumI", 1, [15, 1]),
+    _l(17, "~~((q > p) | (p > r))", "NegI", 0, subs=[[1, 16]]),
+    _l(18, "(q > p) | (p > r)", "NegE", 0, [17]),
+]
