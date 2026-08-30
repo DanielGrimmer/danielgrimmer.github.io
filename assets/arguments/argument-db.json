@@ -334,7 +334,7 @@
    "difficulty": {
     "table": "easy",
     "tree": "easy",
-    "nd": "easy",
+    "nd": "medium",
     "search_sharpness": null
    }
   },
@@ -707,7 +707,7 @@
    "difficulty": {
     "table": "easy",
     "tree": "easy",
-    "nd": "medium",
+    "nd": "hard",
     "search_sharpness": null
    }
   },
@@ -1011,7 +1011,7 @@
    "difficulty": {
     "table": "easy",
     "tree": "easy",
-    "nd": "easy",
+    "nd": "medium",
     "search_sharpness": null
    }
   },
@@ -1571,8 +1571,8 @@
    },
    "difficulty": {
     "table": "easy",
-    "tree": "medium",
-    "nd": "medium",
+    "tree": "hard",
+    "nd": "hard",
     "search_sharpness": null
    }
   },
@@ -3083,7 +3083,7 @@
    "difficulty": {
     "table": "easy",
     "tree": "easy",
-    "nd": "easy",
+    "nd": "medium",
     "search_sharpness": null
    }
   },
@@ -3718,7 +3718,7 @@
    },
    "difficulty": {
     "table": "medium",
-    "tree": "easy",
+    "tree": "medium",
     "nd": "easy",
     "search_sharpness": null
    }
@@ -5266,9 +5266,9 @@
     "idle_premises": []
    },
    "difficulty": {
-    "table": "medium",
+    "table": "hard",
     "tree": "medium",
-    "nd": "medium",
+    "nd": "easy",
     "search_sharpness": null
    }
   },
@@ -6348,7 +6348,7 @@
     "idle_premises": []
    },
    "difficulty": {
-    "table": "medium",
+    "table": "hard",
     "tree": "hard",
     "nd": "hard",
     "search_sharpness": null
@@ -6853,7 +6853,7 @@
    "difficulty": {
     "table": "easy",
     "tree": "medium",
-    "nd": "medium",
+    "nd": "hard",
     "search_sharpness": null
    }
   },
@@ -7754,8 +7754,8 @@
     ]
    },
    "difficulty": {
-    "table": "medium",
-    "tree": "easy",
+    "table": "hard",
+    "tree": "medium",
     "nd": "easy",
     "search_sharpness": null
    }
@@ -8240,7 +8240,7 @@
    },
    "difficulty": {
     "table": "easy",
-    "tree": "easy",
+    "tree": "medium",
     "nd": "easy",
     "search_sharpness": null
    }
@@ -9088,7 +9088,7 @@
    },
    "difficulty": {
     "table": "medium",
-    "tree": "easy",
+    "tree": "medium",
     "nd": null,
     "search_sharpness": 0.0312
    }
@@ -10562,7 +10562,7 @@
    },
    "difficulty": {
     "table": "hard",
-    "tree": "easy",
+    "tree": "medium",
     "nd": null,
     "search_sharpness": 0.0156
    }
@@ -16610,7 +16610,7 @@
     "idle_premises": []
    },
    "difficulty": {
-    "table": "medium",
+    "table": "easy",
     "tree": "easy",
     "nd": null,
     "search_sharpness": 0.0938
@@ -17581,7 +17581,7 @@
     "idle_premises": []
    },
    "difficulty": {
-    "table": "easy",
+    "table": "medium",
     "tree": "hard",
     "nd": null,
     "search_sharpness": 0.125
@@ -18805,7 +18805,7 @@
    },
    "difficulty": {
     "table": "medium",
-    "tree": "medium",
+    "tree": "hard",
     "nd": null,
     "search_sharpness": 0.125
    }
@@ -19371,7 +19371,7 @@
    },
    "difficulty": {
     "table": "medium",
-    "tree": "easy",
+    "tree": "medium",
     "nd": null,
     "search_sharpness": 0.125
    }
@@ -20366,7 +20366,7 @@
    "difficulty": {
     "table": "medium",
     "tree": "medium",
-    "nd": "medium",
+    "nd": "easy",
     "search_sharpness": null
    }
   },
@@ -22018,7 +22018,7 @@
    "difficulty": {
     "table": "hard",
     "tree": "medium",
-    "nd": "medium",
+    "nd": "easy",
     "search_sharpness": null
    }
   },
@@ -22548,7 +22548,7 @@
    "difficulty": {
     "table": "easy",
     "tree": "easy",
-    "nd": "medium",
+    "nd": "hard",
     "search_sharpness": null
    }
   },
@@ -22834,7 +22834,7 @@
    "difficulty": {
     "table": "easy",
     "tree": "easy",
-    "nd": "easy",
+    "nd": "medium",
     "search_sharpness": null
    }
   },
@@ -23085,7 +23085,7 @@
     "table": "easy",
     "tree": "easy",
     "nd": "easy",
-    "search_sharpness": 0.0
+    "search_sharpness": null
    },
    "display": {
     "premises": [
@@ -23388,8 +23388,8 @@
    "difficulty": {
     "table": "easy",
     "tree": "easy",
-    "nd": "medium",
-    "search_sharpness": 0.0
+    "nd": "easy",
+    "search_sharpness": null
    },
    "display": {
     "premises": [
@@ -23788,7 +23788,7 @@
     "table": "easy",
     "tree": "easy",
     "nd": "easy",
-    "search_sharpness": 0.0
+    "search_sharpness": null
    },
    "verdict": {
     "valid": true,
@@ -24054,7 +24054,7 @@
    ],
    "premises": [],
    "conclusion": "(p > q) = (~q > ~p)",
-   "interest": "The conditional and its contrapositive say the same thing, and the course leans on the equivalence from Lecture 4 on without yet proving it -- both directions of the biconditional need their own reductio, so the derivation is not available until Lecture 10 supplies `⊃I` and `⊃I`'s reductio-flavoured cousin `∼I`. Worth keeping apart from its two near neighbours in the popular imagination: the *converse* (`q ⊃ p`) and the *inverse* (`∼p ⊃ ∼q`) are not equivalent to `p ⊃ q`, only to each other, which is what makes denying-the-antecedent and affirming-the-consequent tempting in the first place. Contraposition is the one direction that *is* free.",
+   "interest": "The conditional and its contrapositive say the same thing, and the course leans on the equivalence from Lecture 4 on without yet proving it -- both directions of the biconditional need their own reductio, so the derivation is not available until Lecture 10 supplies `⊃I` and its reductio-flavoured cousin `∼I`. Worth keeping apart from its two near neighbours in the popular imagination: the *converse* (`q ⊃ p`) and the *inverse* (`∼p ⊃ ∼q`) are not equivalent to `p ⊃ q`, only to each other, which is what makes denying-the-antecedent and affirming-the-consequent tempting in the first place. Contraposition is the one direction that *is* free.",
    "english": [
     {
      "gloss": "'If it rains, the streets get wet' says just what 'if the streets are not wet, it did not rain' says.",
@@ -24272,8 +24272,8 @@
    "difficulty": {
     "table": "easy",
     "tree": "medium",
-    "nd": "medium",
-    "search_sharpness": 0.0
+    "nd": "hard",
+    "search_sharpness": null
    },
    "verdict": {
     "valid": true,

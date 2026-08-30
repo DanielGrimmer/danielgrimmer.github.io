@@ -328,6 +328,29 @@ test('every difficulty is a band, and a departure from the rubric is explained',
   });
 });
 
+/*
+ * The manifest, and the merge it exists to catch.
+ *
+ * `argument-db.json` is one large file that two branches edit at once: the
+ * import branch appends entries at the end, main rewrites derived values
+ * throughout. Git line-merges that, reports success, and can silently drop an
+ * entry — which it did on the first import merge, losing two forms that
+ * nothing noticed until they were looked for by name. `entries.txt` is one id
+ * per line, so appends and edits never touch the same line and a merge cannot
+ * lose one. When the two disagree, the JSON is what got damaged.
+ */
+test('every entry the manifest lists is still in the database', () => {
+  const manifest = readFileSync(new URL('../assets/arguments/entries.txt', import.meta.url), 'utf8')
+    .split('\n')
+    .filter(Boolean);
+  const present = entries.map((e) => e.id);
+  for (const id of manifest) {
+    assert.ok(present.includes(id),
+      `${id} is in entries.txt but not in argument-db.json — a merge dropped it`);
+  }
+  assert.deepEqual(present, manifest, 'the database and the manifest are out of step');
+});
+
 test('the database holds together', async (t) => {
   await t.test('ids are unique, since they are the routes', () => {
     const ids = entries.map((e) => e.id);

@@ -37,6 +37,7 @@ from tables import table_block
 from trees import tree_block
 
 DB = Path(__file__).resolve().parents[2] / "assets/arguments/argument-db.json"
+MANIFEST = DB.with_name("entries.txt")
 
 PREAMBLE = [
     "FOL_Yale/notation",
@@ -375,6 +376,19 @@ def build(db: dict) -> tuple[dict, list[str]]:
     # from the blocks they describe. The `nd` score is left alone: finding a
     # proof is not a countable thing, and that one is authored.
     notes += apply_difficulty(db)
+
+    # The manifest. One id per line, written on every build, and the reason it
+    # exists is that `argument-db.json` is a single large file that two
+    # branches edit at once: the import branch appends entries at the end while
+    # main rewrites derived values throughout. Git will line-merge that,
+    # report success, and silently drop an entry -- which is exactly what
+    # happened on the first import merge, costing two forms that nothing
+    # noticed until they were looked for by name.
+    #
+    # A file of one id per line merges correctly, because appends and edits
+    # never touch the same line. So the manifest survives a merge the JSON does
+    # not, and `_tests/argument-forms.test.mjs` fails when the two disagree.
+    MANIFEST.write_text("\n".join(e["id"] for e in db["entries"]) + "\n")
 
     db["latex_requires"] = PREAMBLE
     db["latex_macros"] = {"uv": UV, "treebox": TREEBOX, "tabbox": TABBOX}

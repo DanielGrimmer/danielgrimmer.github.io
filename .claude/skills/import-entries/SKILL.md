@@ -25,6 +25,32 @@ git merge --no-edit origin/main          # keep up with main
 
 If the branch has been merged and deleted, start it again from `origin/main`.
 
+**⚠ Check the merge did not eat an entry.** `argument-db.json` is one large
+file that both branches edit — this branch appends entries at the end, `main`
+rewrites derived values throughout — and git will line-merge that, *report
+success*, and silently drop an entry. It has already happened once, costing two
+imported forms. So after every merge:
+
+```bash
+node --test "_tests/*.test.mjs" 2>&1 | grep -E "manifest|not ok"
+```
+
+`assets/arguments/entries.txt` is one id per line, which merges correctly where
+the JSON does not, and the test compares the two. **If it fails, the JSON is
+what got damaged, not the manifest.** Recover by taking this branch's copy of
+the database wholesale and letting the build reapply `main`'s changes:
+
+```bash
+git checkout --theirs . 2>/dev/null; git show origin/claude/inventory-import:assets/arguments/argument-db.json > assets/arguments/argument-db.json
+cd EncyclopediaOfArguments/latexgen && python3 build.py --write
+```
+
+Everything `main` changes about an existing entry is derived and `build.py`
+recomputes it; what only this branch has is the entries themselves, so this
+direction loses nothing. The one thing it will not restore is an authored
+`difficulty.nd` that `main` changed — check `python3 difficulty.py --diff`
+afterwards.
+
 ## 2. Take the next candidates
 
 ```bash
@@ -182,6 +208,21 @@ one line in the log saying a new pull request is needed. Daniel opens it.
 Say what the queue looks like now (`inventory.py --status`) and what was
 skipped in the commit message, since that is the only report that reaches the
 pull request.
+
+## 7a. Read what you wrote
+
+Before committing, read the entry's prose back. The build checks that the logic
+holds together; nothing checks that a sentence says what you meant. The first
+import run left `⊃I and ⊃I's reductio-flavoured cousin ∼I` in an `interest`,
+where the second `⊃I` should have been a pronoun — the sort of thing that
+survives every test and embarrasses on the page.
+
+Two more the first run got right and are worth keeping right:
+
+- **`cli_ref`** is a reference into the course's own numbering. If you do not
+  have one, write `"—"`; the renderer drops it. Do not invent one.
+- **`looks_like`** whenever another entry is the same lesson in different
+  letters, and say in `interest` how they differ.
 
 ## 8. When a row will not go in
 
