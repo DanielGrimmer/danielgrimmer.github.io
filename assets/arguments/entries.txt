@@ -74,3 +74,6 @@ minimal-example
 addition
 conditional-identity
 bicond-elim-to-cond
+disjunction-with-vacuous-conditional
+conditional-and-its-counterexample
+conjunction-with-its-own-negation

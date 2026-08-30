@@ -950,3 +950,38 @@ PROOFS["bicond-elim-to-cond"] = [
     _l(4, "p > q", "CondI", 1, subs=[[2, 3]]),
     _l(5, "(p = q) > (p > q)", "CondI", 0, subs=[[1, 4]]),
 ]
+
+# -------------------------------------------- disjunction-with-vacuous-conditional
+# No premises to draw on, so both disjuncts have to come from the same outer
+# reductio: assuming p gives the disjunction directly and, once discharged,
+# ~p; assuming p again under that ~p forces a second, nested reductio to get
+# q out of the contradiction (no explosion rule), which is what makes this
+# tautology's proof harder than its two-line table lets on.
+PROOFS["disjunction-with-vacuous-conditional"] = [
+    _l(1, "~(p | (p > q))", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p | (p > q)", "DisjI", 2, [2]),
+    _l(4, "!", "FalsumI", 2, [3, 1]),
+    _l(5, "~p", "NegI", 1, subs=[[2, 4]]),
+    _l(6, "p", "As", 2),
+    _l(7, "~q", "As", 3),
+    _l(8, "!", "FalsumI", 3, [6, 5]),
+    _l(9, "~~q", "NegI", 2, subs=[[7, 8]]),
+    _l(10, "q", "NegE", 2, [9]),
+    _l(11, "p > q", "CondI", 1, subs=[[6, 10]]),
+    _l(12, "p | (p > q)", "DisjI", 1, [11]),
+    _l(13, "!", "FalsumI", 1, [12, 1]),
+    _l(14, "~~(p | (p > q))", "NegI", 0, subs=[[1, 13]]),
+    _l(15, "p | (p > q)", "NegE", 0, [14]),
+]
+
+# ------------------------------------------------- conjunction-with-its-own-negation
+# The premise buries its own negation two conjunctions deep; &E twice unpacks
+# it and FalsumI ends the proof on the spot -- no assumption, no reductio.
+PROOFS["conjunction-with-its-own-negation"] = [
+    P(1, "(p & q) & ~p"),
+    _l(2, "~p", "ConjE", 0, [1]),
+    _l(3, "p & q", "ConjE", 0, [1]),
+    _l(4, "p", "ConjE", 0, [3]),
+    _l(5, "!", "FalsumI", 0, [4, 2]),
+]
