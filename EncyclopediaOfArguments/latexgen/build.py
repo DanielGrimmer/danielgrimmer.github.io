@@ -237,8 +237,10 @@ def normalise(db: dict) -> tuple[list[str], dict[str, dict[str, str]]]:
     between operators of equal precedence, which the conditional does not
     survive. Those are not parsed at all: each is matched against the entry's
     own subformulas, printed the same lossy way, so the parenthesisation is
-    recovered rather than guessed. `subformula_index` raises if a string could
-    mean two different things.
+    recovered rather than guessed. A node whose spelling could mean two
+    different things is refused -- but only that node: an entry may perfectly
+    well *contain* an ambiguous spelling without any of its tree nodes using
+    it, which is exactly what an associativity claim looks like.
 
     Idempotent, and run on every build -- a canonical formula canonicalises to
     itself, and a fully parenthesised display string still matches its own
@@ -301,10 +303,16 @@ def normalise(db: dict) -> tuple[list[str], dict[str, dict[str, str]]]:
         sources = list(entry["premises"])
         if entry["conclusion"] != "!":
             sources.append(entry["conclusion"])
-        index = subformula_index(sources)
+        index, ambiguous = subformula_index(sources)
 
         def fix(shown: str) -> str:
             key = to_ascii(shown)
+            if key in ambiguous:
+                raise SystemExit(
+                    f"{eid}: tree node {shown!r} could mean any of "
+                    f"{ambiguous[key]} -- the elided spelling does not say which, "
+                    f"so write the node fully parenthesised"
+                )
             if key not in index:
                 raise SystemExit(f"{eid}: tree node {shown!r} is not a subformula")
             return glyphs(index[key])

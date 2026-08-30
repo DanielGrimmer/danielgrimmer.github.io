@@ -360,8 +360,19 @@ last `∨` and the step reads itself.
 Both are fixed at the source. `build.py`'s normalisation pass rewrites the
 display strings from the ASCII, and recovers the tree nodes by matching each
 against the entry's **own subformulas** printed the same lossy way, rather than
-by re-parsing a string that no longer determines a formula. If a stored string
-could name two different subformulas the build stops.
+by re-parsing a string that no longer determines a formula. If a stored *node*
+is spelled so that it could name two different subformulas, the build stops and
+names both candidates.
+
+Note the *node*. An entry may perfectly well **contain** an ambiguous spelling
+without any of its tree nodes using one, and one whole family of entries always
+does: an associativity claim asserts that two bracketings of the same operator
+chain come to the same thing, so of course its two sides flatten alike. Since a
+fully parenthesised spelling is always its own unambiguous key, a normalised
+entry never reaches for the elided one, and refusing such an entry outright —
+which the build did until this was noticed — throws away a theorem over a
+string it does not use. Write tree nodes fully parenthesised and the question
+never arises.
 
 **Blocks are still built from `premises` and `conclusion`, never from
 `display.*`** — the ASCII is the source and the display strings are derived from
@@ -1215,7 +1226,7 @@ reaching the site — and what it **repairs**, which the author can leave alone.
 | --- | --- |
 | Atom names legal after renaming | *… is not a name of a proposition* |
 | A tree node is a subformula of the entry's own formulas | *tree node … is not a subformula* |
-| No stored display string is ambiguous between two subformulas | *… is ambiguous between …* |
+| A tree node's spelling names one subformula, not two | *tree node … could mean any of …* |
 | A valid entry has a proof | *valid but no proof written* |
 | The proof's premises are the entry's | *premise lines … do not match* |
 | Every citation is accessible, sibling subproofs included (§6.7) | *line k cites line m, which is not accessible* |

@@ -213,9 +213,16 @@ def candidates(which: str = "course") -> tuple[list[dict], dict[str, int]]:
     # A row already judged and logged is settled. Without this every firing
     # would meet the same rejected row, spend a run re-deciding it, and write
     # the same line into the log again.
+    #
+    # Only the skip table counts, not every backtick in the file. The log has
+    # prose around the table -- a preamble, and a Resolved section recording
+    # rows whose blocker has since been fixed -- and a sequent quoted there
+    # must not go on suppressing the row. That is how a resolved row gets back
+    # into the queue: it moves out of the table.
     settled = set()
     if LOG.exists():
-        for quoted in re.findall(r"`([^`]+)`", LOG.read_text()):
+        rows = [l for l in LOG.read_text().split("\n") if l.startswith("|")]
+        for quoted in re.findall(r"`([^`]+)`", "\n".join(rows)):
             got = split_sequent(quoted)
             if not got:
                 continue

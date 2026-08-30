@@ -252,7 +252,7 @@ def subformulas(node: Node, out: list | None = None) -> list:
     return out
 
 
-def subformula_index(sources: list[str]) -> dict[str, str]:
+def subformula_index(sources: list[str]) -> tuple[dict[str, str], dict[str, list]]:
     """Elided spelling -> canonical spelling, over one entry's own formulas.
 
     A tree node never holds a formula from nowhere: it holds a subformula of a
@@ -262,8 +262,16 @@ def subformula_index(sources: list[str]) -> dict[str, str]:
     string threw away -- without guessing an associativity the language does
     not have.
 
-    Raises if a key is ambiguous, which would mean two genuinely different
-    subformulas print identically and the stored string cannot be resolved.
+    Returns the resolvable keys and, separately, the ambiguous ones with their
+    candidates. **Ambiguity is not an error here**, because a key nobody looks
+    up costs nothing. It used to raise while the index was being built, which
+    refused a whole entry over a string its tree never mentions -- and the
+    entries that hit it were the associativity claims, where the ambiguity is
+    the very thing being asserted: `p ≡ (q ≡ r)` and `(p ≡ q) ≡ r` are the two
+    sides of the biconditional, and of course they flatten alike. The caller
+    raises on an ambiguous *lookup*, which is the case that genuinely cannot be
+    resolved. Note that a canonical spelling is always its own unambiguous key,
+    so a normalised database never reaches for the elided one.
     """
     index: dict[str, set] = {}
     pool: list[Node] = []
@@ -278,12 +286,13 @@ def subformula_index(sources: list[str]) -> dict[str, str]:
         # that has not presents the elided one.
         index.setdefault(flat(n), set()).add(printed)
         index.setdefault(printed, set()).add(printed)
-    out = {}
+    out, ambiguous = {}, {}
     for key, values in index.items():
         if len(values) > 1:
-            raise ValueError(f"{key!r} is ambiguous between {sorted(values)}")
-        out[key] = values.pop()
-    return out
+            ambiguous[key] = sorted(values)
+        else:
+            out[key] = values.pop()
+    return out, ambiguous
 
 
 def render(toks: list[Tok]) -> str:

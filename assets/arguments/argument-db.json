@@ -39166,7 +39166,7 @@
      "faithful": true
     }
    ],
-   "interest": "A tautology because a false antecedent makes a conditional true for free: whichever disjunct the first fails to supply, the second picks up automatically. PS2.1a only asks for the table, but the derivation is a small trap for the classification it looks so easy next to -- there is no explosion rule, so getting `p > q` out of `~p` still costs its own nested reductio inside the reductio for the disjunction as a whole, and a two-line table exercise hides one of the harder proofs in the set.",
+   "interest": "A tautology because a false antecedent makes a conditional true for free: whichever disjunct the first fails to supply, the second picks up automatically. PS2.1a only asks for the table, but the derivation is a small trap for the classification it looks so easy next to -- there is no explosion rule, so getting `p > q` out of `~p` still costs its own nested reductio inside the reductio for the disjunction as a whole, and a four-row table exercise hides one of the harder proofs in the set.",
    "appearances": [
     {
      "type": "used",
@@ -39592,7 +39592,7 @@
      "faithful": true
     }
    ],
-   "interest": "PS2.1b's contradiction, paired with PS2.1a's tautology above: this conjunction asserts a conditional and, in the same breath, the exact row that falsifies it -- `p` true, `q` false. `& I` needs both conjuncts true together, and by the table's own construction they never are, so every row comes out false and none is more of a countermodel than the rest.",
+   "interest": "PS2.1b's contradiction, paired with PS2.1a's tautology above: this conjunction asserts a conditional and, in the same breath, the exact row that falsifies it -- `p` true, `q` false. `&I` needs both conjuncts true together, and by the table's own construction they never are, so every row comes out false and none is more of a countermodel than the rest.",
    "countermodel_gloss": "Every row is one. `p & ~q` is precisely the assignment that makes `p > q` false, so the two conjuncts can never hold at once.",
    "appearances": [
     {
@@ -39793,7 +39793,7 @@
      "faithful": true
     }
    ],
-   "interest": "The plainest case of a premise that refutes itself: `p&q` and `~p` are conjoined into one formula rather than handed over as two separate premises, so the inconsistency is packed into a single line and `&E` twice is all it takes to unpack it. A short, mechanical first exercise in reading `⊢ND ⊥` as an ordinary conclusion rather than something special.",
+   "interest": "The plainest case of a premise that refutes itself: `p&q` and `~p` are conjoined into one formula rather than handed over as two separate premises, so the inconsistency is packed into a single line and three applications of `&E` are all it takes to unpack it -- twice to open the outer conjunction, once more for the `p` buried in the inner one. A short, mechanical first exercise in reading `⊢ND ⊥` as an ordinary conclusion rather than something special.",
    "appearances": [
     {
      "type": "used",
@@ -43122,7 +43122,7 @@
      "faithful": true
     }
    ],
-   "interest": "Unpacking the conditional materially gives `p ∨ (p ∨ q)`, which idempotence of `∨` collapses straight back to `p ∨ q` -- the antecedent `∼p` is doing no work the consequent was not already carrying. PS1.8c sets only the table, where every row simply comes out true and the redundancy is invisible; the derivation is where it shows up. The `⊂` half is trivial, a straight reiteration of the given disjunction into a discharged assumption, but recovering `p ∨ q` from the conditional needs a case split on `p`, since `∨` names no rule to aim at directly.",
+   "interest": "Unpacking the conditional materially gives `p ∨ (p ∨ q)`, which idempotence of `∨` collapses straight back to `p ∨ q` -- the antecedent `∼p` is doing no work the consequent was not already carrying. PS1.8c sets only the table, where every row simply comes out true and the redundancy is invisible; the derivation is where it shows up. The ← half is trivial, a straight reiteration of the given disjunction into a discharged assumption, but recovering `p ∨ q` from the conditional needs a case split on `p`, since `∨` names no rule to aim at directly.",
    "appearances": [
     {
      "type": "used",
