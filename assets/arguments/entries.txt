@@ -68,3 +68,6 @@ buried-conjunct
 inconsistent-biconditional-explosion
 classical-reductio-chain
 disjunction-not-conjunction
+problem-sets-running-invalid
+vacuous-conditional-no-reach
+minimal-example
