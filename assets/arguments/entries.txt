@@ -59,3 +59,6 @@ disjunctive-syllogism
 contraposition-bakery
 self-undermining-conditional
 vacuous-validity-unsat-premises
+importation-instance
+importation-shaped
+importation

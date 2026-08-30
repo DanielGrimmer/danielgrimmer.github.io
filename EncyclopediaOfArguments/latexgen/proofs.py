@@ -820,3 +820,36 @@ PROOFS["vacuous-validity-unsat-premises"] = [
     _l(14, "~~r", "NegI", 0, subs=[[12, 13]]),
     _l(15, "r", "NegE", 0, [14]),
 ]
+
+# ------------------------------------------------------------ importation-instance
+# A plain application: no subproof, no choice of rule at any step.
+PROOFS["importation-instance"] = [
+    P(1, "(p & q) > r"),
+    P(2, "p"),
+    P(3, "q"),
+    _l(4, "p & q", "ConjI", 0, [2, 3]),
+    _l(5, "r", "CondE", 0, [1, 4]),
+]
+
+# -------------------------------------------------------------- importation-shaped
+PROOFS["importation-shaped"] = [
+    P(1, "p > (q & r)"),
+    _l(2, "p & q", "As", 1),
+    _l(3, "p", "ConjE", 1, [2]),
+    _l(4, "q & r", "CondE", 1, [1, 3]),
+    _l(5, "r", "ConjE", 1, [4]),
+    _l(6, "(p & q) > r", "CondI", 0, subs=[[2, 5]]),
+]
+
+# ------------------------------------------------------------------- importation
+# The first seven lines of `exportation`'s own proof: here `p > (q > r)` is a
+# premise in its own right rather than an assumption discharged by \BicondI.
+PROOFS["importation"] = [
+    P(1, "p > (q > r)"),
+    _l(2, "p & q", "As", 1),
+    _l(3, "p", "ConjE", 1, [2]),
+    _l(4, "q", "ConjE", 1, [2]),
+    _l(5, "q > r", "CondE", 1, [1, 3]),
+    _l(6, "r", "CondE", 1, [5, 4]),
+    _l(7, "(p & q) > r", "CondI", 0, subs=[[2, 6]]),
+]
