@@ -201,3 +201,51 @@ into that `session-start-hook` suggestion if one gets written.
 `svg.py --check`, `inventory.py --locks`, and `node --test
 "_tests/*.test.mjs"` all clean (511/511). Imports queue: 30 candidates left
 of 48 (18 now in the database).
+
+**2026-08-30, third `imports`-source firing.** Course queue empty; continued
+Restall's Chapter 3 bank: `converse-error` (Ex 3.4.17, `p⊃q ∴ q⊃p`,
+**invalid** — Restall's own sharp pairing against the valid 3.4.8/3.4.11
+already in the database), `peirce-detached` (Ex 3.9, `(r⊃∼w)⊃r ∴ r`, valid),
+and `conditional-crossover` (Ex 3.10, `(j⊃c)&(e⊃d) ∴ (j⊃d)∨(e⊃c)`, valid —
+the item the inventory itself calls "the most startling item in the book").
+All three verdicts checked against `derive.py` before writing.
+
+`converse-error` gets `looks_like: contraposition`: it is precisely the
+error a student makes by dropping the negations from `contraposition`'s
+valid `p⊃q ≡ ∼q⊃∼p`, and its single countermodel (`p=F, q=T`) was checked
+against `derive.py`'s output before going into `interest`.
+
+`peirce-detached`'s derivation is `peirce-law`'s own proof with the
+outermost assumption-and-⊃I removed — the Peircean conditional arrives as a
+premise here rather than something to introduce, so the same nested reductio
+runs one level shallower. `looks_like: peirce-law`. Checked against
+`nd.check()` directly (13 lines) before being written into `proofs.py`.
+
+`conditional-crossover`'s first proof attempt (case split on the atom `c`,
+then re-deriving `∼j` from `j⊃c` and `∼c` before applying the vacuous-
+conditional move) ran 30 lines with all five §14.3 triggers present — which
+would have made it a fifth `extremely hard` derivation against the guide's
+own warning that the band is meant to stay at two or three per method and
+the test suite fails at five. Found a shorter route instead (case split on
+`j` directly, so the `∼j` branch already has what it needs without
+re-deriving it): 27 lines, same five triggers, but under the 29-line
+threshold, so it scores `hard`. This is a case of finding a better proof,
+not of scoring around the label — the entry did not change, the search did.
+While searching this proof it became clear that the premise's second
+conjunct, `e⊃d`, is never touched by either branch; checked independently
+that `j⊃c` alone already entails the conclusion (`derive.py`, 0
+countermodels), and said so in `interest` rather than leaving it implicit.
+
+`build.py --write`, `python3 difficulty.py --diff` (clean — the `nd`
+difficulty of all three matched the rubric without an override), `svg.py`,
+`svg.py --check`, `inventory.py --locks`, and `node --test
+"_tests/*.test.mjs"` all clean (512/512). `extremely hard` (nd) count
+unchanged at 3. Imports queue: 27 candidates left of 48 (21 now in the
+database).
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled `texlive-latex-base texlive-latex-recommended
+texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
+texlive-humanities texlive-science` via `apt-get`, matching the two prior
+firings' notes. The `session-start-hook` suggestion from those two notes is
+still open.

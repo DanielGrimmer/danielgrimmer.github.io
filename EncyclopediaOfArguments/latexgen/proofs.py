@@ -1372,3 +1372,61 @@ PROOFS["associativity-of-biconditional"] = [
     _l(76, "p = (q = r)", "BicondI", 1, subs=[[43, 54], [55, 75]]),
     _l(77, "(p = (q = r)) = ((p = q) = r)", "BicondI", 0, subs=[[1, 41], [42, 76]]),
 ]
+
+# --------------------------------------------------------- peirce-detached
+# peirce-law's own proof with the outermost assumption-and-CondI stripped off:
+# what that proof assumes at line 1 arrives here as the premise instead, so
+# everything shifts up one level. The FalsumI at 5 needs no reiteration (line
+# 2 is the *enclosing* subproof's assumption, not this one's); the FalsumI at
+# 11 does, because by then the contradiction is with this subproof's own ~r.
+PROOFS["peirce-detached"] = [
+    P(1, "(r > ~w) > r"),
+    _l(2, "~r", "As", 1),
+    _l(3, "r", "As", 2),
+    _l(4, "~~w", "As", 3),
+    _l(5, "!", "FalsumI", 3, [3, 2]),
+    _l(6, "~~~w", "NegI", 2, subs=[[4, 5]]),
+    _l(7, "~w", "NegE", 2, [6]),
+    _l(8, "r > ~w", "CondI", 1, subs=[[3, 7]]),
+    _l(9, "r", "CondE", 1, [1, 8]),
+    _l(10, "~r", "Reit", 1, [2]),
+    _l(11, "!", "FalsumI", 1, [9, 10]),
+    _l(12, "~~r", "NegI", 0, subs=[[2, 11]]),
+    _l(13, "r", "NegE", 0, [12]),
+]
+
+# ----------------------------------------------------- conditional-crossover
+# One case split (j | ~j, proved the same way every excluded-middle instance
+# in this file is proved) glues together one instance of positive-paradox's
+# move (c alone forces e > c) and one instance of negative-paradox's move
+# (~j alone forces j > d). Only the first conjunct of the premise is ever
+# touched -- e > d never appears, because the argument does not need it.
+PROOFS["conditional-crossover"] = [
+    P(1, "(j > c) & (e > d)"),
+    _l(2, "j > c", "ConjE", 0, [1]),
+    _l(3, "~(j | ~j)", "As", 1),
+    _l(4, "j", "As", 2),
+    _l(5, "j | ~j", "DisjI", 2, [4]),
+    _l(6, "!", "FalsumI", 2, [5, 3]),
+    _l(7, "~j", "NegI", 1, subs=[[4, 6]]),
+    _l(8, "j | ~j", "DisjI", 1, [7]),
+    _l(9, "~(j | ~j)", "Reit", 1, [3]),
+    _l(10, "!", "FalsumI", 1, [8, 9]),
+    _l(11, "~~(j | ~j)", "NegI", 0, subs=[[3, 10]]),
+    _l(12, "j | ~j", "NegE", 0, [11]),
+    _l(13, "j", "As", 1),
+    _l(14, "c", "CondE", 1, [2, 13]),
+    _l(15, "e", "As", 2),
+    _l(16, "c", "Reit", 2, [14]),
+    _l(17, "e > c", "CondI", 1, subs=[[15, 16]]),
+    _l(18, "(j > d) | (e > c)", "DisjI", 1, [17]),
+    _l(19, "~j", "As", 1),
+    _l(20, "j", "As", 2),
+    _l(21, "~d", "As", 3),
+    _l(22, "!", "FalsumI", 3, [20, 19]),
+    _l(23, "~~d", "NegI", 2, subs=[[21, 22]]),
+    _l(24, "d", "NegE", 2, [23]),
+    _l(25, "j > d", "CondI", 1, subs=[[20, 24]]),
+    _l(26, "(j > d) | (e > c)", "DisjI", 1, [25]),
+    _l(27, "(j > d) | (e > c)", "DisjE", 0, [12], subs=[[13, 18], [19, 26]]),
+]

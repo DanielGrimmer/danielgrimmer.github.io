@@ -94,3 +94,6 @@ resolution
 prefixing
 material-implication-drill
 permutation-converse
+converse-error
+peirce-detached
+conditional-crossover
