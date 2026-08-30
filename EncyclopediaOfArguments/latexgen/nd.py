@@ -273,6 +273,30 @@ def check(proof: list[dict], premises: list[str], conclusion: str) -> dict:
                     f"line {n}: ⊥I,{a},{b} — line {b} is not the negation of line {a}"
                 )
 
+    # A derived line nothing goes on to use is dead weight, and on a page a
+    # student is reading it is worse than that: it reads as a step the proof
+    # needed. Only two places can be reached from outside a subproof -- its
+    # assumption and its last line -- so a derived line is live iff something
+    # cites it by number or discharges the subproof it closes. Premises are
+    # exempt: an idle premise is a fact about the argument, not a slip, and
+    # `recovery-cleopatra` turns on having one.
+    live = set()
+    for ln in proof:
+        live.update(ln.get("cites") or [])
+        for a, b in ln.get("subs") or []:
+            live.add(a)
+            live.add(b)
+    dead = [
+        ln["n"]
+        for ln in proof[:-1]
+        if ln["rule"] not in ("Pr", "As") and ln["n"] not in live
+    ]
+    if dead:
+        raise ProofError(
+            "nothing cites line " + ", ".join(str(n) for n in dead)
+            + " — a derived line no later line uses does not belong in the proof"
+        )
+
     last = proof[-1]
     if depth[last["n"]] != 0:
         raise ProofError("the proof ends inside a subproof")

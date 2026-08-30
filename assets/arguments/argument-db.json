@@ -24508,9 +24508,8 @@
      "fidelity": "our reconstruction",
      "who": "PHIL 1115",
      "work": "Problem Sets 2, 3 and 5",
-     "locus": "PS2.3c (table); PS3.7 (tree, rule symmetry); PS5.4 (ND, → direction only)",
-     "url": null,
-     "quote": "Set in all three methods, with the derivation set only for the harder-seeming half."
+     "locus": "PS2.3c (table); PS3.7d (tree, rule symmetry); PS5.4 (ND, → direction only)",
+     "url": null
     }
    ],
    "tags": {
@@ -24526,7 +24525,7 @@
     "used_in": [],
     "problem_set": {
      "table": "PS2.3c",
-     "tree": "PS3.7",
+     "tree": "PS3.7d",
      "nd": "PS5.4"
     },
     "quarantined": false,
@@ -24991,16 +24990,15 @@
      "faithful": true
     }
    ],
-   "interest": "The mirror case: the tree's rule for `∼(A & B)` is this law's other half, splitting into `∼A` and `∼B` on separate branches rather than proving the disjunction outright. The study guide's concept question posed only the direction that starts from the disjunction, `∼p ∨ ∼q ⊢ND ∼(p & q)`, which is the routine half -- a disjunction-elimination into two one-line reductios. The other direction is the one that needs the indirect route: assume the disjunction's negation, extract `p` and `q` from the double negations that yields, and collide them with the very premise you started from.",
+   "interest": "The mirror case: the tree's rule for `∼(A & B)` is this law's other half, splitting into `∼A` and `∼B` on separate branches rather than proving the disjunction outright. The study guide's concept question posed only the direction that starts from the disjunction, `∼p ∨ ∼q ⊢ND ∼(p & q)`, which is the routine half -- a disjunction-elimination into two short reductios. The other direction is the one that needs the indirect route: assume the disjunction's negation, extract `p` and `q` from the double negations that yields, and collide them with the very premise you started from.",
    "appearances": [
     {
      "type": "used",
      "fidelity": "our reconstruction",
      "who": "PHIL 1115",
      "work": "Problem Sets 2 and 3, and the Study Guide",
-     "locus": "PS2.3c (table); PS3.7 (tree, rule symmetry); SG-CQ5 (concept question, ← direction only)",
-     "url": null,
-     "quote": "Set by table and tree; the derivation appears only as a study-guide concept question, and only one way round."
+     "locus": "PS2.3c (table); PS3.7a-c (tree, rule symmetry); SG-CQ5 (concept question, ← direction only)",
+     "url": null
     }
    ],
    "tags": {
@@ -25016,7 +25014,7 @@
     "used_in": [],
     "problem_set": {
      "table": "PS2.3c",
-     "tree": "PS3.7"
+     "tree": "PS3.7a-c"
     },
     "quarantined": false,
     "note": "SG-CQ5 posed only the ← direction, and as a study-guide question rather than graded work, so both directions stay open to practice.",
@@ -25564,7 +25562,7 @@
      "faithful": true
     }
    ],
-   "interest": "The conditional restated without `⊃`: everything Lecture 4's truth table for `⊃` says row by row -- false only when the antecedent is true and the consequent isn't -- this says as a disjunction instead. PS5.3 set the full biconditional, both directions, which is why the derivation below is the indirect kind throughout: neither half is dictated by its goal, since `∼p ∨ q` names no rule to aim at, and getting it from `p ⊃ q` needs the same assume-the-negation-of-the-disjunction move the De Morgan pair use. It is also the identity that lets a table, a tree and a Fitch proof all agree that `⊃` was never a primitive idea to begin with -- just a disjunction with a negated first half.",
+   "interest": "The conditional restated without `⊃`: everything Lecture 4's truth table for `⊃` says row by row -- false only when the antecedent is true and the consequent isn't -- this says as a disjunction instead. PS5.3 set the full biconditional, both directions, and the two halves are not alike. Going from `p ⊃ q` to `∼p ∨ q` is the indirect one: the goal is a disjunction, and a disjunction names no rule to aim at, so the only move is to assume its negation and go looking for the contradiction -- the same move the De Morgan pair need. The way back is dictated at every step: the goal `p ⊃ q` asks for `⊃I`, and the premise `∼p ∨ q` asks for `∨E`. It is also the identity that lets a table, a tree and a Fitch proof all agree that `⊃` was never a primitive idea to begin with -- just a disjunction with a negated first half.",
    "appearances": [
     {
      "type": "used",
@@ -25572,8 +25570,7 @@
      "who": "PHIL 1115",
      "work": "Problem Sets 2 and 5",
      "locus": "PS2.4a (table, posed as a concept question); PS5.3 (ND, both directions plus the ≡ theorem)",
-     "url": null,
-     "quote": "Set first as a table concept question, then as a full derivation of the biconditional."
+     "url": null
     }
    ],
    "tags": {
@@ -25965,22 +25962,12 @@
      },
      {
       "n": 19,
-      "f": "!",
-      "rule": "FalsumI",
-      "depth": 3,
-      "cites": [
-       18,
-       17
-      ]
-     },
-     {
-      "n": 20,
       "f": "~q",
       "rule": "As",
       "depth": 4
      },
      {
-      "n": 21,
+      "n": 20,
       "f": "!",
       "rule": "FalsumI",
       "depth": 4,
@@ -25990,73 +25977,73 @@
       ]
      },
      {
-      "n": 22,
+      "n": 21,
       "f": "~~q",
       "rule": "NegI",
       "depth": 3,
       "subs": [
        [
-        20,
-        21
+        19,
+        20
        ]
       ]
      },
      {
-      "n": 23,
+      "n": 22,
       "f": "q",
       "rule": "NegE",
       "depth": 3,
       "cites": [
-       22
+       21
       ]
      },
      {
-      "n": 24,
+      "n": 23,
       "f": "p > q",
       "rule": "CondI",
       "depth": 2,
       "subs": [
        [
         18,
-        23
+        22
        ]
       ]
      },
      {
-      "n": 25,
+      "n": 24,
       "f": "q",
       "rule": "As",
       "depth": 2
      },
      {
-      "n": 26,
+      "n": 25,
       "f": "p",
       "rule": "As",
       "depth": 3
      },
      {
-      "n": 27,
+      "n": 26,
       "f": "q",
       "rule": "Reit",
       "depth": 3,
       "cites": [
-       25
+       24
       ]
      },
      {
-      "n": 28,
+      "n": 27,
       "f": "p > q",
       "rule": "CondI",
       "depth": 2,
       "subs": [
        [
-        26,
-        27
+        25,
+        26
        ]
       ]
      },
      {
-      "n": 29,
+      "n": 28,
       "f": "p > q",
       "rule": "DisjE",
       "depth": 1,
@@ -26066,16 +26053,16 @@
       "subs": [
        [
         17,
-        24
+        23
        ],
        [
-        25,
-        28
+        24,
+        27
        ]
       ]
      },
      {
-      "n": 30,
+      "n": 29,
       "f": "(p > q) = (~p | q)",
       "rule": "BicondI",
       "depth": 0,
@@ -26086,13 +26073,13 @@
        ],
        [
         16,
-        29
+        28
        ]
       ]
      }
     ],
-    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond q}\n\\open\n\\hypo{2}{\\Neg (\\Neg p\\Disj q)}\n\\open\n\\hypo{3}{\\Neg p}\n\\have{4}{\\Neg p\\Disj q}\\by{\\DisjI}{3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,2}\n\\close\n\\have{6}{\\Neg \\Neg p}\\by{\\NegI}{3,5}\n\\have{7}{p}\\by{\\NegE}{6}\n\\open\n\\hypo{8}{q}\n\\have{9}{\\Neg p\\Disj q}\\by{\\DisjI}{8}\n\\have{10}{\\Falsum}\\by{\\FalsumI}{9,2}\n\\close\n\\have{11}{\\Neg q}\\by{\\NegI}{8,10}\n\\have{12}{q}\\by{\\CondE}{1,7}\n\\have{13}{\\Falsum}\\by{\\FalsumI}{12,11}\n\\close\n\\have{14}{\\Neg \\Neg (\\Neg p\\Disj q)}\\by{\\NegI}{2,13}\n\\have{15}{\\Neg p\\Disj q}\\by{\\NegE}{14}\n\\close\n\\open\n\\hypo{16}{\\Neg p\\Disj q}\n\\open\n\\hypo{17}{\\Neg p}\n\\open\n\\hypo{18}{p}\n\\have{19}{\\Falsum}\\by{\\FalsumI}{18,17}\n\\open\n\\hypo{20}{\\Neg q}\n\\have{21}{\\Falsum}\\by{\\FalsumI}{18,17}\n\\close\n\\have{22}{\\Neg \\Neg q}\\by{\\NegI}{20,21}\n\\have{23}{q}\\by{\\NegE}{22}\n\\close\n\\have{24}{p\\Cond q}\\by{\\CondI}{18,23}\n\\close\n\\open\n\\hypo{25}{q}\n\\open\n\\hypo{26}{p}\n\\have{27}{q}\\by{\\Reit}{25}\n\\close\n\\have{28}{p\\Cond q}\\by{\\CondI}{26,27}\n\\close\n\\have{29}{p\\Cond q}\\by{\\DisjE}{16,17-24,25-28}\n\\close\n\\have{30}{(p\\Cond q)\\Bicond (\\Neg p\\Disj q)}\\by{\\BicondI}{1-15,16-29}\n\\end{nd}\n\\end{align*}",
-    "lines": 30,
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond q}\n\\open\n\\hypo{2}{\\Neg (\\Neg p\\Disj q)}\n\\open\n\\hypo{3}{\\Neg p}\n\\have{4}{\\Neg p\\Disj q}\\by{\\DisjI}{3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,2}\n\\close\n\\have{6}{\\Neg \\Neg p}\\by{\\NegI}{3,5}\n\\have{7}{p}\\by{\\NegE}{6}\n\\open\n\\hypo{8}{q}\n\\have{9}{\\Neg p\\Disj q}\\by{\\DisjI}{8}\n\\have{10}{\\Falsum}\\by{\\FalsumI}{9,2}\n\\close\n\\have{11}{\\Neg q}\\by{\\NegI}{8,10}\n\\have{12}{q}\\by{\\CondE}{1,7}\n\\have{13}{\\Falsum}\\by{\\FalsumI}{12,11}\n\\close\n\\have{14}{\\Neg \\Neg (\\Neg p\\Disj q)}\\by{\\NegI}{2,13}\n\\have{15}{\\Neg p\\Disj q}\\by{\\NegE}{14}\n\\close\n\\open\n\\hypo{16}{\\Neg p\\Disj q}\n\\open\n\\hypo{17}{\\Neg p}\n\\open\n\\hypo{18}{p}\n\\open\n\\hypo{19}{\\Neg q}\n\\have{20}{\\Falsum}\\by{\\FalsumI}{18,17}\n\\close\n\\have{21}{\\Neg \\Neg q}\\by{\\NegI}{19,20}\n\\have{22}{q}\\by{\\NegE}{21}\n\\close\n\\have{23}{p\\Cond q}\\by{\\CondI}{18,22}\n\\close\n\\open\n\\hypo{24}{q}\n\\open\n\\hypo{25}{p}\n\\have{26}{q}\\by{\\Reit}{24}\n\\close\n\\have{27}{p\\Cond q}\\by{\\CondI}{25,26}\n\\close\n\\have{28}{p\\Cond q}\\by{\\DisjE}{16,17-23,24-27}\n\\close\n\\have{29}{(p\\Cond q)\\Bicond (\\Neg p\\Disj q)}\\by{\\BicondI}{1-15,16-28}\n\\end{nd}\n\\end{align*}",
+    "lines": 29,
     "max_subproof_depth": 4,
     "subproof_count": 10,
     "assumption_count": 10,

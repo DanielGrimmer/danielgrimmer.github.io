@@ -137,7 +137,12 @@ all four LaTeX blocks. What you must supply:
   suggestion or say in `course.note` why not; the test suite fails otherwise.
 - **The structured data**, from `derive.py` — see §3.
 - **The derivation**, for a valid form: a new entry in `latexgen/proofs.py`,
-  written with the entry's final atom names. `nd.check()` verifies it.
+  written with the entry's final atom names. `nd.check()` verifies it, and it
+  now refuses a proof with a **dead line** — a derived line that nothing later
+  cites and no rule discharges (§6.5). The trap is ⊥: there is no explosion
+  rule, so reaching a contradiction never gives you a formula on the spot.
+  Open a subproof on the negation of what you want and reach ⊥ *inside* it;
+  do not reach ⊥ first and then reach it again under the assumption.
 - For an invalid form, **`nd.note`**: where the attempt at a derivation breaks
   down. "No derivation" alone is a wasted field.
 
@@ -148,14 +153,20 @@ and you should say so plainly.** The course itself is the appearance:
 
 ```json
 { "type": "used", "fidelity": "our reconstruction", "who": "PHIL 1115",
-  "work": "Lecture 10 Handout", "locus": "L10§2", "url": null,
-  "quote": "..." }
+  "work": "Lecture 10 Handout", "locus": "L10§2", "url": null }
 ```
 
 Use `where` from the candidate for `work` and `locus`. `L` is a lecture, `PS` a
-problem set, `P1`/`P2` the midterm practice sets, `SG` the study guide. Quote
-the handout only if you have the text; otherwise leave `quote` out rather than
-paraphrasing into quotation marks. Restall-sourced rows name Restall's *Logic*
+problem set, `P1`/`P2` the midterm practice sets, `SG` the study guide.
+
+**`quote` holds the source's words or it is absent.** The example above has no
+`quote` because the inventory row is a table cell, not a passage — and that is
+the usual case for a course row. A sentence of your own describing where the
+form was set ("Set by table and tree; the derivation appears only as a
+study-guide question") belongs in `interest` or `course.note`, never inside
+quotation marks attributed to the handout. The inventory's own text *is*
+quotable when the row carries some — the exercise wordings in §5.10 are real
+quotes; a summary you wrote from the row is not. Restall-sourced rows name Restall's *Logic*
 and the chapter.
 
 `interest` may be as modest as the truth allows — *"One of the course's own

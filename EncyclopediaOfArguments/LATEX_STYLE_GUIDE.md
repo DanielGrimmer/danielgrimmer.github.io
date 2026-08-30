@@ -861,15 +861,29 @@ written out in full every time:
 \begin{align*}
 \begin{nd}
 \open
-\hypo[n]{1}{\Neg A}
-\have[...]{}{\dots}
-\have[m]{2}{\Falsum}
+\hypo[n]{n}{\Neg A}
+\have[\vdots]{}{\dots}
+\have[m]{m}{\Falsum}
 \close
-\have{3}{\Neg\Neg A\qquad\NegI,n,m}
-\have{}{A\qquad\quad \NegE,m+1}
+\have[m+1]{m+1}{\Neg\Neg A}\by{\NegI}{n,m}
+\have{}{A}\by{\NegE}{m+1}
 \end{nd}
 \end{align*}
 ```
+
+**There is no explosion rule, so ⊥ never yields a formula directly.** Wanting
+`A` from a contradiction means opening a fresh subproof on `\Neg A` and
+reaching ⊥ *inside it*. Do not derive ⊥ on the way in and then derive it again
+under the assumption: the outer one is a line nothing cites, and on the page it
+reads as a step the proof needed. See `ex-falso`, which is exactly this shape
+and nothing more.
+
+**Every derived line must be used.** A line that is neither a premise nor an
+assumption has to be cited by number somewhere later, or be the last line of a
+subproof that some rule discharges, or be the conclusion. `nd.check()` refuses
+a proof with any other kind of line. Premises are exempt — an idle premise is a
+fact about the argument rather than a slip, and `recovery-cleopatra` turns on
+having one.
 
 ### 6.6 Contradiction entries (`⊥` as conclusion)
 
