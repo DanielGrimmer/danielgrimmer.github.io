@@ -31,6 +31,8 @@ from formula import Node, canonical, parse, to_ascii, unparse
 
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE.parent / "Argument Form Inventory (2026-08-28).md"
+IMPORTS = HERE.parent / "Argument Form Inventory — Imports (2026-08-28).md"
+SOURCES = {"course": SOURCE, "imports": IMPORTS}
 LOG = HERE.parent / "IMPORT_LOG.md"
 DB = HERE.parents[1] / "assets/arguments/argument-db.json"
 
@@ -87,6 +89,21 @@ def shape(premises: list[str], conclusion: str) -> tuple:
 def split_sequent(text: str) -> tuple[list[str], str] | None:
     """`p⊃q, q⊃r ⊢ p⊃r` into its premises and its conclusion, in ASCII."""
     body = to_ascii(text.strip().strip("`").strip())
+
+    # Braces mean two different things, and which one depends on whether a
+    # turnstile follows. `{p ≡ (p⊃q)} ⊢ q` -- the imports file's Curry sequent
+    # -- is a premise set, and the braces say nothing the comma does not. A
+    # braced formula standing alone is the claim that the set is *inconsistent*
+    # (`{p≡∼p}`, in the course inventory's §5), which is `X ⊢ ⊥`, not `⊨ X`.
+    # Stripping both alike turns the second into a claim that the formula is a
+    # tautology, which is the opposite of what the row says.
+    braced = body.startswith("{") and body.endswith("}")
+    if braced and not any(to_ascii(m) in body for m in TURNSTILES):
+        inner = body[1:-1].strip()
+        premises = [p for p in (x.strip() for x in inner.split(",")) if p]
+        return (premises, "!") if premises else None
+    body = body.replace("{", "").replace("}", "")
+
     for mark in TURNSTILES:
         mark = to_ascii(mark)
         if mark in body:
@@ -183,8 +200,8 @@ def rows_of(text: str) -> list[dict]:
     return out
 
 
-def candidates() -> tuple[list[dict], dict[str, int]]:
-    text = SOURCE.read_text()
+def candidates(which: str = "course") -> tuple[list[dict], dict[str, int]]:
+    text = SOURCES[which].read_text()
     db = json.loads(DB.read_text())
     known = {shape(e["premises"], e["conclusion"]) for e in db["entries"]}
     banned = set()
@@ -211,19 +228,32 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
              "known": 0, "logged": 0}
     out: list[dict] = []
 
-    for row in rows_of(text):
-        quoted = re.findall(r"`([^`]+)`", row["cells"][0])
-        if not quoted:
-            continue
+    if which == "imports":
+        # Already one sequent per item, and the section stands in for the
+        # "where" column the course inventory has and this file does not.
+        feed = [{"sequent": q, "section": sec, "cells": []}
+                for q, sec in _import_sequents(text)]
+    else:
+        feed = []
+        for row in rows_of(text):
+            quoted = re.findall(r"`([^`]+)`", row["cells"][0])
+            if not quoted:
+                continue
+            # A row holding two sequents is two entries and a judgement about
+            # which to write; it goes to the log rather than the queue. Marked
+            # here so the tally still counts it.
+            feed.append({"sequent": quoted[0] if len(quoted) == 1 else None,
+                         "section": row["section"], "cells": row["cells"],
+                         "compound": len(quoted) > 1 or ";" in row["cells"][0]})
+
+    for row in feed:
         tally["rows"] += 1
 
-        # A row holding two sequents is two entries and a judgement about which
-        # to write; it goes to the log rather than the queue.
-        if len(quoted) > 1 or ";" in row["cells"][0]:
+        if row.get("compound"):
             tally["multiple"] += 1
             continue
 
-        got = split_sequent(quoted[0])
+        got = split_sequent(row["sequent"])
         if not got:
             tally["unparsable"] += 1
             continue
@@ -250,16 +280,108 @@ def candidates() -> tuple[list[dict], dict[str, int]]:
         known.add(key)  # so two inventory rows for one form offer it once
         out.append(
             {
-                "sequent": quoted[0],
+                "sequent": row["sequent"],
                 "premises": premises,
                 "conclusion": conclusion,
-                "name": name_of(row),
+                "name": name_of(row) if row["cells"] else "",
                 "where": where,
-                "problem_set": problem_sets(row),
+                # Nothing in the imports file is this year's graded work:
+                # Restall is a textbook, and last year's papers were set for
+                # last year's students. §11c of the style guide says so.
+                "problem_set": problem_sets(row) if row["cells"] else {},
                 "section": row["section"],
+                "source": which,
             }
         )
     return out, tally
+
+
+# ---------------------------------------------------------------- the imports
+
+# The imports file is a different document and does not parse like the course
+# inventory. Three things differ, and each of them silently yields nothing (or
+# worse, junk) if you read it the other file's way:
+#
+#   * The sequent is not in the first cell. §1's Restall table runs
+#     `| Restall | Form | Verdict | Why interesting |` and §2's archive table
+#     runs `| Old location | Form | Verdict | Note |`, so the column has to be
+#     found by its header rather than assumed. §5.1's tables do lead with it.
+#   * §3 is not a table at all. It is a numbered prose list, one bolded sequent
+#     per item, and it holds the brainstormed candidates -- the part with no
+#     source behind it.
+#   * Much of the file is not importable stock. §4 is a shortlist that points
+#     at the other sections and would double-count every one of them; §5.2 and
+#     §5.3 are predicate logic and errata.
+#
+# Everything here is about locating candidate sequents. What may be *said*
+# about one -- Restall gets a real citation, the archive is last year's paper,
+# and a brainstormed row has no appearance at all -- is §11c of the style
+# guide, because it is a judgement rather than a parse.
+
+# §4 is the shortlist, and every item in it is already in §1, §2 or §3.
+# §5.2 is quantifiers and §5.3 is errata. §2's own prose sections are notes
+# about collisions, not stock.
+IMPORT_SKIP = ("4.", "5.2", "5.3")
+
+# Quantifiers, modal operators and identity: predicate logic, which this
+# database does not hold. `≠` catches Ch 15's inequality, `□`/`◊` Ch 6's modal
+# apparatus, which the file's own Cautions say to strip or flag off-exam.
+NOT_PROPOSITIONAL = re.compile(r"[∀∃□◊≠→]")
+
+
+def _import_sequents(text: str) -> list[tuple[str, str]]:
+    """Every candidate sequent in the imports file, with the section it is in.
+
+    Conservative on purpose: a row that does not clearly carry one sequent is
+    passed over rather than guessed at, because the cost of a wrong guess is an
+    invented entry and the cost of a miss is a row that stays in the queue.
+    """
+    out: list[tuple[str, str]] = []
+    section, form_col = "", None
+
+    for line in text.split("\n"):
+        if line.startswith("## ") or line.startswith("### "):
+            section = line.lstrip("#").strip()
+            form_col = None  # a heading ends whatever table was running
+            continue
+        if any(section.startswith(s) for s in IMPORT_SKIP):
+            continue
+
+        if line.startswith("|"):
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if set("".join(cells)) <= set("-: "):
+                continue
+            # A header row names the column the sequents are in, and holds none
+            # itself. Until one is seen, this table is not being read.
+            lowered = [c.lower() for c in cells]
+            if "form" in lowered:
+                form_col = lowered.index("form")
+                continue
+            if form_col is None or form_col >= len(cells):
+                continue
+            quoted = re.findall(r"`([^`]+)`", cells[form_col])
+            if len(quoted) == 1:
+                out.append((quoted[0], section))
+            continue
+
+        # §3's prose list: `1. **`sequent`** -- valid.` or a named item,
+        # `**Contraction: `p⊃(p⊃q) ⊢ p⊃q`**`. One bolded span, one sequent.
+        item = re.match(r"\s*\d+\.\s+\*\*(.+?)\*\*", line)
+        if item:
+            quoted = re.findall(r"`([^`]+)`", item.group(1))
+            if len(quoted) == 1:
+                out.append((quoted[0], section))
+            continue
+
+        # §5.1's two exercise banks are a run of sequents in one sentence --
+        # `**Ex {7.1} — five sequents to prove without DNE** (…): `A⊃∼B ⊢ B⊃∼A`;
+        # `∼∼∼A ⊢ ∼A`; …` -- and they hold Peirce, the hard De Morgan and the
+        # item the file itself calls the pick of the set. Every span on such a
+        # line is a sequent; `split_sequent` drops any that is not.
+        if line.lstrip().startswith("**Ex {"):
+            out.extend((q, section) for q in re.findall(r"`([^`]+)`", line))
+    return out
+
 
 
 def lock_gaps() -> list[dict]:
@@ -314,6 +436,8 @@ def lock_gaps() -> list[dict]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--status", action="store_true")
+    ap.add_argument("--source", choices=sorted(SOURCES), default="course",
+                    help="which inventory to work: the course, or the imports")
     ap.add_argument("--next", type=int, metavar="N")
     ap.add_argument("--show", type=int, metavar="INDEX")
     ap.add_argument("--locks", action="store_true",
@@ -329,7 +453,7 @@ def main() -> None:
               f"problem-set questions")
         raise SystemExit(1 if gaps else 0)
 
-    queue, tally = candidates()
+    queue, tally = candidates(args.source)
 
     if args.next:
         print(json.dumps(queue[: args.next], indent=1, ensure_ascii=False))
@@ -338,7 +462,7 @@ def main() -> None:
         print(json.dumps(queue[args.show], indent=1, ensure_ascii=False))
         return
 
-    print(f"source     {SOURCE.name}")
+    print(f"source     {SOURCES[args.source].name}")
     print(f"rows       {tally['rows']} carrying a sequent")
     print(f"  already  {tally['known']} in the database")
     print(f"  reserved {tally['quarantined']} quarantined (exam material)")

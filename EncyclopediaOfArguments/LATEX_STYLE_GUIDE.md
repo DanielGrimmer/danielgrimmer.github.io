@@ -1251,6 +1251,58 @@ showing last week's proof; `svg.py --check` and the test suite both catch it.
 
 ---
 
+## 11c. Importing from the *Imports* inventory
+
+`Argument Form Inventory — Imports (2026-08-28).md` is the second source, and
+it is not one source but three under one cover. The parsing differences are
+`inventory.py --source imports`'s problem; the differences that matter here are
+about what may honestly be *said* of a form, and they are not uniform across
+the file.
+
+**§1 and §5.1 are Restall's *Logic*.** A real published book, so a real
+appearance: `who: "Greg Restall"`, `work: "Logic"`, and a `locus` precise
+enough to find — `Ex 3.4.8`, `Ch 7, Ex {7.2}`, `p.65`. `fidelity` is
+`our reconstruction` unless the form is transcribed exactly as he sets it, in
+which case `verbatim` and the entry says so.
+
+**§2 is last year's papers.** `who: "PHIL 1115"`, `work: "PHIL 1115, 2025
+Problem Set 3"` (say the year — otherwise it reads as this year's), `locus` the
+question number as the inventory gives it, `OLD-PS3 Q12`.
+
+**§3 is a brainstorm, and has no source at all.** These are candidate forms
+someone thought the course should carry, not forms anyone has used or
+discussed. An entry needs at least one appearance and the test suite enforces
+it, which is the right answer rather than an obstacle: a form with no
+appearance does not belong in an encyclopedia of arguments people have made.
+Some §3 items do have a champion, and the inventory names them — conditional
+excluded middle is Stalnaker and Lewis, Curry's sequent is Curry, Ross's
+paradox is Ross, and two of them the file itself marks as *"already Restall"*.
+Cite the champion, not the brainstorm. Where there is none — the bivalence
+pigeonhole, double-negation introduction — **log the row and move on**. That is
+what `IMPORT_LOG.md` is for, and it leaves the decision where it belongs.
+
+**Nothing in this file is a practice lock.** Restall is a textbook students may
+read at will, and last year's problem sets were set for last year's students.
+`inventory.py` writes an empty `problem_set` for every row here, and that is
+correct — do not add one. The one thing the file *does* withhold is about exam
+setting rather than practice: `p⊃q ⊢ND ∼p∨q` has now had three outings, so it
+is fine as study material and must not go on the exam. That is a note for the
+instructor, not a field.
+
+**`quote` stays out, for the same reason as §13.1.** The inventory summarises
+Restall and last year's papers; it does not reproduce them, and the routine has
+neither book nor paper. `build.py` now checks Restall and archive appearances
+against `SOURCE_QUOTES.md` exactly as it checks the course's.
+
+**Two cautions the file states and an importer must honour.** Chapter 6 uses
+`→`, `□` and `◊`, and Chapter 15's `≠` is identity: none of it is propositional
+and `inventory.py` refuses it. And Restall's Chapter 7 is the chapter students
+are *told not to read* — the forms in it are standard ones the course meets
+elsewhere, so importing them is fine, but do not frame an entry around
+Chapter 7 as though it were assigned reading.
+
+---
+
 ## 12. Suggested order of work
 
 1. **Templates first, on `lecture8-chain`.** Kant's argument is the only entry

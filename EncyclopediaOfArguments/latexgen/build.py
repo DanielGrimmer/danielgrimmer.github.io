@@ -412,11 +412,19 @@ def build(db: dict) -> tuple[dict, list[str]]:
     return db, notes
 
 
-# A course appearance is one whose source is the course itself, however `who`
-# happens to be spelled. Keying on `who == "PHIL 1115"` alone would let a
-# rename walk straight past the check, so the `work` field is read too.
+# An appearance the import routine could have written, however `who` happens to
+# be spelled. Keying on `who == "PHIL 1115"` alone would let a rename walk
+# straight past the check, so the `work` field is read too.
+#
+# Restall and last year's papers are here for the same reason the course is:
+# the routine works from the inventories, which summarise those sources rather
+# than reproducing them. It has no copy of *Logic* and no copy of last year's
+# problem sets, so a quote attributed to either is a sentence it composed. The
+# SEP and journal quotes already in the database came from reading and are not
+# checked, because nothing in the repository could check them.
 _COURSE_WORK = re.compile(
-    r"lecture|problem set|\bPS\s*\d|study guide|midterm|handout", re.I
+    r"lecture|problem set|\bPS\s*\d|study guide|midterm|handout"
+    r"|restall|old-ps|old-exam|last year", re.I
 )
 
 
