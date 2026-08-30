@@ -38499,7 +38499,7 @@
      "type": "used",
      "fidelity": "our reconstruction",
      "who": "PHIL 1115",
-     "work": "Lecture 4 Handout",
+     "work": "Lecture 4 and 6 Handouts",
      "locus": "L4§1 (table); L6§5 (tree)",
      "url": null
     }
@@ -38686,7 +38686,7 @@
      "fidelity": "our reconstruction",
      "who": "PHIL 1115",
      "work": "Lecture 3 Handout",
-     "locus": "used as a constraint on the truth-functional reading of ⊃, before the table method exists to check it",
+     "locus": "L3 (constraint)",
      "url": null
     },
     {
@@ -38955,7 +38955,7 @@
     "used_in": [],
     "problem_set": {},
     "quarantined": false,
-    "note": null,
+    "note": "P1.2b is midterm practice, not a problem-set question, so nothing here is withheld from the practice page.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
