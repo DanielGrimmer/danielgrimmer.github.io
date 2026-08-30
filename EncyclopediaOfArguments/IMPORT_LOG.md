@@ -11,3 +11,4 @@ than in the database.
 
 | Date | Sequent | Why it was skipped |
 | --- | --- | --- |
+| 2026-08-30 | `p∨q, p ∴ ∼q` (inventory name: "Affirming a disjunct") | Duplicates `affirming-a-disjunct` already in the database (`f∨d, d ∴ ∼f`) — same form, renamed atoms, per §6's own worked example of exactly this pair. |

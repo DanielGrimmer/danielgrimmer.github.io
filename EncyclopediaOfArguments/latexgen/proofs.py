@@ -346,3 +346,40 @@ PROOFS["modus-tollens"] = [
     _l(6, "!", "FalsumI", 1, [4, 5]),
     _l(7, "~p", "NegI", 0, [], [[3, 6]]),
 ]
+
+# --------------------------------------------------------- hypothetical syllogism
+# Two applications of ⊃E inside one assumption of p, then discharge. The
+# two-step half of Lecture 10's own chain (lecture8-chain compounds a third
+# link and turns the last one into a negation by reductio).
+PROOFS["hypothetical-syllogism"] = [
+    P(1, "p > q"),
+    P(2, "q > r"),
+    _l(3, "p", "As", 1),
+    _l(4, "q", "CondE", 1, [1, 3]),
+    _l(5, "r", "CondE", 1, [2, 4]),
+    _l(6, "p > r", "CondI", 0, subs=[[3, 5]]),
+]
+
+# ---------------------------------------------------------------- contraposition
+# Both directions by reductio, then ≡I crosses them over. Each half needs the
+# outer half's assumption imported unreiterated, per the guide's ruling in
+# 6.4: the contradiction is not with the reductio's own assumption, so citing
+# it directly (rather than bringing it down with \Reit) is the right call.
+PROOFS["contraposition"] = [
+    _l(1, "p > q", "As", 1),
+    _l(2, "~q", "As", 2),
+    _l(3, "p", "As", 3),
+    _l(4, "q", "CondE", 3, [1, 3]),
+    _l(5, "!", "FalsumI", 3, [4, 2]),
+    _l(6, "~p", "NegI", 2, subs=[[3, 5]]),
+    _l(7, "~q > ~p", "CondI", 1, subs=[[2, 6]]),
+    _l(8, "~q > ~p", "As", 1),
+    _l(9, "p", "As", 2),
+    _l(10, "~q", "As", 3),
+    _l(11, "~p", "CondE", 3, [8, 10]),
+    _l(12, "!", "FalsumI", 3, [9, 11]),
+    _l(13, "~~q", "NegI", 2, subs=[[10, 12]]),
+    _l(14, "q", "NegE", 2, [13]),
+    _l(15, "p > q", "CondI", 1, subs=[[9, 14]]),
+    _l(16, "(p > q) = (~q > ~p)", "BicondI", 0, subs=[[1, 7], [8, 15]]),
+]
