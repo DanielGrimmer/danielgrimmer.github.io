@@ -17,7 +17,13 @@ those forms are imported with `appearances_pending: true`, which prints
 stated rather than hidden, and it is a debt to be paid later by someone with a
 library — not a reason to refuse the form or to invent a source for it.
 
-| Date | Sequent | Why it was skipped |
+**What the table is.** Every sequent in it is suppressed from the queue, so a
+row lands here when the routine should not be offered it again — usually
+because it was skipped, but also when it was imported under a shape the row's
+own spelling does not give (the queue matches on shape, so it would otherwise
+be offered a second time). The reason column says which.
+
+| Date | Sequent | Why the queue no longer offers it |
 | --- | --- | --- |
 | 2026-08-30 | `p∨q, p ∴ ∼q` (inventory name: "Affirming a disjunct") | Duplicates `affirming-a-disjunct` already in the database (`f∨d, d ∴ ∼f`) — same form, renamed atoms, per §6's own worked example of exactly this pair. |
 | 2026-08-30 | `(p&q)&∼p` (inventory name: "contradiction") | Not skipped — imported as `conjunction-with-its-own-negation`, but reshaped as `(p&q)&∼p ⊢ ⊥` rather than the bare `⊨ (p&q)&∼p` reading `split_sequent` gives a turnstile-free row by default. The row's own annotation names the derivation target directly — **ND untouched (`⊢ND ⊥` in 4 lines)** — which only makes sense if the goal is `⊥`, not the formula; §11c calls this the author's judgement to make. Logged so the row is not re-offered under a shape the database does not carry. |

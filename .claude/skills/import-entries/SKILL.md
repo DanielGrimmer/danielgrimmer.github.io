@@ -298,12 +298,19 @@ an entry, write the lock — including on entries you did not import.
 ```bash
 cd EncyclopediaOfArguments/latexgen
 python3 build.py --write     # normalise, generate, verify
-python3 svg.py               # typeset — 4 blocks per entry
+python3 svg.py               # typeset — only the blocks that changed
 python3 inventory.py --locks # nothing on offer that a problem set set
 cd ../.. && node --test "_tests/*.test.mjs"
 ```
 
-All three must be clean. `build.py` refuses an entry whose table does not
+`svg.py` recompiles only blocks whose digest has changed, so a run that
+reports "every SVG was already current" after you have written an entry means
+the entry's blocks did not regenerate — check that `build.py --write` ran
+first. Never reach for `--force`: it recompiles all of them, and because
+dvisvgm does not order its glyph definitions stably, that rewrites every
+untouched SVG and buries your actual change in the diff.
+
+All must be clean. `build.py` refuses an entry whose table does not
 recompute, whose tree node is not a subformula, or whose proof does not check;
 `svg.py` fails on LaTeX that will not compile; the tests check the rest. **Do
 not push with any of them red** — fix or drop the entry.
