@@ -50,3 +50,6 @@ paradox-disjunction
 the-monster
 positive-paradox
 negative-paradox
+lecture9-first-derivation
+lecture9-proof-by-cases
+constructive-dilemma

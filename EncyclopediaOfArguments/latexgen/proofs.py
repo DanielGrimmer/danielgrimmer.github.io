@@ -675,3 +675,46 @@ PROOFS["negative-paradox"] = [
     _l(6, "r", "NegE", 1, [5]),
     _l(7, "p > r", "CondI", 0, subs=[[2, 6]]),
 ]
+
+# ------------------------------------------------------- first derivation of the course
+# Two conjunctions in, one conjunction out, and nothing else: no assumption
+# opens, because there is nothing here for &E and &I to need one for. The
+# repeated p is a red herring -- each premise is read only for the conjunct
+# the conclusion wants, and the other conjunct of each is never touched.
+PROOFS["lecture9-first-derivation"] = [
+    P(1, "p & (q | r)"),
+    P(2, "(s > t) & p"),
+    _l(3, "q | r", "ConjE", 0, [1]),
+    _l(4, "s > t", "ConjE", 0, [2]),
+    _l(5, "(q | r) & (s > t)", "ConjI", 0, [3, 4]),
+]
+
+# ---------------------------------------------------------------- first proof by cases
+# The database's first ∨E. Both cases are the same one-line move -- &E on the
+# assumed conjunction -- so the only new idea is the shape of the rule itself:
+# split on the disjunction, reach the same formula down each branch, close.
+PROOFS["lecture9-proof-by-cases"] = [
+    P(1, "(p & q) | (p & r)"),
+    _l(2, "p & q", "As", 1),
+    _l(3, "p", "ConjE", 1, [2]),
+    _l(4, "p & r", "As", 1),
+    _l(5, "p", "ConjE", 1, [4]),
+    _l(6, "p", "DisjE", 0, [1], subs=[[2, 3], [4, 5]]),
+]
+
+# ----------------------------------------------------------------- constructive dilemma
+# The same ∨E shape as lecture9-proof-by-cases, but the split is on a bare
+# premise rather than a conjunction sitting ready-boxed, so each case has to
+# fire its own conditional before ∨I closes it out on the matching side.
+PROOFS["constructive-dilemma"] = [
+    P(1, "p | q"),
+    P(2, "p > r"),
+    P(3, "q > s"),
+    _l(4, "p", "As", 1),
+    _l(5, "r", "CondE", 1, [2, 4]),
+    _l(6, "r | s", "DisjI", 1, [5]),
+    _l(7, "q", "As", 1),
+    _l(8, "s", "CondE", 1, [3, 7]),
+    _l(9, "r | s", "DisjI", 1, [8]),
+    _l(10, "r | s", "DisjE", 0, [1], subs=[[4, 6], [7, 9]]),
+]
