@@ -150,3 +150,6 @@ double-negation-theorem
 consensus-theorem
 combinatory-fixed-point
 mcgee-counterexample
+conjunctive-sufficiency
+addition-converse
+distribution-botched

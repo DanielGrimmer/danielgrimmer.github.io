@@ -1386,3 +1386,128 @@ clean. `extremely hard` (nd) count unchanged at 4 of 4 — none of the
 three new entries is close (`hard`, `easy`, `easy`). Comprehensive
 queue: 69 candidates left of 274 (94 now in the database). Course and
 imports queues remain at 0.
+
+## 2026-08-31 (continued) — Huntington/Robbins confirmed over the line
+a third time; three imported from further down §3.1/§3.6 instead
+
+Course and imports queues confirmed empty again (`--status` on both:
+0 candidates). `manifest.py --check-merge` before touching anything:
+`origin/main` was already fully merged into `claude/inventory-import`
+(152 entries, 152 expected), nothing to resolve.
+
+**Huntington's equation and the Robbins equation, independently
+re-verified, same conclusion a third time.** Before reading this log's
+own prior two entries on the pair, wrote both directions from scratch
+in `nd.py`'s line format and ran `nd.check()` directly — same
+motivation as the second entry: don't trust a hand estimate. First
+draft used a proof-by-cases-on-`q` route (re-deriving `q∨∼q` from
+nothing, then splitting on it twice more to build each disjunct) and
+landed at 49 lines, all five §14.3 triggers, `extremely hard`. Reading
+the log afterward found the second entry had already discovered and
+recorded the better route — reductio-against-`∨I` to pull `¬D1`/`¬D2`
+out of `¬(D1∨D2)` directly, skipping the from-scratch excluded-middle
+lemma — bringing its own version to 40 lines, still all five triggers,
+still over the line. Did not re-litigate which route is shorter; the
+second entry's 40-line figure is lower than this firing's 49 and is
+taken as the standing number. Both firings agree on the diagnosis: the
+`extremely hard` (nd) band is at 4 of the 4 the test suite allows
+(`assert.ok(worn.length >= 1 && worn.length <= 4)`,
+`_tests/argument-forms.test.mjs`), a genuinely shorter proof was not
+found on three independent attempts, and importing either equation
+now would need `ND_EXTREME_LINES` raised — a shared-calibration
+decision (it would also reopen `de-morgan-conjunction` and
+`material-conditional`, both sitting at exactly the current 29-line
+floor) that belongs to a firing or to Daniel making it deliberately,
+not to a routine clearing two rows. Left exactly where the last two
+firings left it. A fourth independent attempt at a shorter proof is
+probably not worth another firing's time; the number is likely a
+genuine floor for this identity in the twelve-rule system.
+
+Moved past both without stopping the routine, taking the next three
+importable rows instead — two of them further into §3.6 than the queue
+order alone would suggest, since positions 4–5 (`⊢(p∨q)⊃(p&q)`-style
+free-choice and XOR-definability rows) were skimmed and set aside for
+a future firing with more room, in favour of two rows whose provenance
+was already worked out by this database's own precedent.
+
+**`conjunctive-sufficiency`** (comprehensive, §3.1 "The paradoxes of
+material implication", CLI-307). `p&q ⊢ p⊃q` — the row this log's own
+prior entry investigated and deliberately left ("Stalnaker and Lewis
+are both named directly by the row, so the §11d fallback... would
+apply here too — just not chased fully this firing"). Picked it up
+directly: independently re-fetched §3.1's seven listed `sep` articles
+before touching the database, and reached the same dead end the prior
+entry recorded — `conditionals` resolves to Edgington's *Indicative
+Conditionals*, which does not state the C2/V contrast; `counterfactuals`
+does not either (fetched and searched its full text for "C2",
+"Stalnaker's logic", "Strong Centering" and "conjunctive sufficiency",
+none present); the article that does state it, Égré & Rott's *The
+Logic of Conditionals*, confirmed again (fetched directly: Table 6
+lists CS in systems SS, VC and C2 but not V, matching the row's own
+"In Stalnaker's C2, absent from Lewis's V" almost verbatim) is not on
+§3.1's list. Per §11d's fallback, named the champions the row itself
+names — Robert Stalnaker, whose system C2 is where the schema holds,
+with Lewis's contrasting V named in `work` rather than given a second
+`who` — `fidelity: our reconstruction`, `url: null`, no `quote` (the
+close paraphrase is confirmed accurate but is not any one source's own
+sentence). Valid, `easy` (nd) — 4 lines (`Pr, As, ConjE, CondI`), 0
+§14.3 triggers, matching `difficulty.py` exactly.
+
+**`addition-converse`** (comprehensive, §3.6 "Disjunction — Ross's
+paradox and free choice", CLI-311). `⊢ (p∨q)⊃p`, **INVALID**
+(`p=F,q=T`, matching the row's own countermodel exactly) — the
+converse of `addition`/`ross-paradox` (`p ⊢ p∨q`), included by the
+row's own gloss ("the conclusion really is weaker — what makes Ross's
+paradox a paradox"). No new SEP fetch needed: `ross-paradox`, already
+in the database, cites McNamara & Van De Putte's *Deontic Logic* (SEP,
+§6.3) for the same premise-conclusion pair read the other direction,
+so the same appearance is reused here with `fidelity: our
+reconstruction` (no `quote` — the citation covers Addition read as an
+imperative, not this specific converse) and `looks_like: ross-paradox`
+set both ways. Checked the `interest` claim ("witnessed here by
+`p=F,q=T`") against `derive.py`'s own computed countermodel before
+writing it: matches. Invalid, no derivation — `nd.note` says why
+(`∨I` only ever moves from a disjunct to the disjunction, never back).
+
+**`distribution-botched`** (comprehensive, §3.6, CLI-315). `p∨(q&r) ⊢
+(p∨q)&r`, **INVALID** (2 of 8: `p=T,q=T,r=F` and `p=T,q=F,r=F`,
+matching the row's own count and both computed countermodels). The
+deliberately-invalid companion to the existing `distribution`
+(`p&(q∨r) ⊃ (p&q)∨(p&r)`), reshuffling `∨`/`&` the other way. Reused
+`distribution`'s own SEP appearance (Michael Dummett, *Disjunction*)
+rather than re-fetching, since the two rows are about the same
+disjunction/conjunction interplay and neither claims a fresh quote —
+`fidelity: our reconstruction`, no `quote`, `looks_like: distribution`
+set both ways. Checked the "both countermodels share exactly that
+shape: `p` true, `r` false, `q` either way" claim against the computed
+countermodels before writing it: matches both.
+
+Checked all three against the database for near-duplicate ids and
+premise/conclusion pairs before writing (none beyond the two
+deliberate `looks_like` pairings). `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty; none of the three appearances is course, Restall or
+archive, so none needed it.
+
+**Fresh container again had no LaTeX toolchain**; same gap every prior
+firing recorded. `apt-get install texlive-latex-base
+texlive-latex-extra texlive-fonts-recommended dvisvgm` first (one
+`apt-get update` needed first this time, plus `--fix-missing`, for two
+unrelated 404s on `libegl-mesa0`/`ruby3.2` that a second attempt after
+`update` cleared), then `texlive-science` (`stmaryrd.sty`,
+`fitch.sty`) and `texlive-humanities` (`qtree.sty`) for the same two
+missing packages every prior firing hit. Both installed cleanly.
+
+`build.py --write` (three entries normalised, atoms already legal
+throughout — `p`, `q`, `r` — no renames; `nd` difficulty authored for
+`conjunctive-sufficiency`, `null` for the two invalid entries,
+`difficulty.py --diff` agreed on all three, no override needed),
+`svg.py` (10 SVGs), `svg.py --check` (every SVG current),
+`inventory.py --locks` (0 practicable methods locked — none of the
+three carries a `problem_set`), `manifest.py --check-merge` (155
+entries, 152 expected from the merge parents, nothing lost), and
+`node --test "_tests/*.test.mjs"` (513/513) all clean. `extremely
+hard` (nd) count unchanged at 4 of 4 — none of the three new entries
+is close (`easy`, invalid/no-nd, invalid/no-nd). Comprehensive queue:
+66 candidates left of 274 (97 now in the database). Course and
+imports queues remain at 0.

@@ -2104,6 +2104,17 @@ PROOFS["mcgee-counterexample"] = [
 # `de-morgan-disjunction` uses, then opens a *third* reductio (`p`) to turn
 # `~A` plus `q` into `~p` -- at which point `~p` and `r` build `B` directly
 # by `ConjI`, no further reductio needed, and `B` collides with `~B`.
+# ------------------------------------------------------------- conjunctive-sufficiency
+# `&E` reaches `q` directly from the premise; `>I` supplies the rest. The
+# premise's `p` conjunct is never cited -- it only fixes which conditional
+# gets built, not how `q` is reached.
+PROOFS["conjunctive-sufficiency"] = [
+    P(1, "p & q"),
+    _l(2, "p", "As", 1),
+    _l(3, "q", "ConjE", 1, [1]),
+    _l(4, "p > q", "CondI", 0, subs=[[2, 3]]),
+]
+
 PROOFS["consensus-theorem"] = [
     _l(1, "(p & q) | (~p & r) | (q & r)", "As", 1),
     _l(2, "(p & q) | (~p & r)", "As", 2),
