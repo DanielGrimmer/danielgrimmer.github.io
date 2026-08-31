@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 108,
+ "count": 111,
  "entries": [
   {
    "id": "ex-falso",
@@ -54268,6 +54268,871 @@
     "premises": [],
     "conclusion": "(p ⊃ ∼p) ≡ ∼p",
     "sequent": "⊨ (p ⊃ ∼p) ≡ ∼p"
+   }
+  },
+  {
+   "id": "or-to-if",
+   "cli_ref": "—",
+   "names": [
+    "Or-to-if",
+    "The direct argument"
+   ],
+   "premises": [
+    "p | q"
+   ],
+   "conclusion": "~p > q",
+   "interest": "`p ∨ q` alone -- no second premise -- delivers `∼p ⊃ q`, and the two are truth-functionally equivalent, so the inference runs both ways. That equivalence is what philosophers of conditionals call the direct argument: anyone who accepts that a disjunction licenses the matching conditional is already treating indicative *if* as the material conditional, which most accounts of ordinary conditionals deny. The derivation is not a new idea so much as `disjunctive-syllogism` wearing an extra layer: assume the antecedent `∼p`, and the case split on `p ∨ q` needs exactly that entry's nested reductio to strip the `p` case down to `q`, with the `q` case falling out for free. No source in the imports inventory names a champion for this direction of the inference; a survey of the direct argument in the conditionals literature would settle it.",
+   "english": [
+    {
+     "gloss": "Either the meeting is on Monday or on Tuesday; so if it is not on Monday, it is on Tuesday.",
+     "faithful": true
+    }
+   ],
+   "appearances": [],
+   "appearances_pending": true,
+   "looks_like": "disjunctive-syllogism",
+   "tags": {
+    "topic": [
+     "conditionals",
+     "philosophy of logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Imports §3 (brainstorm, 'Contested classics'), no named champion -- appearances_pending. Teaches well right after `disjunctive-syllogism`, whose reductio it reuses under an outer ⊃I.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "the derivation nests disjunctive-syllogism's reductio inside a ⊃I, so no earlier than Lecture 10"
+    }
+   },
+   "difficulty": {
+    "nd": "hard",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p | q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 4,
+      "f": "~q",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       3,
+       2
+      ]
+     },
+     {
+      "n": 6,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        4,
+        5
+       ]
+      ]
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 2,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 9,
+      "f": "q",
+      "rule": "Reit",
+      "depth": 2,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "q",
+      "rule": "DisjE",
+      "depth": 1,
+      "cites": [
+       1
+      ],
+      "subs": [
+       [
+        3,
+        7
+       ],
+       [
+        8,
+        9
+       ]
+      ]
+     },
+     {
+      "n": 11,
+      "f": "~p > q",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        10
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Disj q}\n\\open\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{p}\n\\open\n\\hypo{4}{\\Neg q}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{3,2}\n\\close\n\\have{6}{\\Neg \\Neg q}\\by{\\NegI}{4,5}\n\\have{7}{q}\\by{\\NegE}{6}\n\\close\n\\open\n\\hypo{8}{q}\n\\have{9}{q}\\by{\\Reit}{8}\n\\close\n\\have{10}{q}\\by{\\DisjE}{1,3-7,8-9}\n\\close\n\\have{11}{\\Neg p\\Cond q}\\by{\\CondI}{2,10}\n\\end{nd}\n\\end{align*}",
+    "lines": 11,
+    "max_subproof_depth": 3,
+    "subproof_count": 4,
+    "assumption_count": 4,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "CondI",
+     "DisjE",
+     "FalsumI",
+     "NegE",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 3,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p ∨ q",
+     "∼p ⊃ q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Disj q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg p\\Cond q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj q}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Disj q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg p\\Cond q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj q}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj q}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Cond q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "p ∨ q",
+     "∼(∼p ⊃ q)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼p",
+       "from": "∼(∼p ⊃ q)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼q",
+       "from": "∼(∼p ⊃ q)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "p",
+         "from": "p ∨ q",
+         "rule": "∨"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "q",
+         "from": "p ∨ q",
+         "rule": "∨"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ∨ q",
+     "branch_rule": "∨"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Disj q$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (\\Neg p\\Cond q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg q$} [.{$p$ \\\\ x} ] [.{$q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p | q",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 1,
+    "connectives": [
+     "conditional",
+     "disjunction",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 7,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 2,
+    "tree_branch_depth": 1,
+    "countermodel_count": 0,
+    "premise_true_rows": 3,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "p ∨ q"
+    ],
+    "conclusion": "∼p ⊃ q",
+    "sequent": "p ∨ q  ⊨ ∼p ⊃ q"
+   }
+  },
+  {
+   "id": "curry-sequent",
+   "cli_ref": "—",
+   "names": [
+    "Curry's sequent",
+    "The negation-free Curry paradox"
+   ],
+   "premises": [
+    "p = (p > q)"
+   ],
+   "conclusion": "q",
+   "interest": "`curry-complete` runs the paradox on two `⊃` premises, one for contraction and one for the fixed point; this is the same collapse packaged into a single biconditional, and no negation appears anywhere in the seven-line proof -- `≡E`, `⊃I` and `⊃E` are all it needs. A sentence that says 'if I am true, then q' makes q provable outright, whatever q is, and the argument never touches a contradiction, so none of the usual reductio-shaped responses to the Liar apply to it. What the proof does need is `p` in two roles: once as the assumption that unlocks `p ⊃ q` from the biconditional, and again, once that conditional is detached, as the very premise that fires it -- the single reuse that a contraction-free logic is built to refuse. Compare `curry-complete`, which spells the same reuse out across two premises instead of one.",
+   "english": [
+    {
+     "gloss": "Let C be the sentence 'if this very sentence is true, then it will rain tomorrow.' C is true exactly when it is; so it will rain tomorrow.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Haskell Curry",
+     "work": "Curry's Paradox",
+     "locus": "SEP",
+     "url": "https://plato.stanford.edu/entries/curry-paradox/"
+    }
+   ],
+   "looks_like": "curry-complete",
+   "tags": {
+    "topic": [
+     "paradox",
+     "self-reference",
+     "structural rules"
+    ],
+    "defect": [],
+    "figure": [
+     "Curry"
+    ],
+    "nonclassical": [
+     "contraction-free-blocks"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Imports §3 (brainstorm, 'Structural-rule stars'), champion named in the row. Teach after `curry-complete`: this is the same collapse with the fixed point built into the premise instead of argued for.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "mechanically available from Lecture 10 -- ≡E, ⊃I, ⊃E only, no reductio -- though the point is the Lecture 11 structural-rules theme"
+    }
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p = (p > q)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "p > q",
+      "rule": "BicondE",
+      "depth": 1,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       3,
+       2
+      ]
+     },
+     {
+      "n": 5,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 0,
+      "cites": [
+       1,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       5,
+       6
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Bicond (p\\Cond q)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Cond q}\\by{\\BicondE}{1,2}\n\\have{4}{q}\\by{\\CondE}{3,2}\n\\close\n\\have{5}{p\\Cond q}\\by{\\CondI}{2,4}\n\\have{6}{p}\\by{\\BicondE}{1,5}\n\\have{7}{q}\\by{\\CondE}{5,6}\n\\end{nd}\n\\end{align*}",
+    "lines": 7,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "BicondE",
+     "CondE",
+     "CondI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p ≡ (p ⊃ q)",
+     "q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Bicond (p\\Cond q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Bicond (p\\Cond q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "p ≡ (p ⊃ q)",
+     "∼q"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "p",
+         "from": "p ≡ (p ⊃ q)",
+         "rule": "≡"
+        },
+        {
+         "formula": "p ⊃ q",
+         "from": "p ≡ (p ⊃ q)",
+         "rule": "≡"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p",
+           "from": "p ⊃ q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "q",
+           "from": "p ⊃ q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "p ⊃ q",
+       "branch_rule": "⊃"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "p ≡ (p ⊃ q)",
+         "rule": "≡"
+        },
+        {
+         "formula": "∼(p ⊃ q)",
+         "from": "p ≡ (p ⊃ q)",
+         "rule": "≡"
+        },
+        {
+         "formula": "p",
+         "from": "∼(p ⊃ q)",
+         "rule": "∼⊃"
+        },
+        {
+         "formula": "∼q",
+         "from": "∼(p ⊃ q)",
+         "rule": "∼⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ≡ (p ⊃ q)",
+     "branch_rule": "≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 3,
+    "branch_depth": 2,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Bicond (p\\Cond q)$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg q$} [.{$p$ \\\\ \\ckpad $p\\Cond q$\\quad\\checkmark} [.{$\\Neg p$ \\\\ x} ] [.{$q$ \\\\ x} ] ] [.{$\\Neg p$ \\\\ \\ckpad $\\Neg (p\\Cond q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p = (p > q)",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 2
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 1,
+    "connectives": [
+     "biconditional",
+     "conditional"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 6,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 3,
+    "tree_branch_depth": 2,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "p ≡ (p ⊃ q)"
+    ],
+    "conclusion": "q",
+    "sequent": "p ≡ (p ⊃ q)  ⊨ q"
+   }
+  },
+  {
+   "id": "double-negation-introduction",
+   "cli_ref": "—",
+   "names": [
+    "Double-negation introduction",
+    "DNI"
+   ],
+   "premises": [
+    "p"
+   ],
+   "conclusion": "~~p",
+   "interest": "Section 6.5 calls the classical reductio the commonest shape in the database, and this is the shape stripped to its minimum: nearly thirty of the proofs already here end a subproof by pairing this step with its mirror, `NegE`, to strip a double negation back down to the goal -- yet nothing has asked for the step on its own until now. Its own proof needs nothing beyond the reductio's bare skeleton: `p` already supplies one half of the contradiction that `⊥I` needs, so assuming `∼p` and reiterating it into that role is the entire subproof, five lines in total, one of them the premise. That shortness is not a shortcut -- there is no explosion rule among the twelve, so a contradiction never hands over a formula directly, and the reductio has to run even when one side of it was sitting on the page from the start. The result marks the safe edge of the intuitionist boundary: `p ⊢ ∼∼p` holds constructively, while its converse, double-negation elimination, does not.",
+   "english": [
+    {
+     "gloss": "Something is so; therefore, it is not the case that it is not so.",
+     "faithful": true
+    }
+   ],
+   "appearances": [],
+   "appearances_pending": true,
+   "tags": {
+    "topic": [
+     "proof theory",
+     "propositional logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": [
+     "intuitionistic"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Imports §3 (brainstorm, 'Structural-rule stars'), no named champion -- appearances_pending. Cheap and thematically apt right after Lecture 10 introduces `NegI`/`NegE`; every later reductio in the database already leans on this step in passing.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "~p",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       1,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p}\n\\open\n\\hypo{2}{\\Neg p}\n\\have{3}{\\Neg p}\\by{\\Reit}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{1,3}\n\\close\n\\have{5}{\\Neg \\Neg p}\\by{\\NegI}{2,4}\n\\end{nd}\n\\end{align*}",
+    "lines": 5,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "FalsumI",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 2,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p"
+    ],
+    "columns": [
+     "p",
+     "∼∼p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg \\Neg p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{\\Neg \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{\\Neg \\Neg p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg \\Neg p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{\\Neg \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{\\Neg \\Neg p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "p",
+     "∼∼∼p"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼p",
+       "from": "∼∼∼p",
+       "rule": "∼∼"
+      }
+     ],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad p$ \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg \\Neg p$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 1,
+    "premise_count": 1,
+    "connectives": [
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 4,
+    "table_rows": 2,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 0,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "p"
+    ],
+    "conclusion": "∼∼p",
+    "sequent": "p  ⊨ ∼∼p"
    }
   }
  ],

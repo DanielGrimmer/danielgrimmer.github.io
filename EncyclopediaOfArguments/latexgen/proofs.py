@@ -1683,3 +1683,48 @@ PROOFS["self-undermining-biconditional"] = [
     _l(10, "p > ~p", "CondI", 1, subs=[[8, 9]]),
     _l(11, "(p > ~p) = ~p", "BicondI", 0, subs=[[1, 6], [7, 10]]),
 ]
+
+# ---------------------------------------------------------------------- or-to-if
+# `disjunctive-syllogism` wrapped in a CondI: assuming ~p for the goal's
+# antecedent turns the disjunction premise into exactly that entry's two
+# premises, so the case split and its nested reductio are copied wholesale
+# and only the outer CondI is new.
+PROOFS["or-to-if"] = [
+    P(1, "p | q"),
+    _l(2, "~p", "As", 1),
+    _l(3, "p", "As", 2),
+    _l(4, "~q", "As", 3),
+    _l(5, "!", "FalsumI", 3, [3, 2]),
+    _l(6, "~~q", "NegI", 2, subs=[[4, 5]]),
+    _l(7, "q", "NegE", 2, [6]),
+    _l(8, "q", "As", 2),
+    _l(9, "q", "Reit", 2, [8]),
+    _l(10, "q", "DisjE", 1, [1], subs=[[3, 7], [8, 9]]),
+    _l(11, "~p > q", "CondI", 0, subs=[[2, 10]]),
+]
+
+# -------------------------------------------------------------- Curry's sequent
+# No reductio anywhere: ≡E hands back the conditional once p is assumed, ⊃E
+# closes that inner subproof to q, ⊃I packages the pair as p⊃q, and then ≡E
+# and ⊃E run once more outside to detach p and then q from it directly.
+PROOFS["curry-sequent"] = [
+    P(1, "p = (p > q)"),
+    _l(2, "p", "As", 1),
+    _l(3, "p > q", "BicondE", 1, [1, 2]),
+    _l(4, "q", "CondE", 1, [3, 2]),
+    _l(5, "p > q", "CondI", 0, subs=[[2, 4]]),
+    _l(6, "p", "BicondE", 0, [1, 5]),
+    _l(7, "q", "CondE", 0, [5, 6]),
+]
+
+# ------------------------------------------------------- double-negation intro
+# The mirror image of NegE, and the shortest reductio in the system: the
+# premise is already one half of the contradiction, so the only thing the
+# subproof does is reiterate it into the role ⊥I needs.
+PROOFS["double-negation-introduction"] = [
+    P(1, "p"),
+    _l(2, "~p", "As", 1),
+    _l(3, "~p", "Reit", 1, [2]),
+    _l(4, "!", "FalsumI", 1, [1, 3]),
+    _l(5, "~~p", "NegI", 0, subs=[[2, 4]]),
+]

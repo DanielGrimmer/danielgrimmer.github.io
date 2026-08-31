@@ -106,3 +106,6 @@ two-switches-lightbulb
 conditional-excluded-middle
 bivalence-pigeonhole
 self-undermining-biconditional
+or-to-if
+curry-sequent
+double-negation-introduction
