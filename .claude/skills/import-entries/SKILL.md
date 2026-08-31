@@ -373,7 +373,15 @@ its formulas will not parse; the verdict disagrees with what the table
 computes; no derivation can be found for a valid form; it duplicates an entry
 already present.
 
-If the queue is empty, say so in the log, do nothing else, and stop.
+**When the queues are empty, stop silently.** All three sources are finite and
+the third is the last one, so this is the normal end of the work rather than a
+fault. Record it once in `IMPORT_LOG.md` — a single line under **Resolved**
+saying which source ran out and when — and on every firing after that, having
+found the queues still empty, **do nothing at all**: no commit, no push, no
+second log line. The routine fires hourly and would otherwise leave a trail of
+identical "nothing to do" commits on the branch, which is noise in a pull
+request someone has to read. Say so in your reply to the session and end the
+turn.
 
 ## Rules that hold whatever else happens
 
