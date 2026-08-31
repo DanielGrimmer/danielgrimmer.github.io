@@ -135,3 +135,6 @@ van-benthem-goodness-preference
 sobel-sequence-defeater
 theological-fatalism-minus-necessity
 boole-cancellation-fallacy
+belief-closure-impossible-world
+hesperus-phosphorus-belief
+lob-without-the-box
