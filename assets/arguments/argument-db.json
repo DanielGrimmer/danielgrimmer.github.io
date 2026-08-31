@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 114,
+ "count": 120,
  "entries": [
   {
    "id": "ex-falso",
@@ -57990,6 +57990,724 @@
     ],
     "conclusion": "(p & r) ⊃ (q ⊃ s)",
     "sequent": "p ⊃ ((q & r) ⊃ s)  ⊨ (p & r) ⊃ (q ⊃ s)"
+   }
+  },
+  {
+   "id": "double-negation-elimination",
+   "cli_ref": "—",
+   "names": [
+    "Double-negation elimination",
+    "DNE"
+   ],
+   "premises": [
+    "~~p"
+   ],
+   "conclusion": "p",
+   "interest": "Restall poses this as a direct challenge inside his own natural-deduction chapter: derive it without appealing to `NegE` itself, and notice that nothing else in the system gets you there -- no combination of the other eleven rules eliminates a double negation. That is exactly why `NegE` is one of the twelve rather than a theorem *of* the twelve, and the entry's own derivation makes the point by being as short as a derivation can be: one line, a single citation of the rule that exists for precisely this move. Its mirror `double-negation-introduction` costs a full reductio -- assume `~p`, reiterate it, collide it with the premise, discharge -- so the two directions of double negation are not symmetric in proof even though they are symmetric in content.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Greg Restall",
+     "work": "Logic",
+     "locus": "Ch 7, worked in the text (6 of 9)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "propositional logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": [
+     "intuitionistic-fails"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Unassigned Restall material (Ch 7, worked in the text) -- Restall's own challenge is to try proving it without DNE first, so it pairs well with a brief remark on why the course's twelve rules include NegE as a primitive rather than deriving it. difficulty.py's heuristic flags this nd score as a suggested 'medium' (an 'undictated reductio', from its blunt uses_indirect_proof check), but that check only looks at whether NegI/NegE appear anywhere in the proof, not whether any assumption was opened -- and this proof has zero subproofs and zero assumptions, just one direct citation of the primitive rule. No reductio, dictated or otherwise, occurs, so 'easy' stands.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~~p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       1
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{\\Neg \\Neg p}\n\\have{2}{p}\\by{\\NegE}{1}\n\\end{nd}\n\\end{align*}",
+    "lines": 2,
+    "max_subproof_depth": 0,
+    "subproof_count": 0,
+    "assumption_count": 0,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "NegE"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 2,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p"
+    ],
+    "columns": [
+     "∼∼p",
+     "p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{\\Neg \\Neg p}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{\\Neg \\Neg p}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{\\Neg \\Neg p}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{\\Neg \\Neg p}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼∼p",
+     "∼p"
+    ],
+    "tree": {
+     "added": [],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad \\Neg \\Neg p$ \\\\ $\\Neg A:\\quad \\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "~~p",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 1,
+    "premise_count": 1,
+    "connectives": [
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 4,
+    "table_rows": 2,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 0,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "looks_like": "double-negation-introduction",
+   "display": {
+    "premises": [
+     "∼∼p"
+    ],
+    "conclusion": "p",
+    "sequent": "∼∼p  ⊨ p"
+   }
+  },
+  {
+   "id": "contraposition-recovered",
+   "cli_ref": "—",
+   "names": [
+    "Contraposition, the DNE-dependent direction",
+    "Contraposition, recovered"
+   ],
+   "premises": [
+    "~q > ~p"
+   ],
+   "conclusion": "p > q",
+   "interest": "The companion form to `double-negation-elimination`, sitting right beside it in Restall's own worked list, and the two challenges are the same one twice: `contraposition-bakery` runs this same pair of conditionals the other way (`p⊃q` to `~q⊃~p`) and needs nothing but a plain reductio, provable without DNE; going back -- from `~q⊃~p` to `p⊃q` -- only gets as far as `~~q` by the identical route, and closing that last gap to `q` is where `NegE` has to be spent. So the two directions of contraposition split exactly along the classical/intuitionistic line, with this direction on the far side, and the single extra line at the end of the derivation is the whole of the difference.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Greg Restall",
+     "work": "Logic",
+     "locus": "Ch 7, worked in the text (7 of 9)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "propositional logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": [
+     "intuitionistic-fails"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Unassigned Restall material (Ch 7, worked in the text) -- the companion form to the DNE entry; teach the two back to back with `contraposition-bakery` to show all three legs of contraposition (one direction free, one direction costing DNE, and the biconditional needing both).",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~q > ~p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "~q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 4,
+      "f": "~p",
+      "rule": "CondE",
+      "depth": 2,
+      "cites": [
+       1,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       2,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        3,
+        5
+       ]
+      ]
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        7
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{\\Neg q\\Cond \\Neg p}\n\\open\n\\hypo{2}{p}\n\\open\n\\hypo{3}{\\Neg q}\n\\have{4}{\\Neg p}\\by{\\CondE}{1,3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{2,4}\n\\close\n\\have{6}{\\Neg \\Neg q}\\by{\\NegI}{3,5}\n\\have{7}{q}\\by{\\NegE}{6}\n\\close\n\\have{8}{p\\Cond q}\\by{\\CondI}{2,7}\n\\end{nd}\n\\end{align*}",
+    "lines": 8,
+    "max_subproof_depth": 2,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI",
+     "FalsumI",
+     "NegE",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 3,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "q",
+     "p"
+    ],
+    "columns": [
+     "∼q ⊃ ∼p",
+     "p ⊃ q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "q": "T",
+       "p": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "q": "T",
+       "p": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "q": "F",
+       "p": "T"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "q": "F",
+       "p": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad q \\qquad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg q\\Cond \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p\\Cond q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{q}{T} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{\\Neg q\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{q}{T} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{\\Neg q\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{q}{F} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{\\Neg q\\Cond \\Neg p}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\quad$ \\\\\n        $\\quad \\uv{q}{F} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{\\Neg q\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad q \\qquad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg q\\Cond \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p\\Cond q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{q}{T} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{\\Neg q\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{q}{T} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{\\Neg q\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\quad$ \\\\\n        $\\quad \\uv{q}{F} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{\\Neg q\\Cond \\Neg p}{F} \\quad$ & $\\quad \\uv{p\\Cond q}{F} \\quad$ \\\\\n        $\\quad \\uv{q}{F} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{\\Neg q\\Cond \\Neg p}{T} \\quad$ & $\\quad \\uv{p\\Cond q}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼q ⊃ ∼p",
+     "∼(p ⊃ q)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "p",
+       "from": "∼(p ⊃ q)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼q",
+       "from": "∼(p ⊃ q)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼∼q",
+         "from": "∼q ⊃ ∼p",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "∼q ⊃ ∼p",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼q ⊃ ∼p",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad \\Neg q\\Cond \\Neg p$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (p\\Cond q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg q$} [.{$\\Neg \\Neg q$ \\\\ x} ] [.{$\\Neg p$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "~q > ~p",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 1,
+    "connectives": [
+     "conditional",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 8,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 2,
+    "tree_branch_depth": 1,
+    "countermodel_count": 0,
+    "premise_true_rows": 3,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "looks_like": "contraposition-bakery",
+   "display": {
+    "premises": [
+     "∼q ⊃ ∼p"
+    ],
+    "conclusion": "p ⊃ q",
+    "sequent": "∼q ⊃ ∼p  ⊨ p ⊃ q"
+   }
+  },
+  {
+   "id": "double-negated-excluded-middle",
+   "cli_ref": "—",
+   "names": [
+    "Double-negated excluded middle"
+   ],
+   "premises": [],
+   "conclusion": "~~(p | ~p)",
+   "interest": "Restall's own 'prove the double negation first' strategy, and the sharpest possible illustration of what `NegE` actually buys: `excluded-middle` itself fails intuitionistically, but this doubly-negated form does not, and the database's own derivation shows why in one step -- it is lines 1 through 9 of `excluded-middle`'s proof verbatim, stopping one line short of the final `NegE` that peels the outer negation pair off. Reaching `~~(p ∨ ~p)` costs nothing but reductio and `∨I`; reaching `p ∨ ~p` itself costs that, plus the one classical rule. `peirce-law` and `excluded-middle` mark the same boundary from the far side; this entry marks it from the near side, as the theorem intuitionistic logic will actually grant.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Greg Restall",
+     "work": "Logic",
+     "locus": "Ch 7, worked in the text (9 of 9)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "propositional logic",
+     "bivalence"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": [
+     "intuitionistic"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Unassigned Restall material (Ch 7, worked in the text) -- the book's own line 8 of the `A ∨ ∼A` proof, presented as its own theorem; good paired with `excluded-middle` to show the exact point DNE gets spent.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~(p | ~p)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p | ~p",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       3,
+       1
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p | ~p",
+      "rule": "DisjI",
+      "depth": 1,
+      "cites": [
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "~(p | ~p)",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       6,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "~~(p | ~p)",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        8
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg (p\\Disj \\Neg p)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj \\Neg p}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\have{6}{p\\Disj \\Neg p}\\by{\\DisjI}{5}\n\\have{7}{\\Neg (p\\Disj \\Neg p)}\\by{\\Reit}{1}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{6,7}\n\\close\n\\have{9}{\\Neg \\Neg (p\\Disj \\Neg p)}\\by{\\NegI}{1,8}\n\\end{nd}\n\\end{align*}",
+    "lines": 9,
+    "max_subproof_depth": 2,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "DisjI",
+     "FalsumI",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 2,
+    "premise_true_rows": 2,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p"
+    ],
+    "columns": [
+     "∼∼(p ∨ ∼p)"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $\\Neg \\Neg (p\\Disj \\Neg p)$ \\\\\n        \\hline\n        T & $\\uv{\\Neg}{T}\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\uv{\\Neg}{F}\\phantom{p}\\phantom{)}$ \\\\\n        F & $\\uv{\\Neg}{T}\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\uv{\\Neg}{T}\\phantom{p}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $\\uv{\\Neg}{M}\\uv{\\Neg}{.}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\uv{\\Neg}{.}\\phantom{p}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $\\Neg \\Neg (p\\Disj \\Neg p)$ \\\\\n        \\hline\n        T & $\\uv{\\Neg}{T}\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\uv{\\Neg}{F}\\phantom{p}\\phantom{)}$ \\\\\n        F & $\\uv{\\Neg}{T}\\uv{\\Neg}{F}\\phantom{(}\\phantom{p}\\uv{\\Disj}{T}\\uv{\\Neg}{T}\\phantom{p}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $\\uv{\\Neg}{M}\\uv{\\Neg}{.}\\phantom{(}\\phantom{p}\\uv{\\Disj}{.}\\uv{\\Neg}{.}\\phantom{p}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼∼∼(p ∨ ∼p)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼(p ∨ ∼p)",
+       "from": "∼∼∼(p ∨ ∼p)",
+       "rule": "∼∼"
+      },
+      {
+       "formula": "∼p",
+       "from": "∼(p ∨ ∼p)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "∼∼p",
+       "from": "∼(p ∨ ∼p)",
+       "rule": "∼∨"
+      }
+     ],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg \\Neg \\Neg (p\\Disj \\Neg p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $\\Neg (p\\Disj \\Neg p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg \\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 1,
+    "premise_count": 0,
+    "connectives": [
+     "disjunction",
+     "negation"
+    ],
+    "max_formula_depth": 4,
+    "total_formula_size": 6,
+    "table_rows": 2,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 0,
+    "countermodel_count": 0,
+    "premise_true_rows": 2,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "looks_like": "excluded-middle",
+   "display": {
+    "premises": [],
+    "conclusion": "∼∼(p ∨ ∼p)",
+    "sequent": "⊨ ∼∼(p ∨ ∼p)"
    }
   }
  ],

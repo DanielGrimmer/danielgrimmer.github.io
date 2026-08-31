@@ -115,3 +115,6 @@ ross-paradox
 strengthen-and-weaken
 self-distribution-premised
 exportation-reordered
+double-negation-elimination
+contraposition-recovered
+double-negated-excluded-middle

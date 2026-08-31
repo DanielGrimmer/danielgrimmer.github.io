@@ -1840,3 +1840,42 @@ PROOFS["exportation-reordered"] = [
     _l(9, "q > s", "CondI", 1, subs=[[6, 8]]),
     _l(10, "(p & r) > (q > s)", "CondI", 0, subs=[[2, 9]]),
 ]
+
+# ----------------------------------------------------- double-negation-elimination
+# The whole proof is the rule itself -- one citation of NegE, which is exactly
+# Restall's point: nothing built from the other eleven rules gets here.
+PROOFS["double-negation-elimination"] = [
+    P(1, "~~p"),
+    _l(2, "p", "NegE", 0, [1]),
+]
+
+# --------------------------------------------------------- contraposition-recovered
+# Same shape as contraposition-bakery's own reductio, run to get q from ~q --
+# but landing on ~~q, not q, so the derivation needs one more line, NegE, to
+# close the gap contraposition-bakery's direction never opens.
+PROOFS["contraposition-recovered"] = [
+    P(1, "~q > ~p"),
+    _l(2, "p", "As", 1),
+    _l(3, "~q", "As", 2),
+    _l(4, "~p", "CondE", 2, [1, 3]),
+    _l(5, "!", "FalsumI", 2, [2, 4]),
+    _l(6, "~~q", "NegI", 1, subs=[[3, 5]]),
+    _l(7, "q", "NegE", 1, [6]),
+    _l(8, "p > q", "CondI", 0, subs=[[2, 7]]),
+]
+
+# ----------------------------------------------------- double-negated-excluded-middle
+# excluded-middle's own proof, verbatim, minus its last line: this is exactly
+# the ~~(p | ~p) that proof reaches before spending NegE to strip the outer
+# pair. Restall's "prove the double negation first" strategy, read off directly.
+PROOFS["double-negated-excluded-middle"] = [
+    _l(1, "~(p | ~p)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p | ~p", "DisjI", 2, [2]),
+    _l(4, "!", "FalsumI", 2, [3, 1]),
+    _l(5, "~p", "NegI", 1, subs=[[2, 4]]),
+    _l(6, "p | ~p", "DisjI", 1, [5]),
+    _l(7, "~(p | ~p)", "Reit", 1, [1]),
+    _l(8, "!", "FalsumI", 1, [6, 7]),
+    _l(9, "~~(p | ~p)", "NegI", 0, subs=[[1, 8]]),
+]
