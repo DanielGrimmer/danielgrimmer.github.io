@@ -112,3 +112,6 @@ double-negation-introduction
 destructive-dilemma
 disjunction-from-conditional
 ross-paradox
+strengthen-and-weaken
+self-distribution-premised
+exportation-reordered

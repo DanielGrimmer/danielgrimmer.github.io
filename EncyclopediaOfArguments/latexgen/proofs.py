@@ -1797,3 +1797,46 @@ PROOFS["ross-paradox"] = [
     P(1, "p"),
     _l(2, "p | q", "DisjI", 0, [1]),
 ]
+
+# ------------------------------------------------------- strengthen-and-weaken
+# antecedent-strengthening's &E, plus one line of ∨I to loosen the conclusion
+# too. The two moves are independent, so nothing is shared between them.
+PROOFS["strengthen-and-weaken"] = [
+    P(1, "p > q"),
+    _l(2, "p & r", "As", 1),
+    _l(3, "p", "ConjE", 1, [2]),
+    _l(4, "q", "CondE", 1, [1, 3]),
+    _l(5, "q | s", "DisjI", 1, [4]),
+    _l(6, "(p & r) > (q | s)", "CondI", 0, subs=[[2, 5]]),
+]
+
+# --------------------------------------------------- self-distribution-premised
+# Two-deep nesting, same shape as `permutation`: assume the inner conditional,
+# then assume p, and ⊃E twice to reach r before discharging outward.
+PROOFS["self-distribution-premised"] = [
+    P(1, "p > q"),
+    _l(2, "p > (q > r)", "As", 1),
+    _l(3, "p", "As", 2),
+    _l(4, "q", "CondE", 2, [1, 3]),
+    _l(5, "q > r", "CondE", 2, [2, 3]),
+    _l(6, "r", "CondE", 2, [5, 4]),
+    _l(7, "p > r", "CondI", 1, subs=[[3, 6]]),
+    _l(8, "(p > (q > r)) > (p > r)", "CondI", 0, subs=[[2, 7]]),
+]
+
+# ----------------------------------------------------------- exportation-reordered
+# Extract p and r from the antecedent, detach the exported consequent, then
+# reassemble q with the extracted r to feed it -- ten lines, matching the
+# book's own count for this one.
+PROOFS["exportation-reordered"] = [
+    P(1, "p > ((q & r) > s)"),
+    _l(2, "p & r", "As", 1),
+    _l(3, "p", "ConjE", 1, [2]),
+    _l(4, "r", "ConjE", 1, [2]),
+    _l(5, "(q & r) > s", "CondE", 1, [1, 3]),
+    _l(6, "q", "As", 2),
+    _l(7, "q & r", "ConjI", 2, [6, 4]),
+    _l(8, "s", "CondE", 2, [5, 7]),
+    _l(9, "q > s", "CondI", 1, subs=[[6, 8]]),
+    _l(10, "(p & r) > (q > s)", "CondI", 0, subs=[[2, 9]]),
+]
