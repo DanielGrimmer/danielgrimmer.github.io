@@ -109,3 +109,6 @@ self-undermining-biconditional
 or-to-if
 curry-sequent
 double-negation-introduction
+destructive-dilemma
+disjunction-from-conditional
+ross-paradox

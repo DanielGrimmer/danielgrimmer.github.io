@@ -1728,3 +1728,72 @@ PROOFS["double-negation-introduction"] = [
     _l(4, "!", "FalsumI", 1, [1, 3]),
     _l(5, "~~p", "NegI", 0, subs=[[2, 4]]),
 ]
+
+# ----------------------------------------------------------- destructive dilemma
+# constructive-dilemma's dual, and not as easy: neither case gets its disjunct
+# by a bare ⊃E, since what each needs is a *negative* conclusion the goal
+# does not name a rule for. So each case opens its own reductio -- assume the
+# antecedent, fire ⊃E, collide with the disjunct that names its negation
+# (cited directly outward, not reiterated, per the De Morgan I precedent) --
+# and only then is there a formula for ∨I to extend.
+PROOFS["destructive-dilemma"] = [
+    P(1, "p > q"),
+    P(2, "r > s"),
+    P(3, "~q | ~s"),
+    _l(4, "~q", "As", 1),
+    _l(5, "p", "As", 2),
+    _l(6, "q", "CondE", 2, [1, 5]),
+    _l(7, "!", "FalsumI", 2, [6, 4]),
+    _l(8, "~p", "NegI", 1, subs=[[5, 7]]),
+    _l(9, "~p | ~r", "DisjI", 1, [8]),
+    _l(10, "~s", "As", 1),
+    _l(11, "r", "As", 2),
+    _l(12, "s", "CondE", 2, [2, 11]),
+    _l(13, "!", "FalsumI", 2, [12, 10]),
+    _l(14, "~r", "NegI", 1, subs=[[11, 13]]),
+    _l(15, "~p | ~r", "DisjI", 1, [14]),
+    _l(16, "~p | ~r", "DisjE", 0, [3], subs=[[4, 9], [10, 15]]),
+]
+
+# ------------------------------------------------- disjunction from ⊃ alone
+# ->: a plain proof by cases -- p⊃q hands back q directly in the p case, and
+# the q case is q already, reiterated into the role ∨E's own conclusion needs.
+# <-: p∨q is not conditional-shaped, so getting it out of (p⊃q)⊃q costs an
+# undictated reductio. Assuming ~(p∨q) refutes each disjunct in turn (∨I
+# against the reiterated assumption, same shape as the -> direction's own
+# reductio-free case, run twice); the second refutation doubles as the
+# antecedent of a vacuous p⊃q, which (p⊃q)⊃q then fires to recover q -- and one
+# more ∨I turns that q back into the very disjunction denied, closing the loop.
+PROOFS["disjunction-from-conditional"] = [
+    _l(1, "p | q", "As", 1),
+    _l(2, "p > q", "As", 2),
+    _l(3, "p", "As", 3),
+    _l(4, "q", "CondE", 3, [2, 3]),
+    _l(5, "q", "As", 3),
+    _l(6, "q", "Reit", 3, [5]),
+    _l(7, "q", "DisjE", 2, [1], subs=[[3, 4], [5, 6]]),
+    _l(8, "(p > q) > q", "CondI", 1, subs=[[2, 7]]),
+    _l(9, "(p > q) > q", "As", 1),
+    _l(10, "~(p | q)", "As", 2),
+    _l(11, "p", "As", 3),
+    _l(12, "p | q", "DisjI", 3, [11]),
+    _l(13, "~q", "As", 4),
+    _l(14, "!", "FalsumI", 4, [12, 10]),
+    _l(15, "~~q", "NegI", 3, subs=[[13, 14]]),
+    _l(16, "q", "NegE", 3, [15]),
+    _l(17, "p > q", "CondI", 2, subs=[[11, 16]]),
+    _l(18, "q", "CondE", 2, [9, 17]),
+    _l(19, "p | q", "DisjI", 2, [18]),
+    _l(20, "~(p | q)", "Reit", 2, [10]),
+    _l(21, "!", "FalsumI", 2, [19, 20]),
+    _l(22, "~~(p | q)", "NegI", 1, subs=[[10, 21]]),
+    _l(23, "p | q", "NegE", 1, [22]),
+    _l(24, "(p | q) = ((p > q) > q)", "BicondI", 0, subs=[[1, 8], [9, 23]]),
+]
+
+# ------------------------------------------------------------- Ross's paradox
+# ∨I and nothing else -- the one-line proof `addition` also uses.
+PROOFS["ross-paradox"] = [
+    P(1, "p"),
+    _l(2, "p | q", "DisjI", 0, [1]),
+]
