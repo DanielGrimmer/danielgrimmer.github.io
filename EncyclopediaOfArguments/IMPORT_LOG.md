@@ -342,3 +342,71 @@ texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
 texlive-humanities texlive-science texlive-fonts-recommended` via
 `apt-get`, matching every prior firing's note. The `session-start-hook`
 suggestion from those notes is still open.
+
+## 2026-08-31 — course inventory now empty; three from the imports brainstorm
+
+The course inventory (`inventory.py --status`) reports zero candidates left,
+so this firing worked `--source imports` exclusively, taking its next three:
+§3, the brainstormed candidate list.
+
+`conditional-excluded-middle` (`⊢ (p⊃q)∨(p⊃∼q)`, valid). Named champions —
+Stalnaker and Lewis — so cited rather than left `appearances_pending`, but
+the champions have no single primary text on hand to quote from directly.
+Fetched Egré & Rott's SEP entry "The Logic of Conditionals" (§3.3) instead,
+which states the fact this entry needs verbatim: Stalnaker's system is
+"C2 with the incorporation of CEM into VC" — Lewis's own axiomatization plus
+this one further axiom. `interest` is careful to say what is and is not
+being claimed: for material `⊃` the schema is a one-line tautology (proved
+here), and the genuine dispute is over the identically-shaped axiom for a
+conditional sensitive to non-actual worlds, not over this entry's own
+material-conditional instance. Lives up to the inventory's "Monster-tier"
+billing on `nd`: neither disjunct is dictated, so the proof has to open with
+an undictated `q ∨ ∼q` lemma (the `excluded-middle` shape) before `∨E` can
+even start. 22 lines, `hard`.
+
+`bivalence-pigeonhole` (`⊢ (p≡q)∨(q≡r)∨(p≡r)`, valid). No champion named in
+the brainstorm entry, so `appearances: []` and `appearances_pending: true`;
+`interest` says a logic text's discussion of bivalence as a pigeonhole
+principle would settle it. The derivation is the longest now in the
+database (106 lines, surpassing `biconditional-as-agreement`'s 85) — three
+`p∨∼p`-shaped lemmas feeding a case split that is deliberately lopsided:
+when `p` and `q` already agree the first disjunct settles it without
+touching `r` at all, and only the two disagreement branches open the third
+lemma. `extremely hard` on `nd`, the fourth entry to wear that band and
+exactly at the cap the test suite enforces (`worn.length <= 4`) — noted in
+case a fifth ever arrives and the threshold needs raising rather than
+excusing.
+
+`self-undermining-biconditional` (`p⊃∼p ≡ ∼p`, valid). No champion named;
+`appearances_pending: true`. Strengthens the existing
+`self-undermining-conditional` (`c⊃∼c ⊢ ∼c`, PS2.8b/PS4.2b) to a full
+equivalence — `looks_like` set to it, one-directional, per the existing
+convention of pointing the newer/more-specific entry at the earlier one
+rather than editing back. The → half repeats that entry's reductio
+verbatim on `p`; the ← half is the vacuous direction. `interest` also flags
+the near-miss with Aristotle's thesis (`∼(p⊃∼p)`), which looks like a
+mirror image but is classically contingent rather than a theorem — worth
+distinguishing since a reader who has just seen this entry is primed to
+expect the same verdict.
+
+Checked `SOURCE_QUOTES.md` was not touched (only course/Restall/archive
+appearances are checked against it, and none of these three are). Checked
+the CEM quote against the fetched SEP page directly rather than composing
+one, per the two things past firings got wrong: it is the source's own
+sentence, not a description of where the form was set wearing quotation
+marks, and the "longest derivation" and "fourth extremely-hard entry"
+claims in `bivalence-pigeonhole`'s `interest`/comment were checked against
+`nd.lines` and the actual count across the database, not asserted from
+impression.
+
+`build.py --write`, `python3 difficulty.py --diff` (clean, 0 differ),
+`svg.py` (12 SVGs, 4 blocks × 3 entries), `svg.py --check`,
+`inventory.py --locks` (0 practicable methods locked), `manifest.py
+--check-merge` (108 entries, nothing lost), and `node --test
+"_tests/*.test.mjs"` (512/512) all clean. `extremely hard` (nd) count now 4
+of 4 allowed. Imports queue: 17 candidates left of 48 (30 now in the
+database).
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled the same package list as every prior firing via `apt-get`. The
+`session-start-hook` suggestion from those notes is still open.

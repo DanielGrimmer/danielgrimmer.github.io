@@ -103,3 +103,6 @@ antecedent-strengthening-converse
 antecedent-strengthening
 redundant-disjunct
 two-switches-lightbulb
+conditional-excluded-middle
+bivalence-pigeonhole
+self-undermining-biconditional
