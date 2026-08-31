@@ -1237,3 +1237,17 @@ test('every source link is one a reader could follow', () => {
   }
   assert.ok(seen.size > 0, 'no SEP links found — the test has stopped looking');
 });
+
+// Superlatives about the database go stale the moment the routine imports
+// something bigger, and this has now happened three times — twice in a firing's
+// prose, once in a correction written to fix one of those. A claim to be the
+// longest derivation is checkable, so it is checked.
+test('an entry claiming to be the longest derivation is the longest', () => {
+  const withProofs = entries.filter((e) => e.nd?.exists);
+  const max = Math.max(...withProofs.map((e) => e.nd.lines));
+  for (const e of entries) {
+    if (!/longest derivation in the database|the longest in the database/i.test(e.interest ?? '')) continue;
+    assert.equal(e.nd?.lines, max,
+      `${e.id} claims the longest derivation at ${e.nd?.lines} lines, but the longest is ${max}`);
+  }
+});
