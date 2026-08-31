@@ -138,3 +138,6 @@ boole-cancellation-fallacy
 belief-closure-impossible-world
 hesperus-phosphorus-belief
 lob-without-the-box
+barcan-formula
+entailment-closure-impossible-world
+self-distribution-axiom

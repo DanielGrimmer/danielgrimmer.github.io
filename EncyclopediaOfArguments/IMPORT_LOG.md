@@ -43,6 +43,8 @@ be offered a second time). The reason column says which.
 | 2026-08-31 | `p&(q∨r), q⊃s, r⊃t ⊢ p&(s&t)` (CLI-130, comprehensive §1b) | The row names "Adams' half-essentialness", and Ernest W. Adams is a real, checkable logician (*The Logic of Conditionals*, 1965/1975) — but a dedicated check could not confirm "half-essentialness" as his genuine terminology. The verified, related term in his own work is "marginal essentialness of premises" (Adams 1981, *Journal of Philosophical Logic* 10), a different paper and not obviously the same concept. Attributing the row's own label to Adams without that confirmation risks putting a term in his mouth he may never have used — exactly the error §13.1 calls the worst in the file. Left for a person with the actual paper in hand to confirm the term (or correct the inventory) before this is imported. |
 | 2026-08-31 | `c⊃a, c⊃b, a, b ⊢ c` (CLI-131, comprehensive §1b) | "Agglomeration", and the open branch is called "the lottery paradox" — but the row names no person (not Kyburg, to whom the paradox is usually credited in the literature). |
 | 2026-08-31 | `Kbr, Ki ⊢ Kb` (CLI-132, comprehensive §1b) | "The Red Barn" — a named case, not a named person; the row credits no one. |
+| 2026-08-31 | `∼p∨q, ∼q∨r, ∼p∨∼r ⊢ p` (CLI-149, comprehensive §1b) | No philosopher named — "three propositions each individually neutral on `p`" describes the shape, not a source, and §1 carries no `sep` line. |
+| 2026-08-31 | `⊢ p ⊃ (q⊃p)` (CLI-203, comprehensive §2.1) | Duplicates `positive-paradox` already in the database (`p ⊢ q⊃p`) — the closed axiom and the premised sequent are the same principle one deduction-theorem step apart, and §2's own `sep` line lists eight articles with no way to tell which covers this row, so there is no independent source to justify treating them as separate entries. |
 
 ## Resolved
 
@@ -927,3 +929,113 @@ now in the database, 3 quarantined, 82 unreadable, 22 settled — eleven
 more rows newly logged above, the rest pre-existing stray backtick
 matches `inventory.py`'s settled-scan has always picked up from the
 log's own prose). Course and imports queues remain at 0.
+
+## 2026-08-31 (continued) — three more from the Comprehensive Logic
+Inventory: Barcan, Rantala's K axiom, Frege's self-distribution
+
+Checked all three queues first (`inventory.py --status`, `--status
+--source imports`, `--status --source comprehensive`): course and
+imports both report 0 candidates, comprehensive reports 85. Worked
+comprehensive, still §1b. (The branch's most recent commit before this
+firing, "Import 3 forms from the comprehensive inventory: Rantala,
+Frege, Löb," already carries `belief-closure-impossible-world` (CLI-140),
+`hesperus-phosphorus-belief` (CLI-141) and `lob-without-the-box`
+(CLI-142) — that firing did not add a narrative section here, so this
+one is the first to record the sibling relationships those three set up.)
+
+`inventory.py --next 3 --source comprehensive` offered CLI-144
+(the Barcan formula), CLI-145 ("K / closure under entailment", cross-
+referenced from §4.8's logical-omniscience table), and CLI-149 (three
+propositions "each individually neutral on `p`"). CLI-149 names no
+philosopher and §1 carries no `sep` line, so it is logged above rather
+than imported. Widened to `--next 6` rather than stop at two: CLI-203
+(`⊢ p⊃(q⊃p)`, "Frege's first axiom") duplicates the existing
+`positive-paradox` one deduction-theorem step away and is also logged
+above; CLI-204 (`⊢ (C⊃(B⊃A))⊃((C⊃B)⊃(C⊃A))`, "Frege's self-distribution;
+the engine of the Deduction Theorem") does not duplicate anything on
+file and became the third import.
+
+`barcan-formula` (CLI-144). The row's own text is enough to identify
+the champion without a `sep` line: "The Barcan formula" names Ruth
+Barcan Marcus directly. Verified the primary citation before writing it
+down rather than trusting memory — Ruth C. Barcan, "A Functional
+Calculus of First Order Based on Strict Implication," *Journal of
+Symbolic Logic* 11 (1946), pp. 1–16 (confirmed via Cambridge Core,
+PhilPapers and Semantic Scholar) — and used her later, standard name
+(`Ruth Barcan Marcus`) as `who`, matching the spelling already used
+for her in `hesperus-phosphorus-belief`'s `locus`. `type: "used"`
+(she is the source of the schema itself, not a diagnosis of someone
+else's argument), `fidelity: "our reconstruction"`, `url: null` — no
+single stable modern URL for the 1946 paper. Countermodel (`Fb2=T`
+alone, 1 of 8) matches the row exactly. No `looks_like`: nothing else
+in the database renders a growing-domain frame yet.
+
+`entailment-closure-impossible-world` (CLI-145). The row's own cell
+carries no `sep` line (§1b inherits none from §1), but the identical
+sequent is cross-referenced by its own CLI number in §4.8's "Logical
+omniscience, as a set of matched pairs" table — the "K / closure under
+entailment" row — which sits under a real `*SEP:* impossible worlds
+(Berto & Jago) · ...` header and states plainly that "the rendering is
+licensed by the source, not invented." This is not a guess at which
+article covers the row: the document itself names the article for this
+exact form, just from a different section than the one the row's table
+lives in. Reused `belief-closure-impossible-world`'s own verified
+appearance wholesale (Veikko Rantala's semantics, as reported in Berto
+and Jago's SEP entry *Impossible Worlds*), since both rows come from
+the same §4.8 table and the same technique, with the `locus` narrowed
+to name the K-axiom row specifically. Countermodel (`p_1=q_1=k=p_2=T,
+q_2=F`, 1 of 32) matches the row exactly. `looks_like:
+belief-closure-impossible-world`, and `interest` says how the two
+differ — this one is the K axiom (`⊃E`-shaped), the sibling is `&E`.
+
+`self-distribution-axiom` (CLI-204). §2's own `*SEP:*` line lists eight
+articles with no way to tell which covers this row, so named the
+champion instead: Gottlob Frege. Checked the exact citation (Metamath's
+`ax-2` reference page) rather than assert one from memory — Proposition
+2 of Frege's *Begriffsschrift* (1879), p. 26 — before writing `who`,
+`work` and `locus`. `type: "used"`, `fidelity: "our reconstruction"`,
+`url: null`. Valid, so it needed a derivation: three subproofs deep
+(assume `p⊃(q⊃r)`, then `p⊃q`, then `p`, three `⊃E` steps to `r`, three
+`⊃I` steps back out), 9 lines, one §14.3 trigger (nesting) — `medium`,
+matching `difficulty.py`'s own suggestion exactly, no override needed.
+Checked against `nd.check()` directly before writing into `proofs.py`.
+`looks_like: self-distribution-premised`, which already anticipates
+this entry in its own `interest` ("the unrestricted axiom needs three"
+levels of nesting) — written before this firing, evidently in
+expectation of exactly this row turning up. Also noted in `course.note`
+that `K`'s own closed form (`⊢ p⊃(q⊃p)`) needs no separate import: it
+is `positive-paradox`'s premised sequent (`p ⊢ q⊃p`) one deduction-
+theorem step away, which is the same reasoning that sent CLI-203 to the
+skip table above rather than in as a fourth entry.
+
+Checked the database for near-duplicates and existing ids first (none
+found for any of the three) before writing. `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty; none of the three appearances is a course appearance,
+so none needed it.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+`apt-get install` of the usual package list 404'd on two unrelated
+packages (`mesa`'s `libegl-mesa0`, `ruby3.2`) from the mirror on the
+first attempt, same as a prior firing's note, but this time `latex`
+and `dvisvgm` did not resolve until a second `apt-get install
+--fix-missing` with the identical package list completed cleanly.
+
+`build.py --write` (three entries normalised, atoms already legal —
+`a_1`/`a_2`/`b_2`, `p_1`/`q_1`/`k`/`p_2`/`q_2`, `p`/`q`/`r` — so no
+renames; four new difficulty scores written, plus the proof's line/
+subproof profile recomputed from what `nd.check()` actually measured),
+`python3 difficulty.py --diff` (2 differ, both pre-existing overrides
+already explained in `course.note` — `double-negation-elimination` and
+`de-morgan-disjunction-easy` — nothing from this firing), `svg.py` (10
+SVGs: 3 blocks × 2 invalid entries + 4 blocks × 1 valid entry),
+`svg.py --check` (every SVG current), `inventory.py --locks` (0
+practicable methods locked), `manifest.py --check-merge` (143 entries,
+140 expected from the merge parents plus 3 new, nothing lost — the
+branch was already up to date with `main`, no merge to resolve this
+firing), and `node --test "_tests/*.test.mjs"` (513/513) all clean.
+`extremely hard` count unchanged at 4 of 4 (nd) — none of the three new
+entries reaches it (two invalid, carrying no `nd` score; the one valid
+entry scores `medium`). Comprehensive queue: 80 candidates left of 274
+(85 now in the database, 3 quarantined, 82 unreadable, 24 settled — two
+more rows newly logged above). Course and imports queues remain at 0.

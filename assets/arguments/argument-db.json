@@ -67158,6 +67158,1400 @@
     "search_sharpness": 0.0625,
     "nd": null
    }
+  },
+  {
+   "id": "barcan-formula",
+   "cli_ref": "CLI-144",
+   "names": [
+    "The Barcan formula",
+    "Domain variance across a growing frame"
+   ],
+   "premises": [],
+   "conclusion": "((a_1 | a_2) | b_2) > (a_1 | a_2)",
+   "truth_table": {
+    "atoms": [
+     "a_1",
+     "a_2",
+     "b_2"
+    ],
+    "columns": [
+     "((a_1 ∨ a_2) ∨ b_2) ⊃ (a_1 ∨ a_2)"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "a_1": "T",
+       "a_2": "T",
+       "b_2": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a_1": "T",
+       "a_2": "T",
+       "b_2": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a_1": "T",
+       "a_2": "F",
+       "b_2": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a_1": "T",
+       "a_2": "F",
+       "b_2": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a_1": "F",
+       "a_2": "T",
+       "b_2": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a_1": "F",
+       "a_2": "T",
+       "b_2": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a_1": "F",
+       "a_2": "F",
+       "b_2": "T"
+      },
+      "premises": [],
+      "conclusion": "F",
+      "premises_all_true": true,
+      "countermodel": true
+     },
+     {
+      "assignment": {
+       "a_1": "F",
+       "a_2": "F",
+       "b_2": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $a_{1}$ & $a_{2}$ & $b_{2}$ & $((a_{1}\\Disj a_{2})\\Disj b_{2})\\Cond (a_{1}\\Disj a_{2})$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{T}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        T & T & F & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{T}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        T & F & T & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{T}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        T & F & F & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{T}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        F & T & T & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{T}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        F & T & F & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{T}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{T}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        F & F & T & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{F}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{T}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{F}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{F}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{F}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{F}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{F}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{.}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{.}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{.}\\phantom{a_{2}}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $a_{1}$ & $a_{2}$ & $b_{2}$ & $((a_{1}\\Disj a_{2})\\Disj b_{2})\\Cond (a_{1}\\Disj a_{2})$ \\\\\n        \\hline\n        $\\vdots$ & $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & T & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{F}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{T}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{F}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{F}\\phantom{a_{2}}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{.}\\phantom{a_{2}}\\phantom{)}\\uv{\\Disj}{.}\\phantom{b_{2}}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{a_{1}}\\uv{\\Disj}{.}\\phantom{a_{2}}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": false,
+    "rows": 8,
+    "premise_true_rows": 8,
+    "countermodel_count": 1,
+    "countermodels": [
+     {
+      "a_1": "F",
+      "a_2": "F",
+      "b_2": "T"
+     }
+    ],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼(((a_1 ∨ a_2) ∨ b_2) ⊃ (a_1 ∨ a_2))"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "(a_1 ∨ a_2) ∨ b_2",
+       "from": "∼(((a_1 ∨ a_2) ∨ b_2) ⊃ (a_1 ∨ a_2))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼(a_1 ∨ a_2)",
+       "from": "∼(((a_1 ∨ a_2) ∨ b_2) ⊃ (a_1 ∨ a_2))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼a_1",
+       "from": "∼(a_1 ∨ a_2)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "∼a_2",
+       "from": "∼(a_1 ∨ a_2)",
+       "rule": "∼∨"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "a_1 ∨ a_2",
+         "from": "(a_1 ∨ a_2) ∨ b_2",
+         "rule": "∨"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "b_2",
+         "from": "(a_1 ∨ a_2) ∨ b_2",
+         "rule": "∨"
+        }
+       ],
+       "children": [],
+       "status": "open",
+       "model": {
+        "a_1": "F",
+        "a_2": "F",
+        "b_2": "T"
+       },
+       "unconstrained": []
+      }
+     ],
+     "status": null,
+     "branched_on": "(a_1 ∨ a_2) ∨ b_2",
+     "branch_rule": "∨"
+    },
+    "open_branches": 1,
+    "closed_branches": 1,
+    "branch_depth": 1,
+    "branch_models": [
+     {
+      "a_1": "F",
+      "a_2": "F",
+      "b_2": "T"
+     }
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (((a_{1}\\Disj a_{2})\\Disj b_{2})\\Cond (a_{1}\\Disj a_{2}))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $(a_{1}\\Disj a_{2})\\Disj b_{2}$\\quad\\checkmark \\\\ \\ckpad $\\Neg (a_{1}\\Disj a_{2})$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg a_{1}$ \\\\ $\\Neg a_{2}$} [.{$a_{1}\\Disj a_{2}$ \\\\ x} ] [.{$b_{2}$ \\\\ o} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "english": [
+    {
+     "gloss": "Something could have been F. So something that already exists could have been F.",
+     "faithful": true
+    }
+   ],
+   "interest": "The formula named for Ruth Barcan Marcus, rendered on a frame whose domain grows: world 1 has only `a`, world 2 gains `b`. The antecedent is `◇∃xFx` read across both worlds -- `a_1∨a_2∨b_2` -- and the consequent is `∃x◇Fx` read against world 1's own domain -- `a_1∨a_2`, the only two atoms naming something that exists there. The single countermodel has `b_2` alone true: something newly existing can possibly be `F` without anything among what already exists being possibly `F`, because the witness the consequent asks for is not there yet to ask about. Three atoms, one open branch, and the whole metaphysical stake of the Barcan formula -- whether possibility ever outruns what actually exists -- sits in that one row.",
+   "countermodel_gloss": "The domain growing, made visible: at world 1 only `a` exists and it is not `F`; at world 2 the newly-existing `b` is `F`. Nothing at world 1 can serve as the witness the consequent asks for, because it is not there yet to ask about.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Ruth Barcan Marcus",
+     "work": "A Functional Calculus of First Order Based on Strict Implication",
+     "locus": "Journal of Symbolic Logic 11 (1946), pp. 1–16 -- the paper introducing the axiomatic system in which the formula bearing her name is derivable",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "modal logic",
+     "philosophy of logic"
+    ],
+    "defect": [
+     "domain variance"
+    ],
+    "figure": [
+     "Ruth Barcan Marcus"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Two-world domain-expansion rendering: `a_1`/`a_2` for \"a is F\" at worlds 1/2, `b_2` for \"b is F\" at world 2 (b does not exist at world 1, so there is no `b_1`).",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": null,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": false,
+    "note": "Assume the antecedent `(a_1∨a_2)∨b_2` and aim for `a_1∨a_2`. `∨E` splits into three cases: the `a_1` and `a_2` cases each close immediately by `∨I`, but the `b_2` case has nothing to work with -- `b_2` is a bare atom with no rule connecting it to `a_1` or `a_2`. The derivation stalls exactly there, which is the whole content of the countermodel: the case that stays open is the one the domain grew to allow."
+   },
+   "difficulty": {
+    "nd": null,
+    "table": "easy",
+    "tree": "easy",
+    "search_sharpness": 0.125
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "((a_1 ∨ a_2) ∨ b_2) ⊃ (a_1 ∨ a_2)",
+    "sequent": "⊭ ((a_1 ∨ a_2) ∨ b_2) ⊃ (a_1 ∨ a_2)"
+   }
+  },
+  {
+   "id": "entailment-closure-impossible-world",
+   "cli_ref": "CLI-145",
+   "names": [
+    "Closure under known entailment, at an impossible world",
+    "The K principle, hyperintensionally"
+   ],
+   "premises": [
+    "(p_1 > q_1) & k",
+    "p_1 & p_2"
+   ],
+   "conclusion": "q_1 & q_2",
+   "truth_table": {
+    "atoms": [
+     "p_1",
+     "q_1",
+     "k",
+     "p_2",
+     "q_2"
+    ],
+    "columns": [
+     "(p_1 ⊃ q_1) & k",
+     "p_1 & p_2",
+     "q_1 & q_2"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "T",
+       "k": "T",
+       "p_2": "T",
+       "q_2": "T"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "T",
+       "k": "T",
+       "p_2": "T",
+       "q_2": "F"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": true,
+      "countermodel": true
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "T",
+       "k": "T",
+       "p_2": "F",
+       "q_2": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "T",
+       "k": "T",
+       "p_2": "F",
+       "q_2": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "T",
+       "k": "F",
+       "p_2": "T",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "T",
+       "k": "F",
+       "p_2": "T",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "T",
+       "k": "F",
+       "p_2": "F",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "T",
+       "k": "F",
+       "p_2": "F",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "F",
+       "k": "T",
+       "p_2": "T",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "F",
+       "k": "T",
+       "p_2": "T",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "F",
+       "k": "T",
+       "p_2": "F",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "F",
+       "k": "T",
+       "p_2": "F",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "F",
+       "k": "F",
+       "p_2": "T",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "F",
+       "k": "F",
+       "p_2": "T",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "F",
+       "k": "F",
+       "p_2": "F",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "T",
+       "q_1": "F",
+       "k": "F",
+       "p_2": "F",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "T",
+       "k": "T",
+       "p_2": "T",
+       "q_2": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "T",
+       "k": "T",
+       "p_2": "T",
+       "q_2": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "T",
+       "k": "T",
+       "p_2": "F",
+       "q_2": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "T",
+       "k": "T",
+       "p_2": "F",
+       "q_2": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "T",
+       "k": "F",
+       "p_2": "T",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "T",
+       "k": "F",
+       "p_2": "T",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "T",
+       "k": "F",
+       "p_2": "F",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "T",
+       "k": "F",
+       "p_2": "F",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "F",
+       "k": "T",
+       "p_2": "T",
+       "q_2": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "F",
+       "k": "T",
+       "p_2": "T",
+       "q_2": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "F",
+       "k": "T",
+       "p_2": "F",
+       "q_2": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "F",
+       "k": "T",
+       "p_2": "F",
+       "q_2": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "F",
+       "k": "F",
+       "p_2": "T",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "F",
+       "k": "F",
+       "p_2": "T",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "F",
+       "k": "F",
+       "p_2": "F",
+       "q_2": "T"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_1": "F",
+       "q_1": "F",
+       "k": "F",
+       "p_2": "F",
+       "q_2": "F"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p_{1} \\qquad q_{1} \\qquad k \\qquad p_{2} \\qquad q_{2} \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad (p_{1}\\Cond q_{1})\\Conj k \\qquad p_{1}\\Conj p_{2} \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q_{1}\\Conj q_{2} \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p_{1} \\qquad q_{1} \\qquad k \\qquad p_{2} \\qquad q_{2} \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad (p_{1}\\Cond q_{1})\\Conj k \\qquad p_{1}\\Conj p_{2} \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q_{1}\\Conj q_{2} \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{T} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{T} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{T} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{T} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{T} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{T} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{T} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{1}}{F} \\qquad \\uv{q_{1}}{F} \\qquad \\uv{k}{F} \\qquad \\uv{p_{2}}{F} \\qquad \\uv{q_{2}}{F} \\quad$ & $\\quad \\uv{(p_{1}\\Cond q_{1})\\Conj k}{F} \\qquad \\uv{p_{1}\\Conj p_{2}}{F} \\quad$ & $\\quad \\uv{q_{1}\\Conj q_{2}}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": false,
+    "rows": 32,
+    "premise_true_rows": 2,
+    "countermodel_count": 1,
+    "countermodels": [
+     {
+      "p_1": "T",
+      "q_1": "T",
+      "k": "T",
+      "p_2": "T",
+      "q_2": "F"
+     }
+    ],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "(p_1 ⊃ q_1) & k",
+     "p_1 & p_2",
+     "∼(q_1 & q_2)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "p_1 ⊃ q_1",
+       "from": "(p_1 ⊃ q_1) & k",
+       "rule": "&"
+      },
+      {
+       "formula": "k",
+       "from": "(p_1 ⊃ q_1) & k",
+       "rule": "&"
+      },
+      {
+       "formula": "p_1",
+       "from": "p_1 & p_2",
+       "rule": "&"
+      },
+      {
+       "formula": "p_2",
+       "from": "p_1 & p_2",
+       "rule": "&"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼q_1",
+         "from": "∼(q_1 & q_2)",
+         "rule": "∼&"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p_1",
+           "from": "p_1 ⊃ q_1",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "q_1",
+           "from": "p_1 ⊃ q_1",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "p_1 ⊃ q_1",
+       "branch_rule": "⊃"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼q_2",
+         "from": "∼(q_1 & q_2)",
+         "rule": "∼&"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p_1",
+           "from": "p_1 ⊃ q_1",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "q_1",
+           "from": "p_1 ⊃ q_1",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "open",
+         "model": {
+          "p_1": "T",
+          "q_1": "T",
+          "k": "T",
+          "p_2": "T",
+          "q_2": "F"
+         },
+         "unconstrained": []
+        }
+       ],
+       "status": null,
+       "branched_on": "p_1 ⊃ q_1",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼(q_1 & q_2)",
+     "branch_rule": "∼&"
+    },
+    "open_branches": 1,
+    "closed_branches": 3,
+    "branch_depth": 2,
+    "branch_models": [
+     {
+      "p_1": "T",
+      "q_1": "T",
+      "k": "T",
+      "p_2": "T",
+      "q_2": "F"
+     }
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad (p_{1}\\Cond q_{1})\\Conj k$\\quad\\checkmark \\\\ \\ckpad $\\qquad p_{1}\\Conj p_{2}$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (q_{1}\\Conj q_{2})$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p_{1}\\Cond q_{1}$\\quad\\checkmark \\\\ $k$ \\\\ $\\vert$ \\\\ $p_{1}$ \\\\ $p_{2}$} [.{$\\Neg q_{1}$} [.{$\\Neg p_{1}$ \\\\ x} ] [.{$q_{1}$ \\\\ x} ] ] [.{$\\Neg q_{2}$} [.{$\\Neg p_{1}$ \\\\ x} ] [.{$q_{1}$ \\\\ o} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "english": [
+    {
+     "gloss": "She believes p implies q, and she believes p. So she believes q.",
+     "faithful": true
+    }
+   ],
+   "interest": "The K axiom -- believing `p⊃q` and believing `p` should hand you belief in `q` -- rendered the way `belief-closure-impossible-world` renders conjunction elimination: one further, impossible world where a complex formula's truth is a fresh atom instead of the value its parts compute. Here it is the conditional's turn: `k` stands for the impossible world's arbitrary verdict on `p⊃q`, while `p_1`, `q_1`, `p_2`, `q_2` keep their ordinary atomic behaviour at both worlds. Belief in `p` carries the normal world's `q_1` out by `⊃E`, but `k` has no route back to `q_2` -- the impossible world's opinion of the whole conditional is severed from what it says about `q` alone. This is `doxastic-closure`'s K-axiom failure again, but with the belief operator's internal structure restored everywhere except the single non-normal alternative that keeps the agent short of logical omniscience.",
+   "countermodel_gloss": "The impossible world agrees with the normal one about `p` and `q` separately, but is stipulated to make the conditional `p⊃q` true on its own terms rather than by computing it from `p` and `q` there -- so `q` can fail at that world even though the conditional the agent believes says it should not.",
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "our reconstruction",
+     "who": "Veikko Rantala",
+     "work": "Impossible world semantics and logical omniscience (Acta Philosophica Fennica 35, 1982), as reported in Francesco Berto and Mark Jago's SEP entry 'Impossible Worlds'",
+     "locus": "§5.3, Impossible Worlds in Epistemic Logic (the K / closure-under-entailment case)",
+     "url": "https://plato.stanford.edu/entries/impossible-worlds/"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "epistemic logic",
+     "philosophy of logic"
+    ],
+    "defect": [
+     "logical omniscience"
+    ],
+    "figure": [
+     "Rantala"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Five atoms via the two-world impossible-worlds expansion (`p_1`/`q_1`/`p_2`/`q_2` for \"p/q at world 1/2\", `k` a fresh atom for the impossible world's verdict on `p⊃q`); pairs with `belief-closure-impossible-world` (CLI-140, the same table's Closure row) and `doxastic-closure` as a third telling of logical omniscience.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": null,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": false,
+    "note": "Assume both premises and aim for `q_1&q_2`. `&E` on the first premise gets `p_1⊃q_1` and `k`; `&E` on the second gets `p_1` and `p_2`; `⊃E` on `p_1⊃q_1` and `p_1` gets `q_1` -- the first conjunct of the goal is free. But nothing links `k` or `p_2` to `q_2`: `k` is a bare atom standing for the impossible world's arbitrary verdict on the whole conditional, and `p_2` says only that `p` holds at the second world, with no conditional there to detach anything from. The derivation reaches `q_1` and stalls exactly where the countermodel says it must -- `q_2` is free to vary independently."
+   },
+   "looks_like": "belief-closure-impossible-world",
+   "difficulty": {
+    "nd": null,
+    "table": "medium",
+    "tree": "medium",
+    "search_sharpness": 0.0312
+   },
+   "display": {
+    "premises": [
+     "(p_1 ⊃ q_1) & k",
+     "p_1 & p_2"
+    ],
+    "conclusion": "q_1 & q_2",
+    "sequent": "(p_1 ⊃ q_1) & k, p_1 & p_2  ⊭ q_1 & q_2"
+   }
+  },
+  {
+   "id": "self-distribution-axiom",
+   "cli_ref": "CLI-204",
+   "names": [
+    "Frege's self-distribution axiom",
+    "The engine of the Deduction Theorem"
+   ],
+   "premises": [],
+   "conclusion": "(p > (q > r)) > ((p > q) > (p > r))",
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q",
+     "r"
+    ],
+    "columns": [
+     "(p ⊃ (q ⊃ r)) ⊃ ((p ⊃ q) ⊃ (p ⊃ r))"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F",
+       "r": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $p$ & $q$ & $r$ & $(p\\Cond (q\\Cond r))\\Cond ((p\\Cond q)\\Cond (p\\Cond r))$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{(}\\phantom{q}\\uv{\\Cond}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{F}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{F}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{(}\\phantom{q}\\uv{\\Cond}{.}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{.}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c c| c}\n        $p$ & $q$ & $r$ & $(p\\Cond (q\\Cond r))\\Cond ((p\\Cond q)\\Cond (p\\Cond r))$ \\\\\n        \\hline\n        T & T & T & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & F & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{(}\\phantom{q}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $.$ & $\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{(}\\phantom{q}\\uv{\\Cond}{.}\\phantom{r}\\phantom{)}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{.}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{r}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 8,
+    "premise_true_rows": 8,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼((p ⊃ (q ⊃ r)) ⊃ ((p ⊃ q) ⊃ (p ⊃ r)))"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "p ⊃ (q ⊃ r)",
+       "from": "∼((p ⊃ (q ⊃ r)) ⊃ ((p ⊃ q) ⊃ (p ⊃ r)))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼((p ⊃ q) ⊃ (p ⊃ r))",
+       "from": "∼((p ⊃ (q ⊃ r)) ⊃ ((p ⊃ q) ⊃ (p ⊃ r)))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "p ⊃ q",
+       "from": "∼((p ⊃ q) ⊃ (p ⊃ r))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼(p ⊃ r)",
+       "from": "∼((p ⊃ q) ⊃ (p ⊃ r))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "p",
+       "from": "∼(p ⊃ r)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼r",
+       "from": "∼(p ⊃ r)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "p ⊃ (q ⊃ r)",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "q ⊃ r",
+         "from": "p ⊃ (q ⊃ r)",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p",
+           "from": "p ⊃ q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "q",
+           "from": "p ⊃ q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼q",
+             "from": "q ⊃ r",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "r",
+             "from": "q ⊃ r",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "q ⊃ r",
+         "branch_rule": "⊃"
+        }
+       ],
+       "status": null,
+       "branched_on": "p ⊃ q",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ⊃ (q ⊃ r)",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 4,
+    "branch_depth": 3,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((p\\Cond (q\\Cond r))\\Cond ((p\\Cond q)\\Cond (p\\Cond r)))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p\\Cond (q\\Cond r)$\\quad\\checkmark \\\\ \\ckpad $\\Neg ((p\\Cond q)\\Cond (p\\Cond r))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $p\\Cond q$\\quad\\checkmark \\\\ \\ckpad $\\Neg (p\\Cond r)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg r$} [.{$\\Neg p$ \\\\ x} ] [.{\\ckpad $q\\Cond r$\\quad\\checkmark} [.{$\\Neg p$ \\\\ x} ] [.{$q$} [.{$\\Neg q$ \\\\ x} ] [.{$r$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "interest": "The unrestricted self-distribution scheme -- Frege's own axiom (Begriffsschrift, 1879, Proposition 2), and the S combinator's shape in propositional dress. `self-distribution-premised` proves the same collapse with `p⊃q` handed over as a premise, which is what keeps that version to two levels of nesting; here nothing is handed over, so the middle conditional has to be assumed and discharged in its own turn, and the derivation nests three subproofs deep. Together with `K` -- `⊢ p⊃(q⊃p)`, the closed form of `positive-paradox`'s premised sequent -- this axiom proves the Deduction Theorem: every appeal to modus ponens inside a hypothetical proof compiles into one instance of it.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Gottlob Frege",
+     "work": "Begriffsschrift",
+     "locus": "Proposition 2, p. 26 (1879)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "propositional logic",
+     "proof theory"
+    ],
+    "defect": [],
+    "figure": [
+     "Frege"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Unrestricted three-level form of `self-distribution-premised`; the axiom's premised sequent (`p⊃q ⊢ (p⊃(q⊃r))⊃(p⊃r)`) is already in the database, and `K`'s own closed form (`⊢ p⊃(q⊃p)`) is already there too as `positive-paradox`'s premised sequent (`p ⊢ q⊃p`) -- neither needed reimporting.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p > (q > r)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p > q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 4,
+      "f": "q > r",
+      "rule": "CondE",
+      "depth": 3,
+      "cites": [
+       1,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 3,
+      "cites": [
+       2,
+       3
+      ]
+     },
+     {
+      "n": 6,
+      "f": "r",
+      "rule": "CondE",
+      "depth": 3,
+      "cites": [
+       4,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "p > r",
+      "rule": "CondI",
+      "depth": 2,
+      "subs": [
+       [
+        3,
+        6
+       ]
+      ]
+     },
+     {
+      "n": 8,
+      "f": "(p > q) > (p > r)",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        7
+       ]
+      ]
+     },
+     {
+      "n": 9,
+      "f": "(p > (q > r)) > ((p > q) > (p > r))",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        8
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{p\\Cond (q\\Cond r)}\n\\open\n\\hypo{2}{p\\Cond q}\n\\open\n\\hypo{3}{p}\n\\have{4}{q\\Cond r}\\by{\\CondE}{1,3}\n\\have{5}{q}\\by{\\CondE}{2,3}\n\\have{6}{r}\\by{\\CondE}{4,5}\n\\close\n\\have{7}{p\\Cond r}\\by{\\CondI}{3,6}\n\\close\n\\have{8}{(p\\Cond q)\\Cond (p\\Cond r)}\\by{\\CondI}{2,7}\n\\close\n\\have{9}{(p\\Cond (q\\Cond r))\\Cond ((p\\Cond q)\\Cond (p\\Cond r))}\\by{\\CondI}{1,8}\n\\end{nd}\n\\end{align*}",
+    "lines": 9,
+    "max_subproof_depth": 3,
+    "subproof_count": 3,
+    "assumption_count": 3,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "looks_like": "self-distribution-premised",
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "(p ⊃ (q ⊃ r)) ⊃ ((p ⊃ q) ⊃ (p ⊃ r))",
+    "sequent": "⊨ (p ⊃ (q ⊃ r)) ⊃ ((p ⊃ q) ⊃ (p ⊃ r))"
+   }
   }
  ],
  "latex_requires": [

@@ -1968,3 +1968,19 @@ PROOFS["de-morgan-conjunction-hard"] = [
     _l(15, "~~(~p | ~q)", "NegI", 0, subs=[[2, 14]]),
     _l(16, "~p | ~q", "NegE", 0, [15]),
 ]
+
+# ------------------------------------------------------- self-distribution-axiom
+# The unrestricted axiom: nothing is handed over as a premise, so all three
+# conditionals nest, three subproofs deep -- self-distribution-premised's
+# proof with the outer p>q assumed and discharged instead of taken as given.
+PROOFS["self-distribution-axiom"] = [
+    _l(1, "p > (q > r)", "As", 1),
+    _l(2, "p > q", "As", 2),
+    _l(3, "p", "As", 3),
+    _l(4, "q > r", "CondE", 3, [1, 3]),
+    _l(5, "q", "CondE", 3, [2, 3]),
+    _l(6, "r", "CondE", 3, [4, 5]),
+    _l(7, "p > r", "CondI", 2, subs=[[3, 6]]),
+    _l(8, "(p > q) > (p > r)", "CondI", 1, subs=[[2, 7]]),
+    _l(9, "(p > (q > r)) > ((p > q) > (p > r))", "CondI", 0, subs=[[1, 8]]),
+]
