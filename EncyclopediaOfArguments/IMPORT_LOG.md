@@ -50,6 +50,9 @@ be offered a second time). The reason column says which.
 | 2026-08-31 | `(∼(∼p ∨ ∼q) ∨ ∼(∼p ∨ q)) ≡ p` (comprehensive, "Identities students will not guess" — Huntington's equation, 1933) | Valid, and the SEP article names it exactly — fetched Burris & Legris's *The Algebra of Logic Tradition* (§8, "Huntington: Axiomatic Investigations of the Algebra of Logic") and confirmed the equation, `who`, and canonical URL directly, rather than trust the row's own gloss. The obstacle is the derivation. Direction `p ⊢ (∼(∼p∨∼q) ∨ ∼(∼p∨q))` needs a case split on `q`, which the goal itself never pins down (the two disjuncts hold under opposite values of `q`), and no route tried avoided it: an explicit `q∨∼q` lemma ran the whole biconditional to 49 lines, and a leaner double-negation extraction of `∼p∨∼q` and `∼p∨q` directly from the negated goal still ran 41 — both comfortably past the 29-line floor with all five §14.3 triggers present, which would make this a fifth `extremely hard` nd entry against the cap of four the test suite enforces (`worn.length <= 4`). The style guide's own instruction for that situation is to raise `ND_EXTREME_LINES` rather than excuse the entry, but this firing's own earlier precedent (`conditional-crossover`, below) is to look for a shorter proof first, since the threshold also governs the four entries already wearing the band. No proof under 29 lines was found. Left for a firing or a person with time for either a cleverer derivation or a considered decision to raise the constant. |
 | 2026-08-31 | `∼(∼(p ∨ q) ∨ ∼(p ∨ ∼q)) ≡ p` (comprehensive, "Identities students will not guess" — the Robbins equation) | Same SEP section (Burris & Legris, §8) names this one too, conjectured by Robbins as a simplification of Huntington's third axiom and settled only by McCune's automated prover in 1996. Not attempted in full: it is structurally the same shape as Huntington's equation directly above it in the queue (a case split on `q` is unavoidable in the same direction), so it is presumed to hit the same 29-line wall rather than re-derive it to confirm. Left for the same reason and alongside it. |
 | 2026-08-31 | `⊢ ((p∨q) & ∼(p&q)) ≡ ∼(p≡q)` (CLI-313, comprehensive §3.6) | The row is "exclusive-or is definable — the logician's reply to the ambiguity thesis," naming no philosopher. §3's own `sep` line lists seven general articles (`conditionals`, `conditionals: counterfactual`, `connectives: sentence connectives in formal logic`, `contradiction`, `disjunction`, `logical constants`, `negation`) with no way to tell which covers this specific row — exactly §11d's case for naming the champion instead, except the row names none. Checked the likeliest candidate directly: Aloni's *Disjunction* discusses exclusive `⊕` and its problems but not this identity or this reply. Left for a person who can identify the actual source, if one of the seven names it at all. |
+| 2026-08-31 | `⊢ ∼(p⊃q) ⊃ (p & ∼q)` (CLI-410, comprehensive §4.1) | No philosopher named in the row ("Classically `∼(p⊃q)` is maximally informative; constructively it is almost empty" states the point itself, attributing it to no one). §4's own `sep` line lists eleven articles; §4.1 is unambiguously about intuitionistic logic specifically, so fetched the SEP *Intuitionistic Logic* entry (Moschovakis) directly and searched it for any discussion of a negated conditional's BHK reading — none found. The article's only worked BHK example in this area is the disjunction clause already spent on `de-morgan-conjunction-hard-theorem` and `conditional-implies-disjunction`, and stretching it a third time to a conjunction-shaped conclusion would not be reporting the article, only echoing a phrase from an unrelated passage. Left for a person who can find an actual discussion of this specific form. |
+| 2026-08-31 | `⊢ (∼p⊃(q∨r)) ⊃ ((∼p⊃q) ∨ (∼p⊃r))` (CLI-412, comprehensive §4.1, Harrop's rule) | Not a provenance problem — the SEP *Intuitionistic Logic* entry (Moschovakis, §4.2, "Admissible rules of intuitionistic logic and arithmetic") names this exact schema and Harrop [1960] by name, confirmed on a direct fetch, and would have made a clean `diagnosed` appearance. The obstacle is the derivation. A classical proof needs `p∨∼p` built from scratch (10 lines, no primitive LEM in the twelve rules), then a case split: the `p` branch needs `∼p⊃q` built vacuously through the no-explosion reductio machinery (8 lines, the same shape as the standalone `ex-falso` entry), and the `∼p` branch needs the premise applied and a second `∨E` on `q∨r`, each of *its* two cases building a vacuous conditional the cheap way (reiterating a formula already in hand, 5 lines each) before `∨I` closes it. Assembled and checked against `nd.check()`: 34 lines, all five §14.3 triggers (`∨E` more than once, an undictated reductio building `p∨∼p`, a subproof four deep, eleven subproofs, well past ten derived lines) — a fifth `extremely hard` `nd` entry against the cap of four the test suite enforces (`worn.length <= 4`; the database already carries `de-morgan-conjunction`, `material-conditional`, `biconditional-as-agreement` and `bivalence-pigeonhole`). Tried restructuring before giving up on the firing, per §6.4a's instruction to write the proof again rather than reach for a flag: extracting `∼(∼p⊃q)` and `∼(∼p⊃r)` from a top-level reductio on the negated goal, hoping to skip the `p∨∼p` lemma entirely, but recovering `∼p` from `∼(∼p⊃q)` needs the identical vacuous-conditional-via-reductio machinery the case-split approach already pays for, so nothing was saved. No proof under 29 lines was found. Left for a firing or a person with time for either a cleverer derivation or a considered decision to raise `ND_EXTREME_LINES`, per the same reasoning `conditional-crossover` and the Huntington/Robbins equations record above. |
+| 2026-08-31 | `⊢ (p⊃(q∨r)) ⊃ ((p⊃q) ∨ (p⊃r))` (CLI-413, comprehensive §4.1) | No philosopher named in the row ("Memorable one-line refutation: set p := q∨r" states the point itself). Checked the SEP *Intuitionistic Logic* entry directly for this specific schema (unnegated antecedent, unlike CLI-412's Harrop rule immediately above it in the queue, which the article does name) — not found; the article's admissible-rules section covers Harrop's rule and Mints's rule, both negated-antecedent, and neither is this one substituted or generalised. Left for a person who can find an actual discussion of this specific form. |
 
 ## Resolved
 
@@ -1757,3 +1760,82 @@ texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
 texlive-humanities texlive-science texlive-fonts-recommended`) resolved it
 cleanly this time, no `--fix-missing` retry needed. The `session-start-hook`
 suggestion from every prior firing's note is still open.
+
+## 2026-08-31 (continued) — two theorem-closures from §4.1 and §4.4
+
+Course and imports queues both re-confirmed empty. Comprehensive's next
+three rows (`inventory.py --next 3`) were CLI-410, CLI-411 and CLI-412, all
+§4.1; only CLI-411 went in cleanly. CLI-410 is logged above (no philosopher
+named, and the SEP *Intuitionistic Logic* entry does not discuss this
+specific negated-conditional form on a direct check). CLI-412 (Harrop's
+rule) is also logged above, for a different reason: the SEP entry names it
+exactly, but the honest derivation runs 34 lines against all five §14.3
+triggers, which would be a fifth `extremely hard` `nd` entry against the
+test suite's cap of four — restructured once before giving up on it this
+firing, no shorter route found. Took `--next 4` to reach CLI-413 in its
+place; also logged, same reason as CLI-410 (no philosopher named, and the
+SEP article's admissible-rules section covers only the negated-antecedent
+Harrop and Mints rules, not this unnegated one).
+
+`contraposition-recovered-theorem` (CLI-411, `⊢ (∼q⊃∼p) ⊃ (p⊃q)`, valid) is
+`contraposition-recovered`'s own premise (`∼q⊃∼p`, already cited to Greg
+Restall's *Logic*, Ch 7) discharged by a closing `⊃I` instead of taken as
+given — the same move `de-morgan-conjunction-hard-theorem` and
+`conditional-implies-disjunction` made two firings ago, but off a
+Restall-sourced sibling rather than an SEP-sourced one, so the appearance
+carries Restall forward (`type: diagnosed`, since the closed theorem is not
+literally the passage he worked) rather than reaching for the SEP
+*Intuitionistic Logic* entry, which was checked directly and does not
+mention contraposition at all — forcing that citation would have been
+exactly the mistake §11d warns against. The row's own note ("equivalent to
+DNE over IPC") is stated in `interest` rather than claimed as a citation.
+Proof: `contraposition-recovered`'s own eight lines, one level deeper (the
+premise becomes an assumption), plus one closing `⊃I` — nine lines, checked
+against `nd.check()` before being written into `proofs.py`. Two triggers
+(an undictated reductio, one subproof inside another), matching the sibling
+entry's own `medium` exactly; `difficulty.py --diff` agreed.
+
+`hypothetical-syllogism-theorem` (CLI-436, `⊢ ((p⊃q)&(q⊃r)) ⊃ (p⊃r)`,
+valid, from §4.4 "Relevance and substructural" once §4.1 was exhausted of
+importable rows) is `hypothetical-syllogism`'s own two premises conjoined
+into one antecedent and discharged the same way. A fresh SEP citation
+rather than a reused course one, since this row is genuinely
+SEP-sourced: Edwin Mares's *Relevance Logic* entry (§6, "Systems Closely
+Related to Mainstream Relevance Logic") names Graham Priest's system N₄ as
+a relevant logic that keeps this as an admissible *rule* while refusing it
+as a *theorem* — "It does not contain any transitivity axioms for
+implication. It has a transitivity rule." — confirmed verbatim on a direct
+fetch before writing it down, matching the row's own "fails in Priest's
+N₄" note exactly. `interest` states plainly that `derive.py`'s classical
+verdict and Mares's report of N₄'s are not in tension, per §11d. Proof: the
+two premises' own `⊃E, ⊃E, ⊃I` chain, unchanged, behind `ConjE` twice and
+one further `⊃I` — eight lines, no reductio anywhere. One trigger (a
+subproof inside another, the same shape `permutation`'s own proof has),
+`medium`, matching `permutation`'s precedent and confirmed by
+`difficulty.py --diff`.
+
+Checked both against the database for near-duplicates before writing (by
+id and by content) — none found beyond the two siblings each is a
+closure of, which `looks_like` already names. `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed
+empty; neither appearance is a course appearance, so neither needed it.
+
+`build.py --write` (two entries normalised, no atom renaming needed;
+`difficulty.py --diff` clean, 0 differ — both hand-scored `nd` values
+matched the rubric without an override), `svg.py` (8 SVGs, 4 blocks × 2
+entries), `svg.py --check` (every SVG current), `inventory.py --locks` (0
+practicable methods locked — comprehensive carries no `problem_set`),
+`manifest.py --check-merge` (168 entries, 166 expected from the merge
+parents, nothing lost), and `node --test "_tests/*.test.mjs"` (514/514) all
+clean. `extremely hard` (nd) count unchanged at 4 of 4 — neither new entry
+came near it. Comprehensive queue: 47 candidates left of 274 (110 now in
+the database, 3 quarantined, 82 unreadable, 32 settled). Course and
+imports queues remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**; the
+same `apt-get update` then `apt-get install` of the package list every
+prior firing has recorded (`texlive-latex-base texlive-latex-recommended
+texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
+texlive-humanities texlive-science texlive-fonts-recommended`) resolved it
+cleanly. The `session-start-hook` suggestion from every prior firing's note
+is still open.

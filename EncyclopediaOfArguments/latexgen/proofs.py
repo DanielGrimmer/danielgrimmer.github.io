@@ -2329,3 +2329,33 @@ PROOFS["disjunction-from-negated-conjunction"] = [
     _l(14, "p | q", "NegE", 1, [13]),
     _l(15, "~(~p & ~q) > (p | q)", "CondI", 0, subs=[[1, 14]]),
 ]
+
+# ------------------------------------------- contraposition-recovered-theorem
+# contraposition-recovered's own eight lines, one level deeper: the premise
+# becomes an assumption, discharged by one more CondI at the end.
+PROOFS["contraposition-recovered-theorem"] = [
+    _l(1, "~q > ~p", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "~q", "As", 3),
+    _l(4, "~p", "CondE", 3, [1, 3]),
+    _l(5, "!", "FalsumI", 3, [2, 4]),
+    _l(6, "~~q", "NegI", 2, subs=[[3, 5]]),
+    _l(7, "q", "NegE", 2, [6]),
+    _l(8, "p > q", "CondI", 1, subs=[[2, 7]]),
+    _l(9, "(~q > ~p) > (p > q)", "CondI", 0, subs=[[1, 8]]),
+]
+
+# ------------------------------------------- hypothetical-syllogism-theorem
+# hypothetical-syllogism's own two-premise proof, with the premises conjoined
+# into a single assumption (split by ConjE) and the whole thing discharged by
+# one further CondI. No reductio anywhere -- pure chaining.
+PROOFS["hypothetical-syllogism-theorem"] = [
+    _l(1, "(p > q) & (q > r)", "As", 1),
+    _l(2, "p > q", "ConjE", 1, [1]),
+    _l(3, "q > r", "ConjE", 1, [1]),
+    _l(4, "p", "As", 2),
+    _l(5, "q", "CondE", 2, [2, 4]),
+    _l(6, "r", "CondE", 2, [3, 5]),
+    _l(7, "p > r", "CondI", 1, subs=[[4, 6]]),
+    _l(8, "((p > q) & (q > r)) > (p > r)", "CondI", 0, subs=[[1, 7]]),
+]
