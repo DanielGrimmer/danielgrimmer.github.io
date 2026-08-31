@@ -1984,3 +1984,230 @@ PROOFS["self-distribution-axiom"] = [
     _l(8, "(p > q) > (p > r)", "CondI", 1, subs=[[2, 7]]),
     _l(9, "(p > (q > r)) > ((p > q) > (p > r))", "CondI", 0, subs=[[1, 8]]),
 ]
+
+# ------------------------------------------------------------------ Nicod's rule
+# Unfolded into `&`/`∼`, the second premise is `a ⊃ (b & c)` in disguise, so
+# the semantic content is modus ponens plus conjunction elimination -- but our
+# twelve rules have no way to read a conditional off a negated conjunction
+# directly, so the reductio has to build `a & ∼(b & c)` as one formula and set
+# it against the premise, rather than detaching and then peeling off `c`.
+PROOFS["nicods-rule"] = [
+    P(1, "a"),
+    P(2, "~(a & ~(b & c))"),
+    _l(3, "~c", "As", 1),
+    _l(4, "b & c", "As", 2),
+    _l(5, "c", "ConjE", 2, [4]),
+    _l(6, "!", "FalsumI", 2, [5, 3]),
+    _l(7, "~(b & c)", "NegI", 1, subs=[[4, 6]]),
+    _l(8, "a & ~(b & c)", "ConjI", 1, [1, 7]),
+    _l(9, "!", "FalsumI", 1, [8, 2]),
+    _l(10, "~~c", "NegI", 0, subs=[[3, 9]]),
+    _l(11, "c", "NegE", 0, [10]),
+]
+
+# -------------------------------------------------------- necessarium-ad-quodlibet
+# `excluded-middle`'s own reductio, verbatim, with one premise `q` bolted on
+# the front and never cited again -- which is the entire point: a necessary
+# truth follows from anything, including a premise the proof never touches.
+PROOFS["necessarium-ad-quodlibet"] = [
+    P(1, "q"),
+    _l(2, "~(p | ~p)", "As", 1),
+    _l(3, "p", "As", 2),
+    _l(4, "p | ~p", "DisjI", 2, [3]),
+    _l(5, "!", "FalsumI", 2, [4, 2]),
+    _l(6, "~p", "NegI", 1, subs=[[3, 5]]),
+    _l(7, "p | ~p", "DisjI", 1, [6]),
+    _l(8, "~(p | ~p)", "Reit", 1, [2]),
+    _l(9, "!", "FalsumI", 1, [7, 8]),
+    _l(10, "~~(p | ~p)", "NegI", 0, subs=[[2, 9]]),
+    _l(11, "p | ~p", "NegE", 0, [10]),
+]
+
+# ------------------------------------------------------ ex-impossibili-contradiction
+# `ex-falso`'s reductio run twice from the same two premises -- once for `q`,
+# once for `∼q` -- and joined with a final `&I`. Two sibling subproofs, not
+# nested: doubling the explosion costs a second reductio, not a deeper one.
+PROOFS["ex-impossibili-contradiction"] = [
+    P(1, "p"),
+    P(2, "~p"),
+    _l(3, "~q", "As", 1),
+    _l(4, "!", "FalsumI", 1, [1, 2]),
+    _l(5, "~~q", "NegI", 0, subs=[[3, 4]]),
+    _l(6, "q", "NegE", 0, [5]),
+    _l(7, "q", "As", 1),
+    _l(8, "!", "FalsumI", 1, [1, 2]),
+    _l(9, "~q", "NegI", 0, subs=[[7, 8]]),
+    _l(10, "q & ~q", "ConjI", 0, [6, 9]),
+]
+
+# ------------------------------------------------------------ structural-weakening
+# The whole rule in one reiteration: `q` is a premise the conclusion never
+# touches, so nothing beyond citing `p` again is needed to reach it.
+PROOFS["structural-weakening"] = [
+    P(1, "p"),
+    P(2, "q"),
+    _l(3, "p", "Reit", 0, [1]),
+]
+
+# ------------------------------------------------------------------- entt-axiom
+# `(p>p)>q` is the outer assumption; to use it, `p>p` has to be built as its
+# own line, which is a subproof inside the outer one -- assume `p`,
+# reiterate it (CondI's discharge cannot cite the assumption line itself,
+# per the one-line-subproof rule), and discharge.
+PROOFS["entt-axiom"] = [
+    _l(1, "(p > p) > q", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p", "Reit", 2, [2]),
+    _l(4, "p > p", "CondI", 1, subs=[[2, 3]]),
+    _l(5, "q", "CondE", 1, [1, 4]),
+    _l(6, "((p > p) > q) > q", "CondI", 0, subs=[[1, 5]]),
+]
+
+# ------------------------------------------------------ double-negation-theorem
+# The deduction-theorem shadow of `double-negation-elimination`: assume the
+# antecedent, cite `NegE`, discharge. One line longer than the rule itself.
+PROOFS["double-negation-theorem"] = [
+    _l(1, "~~p", "As", 1),
+    _l(2, "p", "NegE", 1, [1]),
+    _l(3, "~~p > p", "CondI", 0, subs=[[1, 2]]),
+]
+
+# ------------------------------------------------------------- combinatory-fixed-point
+# `(p>p)>p` is truth-functionally just `p` in disguise -- ⊃E against `p>p`
+# reads it off directly. The first premise never gets cited, which is the
+# point: `derive.py`'s premise_analysis calls it idle, and the dead-line
+# check does not fire because premises are exempt from it (§6.5's own note).
+PROOFS["combinatory-fixed-point"] = [
+    P(1, "p > p"),
+    P(2, "(p > p) > p"),
+    _l(3, "p", "CondE", 0, [2, 1]),
+]
+
+# --------------------------------------------------------------- mcgee-counterexample
+# A curried conditional taken apart and put back together: `~g` opens the
+# subproof `>I` needs, `r&~g` is built directly (both conjuncts already
+# accessible, no reiteration required since neither elimination cites it
+# locally), and `>E` against the premise lands `a` inside the same subproof.
+PROOFS["mcgee-counterexample"] = [
+    P(1, "(r & ~g) > a"),
+    P(2, "r"),
+    _l(3, "~g", "As", 1),
+    _l(4, "r & ~g", "ConjI", 1, [2, 3]),
+    _l(5, "a", "CondE", 1, [1, 4]),
+    _l(6, "~g > a", "CondI", 0, subs=[[3, 5]]),
+]
+
+# ----------------------------------------------------------------- consensus-theorem
+# The trivial half is one line: `A|B` already entails `(A|B)|C`, no
+# reasoning needed. The hard half assumes the whole disjunction false,
+# peels `~A` and `~B` off it by the same reductio-against-DisjI pattern
+# `de-morgan-disjunction` uses, then opens a *third* reductio (`p`) to turn
+# `~A` plus `q` into `~p` -- at which point `~p` and `r` build `B` directly
+# by `ConjI`, no further reductio needed, and `B` collides with `~B`.
+# ------------------------------------------------------------- conjunctive-sufficiency
+# `&E` reaches `q` directly from the premise; `>I` supplies the rest. The
+# premise's `p` conjunct is never cited -- it only fixes which conditional
+# gets built, not how `q` is reached.
+PROOFS["conjunctive-sufficiency"] = [
+    P(1, "p & q"),
+    _l(2, "p", "As", 1),
+    _l(3, "q", "ConjE", 1, [1]),
+    _l(4, "p > q", "CondI", 0, subs=[[2, 3]]),
+]
+
+PROOFS["consensus-theorem"] = [
+    _l(1, "(p & q) | (~p & r) | (q & r)", "As", 1),
+    _l(2, "(p & q) | (~p & r)", "As", 2),
+    _l(3, "(p & q) | (~p & r)", "Reit", 2, [2]),
+    _l(4, "q & r", "As", 2),
+    _l(5, "q", "ConjE", 2, [4]),
+    _l(6, "r", "ConjE", 2, [4]),
+    _l(7, "~((p & q) | (~p & r))", "As", 3),
+    _l(8, "p & q", "As", 4),
+    _l(9, "(p & q) | (~p & r)", "DisjI", 4, [8]),
+    _l(10, "!", "FalsumI", 4, [9, 7]),
+    _l(11, "~(p & q)", "NegI", 3, subs=[[8, 10]]),
+    _l(12, "~p & r", "As", 4),
+    _l(13, "(p & q) | (~p & r)", "DisjI", 4, [12]),
+    _l(14, "!", "FalsumI", 4, [13, 7]),
+    _l(15, "~(~p & r)", "NegI", 3, subs=[[12, 14]]),
+    _l(16, "p", "As", 4),
+    _l(17, "p & q", "ConjI", 4, [16, 5]),
+    _l(18, "!", "FalsumI", 4, [17, 11]),
+    _l(19, "~p", "NegI", 3, subs=[[16, 18]]),
+    _l(20, "~p & r", "ConjI", 3, [19, 6]),
+    _l(21, "!", "FalsumI", 3, [20, 15]),
+    _l(22, "~~((p & q) | (~p & r))", "NegI", 2, subs=[[7, 21]]),
+    _l(23, "(p & q) | (~p & r)", "NegE", 2, [22]),
+    _l(24, "(p & q) | (~p & r)", "DisjE", 1, [1], [[2, 3], [4, 23]]),
+    _l(25, "(p & q) | (~p & r)", "As", 1),
+    _l(26, "((p & q) | (~p & r)) | (q & r)", "DisjI", 1, [25]),
+    _l(27, "(((p & q) | (~p & r)) | (q & r)) = ((p & q) | (~p & r))",
+       "BicondI", 0, subs=[[1, 24], [25, 26]]),
+]
+
+# ------------------------------------------------------- convention-t-gives-bivalence
+# `t_p, f_p` are opaque; nothing connects them to `p` except the two premises.
+# Excluded middle is not among them, so it is proved first as an undictated
+# lemma (`excluded-middle`'s own ten lines, shifted two for the premises), then
+# split by cases: each case names `p` or `~p` directly, and `BicondE` against
+# the matching premise reads off `t_p` or `f_p` outright.
+PROOFS["convention-t-gives-bivalence"] = [
+    P(1, "t_p = p"),
+    P(2, "f_p = ~p"),
+    _l(3, "~(p | ~p)", "As", 1),
+    _l(4, "p", "As", 2),
+    _l(5, "p | ~p", "DisjI", 2, [4]),
+    _l(6, "!", "FalsumI", 2, [5, 3]),
+    _l(7, "~p", "NegI", 1, subs=[[4, 6]]),
+    _l(8, "p | ~p", "DisjI", 1, [7]),
+    _l(9, "~(p | ~p)", "Reit", 1, [3]),
+    _l(10, "!", "FalsumI", 1, [8, 9]),
+    _l(11, "~~(p | ~p)", "NegI", 0, subs=[[3, 10]]),
+    _l(12, "p | ~p", "NegE", 0, [11]),
+    _l(13, "p", "As", 1),
+    _l(14, "t_p", "BicondE", 1, [1, 13]),
+    _l(15, "t_p | f_p", "DisjI", 1, [14]),
+    _l(16, "~p", "As", 1),
+    _l(17, "f_p", "BicondE", 1, [2, 16]),
+    _l(18, "t_p | f_p", "DisjI", 1, [17]),
+    _l(19, "t_p | f_p", "DisjE", 0, [12], subs=[[13, 15], [16, 18]]),
+]
+
+# ------------------------------------------------------------- bivalence-is-no-gap
+# `de-morgan-disjunction` itself, one level up: both sides of `~(p|q)=(~p&~q)`
+# doubly negated (which preserves the biconditional, since `A=B` and `~A=~B`
+# always agree) and the atoms renamed to the opaque `t_p`/`f_p` pair. The proof
+# is the identical shape, not merely the identical theorem: -> assumes the
+# disjunction and refutes the negated conjunction by cases on it; <- assumes
+# the negated goal, extracts `~t_p` and `~f_p` each by a dictated reductio, and
+# collides their conjunction with the premise.
+PROOFS["bivalence-is-no-gap"] = [
+    _l(1, "t_p | f_p", "As", 1),
+    _l(2, "~t_p & ~f_p", "As", 2),
+    _l(3, "~t_p", "ConjE", 2, [2]),
+    _l(4, "~f_p", "ConjE", 2, [2]),
+    _l(5, "t_p", "As", 3),
+    _l(6, "t_p", "Reit", 3, [5]),
+    _l(7, "!", "FalsumI", 3, [6, 3]),
+    _l(8, "f_p", "As", 3),
+    _l(9, "f_p", "Reit", 3, [8]),
+    _l(10, "!", "FalsumI", 3, [9, 4]),
+    _l(11, "!", "DisjE", 2, [1], subs=[[5, 7], [8, 10]]),
+    _l(12, "~(~t_p & ~f_p)", "NegI", 1, subs=[[2, 11]]),
+    _l(13, "~(~t_p & ~f_p)", "As", 1),
+    _l(14, "~(t_p | f_p)", "As", 2),
+    _l(15, "t_p", "As", 3),
+    _l(16, "t_p | f_p", "DisjI", 3, [15]),
+    _l(17, "!", "FalsumI", 3, [16, 14]),
+    _l(18, "~t_p", "NegI", 2, subs=[[15, 17]]),
+    _l(19, "f_p", "As", 3),
+    _l(20, "t_p | f_p", "DisjI", 3, [19]),
+    _l(21, "!", "FalsumI", 3, [20, 14]),
+    _l(22, "~f_p", "NegI", 2, subs=[[19, 21]]),
+    _l(23, "~t_p & ~f_p", "ConjI", 2, [18, 22]),
+    _l(24, "!", "FalsumI", 2, [23, 13]),
+    _l(25, "~~(t_p | f_p)", "NegI", 1, subs=[[14, 24]]),
+    _l(26, "t_p | f_p", "NegE", 1, [25]),
+    _l(27, "(t_p | f_p) = ~(~t_p & ~f_p)", "BicondI", 0, subs=[[1, 12], [13, 26]]),
+]

@@ -45,6 +45,11 @@ be offered a second time). The reason column says which.
 | 2026-08-31 | `Kbr, Ki ⊢ Kb` (CLI-132, comprehensive §1b) | "The Red Barn" — a named case, not a named person; the row credits no one. |
 | 2026-08-31 | `∼p∨q, ∼q∨r, ∼p∨∼r ⊢ p` (CLI-149, comprehensive §1b) | No philosopher named — "three propositions each individually neutral on `p`" describes the shape, not a source, and §1 carries no `sep` line. |
 | 2026-08-31 | `⊢ p ⊃ (q⊃p)` (CLI-203, comprehensive §2.1) | Duplicates `positive-paradox` already in the database (`p ⊢ q⊃p`) — the closed axiom and the premised sequent are the same principle one deduction-theorem step apart, and §2's own `sep` line lists eight articles with no way to tell which covers this row, so there is no independent source to justify treating them as separate entries. |
+| 2026-08-31 | `⊢ (p∨q) ≡ ((p∨q) & (r∨∼r))` (CLI-210, comprehensive §2.1) | The row's own gloss calls this "SEP's 'contaminated disjunction'," naming SEP but not which of it — §2.1's `sep` line lists eight general articles. Checked five of the eight directly (`logic: classical`, `logic: propositional`, `logical consequence`, `logical form`, `logical truth`) for this specific example (a disjunction padded with a tautologous, atom-disjoint conjunct) and none of the five contains it; the row names no philosopher to fall back on either. Left for a person who can identify which SEP article (if any of the eight, rather than a ninth this firing did not think to check) the phrase is drawn from. |
+| 2026-08-31 | `⊢ (p⊃q) ∨ p` (CLI-212, comprehensive §2.1) | Duplicates `disjunction-with-vacuous-conditional` already in the database (`⊢ p ∨ (p⊃q)`) — the identical tautology with its two disjuncts swapped, which `inventory.py`'s shape-match dedup does not catch since it does not normalise disjunct order. Caught by a manual search per §6 before writing. (Its sibling `⊢ a ∨ (a⊃b)`, CLI-214, does not appear in the queue at all — same theorem, same disjunct order up to renaming `a→p, b→q`, which the dedup does catch.) |
+| 2026-08-31 | `(∼(∼p ∨ ∼q) ∨ ∼(∼p ∨ q)) ≡ p` (comprehensive, "Identities students will not guess" — Huntington's equation, 1933) | Valid, and the SEP article names it exactly — fetched Burris & Legris's *The Algebra of Logic Tradition* (§8, "Huntington: Axiomatic Investigations of the Algebra of Logic") and confirmed the equation, `who`, and canonical URL directly, rather than trust the row's own gloss. The obstacle is the derivation. Direction `p ⊢ (∼(∼p∨∼q) ∨ ∼(∼p∨q))` needs a case split on `q`, which the goal itself never pins down (the two disjuncts hold under opposite values of `q`), and no route tried avoided it: an explicit `q∨∼q` lemma ran the whole biconditional to 49 lines, and a leaner double-negation extraction of `∼p∨∼q` and `∼p∨q` directly from the negated goal still ran 41 — both comfortably past the 29-line floor with all five §14.3 triggers present, which would make this a fifth `extremely hard` nd entry against the cap of four the test suite enforces (`worn.length <= 4`). The style guide's own instruction for that situation is to raise `ND_EXTREME_LINES` rather than excuse the entry, but this firing's own earlier precedent (`conditional-crossover`, below) is to look for a shorter proof first, since the threshold also governs the four entries already wearing the band. No proof under 29 lines was found. Left for a firing or a person with time for either a cleverer derivation or a considered decision to raise the constant. |
+| 2026-08-31 | `∼(∼(p ∨ q) ∨ ∼(p ∨ ∼q)) ≡ p` (comprehensive, "Identities students will not guess" — the Robbins equation) | Same SEP section (Burris & Legris, §8) names this one too, conjectured by Robbins as a simplification of Huntington's third axiom and settled only by McCune's automated prover in 1996. Not attempted in full: it is structurally the same shape as Huntington's equation directly above it in the queue (a case split on `q` is unavoidable in the same direction), so it is presumed to hit the same 29-line wall rather than re-derive it to confirm. Left for the same reason and alongside it. |
+| 2026-08-31 | `⊢ ((p∨q) & ∼(p&q)) ≡ ∼(p≡q)` (CLI-313, comprehensive §3.6) | The row is "exclusive-or is definable — the logician's reply to the ambiguity thesis," naming no philosopher. §3's own `sep` line lists seven general articles (`conditionals`, `conditionals: counterfactual`, `connectives: sentence connectives in formal logic`, `contradiction`, `disjunction`, `logical constants`, `negation`) with no way to tell which covers this specific row — exactly §11d's case for naming the champion instead, except the row names none. Checked the likeliest candidate directly: Aloni's *Disjunction* discusses exclusive `⊕` and its problems but not this identity or this reply. Left for a person who can identify the actual source, if one of the seven names it at all. |
 
 ## Resolved
 
@@ -1039,3 +1044,634 @@ entries reaches it (two invalid, carrying no `nd` score; the one valid
 entry scores `medium`). Comprehensive queue: 80 candidates left of 274
 (85 now in the database, 3 quarantined, 82 unreadable, 24 settled — two
 more rows newly logged above). Course and imports queues remain at 0.
+
+## 2026-08-31 — three more from §2.1, all valid, all champions or SEP
+
+Course and imports queues both empty (`inventory.py --status`: 0
+candidates each). Worked the comprehensive queue, `--next 3`: all three
+from §2.1 CORE PROPOSITIONAL AND FORMAL LOGIC, whose own `*SEP:*` line
+lists eight general articles with no way to tell which covers any one
+row — so each got read individually rather than trusting the header.
+
+`nicods-rule` (CLI-205, `a, ∼(a & ∼(b & c)) ⊢ c`). No single article in
+the header's eight covers this specifically (Nicod is a historical
+figure, not a subject any of the eight are about), so named the
+champion: Jean Nicod, *A Reduction in the Number of the Primitive
+Propositions of Logic* (1917), `url: null` — confirmed only the
+uncontroversial shape of the achievement (one axiom, one rule, all in
+the Sheffer stroke, replacing *Principia*'s apparatus) rather than
+assert an unverified characterisation of the rule's content. The
+content claim in `interest` — that `∼(a & ∼(b & c))` is `a ⊃ (b & c)`
+in stroke clothing — is verified directly (`∼(X & ∼Y) ≡ X⊃Y` is a
+tautological equivalence, not a citation) rather than attributed to
+anyone. Valid, 1 of 8 rows premise-true (matches the row's own
+annotation). Needed a derivation: an undictated reductio for the
+non-negation goal `c`, with a second reductio nested inside it to build
+`∼(b & c)` before the two conjuncts can be joined and set against the
+second premise — two §14.3 triggers (undictated reductio, nested
+subproof), `medium`, matching `difficulty.py` exactly. Checked against
+`nd.check()` directly. No near-duplicate in the database; no
+`looks_like`.
+
+`necessarium-ad-quodlibet` (CLI-206, `q ⊢ p ∨ ∼p`) and
+`ex-impossibili-contradiction` (CLI-207, `p, ∼p ⊢ q & ∼q`). Both
+corollaries of Buridan's, and §2.4 (a different section of the same
+file) names the exact article and section for both without my having
+to guess: SEP *Medieval Theories of Consequence*, §3.3, "lists *ex
+impossibili quodlibet* among Buridan's corollaries." Fetched the entry
+directly (twice, independently, to the same wording both times) rather
+than trust that pointer alone — confirmed current authorship (Catarina
+Dutilh Novaes, original author; Milo Crimi, Fall 2024 revision — the
+*byline* on the entry as it stands, not just the historical author),
+the section (§3.3, "Buridan and the Parisian tradition"), the URL, and
+the exact sentence: "'from the impossible anything follows'... or 'the
+necessary follows from anything'." Cited the SEP entry as `who` rather
+than Buridan directly, `type: discussed`, `fidelity: verbatim` — the
+same choice `peirce-law`'s Bimbó appearance already made for a
+structurally identical case (a modern SEP entry reporting a formal
+result rather than the SEP authors' own argument), and safer than
+guessing a locus in Buridan's own *Treatise on Consequences* that
+nobody here has read.
+
+`necessarium-ad-quodlibet`: valid, tautological conclusion, one
+premise never used — `looks_like: excluded-middle` (0-premise version
+of the same tautology), `interest` says how they differ, and the
+derivation *is* `excluded-middle`'s own reductio with `q` bolted on the
+front, never cited again. Tagged `defect: idle premise` (`quotes
+recovery-cleopatra`'s and `vacuous-conditional-no-reach`'s own
+vocabulary for the same phenomenon) and `nonclassical: relevant`.
+1 §14.3 trigger (undictated reductio), `medium`.
+
+`ex-impossibili-contradiction`: valid, premises jointly unsatisfiable
+(0 of 4 rows premise-true) — `looks_like: ex-falso` (same principle,
+premises separate rather than conjoined, conclusion a contradiction
+rather than a bare atom), `interest` says how they differ. Derivation
+runs `ex-falso`'s own reductio twice from the same two premises, once
+for `q` and once for `∼q`, joined by one `&I` — two sibling subproofs,
+not nested, so only 1 §14.3 trigger, `medium`. Tagged `defect: vacuous
+validity` and `nonclassical: [relevant, paraconsistent]`, matching
+`ex-falso`'s own tags exactly, since it is the same phenomenon.
+
+All three: `difficulty.py --diff` printed nothing (0 differ) — every
+authored `nd` score matched the computed suggestion, no override
+needed. Checked the database for near-duplicates and existing ids
+first (none found for any of the three) before writing. `git diff
+--name-only origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty; none of the three appearances is a course appearance,
+so none needed it.
+
+**The sandbox again had no LaTeX toolchain in this fresh container.**
+`apt-get install` of the usual package list (`texlive-latex-base
+texlive-latex-recommended texlive-latex-extra texlive-pictures
+texlive-binaries dvisvgm texlive-humanities texlive-science
+texlive-fonts-recommended`) 404'd on the same two unrelated packages
+prior firings have already noted (`mesa`'s `libegl-mesa0`, `ruby3.2`)
+on the first attempt; a second `apt-get install --fix-missing` with the
+identical list resolved `latex`, `pdflatex` and `dvisvgm` cleanly.
+
+`build.py --write` (three entries normalised, atoms already legal —
+`a`/`b`/`c`, `p`/`q` — so no renames; difficulty scores written for
+table/tree, `nd` left at the authored value since it already matched),
+`python3 difficulty.py --diff` (0 differ), `svg.py` (12 SVGs: 4 blocks
+× 3 valid entries), `svg.py --check` (every SVG current),
+`inventory.py --locks` (0 practicable methods locked),
+`manifest.py --check-merge` (146 entries, 143 expected from the merge
+parents plus 3 new, nothing lost — the branch was already up to date
+with `main`, no merge to resolve this firing), and
+`node --test "_tests/*.test.mjs"` (513/513) all clean. `extremely hard`
+count unchanged (none of the three new entries is anywhere close: all
+three score `medium`). Comprehensive queue: 77 candidates left of 274
+(88 now in the database, 3 quarantined, 82 unreadable, 24 settled).
+Course and imports queues remain at 0.
+
+## 2026-08-31 — three more from §2.1 and §4.1; two skipped, two more caught by manual dedup
+
+Course and imports queues both confirmed empty (`inventory.py --status`,
+`--status --source imports`: 0 candidates each). Continued the
+comprehensive queue, `--next 3 --source comprehensive`: `p, q ⊢ p`
+(CLI-208), `⊢ (p∨q) ≡ ((p∨q) & (r∨∼r))` (CLI-210), and
+`⊢ ((p⊃p)⊃q)⊃q` (CLI-211), all §2.1 CORE PROPOSITIONAL AND FORMAL
+LOGIC, whose `sep` line again lists eight general articles with no
+per-row pointer.
+
+CLI-210 could not be sourced — logged above — so a fourth candidate,
+CLI-212 (`⊢ (p⊃q) ∨ p`), was pulled to look at as a replacement and
+turned out to be a disjunct-order duplicate of the existing
+`disjunction-with-vacuous-conditional` — also logged above, since
+`inventory.py`'s dedup does not normalise disjunct order and would
+offer it again untouched. Went further down the queue for a genuine
+third candidate and took `⊢ ∼∼p ⊃ p` (CLI-401, §4.1 "Intuitionistic
+logic — the classical theorems that fail") instead, whose `sep` line
+names `logic: intuitionistic` directly rather than a grab-bag.
+
+`structural-weakening` (CLI-208, `p, q ⊢ p`). The row's own gloss
+— "the rule relevance logic rejects one level above the connectives" —
+names no philosopher, and none of §2.1's eight listed articles is
+obviously about relevance logic by title, so five of the eight were
+read directly rather than guessed past: `logic: classical`,
+`logic: propositional`, `logical form`, `logical truth`, and
+`logical consequence`. The fifth has the passage this row needs
+verbatim — Beall, Restall & Sagi's SEP entry *Logical Consequence*,
+§4 ("Premises and Conclusions"), states the objection to the
+structural rule of weakening in almost exactly the row's own words —
+so it is cited directly (`who`, `work`, `url` all confirmed against
+the fetched page) rather than treated as unclear. Quote checked
+against the fetched text before writing, not composed. Valid,
+trivially — the shortest entry in the database by every measure:
+3-line proof (`Pr, Pr, Reit`), 0 §14.3 triggers, `easy`. `derive.py`'s
+own `premise_analysis` confirms `q` is idle on every row before that
+claim went into `interest`.
+
+`entt-axiom` (CLI-211, `⊢ ((p⊃p)⊃q)⊃q`, Anderson & Belnap's EntT,
+axiom 2 of the relevance logic E). The row names E and R directly —
+Anderson and Belnap's own systems — but neither "relevance logic" nor
+"Anderson" nor "Belnap" is among §2.1's eight listed SEP articles, so
+rather than reach for SEP's own *Relevance Logic* entry (confirmed by
+search to carry the exact axiom, word for word, in its "Logic E"
+subpage — a hit, not a guess) and cite an article outside the row's
+given list, named the champions directly per §11d's fallback: Anderson
+& Belnap's *Entailment: The Logic of Relevance and Necessity* (1975),
+`url: null`, no `quote` (no verbatim text on hand to check one
+against). The claim that EntT is not among R's own eleven listed
+axioms — checked directly against SEP's *Relevance Logic* "Logic R"
+subpage, which is how the entry's own `interest` can say it — is
+stated in `interest` in the encyclopedia's own voice, not attributed
+to SEP as a quotation. Valid; the proof needs `p⊃p` built as its own
+subproof nested inside the assumption for the whole theorem, one
+§14.3 trigger, `medium`, matching `difficulty.py` exactly.
+
+`double-negation-theorem` (CLI-401, `⊢ ∼∼p ⊃ p`). Companion to the
+existing `double-negation-elimination` (`∼∼p ⊢ p`) — same rule, one
+`CondI` further out, `looks_like` set and `course.note` names the
+pairing. §4.1's `sep` line names `logic: intuitionistic` directly, no
+guessing needed: fetched Joan Rand Moschovakis's SEP entry
+*Intuitionistic Logic*, §1 ("Rejection of *Tertium Non Datur*"),
+confirmed the current byline and quoted its own sentence verbatim —
+"the classical law of double negation elimination: ¬¬A → A" — rather
+than composing one. Valid, 3-line proof (`As, NegE, CondI`), 0 §14.3
+triggers, `easy`.
+
+**Two more from the front of the queue were considered and set aside
+rather than imported this firing, not logged as skips since neither is
+rejected — both are still exactly where the queue left them.** Positions
+2 and 3 at firing's end are Huntington's equation
+(`(∼(∼p∨∼q)∨∼(∼p∨q)) ≡ p`, 1933) and the Robbins equation
+(`∼(∼(p∨q)∨∼(p∨∼q)) ≡ p`, McCune's 1996 automated proof) — both
+directly and richly sourced (SEP's *The Algebra of Logic Tradition*,
+Burris & Legris, §8, confirmed to carry both equations and the full
+McCune/Tarski/Berkeley narrative verbatim) and both good future
+imports. Each is semantically `p & (q∨∼q) ≡ p` under De Morgan, and a
+hand-sketched `BicondI` derivation for that shape — proof-by-cases
+lemma for `q∨∼q`, nested inside a second case split to extract each
+half of the disjunction being defined — ran past 40 lines with what
+looked like all five §14.3 triggers before it was even fully checked.
+The `extremely hard` (nd) band is at 4 of the 4 the test suite allows;
+writing either equation's derivation by hand at that length and risking
+a fifth was worse than leaving both for a firing that can either find a
+shorter route or accept the count needs to rise, per §14.-0.5's own
+instruction to say so rather than score around it. Recorded here so
+the next firing does not have to rediscover the risk from nothing.
+
+Checked all three imported entries against the database for
+near-duplicates and existing ids first (none beyond the
+`double-negation-theorem`/`double-negation-elimination` pairing, which
+is deliberate and stated via `looks_like`). `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty; none of the three appearances is a course, Restall or
+archive appearance, so none needed it.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+`apt-get install texlive-latex-base texlive-latex-extra
+texlive-fonts-recommended dvisvgm` first, which left `stmaryrd.sty` and
+`qtree.sty`/`fitch.sty` missing (same shape of gap prior firings
+recorded); `apt-file search` (after `apt-file update`) pointed at
+`texlive-science` (`stmaryrd.sty`, `fitch.sty`) and
+`texlive-humanities` (`qtree.sty`), matching every prior firing's note
+exactly. Both installed cleanly, no `--fix-missing` needed this time.
+
+`build.py --write` (three entries normalised, atoms already legal —
+`p`/`q` throughout, no renames; difficulty scores written for
+table/tree, `nd` left at the authored values since `difficulty.py
+--diff` agreed with all three), `svg.py` (12 SVGs: 4 blocks × 3 valid
+entries), `svg.py --check` (every SVG current), `inventory.py --locks`
+(0 practicable methods locked — none of the three carries a
+`problem_set`, per §11d), `manifest.py --check-merge` (149 entries, 146
+expected from the merge parents plus 3 new, nothing lost — the branch
+was already up to date with `main`, no merge to resolve this firing),
+and `node --test "_tests/*.test.mjs"` (513/513) all clean. `extremely
+hard` count unchanged at 4 of 4 (nd) — none of the three new entries is
+close (`easy`, `medium`, `easy`). Comprehensive queue: 74 candidates
+left of 274 (91 now in the database, 3 quarantined, 82 unreadable, 26
+settled — CLI-210 and CLI-212 newly logged above). Course and imports
+queues remain at 0.
+
+## 2026-08-31 (continued) — a shorter Huntington/Robbins proof, still over
+the line; three imported instead from further down §2.6/§2.17b/§3.1
+
+Course and imports queues confirmed empty again. `python3
+manifest.py --check-merge` before touching anything: `origin/main` was
+already fully merged into `claude/inventory-import` (149 entries, 149
+expected), nothing to resolve.
+
+**Huntington's equation and the Robbins equation, revisited.** The
+prior firing set both aside at 4 of 4 `extremely hard` (nd) rather than
+risk a fifth, and left a hand-sketched >40-line estimate for whichever
+firing came next to either shorten or accept. Took that up directly:
+wrote both directions in `nd.py`'s own line format and checked them
+with `nd.check()` rather than by hand, since the prior estimate was
+explicitly unverified. The `⟸` direction (`p ⊢ D1∨D2`) compresses well
+once the two disjuncts are attacked by reductio-against-`E`
+(`¬(D1∨D2)`) rather than by first deriving `q∨∼q` and case-splitting on
+it — the case-split route re-proves excluded middle from scratch (10
+lines) and then repeats a nested `∨E` twice more; the `¬E`-first route
+gets `¬D1` and `¬D2` directly (4 lines each, same shape
+`de-morgan-disjunction` uses) and only needs one nested case-split to
+collide them, 26 lines against `Reit` where required for own-assumption
+`⊥I` (§6.4's table, row 4 — every one of the four such spots in this
+proof needed it, and `nd.check()` catches the ones a first draft
+missed). The `⟹` direction (`D1∨D2 ⊢ p`) similarly compresses from a
+naive double-reductio (14 lines) to a single shared reductio wrapping
+the case split (13 lines). Verified total: **40 lines** (13 + 26 + 1 for
+`≡I`), all five §14.3 triggers present. This confirms rather than
+overturns the prior estimate — a genuinely shorter route was not
+found, and 40 lines is a floor for this identity in the twelve-rule
+system, not an artifact of bad proof search. The `extremely hard` (nd)
+band is still at 4 of the 4 the test suite allows, so importing either
+now would need `ND_EXTREME_LINES` raised — which also touches
+`de-morgan-conjunction` and `material-conditional`, both sitting at
+exactly the current 29-line floor, and would need their own
+`course.note` added the moment the threshold moves past them. That is
+a real decision about shared calibration, not a per-entry judgement,
+so it is left for a firing (or Daniel) that can make it deliberately
+rather than as a side effect of clearing this pair. The verified
+40-line proof is not thrown away: it is sitting in this firing's own
+scratch history and can be dropped into `proofs.py` verbatim the day
+the threshold moves. Consensus (below) needed the same reductio-against-`E`
+trick and came in at 27 lines — proof that the trick works, just not by
+enough margin on the harder pair.
+
+**`consensus-theorem`** (comprehensive, §2.6 "Identities students will
+not guess", no `ID`). `((p&q)∨(∼p&r)∨(q&r)) ≡ ((p&q)∨(∼p&r))` — the
+disjunct `q&r` is redundant given the other two, because `p` and `∼p`
+between them already exhaust it. The section's own `sep` line names
+three articles (Burris & Legris' *The Algebra of Logic Tradition*, Monk's
+*The Mathematics of Boolean Algebra*, Font & Jansana's *Algebraic
+Propositional Logic*); fetched all three specifically for this row (not
+just the section) and none discusses consensus by name — Burris &
+Legris covers Huntington and Robbins (confirmed, see above) but stops
+there. Per §11d's fallback, named the champion the row's own table
+credits instead: Archie Blake, whose 1937 dissertation *Canonical
+Expressions in Boolean Algebra* introduced the shape (confirmed against
+Wikipedia's history section, cross-checked for the year and title
+rather than taken as given); `fidelity: our reconstruction`, `url:
+null`. Valid, `hard` (nd) — 27 lines, matching `difficulty.py`'s own
+rubric exactly (no `course.note` needed), comfortably under the
+29-line floor that would push it into `extremely hard` even with all
+five §14.3 triggers present.
+
+**`combinatory-fixed-point`** (comprehensive, §2.17b "Fixed points",
+no `ID`). `p⊃p, (p⊃p)⊃p ⊨ p` — the propositional shadow of the
+combinatory fixed-point theorem (`Yx ▷ x(Yx)` needs `Y : (A⊃A)⊃A`, which
+is not a theorem as a bare schema but becomes trivial once `A⊃A`'s own
+theorem-hood is handed in as a second premise). The section's `sep`
+line names Bimbó's *Combinatory Logic* directly; fetched it and
+confirmed both the fixed-point theorem statement and its self-application
+passage verbatim, §2.3. `derive.py`'s `premise_analysis` confirms `p⊃p`
+is idle — checked before it went into `interest`, since that is exactly
+the kind of claim §11d/the routine's own standing caution says to
+verify rather than assert. Valid, `easy` (nd) — 3 lines, `Pr, Pr,
+CondE`.
+
+**`mcgee-counterexample`** (comprehensive, §3.1 "The paradoxes of
+material implication", CLI-309). `(r&∼g)⊃a, r ⊢ ∼g⊃a` — the
+propositional shadow of Vann McGee's 1985 counterexample to modus
+ponens. The section's `sep` line lists seven general articles including
+`conditionals`, which resolves (checked, not assumed) to Dorothy
+Edgington's *Indicative Conditionals* rather than to Égré & Rott's *The
+Logic of Conditionals* (a different, unlisted article that happens to
+also be in the database already, cited on `conditional-excluded-middle`
+— checked it was not what this row's own `sep` line names before
+reaching for it here). Fetched Edgington's entry and confirmed it
+discusses McGee's example by name and year in §5, quote verbatim.
+Row's own `Prop?` column flags the loss directly ("the failure needs
+probability"): the propositional fragment is classically valid with no
+countermodel (`derive.py`: 3 of 8 rows keep both premises true, all
+three also true in the conclusion) precisely because it cannot
+represent the probabilistic semantics McGee's actual argument needs —
+said in `interest` rather than left for the `VALID` chip to read as a
+rebuttal of McGee, per §11d's standing instruction on rows that flag
+their own propositional shadow.
+
+**CLI-307** (`p&q ⊢ p⊃q`, "And-to-If / Conjunctive Sufficiency... In
+Stalnaker's C2, absent from Lewis's V") was looked at and set aside,
+not rejected. Confirmed the technical claim is accurate — Égré & Rott's
+*The Logic of Conditionals* §3.3 states system `V` excludes `CS`
+(Conjunctive Sufficiency) while `VC`/`C2` include it, matching the
+row's own phrasing closely enough that `CS` is very likely what the row
+means — but that article is not one of §3.1's seven listed `sep`
+articles, and `conditionals` on that list resolves to Edgington's
+different, unlisted-by-name article instead (used for `mcgee-counterexample`
+above). Stalnaker and Lewis are both named directly by the row, so the
+§11d fallback (cite the champions, `url: null`) would apply here too —
+just not chased fully this firing once `mcgee-counterexample` gave a
+cleaner three-entry batch. Left exactly where the queue leaves it, for
+a firing that wants a fourth from this section.
+
+`build.py --write` (three entries normalised; `p⊃p` and `p` already
+legal atoms throughout, no renames; `nd` difficulty authored for all
+three and `difficulty.py --diff` agreed on every one, no override
+needed), `svg.py` (12 SVGs: 4 blocks × 3 valid entries), `svg.py
+--check` (every SVG current), `inventory.py --locks` (0 practicable
+methods locked — none of the three carries a `problem_set`, per §11d),
+`manifest.py --check-merge` (152 entries, 149 expected plus 3 new,
+nothing lost), and `node --test "_tests/*.test.mjs"` (513/513) all
+clean. `extremely hard` (nd) count unchanged at 4 of 4 — none of the
+three new entries is close (`hard`, `easy`, `easy`). Comprehensive
+queue: 69 candidates left of 274 (94 now in the database). Course and
+imports queues remain at 0.
+
+## 2026-08-31 (continued) — Huntington/Robbins confirmed over the line
+a third time; three imported from further down §3.1/§3.6 instead
+
+Course and imports queues confirmed empty again (`--status` on both:
+0 candidates). `manifest.py --check-merge` before touching anything:
+`origin/main` was already fully merged into `claude/inventory-import`
+(152 entries, 152 expected), nothing to resolve.
+
+**Huntington's equation and the Robbins equation, independently
+re-verified, same conclusion a third time.** Before reading this log's
+own prior two entries on the pair, wrote both directions from scratch
+in `nd.py`'s line format and ran `nd.check()` directly — same
+motivation as the second entry: don't trust a hand estimate. First
+draft used a proof-by-cases-on-`q` route (re-deriving `q∨∼q` from
+nothing, then splitting on it twice more to build each disjunct) and
+landed at 49 lines, all five §14.3 triggers, `extremely hard`. Reading
+the log afterward found the second entry had already discovered and
+recorded the better route — reductio-against-`∨I` to pull `¬D1`/`¬D2`
+out of `¬(D1∨D2)` directly, skipping the from-scratch excluded-middle
+lemma — bringing its own version to 40 lines, still all five triggers,
+still over the line. Did not re-litigate which route is shorter; the
+second entry's 40-line figure is lower than this firing's 49 and is
+taken as the standing number. Both firings agree on the diagnosis: the
+`extremely hard` (nd) band is at 4 of the 4 the test suite allows
+(`assert.ok(worn.length >= 1 && worn.length <= 4)`,
+`_tests/argument-forms.test.mjs`), a genuinely shorter proof was not
+found on three independent attempts, and importing either equation
+now would need `ND_EXTREME_LINES` raised — a shared-calibration
+decision (it would also reopen `de-morgan-conjunction` and
+`material-conditional`, both sitting at exactly the current 29-line
+floor) that belongs to a firing or to Daniel making it deliberately,
+not to a routine clearing two rows. Left exactly where the last two
+firings left it. A fourth independent attempt at a shorter proof is
+probably not worth another firing's time; the number is likely a
+genuine floor for this identity in the twelve-rule system.
+
+Moved past both without stopping the routine, taking the next three
+importable rows instead — two of them further into §3.6 than the queue
+order alone would suggest, since positions 4–5 (`⊢(p∨q)⊃(p&q)`-style
+free-choice and XOR-definability rows) were skimmed and set aside for
+a future firing with more room, in favour of two rows whose provenance
+was already worked out by this database's own precedent.
+
+**`conjunctive-sufficiency`** (comprehensive, §3.1 "The paradoxes of
+material implication", CLI-307). `p&q ⊢ p⊃q` — the row this log's own
+prior entry investigated and deliberately left ("Stalnaker and Lewis
+are both named directly by the row, so the §11d fallback... would
+apply here too — just not chased fully this firing"). Picked it up
+directly: independently re-fetched §3.1's seven listed `sep` articles
+before touching the database, and reached the same dead end the prior
+entry recorded — `conditionals` resolves to Edgington's *Indicative
+Conditionals*, which does not state the C2/V contrast; `counterfactuals`
+does not either (fetched and searched its full text for "C2",
+"Stalnaker's logic", "Strong Centering" and "conjunctive sufficiency",
+none present); the article that does state it, Égré & Rott's *The
+Logic of Conditionals*, confirmed again (fetched directly: Table 6
+lists CS in systems SS, VC and C2 but not V, matching the row's own
+"In Stalnaker's C2, absent from Lewis's V" almost verbatim) is not on
+§3.1's list. Per §11d's fallback, named the champions the row itself
+names — Robert Stalnaker, whose system C2 is where the schema holds,
+with Lewis's contrasting V named in `work` rather than given a second
+`who` — `fidelity: our reconstruction`, `url: null`, no `quote` (the
+close paraphrase is confirmed accurate but is not any one source's own
+sentence). Valid, `easy` (nd) — 4 lines (`Pr, As, ConjE, CondI`), 0
+§14.3 triggers, matching `difficulty.py` exactly.
+
+**`addition-converse`** (comprehensive, §3.6 "Disjunction — Ross's
+paradox and free choice", CLI-311). `⊢ (p∨q)⊃p`, **INVALID**
+(`p=F,q=T`, matching the row's own countermodel exactly) — the
+converse of `addition`/`ross-paradox` (`p ⊢ p∨q`), included by the
+row's own gloss ("the conclusion really is weaker — what makes Ross's
+paradox a paradox"). No new SEP fetch needed: `ross-paradox`, already
+in the database, cites McNamara & Van De Putte's *Deontic Logic* (SEP,
+§6.3) for the same premise-conclusion pair read the other direction,
+so the same appearance is reused here with `fidelity: our
+reconstruction` (no `quote` — the citation covers Addition read as an
+imperative, not this specific converse) and `looks_like: ross-paradox`
+set both ways. Checked the `interest` claim ("witnessed here by
+`p=F,q=T`") against `derive.py`'s own computed countermodel before
+writing it: matches. Invalid, no derivation — `nd.note` says why
+(`∨I` only ever moves from a disjunct to the disjunction, never back).
+
+**`distribution-botched`** (comprehensive, §3.6, CLI-315). `p∨(q&r) ⊢
+(p∨q)&r`, **INVALID** (2 of 8: `p=T,q=T,r=F` and `p=T,q=F,r=F`,
+matching the row's own count and both computed countermodels). The
+deliberately-invalid companion to the existing `distribution`
+(`p&(q∨r) ⊃ (p&q)∨(p&r)`), reshuffling `∨`/`&` the other way. Reused
+`distribution`'s own SEP appearance (Michael Dummett, *Disjunction*)
+rather than re-fetching, since the two rows are about the same
+disjunction/conjunction interplay and neither claims a fresh quote —
+`fidelity: our reconstruction`, no `quote`, `looks_like: distribution`
+set both ways. Checked the "both countermodels share exactly that
+shape: `p` true, `r` false, `q` either way" claim against the computed
+countermodels before writing it: matches both.
+
+Checked all three against the database for near-duplicate ids and
+premise/conclusion pairs before writing (none beyond the two
+deliberate `looks_like` pairings). `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty; none of the three appearances is course, Restall or
+archive, so none needed it.
+
+**Fresh container again had no LaTeX toolchain**; same gap every prior
+firing recorded. `apt-get install texlive-latex-base
+texlive-latex-extra texlive-fonts-recommended dvisvgm` first (one
+`apt-get update` needed first this time, plus `--fix-missing`, for two
+unrelated 404s on `libegl-mesa0`/`ruby3.2` that a second attempt after
+`update` cleared), then `texlive-science` (`stmaryrd.sty`,
+`fitch.sty`) and `texlive-humanities` (`qtree.sty`) for the same two
+missing packages every prior firing hit. Both installed cleanly.
+
+`build.py --write` (three entries normalised, atoms already legal
+throughout — `p`, `q`, `r` — no renames; `nd` difficulty authored for
+`conjunctive-sufficiency`, `null` for the two invalid entries,
+`difficulty.py --diff` agreed on all three, no override needed),
+`svg.py` (10 SVGs), `svg.py --check` (every SVG current),
+`inventory.py --locks` (0 practicable methods locked — none of the
+three carries a `problem_set`), `manifest.py --check-merge` (155
+entries, 152 expected from the merge parents, nothing lost), and
+`node --test "_tests/*.test.mjs"` (513/513) all clean. `extremely
+hard` (nd) count unchanged at 4 of 4 — none of the three new entries
+is close (`easy`, invalid/no-nd, invalid/no-nd). Comprehensive queue:
+66 candidates left of 274 (97 now in the database). Course and
+imports queues remain at 0.
+
+**2026-08-31, `comprehensive`-source firing: two entries, three skipped over the
+`extremely hard` cap and an unattributable row.** Course and imports queues
+both re-confirmed empty. `inventory.py --next 3 --source comprehensive` gave
+Huntington's equation and the Robbins equation (both from "Identities students
+will not guess," §2.6) and CLI-313 ("exclusive-or is definable"); none of the
+three went in cleanly, each logged above with its own reason. Continued into
+the queue rather than stop the firing over three bad rows in a row, and landed
+on a clean pair: `⊢ Tp∨Fp` and `⊢ ∼(Tp&Fp)`, from §3.8's "forms that separate
+[excluded middle from bivalence]" — imported as `bivalence-schema` and
+`no-gluts`.
+
+Huntington's and Robbins's equations were the SEP-article part of §11d done
+right: their shared `sep` line names three general algebra-of-logic articles,
+but the file's own table calls each identity by name, and fetching Burris &
+Legris's *The Algebra of Logic Tradition* confirmed both are stated verbatim in
+its §8 — Huntington's third 1933 axiom and Robbins's 1963 simplification of it,
+with the equations themselves (translated out of `+`/`'`/`=` into `∨`/`∼`/`≡`)
+matching the row exactly. Getting the citation right was not the obstacle this
+time; the derivation was. Both identities need a case split on `q` in one
+direction (the two disjuncts hold under opposite values of `q`, and the goal
+`p` never mentions it), and every route tried for Huntington's alone — an
+explicit `q∨∼q` lemma, and a leaner extraction of `∼p∨∼q` and `∼p∨q` straight
+out of the negated goal — landed at 49 and 41 lines respectively, both with all
+five §14.3 triggers and both well past the 29-line floor. That would make
+either entry a fifth `extremely hard` nd, one past the cap `worn.length <= 4`
+enforces, and `bivalence-pigeonhole`'s own note (above) already flagged this
+exact cap as reached with nothing to spare. Robbins's equation was not
+attempted in full — same section, same shape, presumed to hit the same wall —
+and both are left in the skip table for a cleverer proof or a considered
+decision to raise `ND_EXTREME_LINES`, which is a bigger, more consequential
+change than a routine firing's two-or-three-row scope, and affects the other
+four entries already scored against it.
+
+CLI-313 named no philosopher and its enclosing section's `sep` line lists seven
+general articles with no way to tell which one, if any, covers this specific
+identity. Checked the likeliest of the seven — Aloni's *Disjunction* — directly
+rather than guess: it discusses exclusive `⊕` and where it breaks down, but not
+this identity or the "logician's reply" framing the row gives it. Left rather
+than attributed on a guess, per §11d's own warning that a wrong SEP slug puts a
+real author's name on a page they may never have written.
+
+`bivalence-schema` and `no-gluts` are `p∨∼p` and `∼(p&∼p)` themselves —
+`excluded-middle` and `non-contradiction`, both already in the database —
+written one level up, over deliberately opaque atoms `Tp`/`Fp` proxying the
+metalinguistic claims "p is true"/"p is false" rather than `p`/`∼p`
+themselves. `looks_like` set to each accordingly. Both invalid, with
+countermodels checked against `derive.py`'s own output before writing (`Tp=F,
+Fp=F` — the gap; `Tp=T, Fp=T` — the glut — both matching the file's stated
+countermodels exactly) rather than copied from the row. `interest` also claims
+that adding Convention T (`Tp≡p, Fp≡∼p`) as a premise makes `Tp∨Fp` valid,
+which the file states but this firing checked independently with `derive.py`
+before writing it down, per this file's standing caution about claims that
+sound right and are not verified. The SEP quote (bivalence "taken as a
+metatheoretical principle, viz. that there exist only two distinct logical
+values") was fetched from the live page and confirmed verbatim before being
+written into `appearances`, not copied from the inventory file's own
+paraphrase of it. `Tp`/`Fp` are not legal atom names (uppercase first letter),
+so `build.py` renamed them to `t_p`/`f_p` throughout, prose included.
+
+`build.py --write` (two entries normalised, `Tp→t_p`/`Fp→f_p` renamed
+everywhere including `interest` and `nd.note`; difficulty `easy`/`easy`/`null`
+for both, matching the rubric), `python3 difficulty.py --diff` (clean, 0
+differ), `svg.py` (6 SVGs — table and tree only, no `nd` block for either
+invalid entry), `svg.py --check` (every SVG current), `inventory.py --locks`
+(0 practicable methods locked — neither entry carries a `problem_set`),
+`manifest.py --check-merge` (157 entries, 155 expected from the merge
+parents, nothing lost), and `node --test "_tests/*.test.mjs"` (513/513) all
+clean. `extremely hard` (nd) count unchanged at 4 of 4 — both new entries are
+invalid and carry no `nd` score, which is exactly why they were the pair that
+went in this firing. Comprehensive queue: 61 candidates left of 274 (99 now
+in the database, 3 quarantined, 82 unreadable, 29 settled — the three rows
+above newly logged). Course and imports queues remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**; `apt-get
+install` of the same package list every prior firing has recorded
+(`texlive-latex-base texlive-latex-recommended texlive-latex-extra
+texlive-pictures texlive-binaries dvisvgm texlive-humanities texlive-science
+texlive-fonts-recommended`) needed `--fix-missing` after two unrelated 404s
+(`libegl-mesa0`, `ruby3.2` — neither on this project's own package list) on
+the first attempt; the retry installed cleanly and both `latex` and `dvisvgm`
+resolved. The `session-start-hook` suggestion from every prior firing's note
+is still open.
+
+**2026-08-31, `comprehensive`-source firing: the six-row exercise, three more
+rows.** Course and imports queues both confirmed empty again
+(`inventory.py --status`, `--status --source imports`). `inventory.py --next 3
+--source comprehensive` gave the next three rows of §3.8's own "forms that
+separate them" table, continuing straight on from the pair (`bivalence-schema`,
+`no-gluts`) the previous comprehensive firing took from the same eight-row
+table — checked against the inventory file directly (line 1731 onward) rather
+than assumed, since the file's own prose says "six rows" while the table prints
+eight; the four already accounted for (`excluded-middle`, `non-contradiction`
+pre-existing; `bivalence-schema`, `no-gluts` from the last firing) plus the
+three taken this firing leave exactly one row of the table still queued (the
+"Gaps + Gluts = Bivalence" row), for a future firing.
+
+`bivalence-not-from-lem` (`p∨∼p ⊢ Tp∨Fp`, **invalid**) is `bivalence-schema`
+with the theorem `p∨∼p` bolted on as a premise — checked with `derive.py`
+before writing that the premise is genuinely idle (`premise_analysis` marks it
+so, and the countermodel count stays at what `bivalence-schema` alone carries,
+just once per value of `p`), which is exactly the inventory row's own point:
+excluded middle does not hand you bivalence. No derivation needed (invalid);
+`nd.note` says where the attempt breaks down, the same wall `bivalence-schema`
+already hits.
+
+`convention-t-gives-bivalence` (`Tp≡p, Fp≡∼p ⊢ Tp∨Fp`, **valid**) is the
+sequent `bivalence-schema`'s own `interest` field already named, from the
+previous firing, as the fix for its missing connection — written now and
+checked directly rather than left as a forward reference. The derivation
+cannot eliminate either premise directly (neither names `p∨∼p`), so excluded
+middle has to be proved first as an undictated lemma (`excluded-middle`'s own
+ten lines, reused verbatim as the opening of a 19-line proof) before a case
+split lets `BicondE` read off `t_p` or `f_p` in each branch.
+
+`bivalence-is-no-gap` (`(Tp∨Fp)≡∼(∼Tp&∼Fp)`, **valid**) is a near-duplicate
+caught by the required search before writing: both sides of
+`de-morgan-disjunction`'s own theorem (`∼(p∨q)≡(∼p&∼q)`) negated once, atoms
+renamed — logically the identical theorem, since `A≡B` and `∼A≡∼B` always
+agree — so `looks_like: de-morgan-disjunction` rather than a bare import, and
+`interest` says how they relate rather than repeating the table. First
+draft of `interest` called this transformation "doubly negated", which is
+wrong (a single negation of each side, one of which happens to cancel against
+the left side's own pre-existing negation) and contradicts the correct rule
+stated one clause later in the same sentence — caught on the §7a re-read
+before committing, not by any test, and fixed. The 27-line derivation is the
+same shape as `de-morgan-disjunction`'s own proof, one level removed (the
+outer premise is the disjunction itself rather than a separate premise about
+it).
+
+All three reuse `bivalence-schema`'s already-verified SEP appearance (Shramko
+& Wansing, "Truth Values", quote checked against the live page by the prior
+firing) rather than re-fetching, since all three continue the same §3.8
+discussion the quote is drawn from.
+
+Every `difficulty.nd` scored by hand against §14.3 before checking: both valid
+proofs hit all five triggers (`∨E`, an undictated reductio, nesting, four or
+more subproofs, more than ten derived lines) but fall short of the 29-line
+`extremely hard` floor (19 and 27 lines) — `hard`, confirmed by
+`python3 difficulty.py --diff` printing "0 scores differ from the rubric"
+after `build.py --write`. `extremely hard` (nd) count unchanged at 4 of 4.
+
+`build.py --write` (three entries normalised — no atom renaming needed, since
+this firing wrote `t_p`/`f_p` directly rather than relying on the `Tp`/`Fp`
+auto-rename the previous firing used; two proof profiles recomputed from
+`proofs.py` and matched what was authored), `difficulty.py --diff` (clean, 0
+differ, both before and after the `interest` wording fix), `svg.py` (11 SVGs:
+table and tree for all three, plus `nd` for the two valid ones), `svg.py
+--check` (every SVG current), `inventory.py --locks` (0 practicable methods
+locked — none of the three carries a `problem_set`; comprehensive is not a
+practice lock at all per §11d), `manifest.py --check-merge` (160 entries, 157
+expected from the merge parents, nothing lost), and `node --test
+"_tests/*.test.mjs"` (513/513) all clean. Comprehensive queue: 58 candidates
+left of 274 (102 now in the database, 3 quarantined, 82 unreadable, 29
+settled). Course and imports queues remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+`apt-get install --fix-missing` of the same package list every prior firing
+has recorded resolved it after the same two unrelated 404s
+(`libegl-mesa0`, `ruby3.2`) on the first attempt. The `session-start-hook`
+suggestion from every prior firing's note is still open.
