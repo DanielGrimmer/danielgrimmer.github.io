@@ -1420,6 +1420,58 @@ there.
 
 ---
 
+## 11d. Importing from the Comprehensive Logic Inventory
+
+The third source, and the deepest: a sweep of the SEP, 3,200 lines of prose
+with form tables threaded through it. `inventory.py --source comprehensive`
+finds them by their `Form` column header, so a prose section simply yields
+nothing. 274 form rows; 82 are hybrid, dynamic, modal, quantified or otherwise
+outside our five connectives and are refused; the queue is what is left.
+
+**This is where the encyclopedia's own first 35 entries came from**, so the
+house provenance style is already set by them: `who` is the SEP article's
+author, `work` its title, `locus` "SEP" and a section, `url` the canonical
+entry. Match it.
+
+**Getting the article right is the whole difficulty, and the file helps.** Each
+top-level section carries a `*SEP: …*` line naming the articles it was swept
+from, usually with authors — *the algebra of logic tradition (Burris &
+Legris)*, *logic: ancient (Bobzien)* — and every candidate carries that line as
+`sep`. Use it. Read the SEP entry it names to confirm the author and the
+canonical URL, and **never guess a slug**: §2.8 of the inventory exists partly
+to record that the traditional square of opposition lives at `square`, not at
+`square-of-opposition`.
+
+**When the article is not clear, name the champion instead.** §1 has no `*SEP:*`
+line at all, and elsewhere a section may list six articles with no way to tell
+which covers a given row. Then the honest appearance is the philosopher the row
+itself names — van Fraassen for the bad lot, Abelard for the First Principle —
+with `work` describing their contribution, `fidelity: our reconstruction`, and
+`url: null`. A guess at which SEP article discussed a form puts a real author's
+name on a page they may never have written; the champion is checkable and the
+article can be added later.
+
+**The verdicts in this file are often not ours, and that is frequently the
+point.** §0 says it plainly: these articles reason *inside* connexive,
+relevance and many-valued systems, so "an agent reporting valid is reporting
+the article's system, not ours". `derive.py` computes the classical verdict as
+always. Where the two differ, that difference belongs in `interest` — Boethius'
+Thesis is a theorem of connexive logic and a non-theorem here, and saying so is
+worth more than either verdict alone.
+
+**Two flags to carry into the prose.** `Prop?` marks whether a form survives
+translation: the importer refuses `skeleton` and `needs-X`, but a row whose
+prose flags a loss anyway (*"propositional shadow"*, *"state the loss"*) should
+say so in `interest` — CLI-112's undistributed middle shows an invalidity, not
+a rule violation, and a student who is not told that learns the wrong lesson.
+And §1's rows carry verified countermodels: check them against the computed
+ones, and treat a mismatch as a question for a person rather than an entry.
+
+**Nothing here is a practice lock.** It is a survey of what the course has
+never taught, so `inventory.py` writes an empty `problem_set` for every row.
+
+---
+
 ## 12. Suggested order of work
 
 1. **Templates first, on `lecture8-chain`.** Kant's argument is the only entry

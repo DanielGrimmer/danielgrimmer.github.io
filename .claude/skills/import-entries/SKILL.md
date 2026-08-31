@@ -93,12 +93,24 @@ python3 inventory.py --status --source imports
 python3 inventory.py --next 3 --source imports
 ```
 
-`--source course` is the default and covers what this year's course does. When
-its queue reaches zero, switch: `--source imports` reads
-`Argument Form Inventory — Imports (2026-08-28).md`, which is Restall's
-propositional chapters, last year's papers, and a brainstormed candidate list.
-Do not mix sources within one firing — the provenance rules differ and keeping
-a run to one source keeps the commit legible.
+**Three sources, worked in order.** `--source course` is the default and covers
+what this year's course does. When its queue reaches zero, switch to
+`--source imports` (Restall's propositional chapters, last year's papers, and a
+brainstormed candidate list); when that empties, `--source comprehensive` (the
+SEP sweep, 119 candidates, which is where the encyclopedia's first 35 entries
+came from). Do not mix sources within one firing — the provenance rules differ
+and keeping a run to one source keeps the commit legible.
+
+Each has its own section of the style guide, and **read it before the first
+firing on a new source**: §11b for the course, §11c for the imports, §11d for
+the comprehensive. The one for the comprehensive matters most, because getting
+the SEP article right is its whole difficulty: every candidate carries a `sep`
+field naming the articles its section was swept from, usually with authors.
+Read the entry it names to confirm the author and canonical URL, never guess a
+slug, and where the article is unclear — §1 carries no `sep` line at all — name
+the philosopher the row itself names instead, with `url: null`. A guess at
+which SEP article discussed a form puts a real author's name on a page they may
+never have written.
 
 **Read §11c of the style guide before the first imports run.** It is short and
 it is the whole difference. In brief: Restall rows cite Restall's *Logic* with

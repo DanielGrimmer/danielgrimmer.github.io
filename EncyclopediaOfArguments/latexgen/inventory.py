@@ -32,7 +32,8 @@ from formula import Node, canonical, parse, to_ascii, unparse
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE.parent / "Argument Form Inventory (2026-08-28).md"
 IMPORTS = HERE.parent / "Argument Form Inventory — Imports (2026-08-28).md"
-SOURCES = {"course": SOURCE, "imports": IMPORTS}
+COMPREHENSIVE = HERE.parent / "Comprehensive Logic Inventory (2026-08-28).md"
+SOURCES = {"course": SOURCE, "imports": IMPORTS, "comprehensive": COMPREHENSIVE}
 LOG = HERE.parent / "IMPORT_LOG.md"
 DB = HERE.parents[1] / "assets/arguments/argument-db.json"
 
@@ -235,7 +236,19 @@ def candidates(which: str = "course") -> tuple[list[dict], dict[str, int]]:
              "known": 0, "logged": 0}
     out: list[dict] = []
 
-    if which == "imports":
+    if which == "comprehensive":
+        feed = []
+        for row in _comprehensive_rows(text):
+            # §0's `Prop?` gate. `skeleton` is a propositional shadow that
+            # loses the point, `needs-X` is not expressible at all; either way
+            # the row does not belong in a propositional encyclopedia. Most
+            # rows carry no such column, and those are let through -- the flag
+            # refuses what it can see rather than pretending to vet everything.
+            if row["prop"] and not row["prop"].startswith("yes"):
+                continue
+            feed.append({"sequent": row["sequent"], "section": row["section"],
+                         "sep": row["sep"], "cells": []})
+    elif which == "imports":
         # Already one sequent per item, and the section stands in for the
         # "where" column the course inventory has and this file does not.
         feed = [{"sequent": q, "section": sec, "cells": []}
@@ -298,6 +311,11 @@ def candidates(which: str = "course") -> tuple[list[dict], dict[str, int]]:
                 "problem_set": problem_sets(row) if row["cells"] else {},
                 "section": row["section"],
                 "source": which,
+                # Which SEP articles the section was swept from, with their
+                # authors where the file gives them. Present only on the
+                # comprehensive source; §11d says how to turn it into an
+                # appearance without guessing which article a row came from.
+                "sep": row.get("sep", ""),
             }
         )
     return out, tally
@@ -387,6 +405,87 @@ def _import_sequents(text: str) -> list[tuple[str, str]]:
         # line is a sequent; `split_sequent` drops any that is not.
         if line.lstrip().startswith("**Ex {"):
             out.extend((q, section) for q in re.findall(r"`([^`]+)`", line))
+    return out
+
+
+
+# ------------------------------------------------------- the third inventory
+
+# The Comprehensive Logic Inventory is the SEP sweep: 3,200 lines of prose with
+# form tables threaded through it, and no single table shape. What every one of
+# those tables does have is a column headed `Form`, so the column is found by
+# its header and everything else about the table is ignored -- which also means
+# a prose section with no such table yields nothing, and needs no skip list.
+#
+# Two of its own warnings are enforced here rather than left to the reader:
+#
+#   * **`Prop?`** marks whether a form survives translation into our five
+#     connectives. `skeleton` means a propositional shadow that loses the
+#     point, and §0 calls those "the dangerous ones: they look like they belong
+#     and they teach the wrong thing". Anything not `yes` is refused.
+#   * **The verdicts in this file are often not ours.** §0: an agent reporting
+#     "valid" inside connexive or relevance logic "is reporting the article's
+#     system, not ours". Nothing here reads a verdict from the file -- as
+#     everywhere else, `derive.py` computes it -- but §11d says to check the
+#     row's claim against it and say so in the prose when they differ.
+SEP_LINE = re.compile(r"^\*SEP:\s*(.+?)\*?$")
+
+
+def _comprehensive_rows(text: str) -> list[dict]:
+    """Every form-bearing row, with the section and SEP articles behind it.
+
+    The `*SEP: …*` line under a heading names the articles the section was
+    swept from, and often their authors and a slug caveat. It is carried on
+    every candidate because it is what lets an importer cite the source without
+    guessing which article a row came from -- the failure the file's own §2.8
+    warns about when it notes the slug is `square`, not `square-of-opposition`.
+    """
+    out: list[dict] = []
+    section = sep = ""
+    header: list[str] | None = None
+    form_col = prop_col = None
+
+    for line in text.split("\n"):
+        if line.startswith("#"):
+            section = line.lstrip("#").strip()
+            header = form_col = prop_col = None
+            # The `*SEP: …*` line sits under a top-level heading and covers
+            # every subsection beneath it, so only a new `##` clears it. Losing
+            # it at each `###` would leave all but a handful of rows with no
+            # source attached, which is the whole point of carrying it.
+            if line.startswith("## ") and not line.startswith("### "):
+                sep = ""
+            continue
+        hit = SEP_LINE.match(line.strip())
+        if hit:
+            sep = hit.group(1).strip().rstrip("*").strip()
+            continue
+        if not line.startswith("|"):
+            continue
+
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if set("".join(cells)) <= set("-: "):
+            continue
+        lowered = [c.lower() for c in cells]
+        if "form" in lowered:
+            header, form_col = cells, lowered.index("form")
+            prop_col = lowered.index("prop?") if "prop?" in lowered else None
+            continue
+        if form_col is None or form_col >= len(cells):
+            continue
+
+        quoted = re.findall(r"`([^`]+)`", cells[form_col])
+        if len(quoted) != 1:
+            continue
+
+        # Only trust the Prop? cell when the row lines up with its header;
+        # a short row would otherwise read some other column as the flag.
+        prop = ""
+        if prop_col is not None and header is not None and len(cells) == len(header):
+            prop = cells[prop_col].lower()
+
+        out.append({"sequent": quoted[0], "section": section, "sep": sep,
+                    "prop": prop, "cells": cells})
     return out
 
 

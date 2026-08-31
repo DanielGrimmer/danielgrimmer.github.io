@@ -1214,3 +1214,26 @@ test('no entry offers a method the problem sets already set', () => {
   assert.ok(matched > 0, 'no inventory row matched any entry -- the test has stopped looking');
   assert.deepEqual([...gaps], [], 'the practice page would hand a student graded work');
 });
+
+// A citation a reader cannot follow is not provenance, and a fabricated one is
+// worse. The comprehensive inventory names SEP articles by title rather than by
+// URL, so an importer has to construct the link — and the inventory's own §2.8
+// records that the traditional square of opposition lives at `square`, not the
+// `square-of-opposition` anyone would guess. This checks the shape of what gets
+// written, which is the part a test can check.
+test('every source link is one a reader could follow', () => {
+  const seen = new Set();
+  for (const e of entries) {
+    for (const a of e.appearances ?? []) {
+      if (!a.url) continue;
+      assert.match(a.url, /^https:\/\//, `${e.id}: ${a.url} is not an https link`);
+      if (!/plato\.stanford\.edu/.test(a.url)) continue;
+      // The SEP's canonical shape. A trailing slash matters: without it the
+      // site redirects, and a link that redirects is a link nobody checked.
+      assert.match(a.url, /^https:\/\/plato\.stanford\.edu\/entries\/[a-z0-9-]+\/$/,
+        `${e.id}: ${a.url} is not a canonical SEP entry URL`);
+      seen.add(a.url);
+    }
+  }
+  assert.ok(seen.size > 0, 'no SEP links found — the test has stopped looking');
+});
