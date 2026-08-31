@@ -158,3 +158,6 @@ no-gluts
 bivalence-not-from-lem
 convention-t-gives-bivalence
 bivalence-is-no-gap
+gaps-and-gluts-give-bivalence
+de-morgan-conjunction-hard-theorem
+conditional-implies-disjunction

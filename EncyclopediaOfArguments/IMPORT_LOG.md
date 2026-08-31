@@ -1675,3 +1675,85 @@ settled). Course and imports queues remain at 0.
 has recorded resolved it after the same two unrelated 404s
 (`libegl-mesa0`, `ruby3.2`) on the first attempt. The `session-start-hook`
 suggestion from every prior firing's note is still open.
+
+**2026-09-01, `comprehensive`-source firing: the last row of the six-row
+exercise, plus a pair from §4.1's intuitionistic contrast set.** Course and
+imports queues both confirmed empty again (`inventory.py --status`,
+`--status --source imports`). `inventory.py --next 3 --source comprehensive`
+gave `∼(∼Tp&∼Fp), ∼(Tp&Fp) ⊢ Tp≡∼Fp` — the one row of §3.8's own table the
+previous two comprehensive firings left queued — followed by two rows of
+§4.1's list of classical theorems that fail under IPC.
+
+`gaps-and-gluts-give-bivalence` (**valid**) is that last row: taking both
+`bivalence-schema`'s and `no-gluts`'s failures as denials — no gap, no glut —
+is enough to derive the full biconditional `t_p≡∼f_p` rather than the bare
+disjunction `bivalence-schema` alone reaches for. Each half of the 14-line
+proof is a single reductio against the matching premise (assume `t_p`, refute
+`f_p` against no-glut; assume `∼f_p`, refute `∼t_p` against no-gap) — no case
+split needed, unlike `bivalence-is-no-gap`'s. `looks_like:
+convention-t-gives-bivalence`, the row's nearest kin (same family, different
+premise pair reaching the same kind of connection). Reused
+`bivalence-schema`'s already-verified SEP appearance (Shramko & Wansing,
+"Truth Values") rather than re-fetching, since this row continues the same
+§3.8 discussion — but re-verified the author and URL against the live entry
+directly this firing rather than trusting the chain, per §11d: confirmed via
+the entry's citation page (`Author and Citation Info`) that lists Yaroslav
+Shramko and Heinrich Wansing, and the slug is `truth-values`.
+
+`de-morgan-conjunction-hard-theorem` (CLI-405, `⊢ ∼(p&q) ⊃ (∼p∨∼q)`,
+**valid**) and `conditional-implies-disjunction` (CLI-406, `⊢ (p⊃q) ⊃
+(∼p∨q)`, **valid**) both sit under §4.1, "Intuitionistic logic — the
+classical theorems that fail". The row's own `sep` field lists eleven review
+articles (the whole of §4's shared header), which is not a name to cite
+directly — but §4.1 itself is unambiguously about intuitionistic logic, and
+CLI-409's own line a few rows down is flagged "SEP verbatim" quoting the SEP
+*Intuitionistic Logic* entry's line on disjunction, which settled the article
+for the whole subsection rather than leaving it a guess. Fetched the entry
+directly to confirm: author Joan Moschovakis, slug `logic-intuitionistic`,
+and the quoted sentence — "asserts that either a proof of A, or a proof of B,
+has been constructed" — verified verbatim on the live page. The entry does
+not discuss either specific formula by name, so both appearances are
+`type: diagnosed` (the BHK semantics it states is what diagnoses the failure)
+rather than `used` or a claim of a formula-specific discussion, and `fidelity:
+our reconstruction`.
+
+Both derivations are reuses rather than new searches: `de-morgan-conjunction`
+already carries `∼(p&q) ⊢ ∼p∨∼q` as one half of its biconditional
+(`de-morgan-conjunction-hard`), and `material-conditional` already carries
+`p⊃q ⊢ ∼p∨q` as one direction of its own — CLI-405 and CLI-406 are exactly
+those two sequents with the premise taken as an assumption and discharged by
+a closing `⊃I` instead. Copied the relevant lines from `proofs.py` verbatim
+and added the one closing line each (17 and 16 lines respectively);
+`nd.check()` passed both without edits. `looks_like` names the entry each was
+copied from, and `interest` says why the classical proof (assume the negated
+disjunction, extract each disjunct's negation by double-negation elimination)
+is exactly the move IPC refuses under the BHK reading, rather than leaving
+the SEP's verdict and `derive.py`'s classical one merely juxtaposed.
+
+Every `difficulty.nd` scored by hand against §14.3 before checking: all three
+proofs hit four of the five triggers (an undictated reductio, nesting, four
+or more subproofs, more than ten derived lines — none uses `∨E`) and fall
+well short of the 29-line `extremely hard` floor (14, 17 and 16 lines) —
+`hard`, confirmed by `python3 difficulty.py --diff` printing "0 scores differ
+from the rubric" after `build.py --write`. `extremely hard` (nd) count
+unchanged at 4 of 4.
+
+`build.py --write` (three entries normalised — no atom renaming needed, `t_p`/
+`f_p`/`p`/`q` already legal; three proof profiles recomputed from `proofs.py`
+and matched what was authored), `difficulty.py --diff` (clean, 0 differ),
+`svg.py` (12 SVGs: table, tree and `nd` for all three, all valid), `svg.py
+--check` (every SVG current), `inventory.py --locks` (0 practicable methods
+locked — comprehensive carries no `problem_set` at all per §11d),
+`manifest.py --check-merge` (163 entries, 160 expected from the merge
+parents, nothing lost), and `node --test "_tests/*.test.mjs"` (514/514) all
+clean. Comprehensive queue: 55 candidates left of 274 (105 now in the
+database, 3 quarantined, 82 unreadable, 29 settled). Course and imports
+queues remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**; the
+same `apt-get update` then `apt-get install` of the package list every prior
+firing has recorded (`texlive-latex-base texlive-latex-recommended
+texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
+texlive-humanities texlive-science texlive-fonts-recommended`) resolved it
+cleanly this time, no `--fix-missing` retry needed. The `session-start-hook`
+suggestion from every prior firing's note is still open.

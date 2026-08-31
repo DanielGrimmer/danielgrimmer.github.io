@@ -2211,3 +2211,70 @@ PROOFS["bivalence-is-no-gap"] = [
     _l(26, "t_p | f_p", "NegE", 1, [25]),
     _l(27, "(t_p | f_p) = ~(~t_p & ~f_p)", "BicondI", 0, subs=[[1, 12], [13, 26]]),
 ]
+
+# ----------------------------------------------- gaps-and-gluts-give-bivalence
+# The no-gap and no-glut premises, each spent on its own half of the
+# biconditional: assume `t_p` and refute `f_p` against the no-glut premise;
+# assume `~f_p` and refute `~t_p` against the no-gap premise. Neither half
+# needs a case split -- each is a single reductio against the matching premise.
+PROOFS["gaps-and-gluts-give-bivalence"] = [
+    P(1, "~(~t_p & ~f_p)"),
+    P(2, "~(t_p & f_p)"),
+    _l(3, "t_p", "As", 1),
+    _l(4, "f_p", "As", 2),
+    _l(5, "t_p & f_p", "ConjI", 2, [3, 4]),
+    _l(6, "!", "FalsumI", 2, [5, 2]),
+    _l(7, "~f_p", "NegI", 1, subs=[[4, 6]]),
+    _l(8, "~f_p", "As", 1),
+    _l(9, "~t_p", "As", 2),
+    _l(10, "~t_p & ~f_p", "ConjI", 2, [9, 8]),
+    _l(11, "!", "FalsumI", 2, [10, 1]),
+    _l(12, "~~t_p", "NegI", 1, subs=[[9, 11]]),
+    _l(13, "t_p", "NegE", 1, [12]),
+    _l(14, "t_p = ~f_p", "BicondI", 0, subs=[[3, 7], [8, 13]]),
+]
+
+# --------------------------------------------- de-morgan-conjunction-hard-theorem
+# `de-morgan-conjunction-hard`'s own derivation, verbatim, with its premise
+# taken as an assumption instead and discharged by a closing `⊃I`.
+PROOFS["de-morgan-conjunction-hard-theorem"] = [
+    _l(1, "~(p & q)", "As", 1),
+    _l(2, "~(~p | ~q)", "As", 2),
+    _l(3, "~p", "As", 3),
+    _l(4, "~p | ~q", "DisjI", 3, [3]),
+    _l(5, "!", "FalsumI", 3, [4, 2]),
+    _l(6, "~~p", "NegI", 2, subs=[[3, 5]]),
+    _l(7, "p", "NegE", 2, [6]),
+    _l(8, "~q", "As", 3),
+    _l(9, "~p | ~q", "DisjI", 3, [8]),
+    _l(10, "!", "FalsumI", 3, [9, 2]),
+    _l(11, "~~q", "NegI", 2, subs=[[8, 10]]),
+    _l(12, "q", "NegE", 2, [11]),
+    _l(13, "p & q", "ConjI", 2, [7, 12]),
+    _l(14, "!", "FalsumI", 2, [13, 1]),
+    _l(15, "~~(~p | ~q)", "NegI", 1, subs=[[2, 14]]),
+    _l(16, "~p | ~q", "NegE", 1, [15]),
+    _l(17, "~(p & q) > (~p | ~q)", "CondI", 0, subs=[[1, 16]]),
+]
+
+# ------------------------------------------------- conditional-implies-disjunction
+# `material-conditional`'s own `->` half, verbatim, closed with `⊃I` instead of
+# carried on into the `<-` half's `∨E`.
+PROOFS["conditional-implies-disjunction"] = [
+    _l(1, "p > q", "As", 1),
+    _l(2, "~(~p | q)", "As", 2),
+    _l(3, "~p", "As", 3),
+    _l(4, "~p | q", "DisjI", 3, [3]),
+    _l(5, "!", "FalsumI", 3, [4, 2]),
+    _l(6, "~~p", "NegI", 2, subs=[[3, 5]]),
+    _l(7, "p", "NegE", 2, [6]),
+    _l(8, "q", "As", 3),
+    _l(9, "~p | q", "DisjI", 3, [8]),
+    _l(10, "!", "FalsumI", 3, [9, 2]),
+    _l(11, "~q", "NegI", 2, subs=[[8, 10]]),
+    _l(12, "q", "CondE", 2, [1, 7]),
+    _l(13, "!", "FalsumI", 2, [12, 11]),
+    _l(14, "~~(~p | q)", "NegI", 1, subs=[[2, 13]]),
+    _l(15, "~p | q", "NegE", 1, [14]),
+    _l(16, "(p > q) > (~p | q)", "CondI", 0, subs=[[1, 15]]),
+]
