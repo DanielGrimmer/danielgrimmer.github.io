@@ -1984,3 +1984,58 @@ PROOFS["self-distribution-axiom"] = [
     _l(8, "(p > q) > (p > r)", "CondI", 1, subs=[[2, 7]]),
     _l(9, "(p > (q > r)) > ((p > q) > (p > r))", "CondI", 0, subs=[[1, 8]]),
 ]
+
+# ------------------------------------------------------------------ Nicod's rule
+# Unfolded into `&`/`∼`, the second premise is `a ⊃ (b & c)` in disguise, so
+# the semantic content is modus ponens plus conjunction elimination -- but our
+# twelve rules have no way to read a conditional off a negated conjunction
+# directly, so the reductio has to build `a & ∼(b & c)` as one formula and set
+# it against the premise, rather than detaching and then peeling off `c`.
+PROOFS["nicods-rule"] = [
+    P(1, "a"),
+    P(2, "~(a & ~(b & c))"),
+    _l(3, "~c", "As", 1),
+    _l(4, "b & c", "As", 2),
+    _l(5, "c", "ConjE", 2, [4]),
+    _l(6, "!", "FalsumI", 2, [5, 3]),
+    _l(7, "~(b & c)", "NegI", 1, subs=[[4, 6]]),
+    _l(8, "a & ~(b & c)", "ConjI", 1, [1, 7]),
+    _l(9, "!", "FalsumI", 1, [8, 2]),
+    _l(10, "~~c", "NegI", 0, subs=[[3, 9]]),
+    _l(11, "c", "NegE", 0, [10]),
+]
+
+# -------------------------------------------------------- necessarium-ad-quodlibet
+# `excluded-middle`'s own reductio, verbatim, with one premise `q` bolted on
+# the front and never cited again -- which is the entire point: a necessary
+# truth follows from anything, including a premise the proof never touches.
+PROOFS["necessarium-ad-quodlibet"] = [
+    P(1, "q"),
+    _l(2, "~(p | ~p)", "As", 1),
+    _l(3, "p", "As", 2),
+    _l(4, "p | ~p", "DisjI", 2, [3]),
+    _l(5, "!", "FalsumI", 2, [4, 2]),
+    _l(6, "~p", "NegI", 1, subs=[[3, 5]]),
+    _l(7, "p | ~p", "DisjI", 1, [6]),
+    _l(8, "~(p | ~p)", "Reit", 1, [2]),
+    _l(9, "!", "FalsumI", 1, [7, 8]),
+    _l(10, "~~(p | ~p)", "NegI", 0, subs=[[2, 9]]),
+    _l(11, "p | ~p", "NegE", 0, [10]),
+]
+
+# ------------------------------------------------------ ex-impossibili-contradiction
+# `ex-falso`'s reductio run twice from the same two premises -- once for `q`,
+# once for `∼q` -- and joined with a final `&I`. Two sibling subproofs, not
+# nested: doubling the explosion costs a second reductio, not a deeper one.
+PROOFS["ex-impossibili-contradiction"] = [
+    P(1, "p"),
+    P(2, "~p"),
+    _l(3, "~q", "As", 1),
+    _l(4, "!", "FalsumI", 1, [1, 2]),
+    _l(5, "~~q", "NegI", 0, subs=[[3, 4]]),
+    _l(6, "q", "NegE", 0, [5]),
+    _l(7, "q", "As", 1),
+    _l(8, "!", "FalsumI", 1, [1, 2]),
+    _l(9, "~q", "NegI", 0, subs=[[7, 8]]),
+    _l(10, "q & ~q", "ConjI", 0, [6, 9]),
+]

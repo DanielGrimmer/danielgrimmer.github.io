@@ -1039,3 +1039,102 @@ entries reaches it (two invalid, carrying no `nd` score; the one valid
 entry scores `medium`). Comprehensive queue: 80 candidates left of 274
 (85 now in the database, 3 quarantined, 82 unreadable, 24 settled — two
 more rows newly logged above). Course and imports queues remain at 0.
+
+## 2026-08-31 — three more from §2.1, all valid, all champions or SEP
+
+Course and imports queues both empty (`inventory.py --status`: 0
+candidates each). Worked the comprehensive queue, `--next 3`: all three
+from §2.1 CORE PROPOSITIONAL AND FORMAL LOGIC, whose own `*SEP:*` line
+lists eight general articles with no way to tell which covers any one
+row — so each got read individually rather than trusting the header.
+
+`nicods-rule` (CLI-205, `a, ∼(a & ∼(b & c)) ⊢ c`). No single article in
+the header's eight covers this specifically (Nicod is a historical
+figure, not a subject any of the eight are about), so named the
+champion: Jean Nicod, *A Reduction in the Number of the Primitive
+Propositions of Logic* (1917), `url: null` — confirmed only the
+uncontroversial shape of the achievement (one axiom, one rule, all in
+the Sheffer stroke, replacing *Principia*'s apparatus) rather than
+assert an unverified characterisation of the rule's content. The
+content claim in `interest` — that `∼(a & ∼(b & c))` is `a ⊃ (b & c)`
+in stroke clothing — is verified directly (`∼(X & ∼Y) ≡ X⊃Y` is a
+tautological equivalence, not a citation) rather than attributed to
+anyone. Valid, 1 of 8 rows premise-true (matches the row's own
+annotation). Needed a derivation: an undictated reductio for the
+non-negation goal `c`, with a second reductio nested inside it to build
+`∼(b & c)` before the two conjuncts can be joined and set against the
+second premise — two §14.3 triggers (undictated reductio, nested
+subproof), `medium`, matching `difficulty.py` exactly. Checked against
+`nd.check()` directly. No near-duplicate in the database; no
+`looks_like`.
+
+`necessarium-ad-quodlibet` (CLI-206, `q ⊢ p ∨ ∼p`) and
+`ex-impossibili-contradiction` (CLI-207, `p, ∼p ⊢ q & ∼q`). Both
+corollaries of Buridan's, and §2.4 (a different section of the same
+file) names the exact article and section for both without my having
+to guess: SEP *Medieval Theories of Consequence*, §3.3, "lists *ex
+impossibili quodlibet* among Buridan's corollaries." Fetched the entry
+directly (twice, independently, to the same wording both times) rather
+than trust that pointer alone — confirmed current authorship (Catarina
+Dutilh Novaes, original author; Milo Crimi, Fall 2024 revision — the
+*byline* on the entry as it stands, not just the historical author),
+the section (§3.3, "Buridan and the Parisian tradition"), the URL, and
+the exact sentence: "'from the impossible anything follows'... or 'the
+necessary follows from anything'." Cited the SEP entry as `who` rather
+than Buridan directly, `type: discussed`, `fidelity: verbatim` — the
+same choice `peirce-law`'s Bimbó appearance already made for a
+structurally identical case (a modern SEP entry reporting a formal
+result rather than the SEP authors' own argument), and safer than
+guessing a locus in Buridan's own *Treatise on Consequences* that
+nobody here has read.
+
+`necessarium-ad-quodlibet`: valid, tautological conclusion, one
+premise never used — `looks_like: excluded-middle` (0-premise version
+of the same tautology), `interest` says how they differ, and the
+derivation *is* `excluded-middle`'s own reductio with `q` bolted on the
+front, never cited again. Tagged `defect: idle premise` (`quotes
+recovery-cleopatra`'s and `vacuous-conditional-no-reach`'s own
+vocabulary for the same phenomenon) and `nonclassical: relevant`.
+1 §14.3 trigger (undictated reductio), `medium`.
+
+`ex-impossibili-contradiction`: valid, premises jointly unsatisfiable
+(0 of 4 rows premise-true) — `looks_like: ex-falso` (same principle,
+premises separate rather than conjoined, conclusion a contradiction
+rather than a bare atom), `interest` says how they differ. Derivation
+runs `ex-falso`'s own reductio twice from the same two premises, once
+for `q` and once for `∼q`, joined by one `&I` — two sibling subproofs,
+not nested, so only 1 §14.3 trigger, `medium`. Tagged `defect: vacuous
+validity` and `nonclassical: [relevant, paraconsistent]`, matching
+`ex-falso`'s own tags exactly, since it is the same phenomenon.
+
+All three: `difficulty.py --diff` printed nothing (0 differ) — every
+authored `nd` score matched the computed suggestion, no override
+needed. Checked the database for near-duplicates and existing ids
+first (none found for any of the three) before writing. `git diff
+--name-only origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty; none of the three appearances is a course appearance,
+so none needed it.
+
+**The sandbox again had no LaTeX toolchain in this fresh container.**
+`apt-get install` of the usual package list (`texlive-latex-base
+texlive-latex-recommended texlive-latex-extra texlive-pictures
+texlive-binaries dvisvgm texlive-humanities texlive-science
+texlive-fonts-recommended`) 404'd on the same two unrelated packages
+prior firings have already noted (`mesa`'s `libegl-mesa0`, `ruby3.2`)
+on the first attempt; a second `apt-get install --fix-missing` with the
+identical list resolved `latex`, `pdflatex` and `dvisvgm` cleanly.
+
+`build.py --write` (three entries normalised, atoms already legal —
+`a`/`b`/`c`, `p`/`q` — so no renames; difficulty scores written for
+table/tree, `nd` left at the authored value since it already matched),
+`python3 difficulty.py --diff` (0 differ), `svg.py` (12 SVGs: 4 blocks
+× 3 valid entries), `svg.py --check` (every SVG current),
+`inventory.py --locks` (0 practicable methods locked),
+`manifest.py --check-merge` (146 entries, 143 expected from the merge
+parents plus 3 new, nothing lost — the branch was already up to date
+with `main`, no merge to resolve this firing), and
+`node --test "_tests/*.test.mjs"` (513/513) all clean. `extremely hard`
+count unchanged (none of the three new entries is anywhere close: all
+three score `medium`). Comprehensive queue: 77 candidates left of 274
+(88 now in the database, 3 quarantined, 82 unreadable, 24 settled).
+Course and imports queues remain at 0.

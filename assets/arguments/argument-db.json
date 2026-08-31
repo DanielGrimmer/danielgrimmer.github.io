@@ -68550,6 +68550,931 @@
     "conclusion": "(p ⊃ (q ⊃ r)) ⊃ ((p ⊃ q) ⊃ (p ⊃ r))",
     "sequent": "⊨ (p ⊃ (q ⊃ r)) ⊃ ((p ⊃ q) ⊃ (p ⊃ r))"
    }
+  },
+  {
+   "id": "nicods-rule",
+   "cli_ref": "CLI-205",
+   "names": [
+    "Nicod's Rule",
+    "The Stroke's Single Rule of Inference"
+   ],
+   "premises": [
+    "a",
+    "~(a & ~(b & c))"
+   ],
+   "conclusion": "c",
+   "truth_table": {
+    "atoms": [
+     "a",
+     "b",
+     "c"
+    ],
+    "columns": [
+     "a",
+     "∼(a & ∼(b & c))",
+     "c"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "T"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad a \\qquad b \\qquad c \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad a \\qquad \\Neg (a\\Conj \\Neg (b\\Conj c)) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad c \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a}{T} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{T} \\quad$ & $\\quad \\uv{c}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a}{T} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{F} \\quad$ & $\\quad \\uv{c}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a}{T} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{F} \\quad$ & $\\quad \\uv{c}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a}{T} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{F} \\quad$ & $\\quad \\uv{c}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a}{F} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{T} \\quad$ & $\\quad \\uv{c}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a}{F} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{T} \\quad$ & $\\quad \\uv{c}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a}{F} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{T} \\quad$ & $\\quad \\uv{c}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a}{F} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{T} \\quad$ & $\\quad \\uv{c}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad a \\qquad b \\qquad c \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad a \\qquad \\Neg (a\\Conj \\Neg (b\\Conj c)) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad c \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a}{T} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{T} \\quad$ & $\\quad \\uv{c}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a}{T} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{F} \\quad$ & $\\quad \\uv{c}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a}{T} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{F} \\quad$ & $\\quad \\uv{c}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a}{F} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{T} \\quad$ & $\\quad \\uv{c}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a}{F} \\qquad \\uv{\\Neg (a\\Conj \\Neg (b\\Conj c))}{T} \\quad$ & $\\quad \\uv{c}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 8,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "a",
+     "∼(a & ∼(b & c))",
+     "∼c"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼a",
+         "from": "∼(a & ∼(b & c))",
+         "rule": "∼&"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼∼(b & c)",
+         "from": "∼(a & ∼(b & c))",
+         "rule": "∼&"
+        },
+        {
+         "formula": "b & c",
+         "from": "∼∼(b & c)",
+         "rule": "∼∼"
+        },
+        {
+         "formula": "b",
+         "from": "b & c",
+         "rule": "&"
+        },
+        {
+         "formula": "c",
+         "from": "b & c",
+         "rule": "&"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼(a & ∼(b & c))",
+     "branch_rule": "∼&"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad a$ \\\\ \\ckpad $\\qquad \\Neg (a\\Conj \\Neg (b\\Conj c))$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg c$} [.{$\\Neg a$ \\\\ x} ] [.{\\ckpad $\\Neg \\Neg (b\\Conj c)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $b\\Conj c$\\quad\\checkmark \\\\ $\\vert$ \\\\ $b$ \\\\ $c$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "interest": "Jean Nicod's 1917 paper cut *Principia Mathematica*'s propositional logic to one axiom and one rule of inference, both written in the Sheffer stroke -- an entire logic run through a single primitive step. Unfolded into `&` and `∼`, the second premise here is `∼(a & ∼(b & c))`, and that is just `a ⊃ (b & c)` wearing stroke clothing: `∼(X & ∼Y)` is the ordinary equivalence for a conditional. So Nicod's rule does modus ponens and conjunction elimination in one primitive step where our twelve rules need two, which is why the derivation below has to build `a & ∼(b & c)` as a single formula and set it against the second premise directly, rather than detaching `b & c` and then peeling off `c`. The table's numbers say the same thing more starkly: the argument is premise-true on exactly one of its eight rows, the row where `a`, `b` and `c` are all true, which is the only place a conditional and its antecedent can both hold.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Jean Nicod",
+     "work": "A Reduction in the Number of the Primitive Propositions of Logic",
+     "locus": "1917, the paper's single rule of inference",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "history of logic"
+    ],
+    "figure": [
+     "Nicod"
+    ],
+    "defect": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "A clean single-primitive-rule example for a proof-theory aside; the second premise reads as opaque until `∼(a & ∼X)` is pointed out as `a ⊃ X` in disguise.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "a",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~(a & ~(b & c))",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "~c",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 4,
+      "f": "b & c",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 5,
+      "f": "c",
+      "rule": "ConjE",
+      "depth": 2,
+      "cites": [
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       5,
+       3
+      ]
+     },
+     {
+      "n": 7,
+      "f": "~(b & c)",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        4,
+        6
+       ]
+      ]
+     },
+     {
+      "n": 8,
+      "f": "a & ~(b & c)",
+      "rule": "ConjI",
+      "depth": 1,
+      "cites": [
+       1,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       8,
+       2
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~~c",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        3,
+        9
+       ]
+      ]
+     },
+     {
+      "n": 11,
+      "f": "c",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       10
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{a}\n\\hypo{2}{\\Neg (a\\Conj \\Neg (b\\Conj c))}\n\\open\n\\hypo{3}{\\Neg c}\n\\open\n\\hypo{4}{b\\Conj c}\n\\have{5}{c}\\by{\\ConjE}{4}\n\\have{6}{\\Falsum}\\by{\\FalsumI}{5,3}\n\\close\n\\have{7}{\\Neg (b\\Conj c)}\\by{\\NegI}{4,6}\n\\have{8}{a\\Conj \\Neg (b\\Conj c)}\\by{\\ConjI}{1,7}\n\\have{9}{\\Falsum}\\by{\\FalsumI}{8,2}\n\\close\n\\have{10}{\\Neg \\Neg c}\\by{\\NegI}{3,9}\n\\have{11}{c}\\by{\\NegE}{10}\n\\end{nd}\n\\end{align*}",
+    "lines": 11,
+    "max_subproof_depth": 2,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "ConjE",
+     "ConjI",
+     "FalsumI",
+     "NegE",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [
+     "a",
+     "∼(a & ∼(b & c))"
+    ],
+    "conclusion": "c",
+    "sequent": "a, ∼(a & ∼(b & c))  ⊨ c"
+   }
+  },
+  {
+   "id": "necessarium-ad-quodlibet",
+   "cli_ref": "CLI-206",
+   "names": [
+    "Necessarium ad Quodlibet",
+    "The Necessary Follows from Anything"
+   ],
+   "premises": [
+    "q"
+   ],
+   "conclusion": "p | ~p",
+   "truth_table": {
+    "atoms": [
+     "q",
+     "p"
+    ],
+    "columns": [
+     "q",
+     "p ∨ ∼p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "q": "T",
+       "p": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "q": "T",
+       "p": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "q": "F",
+       "p": "T"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "q": "F",
+       "p": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad q \\qquad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p\\Disj \\Neg p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{q}{T} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{q}{T} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{q}{F} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{q}{F} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Disj \\Neg p}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad q \\qquad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p\\Disj \\Neg p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{q}{T} \\qquad \\uv{p}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj \\Neg p}{T} \\quad$ \\\\\n        $\\quad \\uv{q}{T} \\qquad \\uv{p}{F} \\quad$ & $\\quad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Disj \\Neg p}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 2,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "q",
+     "∼(p ∨ ∼p)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼p",
+       "from": "∼(p ∨ ∼p)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "∼∼p",
+       "from": "∼(p ∨ ∼p)",
+       "rule": "∼∨"
+      }
+     ],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad q$ \\\\ \\ckpad $\\Neg A:\\quad \\Neg (p\\Disj \\Neg p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg \\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "english": [
+    {
+     "gloss": "Take q, whatever it may be. It follows that p, or not p.",
+     "faithful": true
+    }
+   ],
+   "interest": "Buridan's *Treatise on Consequences* states, alongside its more famous sibling that anything follows from the impossible, that whatever is necessary follows from anything at all. This is the schema that principle licenses: `p ∨ ∼p` is a tautology, so it can be validly inferred from any premise whatever, and here the premise is an arbitrary `q`. The derivation below makes the point sharply -- it is `excluded-middle`'s own reductio with one extra premise line bolted on the front, and `q` is never cited anywhere in the ten lines that follow it, which is exactly what 'follows from anything' should look like on the page. Relevance logicians reject the schema for the same reason: a proof that never touches its premise is not tracking any connection between what is assumed and what is concluded.",
+   "appearances": [
+    {
+     "type": "discussed",
+     "fidelity": "verbatim",
+     "who": "Catarina Dutilh Novaes & Milo Crimi",
+     "work": "Medieval Theories of Consequence",
+     "locus": "SEP, §3.3",
+     "url": "https://plato.stanford.edu/entries/consequence-medieval/",
+     "quote": "the necessary follows from anything"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "philosophy of logic",
+     "history of logic"
+    ],
+    "figure": [
+     "Buridan"
+    ],
+    "defect": [
+     "idle premise"
+    ],
+    "nonclassical": [
+     "relevant"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Pairs with `excluded-middle`: same tautology, but with a premise attached that the derivation never has to touch. Good for making 'valid' and 'relevant' come apart out loud.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "looks_like": "excluded-middle",
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~(p | ~p)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 4,
+      "f": "p | ~p",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       4,
+       2
+      ]
+     },
+     {
+      "n": 6,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        3,
+        5
+       ]
+      ]
+     },
+     {
+      "n": 7,
+      "f": "p | ~p",
+      "rule": "DisjI",
+      "depth": 1,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~(p | ~p)",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 9,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       7,
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~~(p | ~p)",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        9
+       ]
+      ]
+     },
+     {
+      "n": 11,
+      "f": "p | ~p",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       10
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{q}\n\\open\n\\hypo{2}{\\Neg (p\\Disj \\Neg p)}\n\\open\n\\hypo{3}{p}\n\\have{4}{p\\Disj \\Neg p}\\by{\\DisjI}{3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,2}\n\\close\n\\have{6}{\\Neg p}\\by{\\NegI}{3,5}\n\\have{7}{p\\Disj \\Neg p}\\by{\\DisjI}{6}\n\\have{8}{\\Neg (p\\Disj \\Neg p)}\\by{\\Reit}{2}\n\\have{9}{\\Falsum}\\by{\\FalsumI}{7,8}\n\\close\n\\have{10}{\\Neg \\Neg (p\\Disj \\Neg p)}\\by{\\NegI}{2,9}\n\\have{11}{p\\Disj \\Neg p}\\by{\\NegE}{10}\n\\end{nd}\n\\end{align*}",
+    "lines": 11,
+    "max_subproof_depth": 2,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "DisjI",
+     "FalsumI",
+     "NegE",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [
+     "q"
+    ],
+    "conclusion": "p ∨ ∼p",
+    "sequent": "q  ⊨ p ∨ ∼p"
+   }
+  },
+  {
+   "id": "ex-impossibili-contradiction",
+   "cli_ref": "CLI-207",
+   "names": [
+    "Ex Impossibili, Contradictory Conclusion",
+    "Doubled Explosion"
+   ],
+   "premises": [
+    "p",
+    "~p"
+   ],
+   "conclusion": "q & ~q",
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p",
+     "∼p",
+     "q & ∼q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\qquad \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q\\Conj \\Neg q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{\\Neg p}{F} \\quad$ & $\\quad \\uv{q\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{\\Neg p}{F} \\quad$ & $\\quad \\uv{q\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{\\Neg p}{T} \\quad$ & $\\quad \\uv{q\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{\\Neg p}{T} \\quad$ & $\\quad \\uv{q\\Conj \\Neg q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\qquad \\Neg p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q\\Conj \\Neg q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{\\Neg p}{F} \\quad$ & $\\quad \\uv{q\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{\\Neg p}{T} \\quad$ & $\\quad \\uv{q\\Conj \\Neg q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 0,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": false
+   },
+   "tree": {
+    "roots": [
+     "p",
+     "∼p",
+     "∼(q & ∼q)"
+    ],
+    "tree": {
+     "added": [],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad p$ \\\\ $\\qquad \\Neg p$ \\\\ $\\Neg A:\\quad \\Neg (q\\Conj \\Neg q)$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "english": [
+    {
+     "gloss": "p, and not p. It follows that q, and not q.",
+     "faithful": true
+    }
+   ],
+   "interest": "The same passage of Buridan's *Treatise on Consequences* that licenses `necessarium-ad-quodlibet` opens with the sibling principle: anything follows from an impossibility. This is its sharpest instance -- not just any conclusion, but a full contradiction, doubling the explosion. It sits beside `ex-falso` as the same principle in a different shape: there the contradictory halves arrive pre-conjoined in one premise and the conclusion is a bare atom; here they are two separate premises and the conclusion is itself contradictory, so the derivation below proves `q` and `∼q` independently, by the same reductio run twice, and joins them with one final `&I`. It is vacuously valid -- the premises are satisfiable in none of the four rows, so there is no row left over for a countermodel to occupy.",
+   "appearances": [
+    {
+     "type": "discussed",
+     "fidelity": "verbatim",
+     "who": "Catarina Dutilh Novaes & Milo Crimi",
+     "work": "Medieval Theories of Consequence",
+     "locus": "SEP, §3.3",
+     "url": "https://plato.stanford.edu/entries/consequence-medieval/",
+     "quote": "from the impossible anything follows"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "philosophy of logic",
+     "history of logic"
+    ],
+    "figure": [
+     "Buridan"
+    ],
+    "defect": [
+     "vacuous validity"
+    ],
+    "nonclassical": [
+     "relevant",
+     "paraconsistent"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Pairs with `ex-falso` as the same principle in a different shape -- separate premises rather than one conjoined, and a contradictory conclusion rather than an arbitrary one. Good for showing the reductio pattern is reusable, not a one-off trick.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "looks_like": "ex-falso",
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "~q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 4,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        3,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 9,
+      "f": "~q",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        7,
+        8
+       ]
+      ]
+     },
+     {
+      "n": 10,
+      "f": "q & ~q",
+      "rule": "ConjI",
+      "depth": 0,
+      "cites": [
+       6,
+       9
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p}\n\\hypo{2}{\\Neg p}\n\\open\n\\hypo{3}{\\Neg q}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{1,2}\n\\close\n\\have{5}{\\Neg \\Neg q}\\by{\\NegI}{3,4}\n\\have{6}{q}\\by{\\NegE}{5}\n\\open\n\\hypo{7}{q}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{1,2}\n\\close\n\\have{9}{\\Neg q}\\by{\\NegI}{7,8}\n\\have{10}{q\\Conj \\Neg q}\\by{\\ConjI}{6,9}\n\\end{nd}\n\\end{align*}",
+    "lines": 10,
+    "max_subproof_depth": 1,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "ConjI",
+     "FalsumI",
+     "NegE",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "display": {
+    "premises": [
+     "p",
+     "∼p"
+    ],
+    "conclusion": "q & ∼q",
+    "sequent": "p, ∼p  ⊨ q & ∼q"
+   }
   }
  ],
  "latex_requires": [
