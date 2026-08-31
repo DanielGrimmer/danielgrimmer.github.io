@@ -526,3 +526,84 @@ texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
 texlive-humanities texlive-science texlive-fonts-recommended` via
 `apt-get`, matching every prior firing's note. The `session-start-hook`
 suggestion from those notes is still open.
+
+**2026-08-31, first `comprehensive`-source firing.** Course queue and
+imports queue both confirmed empty (`inventory.py --status`,
+`--status --source imports`), so this firing works the Comprehensive Logic
+Inventory (the SEP sweep) for the first time. Read §11d before starting.
+
+Took the first three candidates (`inventory.py --next 3 --source
+comprehensive`), all from §1 ("THE VOID"), which carries no `*SEP:*` line —
+confirmed by reading the section header directly. Per §11d's fallback for
+an unclear article, each is attributed to the philosopher the row itself
+names, not guessed at a SEP slug:
+
+- **`abelian-axiom-nested`** (CLI-101, `⊢ (((p⊃(q&r))⊃(q&r))⊃p)`). The
+  file's own §6.1 item 9 cross-references this row explicitly as "Three-atom
+  version (CLI-101, §1 rank 1)" of the axiom already in the database as
+  `abelian-axiom`. Rather than treat that as coincidence, reused
+  `abelian-axiom`'s own verified appearance (Meyer & Slaney, SEP's
+  *Relevance Logic* article) wholesale — not a fresh guess, but the same
+  attribution already confirmed for the identical axiom schema, now
+  instantiated with `q & r` in place of `q`. `looks_like: abelian-axiom`.
+  Countermodel (`p=F, q=T, r=T`, 1 of 8) matches the row's own stated
+  countermodel exactly.
+- **`boethius-thesis`** (CLI-102, `⊢ ((p&q)⊃r)⊃∼((p&q)⊃∼r)`). No existing
+  entry (checked `who`/`work`/`id` for "boethius" first). §1 has no `sep`
+  field, so the appearance names Boethius directly, per Kneale & Kneale's
+  reading of *De Syllogismo Hypothetico* 843D, `url: null`, `fidelity: our
+  reconstruction` — no verbatim text available, so `quote` is left out
+  rather than composed. The file's own §6.5 records that this exact
+  attribution is contested (Wansing argues Kneale & Kneale misread
+  Boethius; Bonevac & Dever cannot find the related Abelard principle in
+  him at all), so that caveat is written into `course.note`
+  (instructor-facing, never rendered) rather than dropped or overclaimed in
+  `interest`. Countermodel count (6 of 8) matches the row exactly.
+- **`quantifier-shift-2x2`** (CLI-105, the quantifier-shift fallacy
+  `(∀x)(∃y)Rxy ⊬ (∃x)(∀y)Ryx` eliminated over a two-element domain). The
+  row itself names a real, checkable source — "Restall works this exact
+  propositional tree in Box 9.1 (p. 102)" — so the appearance is Restall's
+  *Logic* directly (`who: "Greg Restall"`, `url: null`), the same format
+  already used for Restall citations from the imports inventory. The
+  relational atoms `Raa, Rab, Rba, Rbb` were written as given and left for
+  `build.py` to legalise (`R` is not a legal first letter — atoms must be
+  lower-case — and the legaliser's own rule of "first letter is the name,
+  rest is the subscript" does the right thing here: `Raa → r_aa`, etc.,
+  confirmed in the build's own rename log). Countermodel count (2 of 16)
+  matches the row exactly.
+
+Checked all three against the database by id, by content (`Boethius`,
+`quantifier`/`shift`/`Restall`), and by shape before writing — no
+near-duplicates. All three are invalid, so no `proofs.py` entry: each
+carries an `nd.note` describing where a derivation attempt breaks down,
+checked against the actual computed tree rather than composed on
+intuition. Every stated countermodel and countermodel count was checked
+against `derive()`'s own output before writing, per the file's own
+standing caution (§0) that classical verdicts here are independently
+recomputed and can differ from a source's own system — none did, here, but
+none of the three needed the connexive/relevance caveat in `interest`
+either, since the classical countermodel counts already agreed with the
+file's own recomputed ones.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled the same `texlive-*`/`dvisvgm` package list as every prior
+firing via `apt-get`. The `session-start-hook` suggestion from those notes
+is still open.
+
+`build.py --write` (atoms renamed as expected; difficulty scores newly
+written for all three, no `None`s left), `python3 difficulty.py --diff` (2
+differ, both pre-existing overrides already explained in `course.note` —
+`double-negation-elimination` and `de-morgan-disjunction-easy` — nothing
+from this firing), `svg.py` (9 SVGs, 3 blocks × 3 invalid entries),
+`svg.py --check` (every SVG current), `inventory.py --locks` (0
+practicable methods locked), `manifest.py --check-merge` (128 entries, 125
+expected from the merge parents plus 3 new, nothing lost — the branch was
+already up to date with `main`, no merge to resolve this firing), and
+`node --test "_tests/*.test.mjs"` (513/513) all clean. `extremely hard`
+count unchanged at 4 of 4 (nd) — this firing added none, since all three
+entries are invalid and carry no `nd` score. `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed
+empty; none of the three appearances is a course appearance, so none
+needed it. Comprehensive queue: 111 candidates left of 274 (72 now in the
+database, 3 quarantined, 82 unreadable, 6 settled). Course and imports
+queues untouched this firing (both already empty) and remain at 0.

@@ -123,3 +123,6 @@ triple-negation-elimination
 de-morgan-conjunction-easy
 de-morgan-disjunction-easy
 de-morgan-conjunction-hard
+abelian-axiom-nested
+boethius-thesis
+quantifier-shift-2x2
