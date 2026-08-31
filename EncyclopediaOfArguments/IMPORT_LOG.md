@@ -1261,3 +1261,128 @@ close (`easy`, `medium`, `easy`). Comprehensive queue: 74 candidates
 left of 274 (91 now in the database, 3 quarantined, 82 unreadable, 26
 settled — CLI-210 and CLI-212 newly logged above). Course and imports
 queues remain at 0.
+
+## 2026-08-31 (continued) — a shorter Huntington/Robbins proof, still over
+the line; three imported instead from further down §2.6/§2.17b/§3.1
+
+Course and imports queues confirmed empty again. `python3
+manifest.py --check-merge` before touching anything: `origin/main` was
+already fully merged into `claude/inventory-import` (149 entries, 149
+expected), nothing to resolve.
+
+**Huntington's equation and the Robbins equation, revisited.** The
+prior firing set both aside at 4 of 4 `extremely hard` (nd) rather than
+risk a fifth, and left a hand-sketched >40-line estimate for whichever
+firing came next to either shorten or accept. Took that up directly:
+wrote both directions in `nd.py`'s own line format and checked them
+with `nd.check()` rather than by hand, since the prior estimate was
+explicitly unverified. The `⟸` direction (`p ⊢ D1∨D2`) compresses well
+once the two disjuncts are attacked by reductio-against-`E`
+(`¬(D1∨D2)`) rather than by first deriving `q∨∼q` and case-splitting on
+it — the case-split route re-proves excluded middle from scratch (10
+lines) and then repeats a nested `∨E` twice more; the `¬E`-first route
+gets `¬D1` and `¬D2` directly (4 lines each, same shape
+`de-morgan-disjunction` uses) and only needs one nested case-split to
+collide them, 26 lines against `Reit` where required for own-assumption
+`⊥I` (§6.4's table, row 4 — every one of the four such spots in this
+proof needed it, and `nd.check()` catches the ones a first draft
+missed). The `⟹` direction (`D1∨D2 ⊢ p`) similarly compresses from a
+naive double-reductio (14 lines) to a single shared reductio wrapping
+the case split (13 lines). Verified total: **40 lines** (13 + 26 + 1 for
+`≡I`), all five §14.3 triggers present. This confirms rather than
+overturns the prior estimate — a genuinely shorter route was not
+found, and 40 lines is a floor for this identity in the twelve-rule
+system, not an artifact of bad proof search. The `extremely hard` (nd)
+band is still at 4 of the 4 the test suite allows, so importing either
+now would need `ND_EXTREME_LINES` raised — which also touches
+`de-morgan-conjunction` and `material-conditional`, both sitting at
+exactly the current 29-line floor, and would need their own
+`course.note` added the moment the threshold moves past them. That is
+a real decision about shared calibration, not a per-entry judgement,
+so it is left for a firing (or Daniel) that can make it deliberately
+rather than as a side effect of clearing this pair. The verified
+40-line proof is not thrown away: it is sitting in this firing's own
+scratch history and can be dropped into `proofs.py` verbatim the day
+the threshold moves. Consensus (below) needed the same reductio-against-`E`
+trick and came in at 27 lines — proof that the trick works, just not by
+enough margin on the harder pair.
+
+**`consensus-theorem`** (comprehensive, §2.6 "Identities students will
+not guess", no `ID`). `((p&q)∨(∼p&r)∨(q&r)) ≡ ((p&q)∨(∼p&r))` — the
+disjunct `q&r` is redundant given the other two, because `p` and `∼p`
+between them already exhaust it. The section's own `sep` line names
+three articles (Burris & Legris' *The Algebra of Logic Tradition*, Monk's
+*The Mathematics of Boolean Algebra*, Font & Jansana's *Algebraic
+Propositional Logic*); fetched all three specifically for this row (not
+just the section) and none discusses consensus by name — Burris &
+Legris covers Huntington and Robbins (confirmed, see above) but stops
+there. Per §11d's fallback, named the champion the row's own table
+credits instead: Archie Blake, whose 1937 dissertation *Canonical
+Expressions in Boolean Algebra* introduced the shape (confirmed against
+Wikipedia's history section, cross-checked for the year and title
+rather than taken as given); `fidelity: our reconstruction`, `url:
+null`. Valid, `hard` (nd) — 27 lines, matching `difficulty.py`'s own
+rubric exactly (no `course.note` needed), comfortably under the
+29-line floor that would push it into `extremely hard` even with all
+five §14.3 triggers present.
+
+**`combinatory-fixed-point`** (comprehensive, §2.17b "Fixed points",
+no `ID`). `p⊃p, (p⊃p)⊃p ⊨ p` — the propositional shadow of the
+combinatory fixed-point theorem (`Yx ▷ x(Yx)` needs `Y : (A⊃A)⊃A`, which
+is not a theorem as a bare schema but becomes trivial once `A⊃A`'s own
+theorem-hood is handed in as a second premise). The section's `sep`
+line names Bimbó's *Combinatory Logic* directly; fetched it and
+confirmed both the fixed-point theorem statement and its self-application
+passage verbatim, §2.3. `derive.py`'s `premise_analysis` confirms `p⊃p`
+is idle — checked before it went into `interest`, since that is exactly
+the kind of claim §11d/the routine's own standing caution says to
+verify rather than assert. Valid, `easy` (nd) — 3 lines, `Pr, Pr,
+CondE`.
+
+**`mcgee-counterexample`** (comprehensive, §3.1 "The paradoxes of
+material implication", CLI-309). `(r&∼g)⊃a, r ⊢ ∼g⊃a` — the
+propositional shadow of Vann McGee's 1985 counterexample to modus
+ponens. The section's `sep` line lists seven general articles including
+`conditionals`, which resolves (checked, not assumed) to Dorothy
+Edgington's *Indicative Conditionals* rather than to Égré & Rott's *The
+Logic of Conditionals* (a different, unlisted article that happens to
+also be in the database already, cited on `conditional-excluded-middle`
+— checked it was not what this row's own `sep` line names before
+reaching for it here). Fetched Edgington's entry and confirmed it
+discusses McGee's example by name and year in §5, quote verbatim.
+Row's own `Prop?` column flags the loss directly ("the failure needs
+probability"): the propositional fragment is classically valid with no
+countermodel (`derive.py`: 3 of 8 rows keep both premises true, all
+three also true in the conclusion) precisely because it cannot
+represent the probabilistic semantics McGee's actual argument needs —
+said in `interest` rather than left for the `VALID` chip to read as a
+rebuttal of McGee, per §11d's standing instruction on rows that flag
+their own propositional shadow.
+
+**CLI-307** (`p&q ⊢ p⊃q`, "And-to-If / Conjunctive Sufficiency... In
+Stalnaker's C2, absent from Lewis's V") was looked at and set aside,
+not rejected. Confirmed the technical claim is accurate — Égré & Rott's
+*The Logic of Conditionals* §3.3 states system `V` excludes `CS`
+(Conjunctive Sufficiency) while `VC`/`C2` include it, matching the
+row's own phrasing closely enough that `CS` is very likely what the row
+means — but that article is not one of §3.1's seven listed `sep`
+articles, and `conditionals` on that list resolves to Edgington's
+different, unlisted-by-name article instead (used for `mcgee-counterexample`
+above). Stalnaker and Lewis are both named directly by the row, so the
+§11d fallback (cite the champions, `url: null`) would apply here too —
+just not chased fully this firing once `mcgee-counterexample` gave a
+cleaner three-entry batch. Left exactly where the queue leaves it, for
+a firing that wants a fourth from this section.
+
+`build.py --write` (three entries normalised; `p⊃p` and `p` already
+legal atoms throughout, no renames; `nd` difficulty authored for all
+three and `difficulty.py --diff` agreed on every one, no override
+needed), `svg.py` (12 SVGs: 4 blocks × 3 valid entries), `svg.py
+--check` (every SVG current), `inventory.py --locks` (0 practicable
+methods locked — none of the three carries a `problem_set`, per §11d),
+`manifest.py --check-merge` (152 entries, 149 expected plus 3 new,
+nothing lost), and `node --test "_tests/*.test.mjs"` (513/513) all
+clean. `extremely hard` (nd) count unchanged at 4 of 4 — none of the
+three new entries is close (`hard`, `easy`, `easy`). Comprehensive
+queue: 69 candidates left of 274 (94 now in the database). Course and
+imports queues remain at 0.

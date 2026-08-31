@@ -2071,3 +2071,66 @@ PROOFS["double-negation-theorem"] = [
     _l(2, "p", "NegE", 1, [1]),
     _l(3, "~~p > p", "CondI", 0, subs=[[1, 2]]),
 ]
+
+# ------------------------------------------------------------- combinatory-fixed-point
+# `(p>p)>p` is truth-functionally just `p` in disguise -- ⊃E against `p>p`
+# reads it off directly. The first premise never gets cited, which is the
+# point: `derive.py`'s premise_analysis calls it idle, and the dead-line
+# check does not fire because premises are exempt from it (§6.5's own note).
+PROOFS["combinatory-fixed-point"] = [
+    P(1, "p > p"),
+    P(2, "(p > p) > p"),
+    _l(3, "p", "CondE", 0, [2, 1]),
+]
+
+# --------------------------------------------------------------- mcgee-counterexample
+# A curried conditional taken apart and put back together: `~g` opens the
+# subproof `>I` needs, `r&~g` is built directly (both conjuncts already
+# accessible, no reiteration required since neither elimination cites it
+# locally), and `>E` against the premise lands `a` inside the same subproof.
+PROOFS["mcgee-counterexample"] = [
+    P(1, "(r & ~g) > a"),
+    P(2, "r"),
+    _l(3, "~g", "As", 1),
+    _l(4, "r & ~g", "ConjI", 1, [2, 3]),
+    _l(5, "a", "CondE", 1, [1, 4]),
+    _l(6, "~g > a", "CondI", 0, subs=[[3, 5]]),
+]
+
+# ----------------------------------------------------------------- consensus-theorem
+# The trivial half is one line: `A|B` already entails `(A|B)|C`, no
+# reasoning needed. The hard half assumes the whole disjunction false,
+# peels `~A` and `~B` off it by the same reductio-against-DisjI pattern
+# `de-morgan-disjunction` uses, then opens a *third* reductio (`p`) to turn
+# `~A` plus `q` into `~p` -- at which point `~p` and `r` build `B` directly
+# by `ConjI`, no further reductio needed, and `B` collides with `~B`.
+PROOFS["consensus-theorem"] = [
+    _l(1, "(p & q) | (~p & r) | (q & r)", "As", 1),
+    _l(2, "(p & q) | (~p & r)", "As", 2),
+    _l(3, "(p & q) | (~p & r)", "Reit", 2, [2]),
+    _l(4, "q & r", "As", 2),
+    _l(5, "q", "ConjE", 2, [4]),
+    _l(6, "r", "ConjE", 2, [4]),
+    _l(7, "~((p & q) | (~p & r))", "As", 3),
+    _l(8, "p & q", "As", 4),
+    _l(9, "(p & q) | (~p & r)", "DisjI", 4, [8]),
+    _l(10, "!", "FalsumI", 4, [9, 7]),
+    _l(11, "~(p & q)", "NegI", 3, subs=[[8, 10]]),
+    _l(12, "~p & r", "As", 4),
+    _l(13, "(p & q) | (~p & r)", "DisjI", 4, [12]),
+    _l(14, "!", "FalsumI", 4, [13, 7]),
+    _l(15, "~(~p & r)", "NegI", 3, subs=[[12, 14]]),
+    _l(16, "p", "As", 4),
+    _l(17, "p & q", "ConjI", 4, [16, 5]),
+    _l(18, "!", "FalsumI", 4, [17, 11]),
+    _l(19, "~p", "NegI", 3, subs=[[16, 18]]),
+    _l(20, "~p & r", "ConjI", 3, [19, 6]),
+    _l(21, "!", "FalsumI", 3, [20, 15]),
+    _l(22, "~~((p & q) | (~p & r))", "NegI", 2, subs=[[7, 21]]),
+    _l(23, "(p & q) | (~p & r)", "NegE", 2, [22]),
+    _l(24, "(p & q) | (~p & r)", "DisjE", 1, [1], [[2, 3], [4, 23]]),
+    _l(25, "(p & q) | (~p & r)", "As", 1),
+    _l(26, "((p & q) | (~p & r)) | (q & r)", "DisjI", 1, [25]),
+    _l(27, "(((p & q) | (~p & r)) | (q & r)) = ((p & q) | (~p & r))",
+       "BicondI", 0, subs=[[1, 24], [25, 26]]),
+]
