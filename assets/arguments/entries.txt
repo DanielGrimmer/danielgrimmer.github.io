@@ -166,3 +166,6 @@ consequentia-mirabilis
 disjunction-from-negated-conjunction
 contraposition-recovered-theorem
 hypothetical-syllogism-theorem
+disjunction-elimination-axiom
+suffixing
+antilogism

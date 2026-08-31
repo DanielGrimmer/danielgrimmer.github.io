@@ -53,6 +53,7 @@ be offered a second time). The reason column says which.
 | 2026-08-31 | `⊢ ∼(p⊃q) ⊃ (p & ∼q)` (CLI-410, comprehensive §4.1) | No philosopher named in the row ("Classically `∼(p⊃q)` is maximally informative; constructively it is almost empty" states the point itself, attributing it to no one). §4's own `sep` line lists eleven articles; §4.1 is unambiguously about intuitionistic logic specifically, so fetched the SEP *Intuitionistic Logic* entry (Moschovakis) directly and searched it for any discussion of a negated conditional's BHK reading — none found. The article's only worked BHK example in this area is the disjunction clause already spent on `de-morgan-conjunction-hard-theorem` and `conditional-implies-disjunction`, and stretching it a third time to a conjunction-shaped conclusion would not be reporting the article, only echoing a phrase from an unrelated passage. Left for a person who can find an actual discussion of this specific form. |
 | 2026-08-31 | `⊢ (∼p⊃(q∨r)) ⊃ ((∼p⊃q) ∨ (∼p⊃r))` (CLI-412, comprehensive §4.1, Harrop's rule) | Not a provenance problem — the SEP *Intuitionistic Logic* entry (Moschovakis, §4.2, "Admissible rules of intuitionistic logic and arithmetic") names this exact schema and Harrop [1960] by name, confirmed on a direct fetch, and would have made a clean `diagnosed` appearance. The obstacle is the derivation. A classical proof needs `p∨∼p` built from scratch (10 lines, no primitive LEM in the twelve rules), then a case split: the `p` branch needs `∼p⊃q` built vacuously through the no-explosion reductio machinery (8 lines, the same shape as the standalone `ex-falso` entry), and the `∼p` branch needs the premise applied and a second `∨E` on `q∨r`, each of *its* two cases building a vacuous conditional the cheap way (reiterating a formula already in hand, 5 lines each) before `∨I` closes it. Assembled and checked against `nd.check()`: 34 lines, all five §14.3 triggers (`∨E` more than once, an undictated reductio building `p∨∼p`, a subproof four deep, eleven subproofs, well past ten derived lines) — a fifth `extremely hard` `nd` entry against the cap of four the test suite enforces (`worn.length <= 4`; the database already carries `de-morgan-conjunction`, `material-conditional`, `biconditional-as-agreement` and `bivalence-pigeonhole`). Tried restructuring before giving up on the firing, per §6.4a's instruction to write the proof again rather than reach for a flag: extracting `∼(∼p⊃q)` and `∼(∼p⊃r)` from a top-level reductio on the negated goal, hoping to skip the `p∨∼p` lemma entirely, but recovering `∼p` from `∼(∼p⊃q)` needs the identical vacuous-conditional-via-reductio machinery the case-split approach already pays for, so nothing was saved. No proof under 29 lines was found. Left for a firing or a person with time for either a cleverer derivation or a considered decision to raise `ND_EXTREME_LINES`, per the same reasoning `conditional-crossover` and the Huntington/Robbins equations record above. |
 | 2026-08-31 | `⊢ (p⊃(q∨r)) ⊃ ((p⊃q) ∨ (p⊃r))` (CLI-413, comprehensive §4.1) | No philosopher named in the row ("Memorable one-line refutation: set p := q∨r" states the point itself). Checked the SEP *Intuitionistic Logic* entry directly for this specific schema (unnegated antecedent, unlike CLI-412's Harrop rule immediately above it in the queue, which the article does name) — not found; the article's admissible-rules section covers Harrop's rule and Mints's rule, both negated-antecedent, and neither is this one substituted or generalised. Left for a person who can find an actual discussion of this specific form. |
+| 2026-08-31 | `⊢ ((p⊃q)⊃q)⊃((q⊃p)⊃p)` (comprehensive §4.2, "Ł's axiom") | The row's own label names Łukasiewicz, but §4 carries one `sep` line covering §4.1–§4.9 jointly (eleven articles), too broad to point at any one of them for a §4.2 row, and fetching the likeliest candidate directly (SEP's *Many-Valued Logic*) found it discusses Ł3/K3/LP/G3 at length but never states this specific axiom in the text retrieved. A web search for the schema itself turned up Wajsberg's 1931 axiomatisation of Łukasiewicz's three-valued calculus without confirming whether this exact schema (as opposed to a variant) is among Wajsberg's axioms or original to Łukasiewicz. Rather than write `who: Jan Łukasiewicz` against a work this firing could not pin down and verify — exactly the guessed-attribution mistake §11d warns against, on the champion fallback as much as on an SEP slug — left for a person who can confirm the actual source. The two other §4.4 candidates queued alongside it (CLI-433, CLI-434) had clean citations and were imported this firing. |
 
 ## Resolved
 
@@ -1839,3 +1840,91 @@ texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
 texlive-humanities texlive-science texlive-fonts-recommended`) resolved it
 cleanly. The `session-start-hook` suggestion from every prior firing's note
 is still open.
+
+## 2026-08-31 (continued) — the ∨E axiom, Suffixing, and Nelson's antilogism from §4.4
+
+Course and imports queues re-confirmed empty (`inventory.py --status` for
+both). `inventory.py --next 3 --source comprehensive` gave three rows in a
+row from §4's shared, eleven-article `sep` line: "Ł's axiom" (§4.2), and
+CLI-433 and CLI-434 (§4.4, "Relevance and substructural"). The first did not
+go in cleanly and is logged above; the other two did, plus a fourth pulled
+past it (`inventory.py --next 6`) once it was clear §4.4's citations, unlike
+§4.2's, resolve to a specific page rather than the section-wide list.
+
+**CLI-433 and CLI-434** (`⊢ ((p∨q)⊃r) ≡ ((p⊃r)&(q⊃r))`, `⊢ (p⊃q) ⊃
+((q⊃r)⊃(p⊃r))`) name "R and E" and "R, E, NR" respectively, without pointing
+at a page. Edwin Mares's *Relevance Logic* SEP entry itself defers R's
+axiomatisation to a supplement rather than stating it in the main text
+("For an axiomatisation of R, see *Logic R*"), so that supplement —
+`logic-relevance/logicr.html` — was fetched directly instead of guessing that
+the main entry covers it. It lists eleven numbered axioms; axiom 8 is
+`((A ∨ B) → C) ↔ ((A → C) ∧ (B → C))` (∨-elimination, CLI-433's schema exactly)
+and axiom 2 is `(A → B) → ((B → C) → (A → C))` (suffixing, CLI-434's schema
+exactly), confirmed by three independent fetches before either quote was
+written down. Imported as `disjunction-elimination-axiom` and `suffixing`.
+Both appearances cite Mares (`type: used`, `fidelity: verbatim`, the quote
+in the supplement's own `→`/`↔` notation) rather than Anderson and Belnap
+directly, since Mares's page is what was actually read; `interest` names
+Anderson and Belnap as R and E's authors and states plainly that the
+supplement's `→` is intensional, not the material `⊃` graphed here — on
+these two schemas specifically there is nothing to report by way of
+divergence, since both are asserted as axioms of R itself, unlike
+`hypothetical-syllogism-theorem`'s own transitivity theorem two doors down,
+which Priest's N₄ keeps as a rule while refusing as an axiom. The `url` field
+had to point at the main entry rather than the supplement —
+`_tests/argument-forms.test.mjs`'s canonical-SEP-link check only accepts
+`plato.stanford.edu/entries/<slug>/`, caught on the first test run and fixed
+before this was written down; the supplement page is named in `locus`
+instead, which is where a reader who wants the exact axiom list should look.
+
+`suffixing`'s content is `hypothetical-syllogism-theorem`'s own conclusion
+uncurried — the conjoined antecedent `(p⊃q)&(q⊃r)` traded for two nested
+conditionals — so `looks_like` names it and `interest` says so; checked
+against the database by content, not just by id, before writing either new
+entry, per §6.
+
+**CLI-438** (`⊢ ((p&q)⊃r) ⊃ ((p&∼r)⊃∼q)`, "E. Nelson's NL axiom 1.7 (1930)
+— antilogism") named a philosopher directly rather than a system to look up,
+so no SEP page was in play at all. Confirmed by search rather than SEP: E. J.
+Nelson's "Intensional Relations," *Mind* 39(156), Oct. 1930, pp. 440–453,
+postulates the Principle of the Antilogism as an axiom of his system NL. No
+verbatim quote of Nelson's own 1930 text was available to fetch and check —
+the paper is paywalled and only a secondary paraphrase turned up, garbled
+enough (`Nelr` for `r`) that it was not trustworthy to quote — so the
+appearance carries no `quote` field and `fidelity: our reconstruction` rather
+than `verbatim`, per §13.4's own rule against rewording a source to make it
+fit. `interest` notes that Nelson's `→` is intensional and NL is a genuinely
+early source for connexive logic, and that Mares and Francesco Paoli's
+reconstruction of NL still lacks a complete semantics — without claiming any
+divergence between Nelson's verdict and the classical one on this specific
+schema, since nothing found states one. Imported as `antilogism`.
+
+All three proofs (21, 8, and 11 lines respectively) were checked with
+`nd.check()` before being written into `proofs.py`: `disjunction-elimination-
+axiom` builds each conditional by a separate `⊃I` and joins them with `∧I`
+one way, then a genuine `∨E` inside a fresh assumption the other way, closed
+by `≡I`; `suffixing` is three nested `⊃I`s and nothing else, no `∧E` needed
+since there is no conjunction to take apart; `antilogism` is a reductio
+dictated by the goal (`∼I` on a negation goal), with the `⊥I`'s contradictory
+pair (`r`, `∼r`) not involving the subproof's own assumption (`q`), so no
+reiteration was required. `difficulty.py --diff` came back clean on all three
+hand-scored `nd` values (`hard`, `medium`, `medium`) without an override.
+`extremely hard` (nd) count unchanged at 4 of 4.
+
+`build.py --write` (three entries normalised, no atom renaming needed),
+`svg.py` (12 SVGs, 4 blocks × 3 entries), `inventory.py --locks` (0
+practicable methods locked — comprehensive carries no `problem_set`),
+`manifest.py --check-merge` (171 entries, 168 expected from the merge
+parents, nothing lost), and `node --test "_tests/*.test.mjs"` (514/514, after
+fixing the SEP-URL test failure above) all clean. `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed
+empty; none of the three appearances is a course appearance. Comprehensive
+queue: 44 candidates left of 274 (113 now in the database, 3 quarantined, 82
+unreadable, 33 settled). Course and imports queues remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**; the
+same package list every prior firing has recorded (`texlive-latex-base
+texlive-latex-recommended texlive-latex-extra texlive-pictures
+texlive-binaries dvisvgm texlive-humanities texlive-science
+texlive-fonts-recommended`) via `apt-get` resolved it cleanly. The
+`session-start-hook` suggestion from every prior firing's note is still open.

@@ -2359,3 +2359,67 @@ PROOFS["hypothetical-syllogism-theorem"] = [
     _l(7, "p > r", "CondI", 1, subs=[[4, 6]]),
     _l(8, "((p > q) & (q > r)) > (p > r)", "CondI", 0, subs=[[1, 7]]),
 ]
+
+# ------------------------------------------------- disjunction-elimination-axiom
+# Both directions in one biconditional, each a case-split under an assumed
+# conditional. -> assumes (p|q)>r and builds p>r and q>r separately, each by
+# assuming the disjunct, introducing p|q, and detaching r. <- assumes the pair
+# and rebuilds (p|q)>r by a genuine DisjE inside the fresh assumption p|q.
+PROOFS["disjunction-elimination-axiom"] = [
+    _l(1, "(p | q) > r", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p | q", "DisjI", 2, [2]),
+    _l(4, "r", "CondE", 2, [1, 3]),
+    _l(5, "p > r", "CondI", 1, subs=[[2, 4]]),
+    _l(6, "q", "As", 2),
+    _l(7, "p | q", "DisjI", 2, [6]),
+    _l(8, "r", "CondE", 2, [1, 7]),
+    _l(9, "q > r", "CondI", 1, subs=[[6, 8]]),
+    _l(10, "(p > r) & (q > r)", "ConjI", 1, [5, 9]),
+    _l(11, "(p > r) & (q > r)", "As", 1),
+    _l(12, "p > r", "ConjE", 1, [11]),
+    _l(13, "q > r", "ConjE", 1, [11]),
+    _l(14, "p | q", "As", 2),
+    _l(15, "p", "As", 3),
+    _l(16, "r", "CondE", 3, [12, 15]),
+    _l(17, "q", "As", 3),
+    _l(18, "r", "CondE", 3, [13, 17]),
+    _l(19, "r", "DisjE", 2, [14], [[15, 16], [17, 18]]),
+    _l(20, "(p | q) > r", "CondI", 1, subs=[[14, 19]]),
+    _l(21, "((p | q) > r) = ((p > r) & (q > r))", "BicondI", 0,
+       subs=[[1, 10], [11, 20]]),
+]
+
+# ------------------------------------------------------------------- suffixing
+# hypothetical-syllogism-theorem's own content, curried instead of conjoined:
+# three nested CondIs and nothing else, no ConjE needed because there is no
+# conjunction to take apart.
+PROOFS["suffixing"] = [
+    _l(1, "p > q", "As", 1),
+    _l(2, "q > r", "As", 2),
+    _l(3, "p", "As", 3),
+    _l(4, "q", "CondE", 3, [1, 3]),
+    _l(5, "r", "CondE", 3, [2, 4]),
+    _l(6, "p > r", "CondI", 2, subs=[[3, 5]]),
+    _l(7, "(q > r) > (p > r)", "CondI", 1, subs=[[2, 6]]),
+    _l(8, "(p > q) > ((q > r) > (p > r))", "CondI", 0, subs=[[1, 7]]),
+]
+
+# ------------------------------------------------------------------- antilogism
+# Nelson's own axiom, by reductio. Assume the consequent's antecedent false
+# (q); rebuild p&q from the pieces p&~r already supplies, detach r through
+# the outer premise, and collide it with ~r -- the pair the assumption never
+# had to be reiterated into, since neither side of the FalsumI is q itself.
+PROOFS["antilogism"] = [
+    _l(1, "(p & q) > r", "As", 1),
+    _l(2, "p & ~r", "As", 2),
+    _l(3, "p", "ConjE", 2, [2]),
+    _l(4, "~r", "ConjE", 2, [2]),
+    _l(5, "q", "As", 3),
+    _l(6, "p & q", "ConjI", 3, [3, 5]),
+    _l(7, "r", "CondE", 3, [1, 6]),
+    _l(8, "!", "FalsumI", 3, [7, 4]),
+    _l(9, "~q", "NegI", 2, subs=[[5, 8]]),
+    _l(10, "(p & ~r) > ~q", "CondI", 1, subs=[[2, 9]]),
+    _l(11, "((p & q) > r) > ((p & ~r) > ~q)", "CondI", 0, subs=[[1, 10]]),
+]
