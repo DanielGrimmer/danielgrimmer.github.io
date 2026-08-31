@@ -113,10 +113,22 @@ def nd_triggers(entry: dict) -> list:
     out = []
     if "DisjE" in nd.get("rules_used", []):
         out.append("proof by cases")
-    # A reductio is *dictated* when the goal is a negation -- ∼I is the rule the
-    # goal names. Assuming the negation of anything else is a choice, and
-    # choosing it is the step students do not find.
-    if nd.get("uses_indirect_proof") and (goal is None or goal.op != "~"):
+    # A reductio is *dictated* when what it proves is a negation: ∼I is the rule
+    # that goal names, and taking it is not a choice. The undictated move is the
+    # classical one -- prove `∼∼A` by reductio and strip it to reach a *positive*
+    # `A` -- and that is exactly a `∼E` citing a `∼I`.
+    #
+    # This used to read `uses_indirect_proof`, which the profile computes as
+    # "∼I or ∼E appears anywhere", and it was wrong twice over. It called
+    # `∼∼p ∴ p` undictated, though that proof is two lines and opens no
+    # assumption at all; and it called `∼(p∨q) ∴ ∼p & ∼q` undictated because the
+    # top-level goal is a conjunction, though both of its reductios prove a
+    # negation and are dictated. Two overnight entries diagnosed this in their
+    # own course.note rather than scoring around it, which is what fixed it.
+    by_line = {l["n"]: l for l in nd.get("proof") or []}
+    if any(l["rule"] == "NegE"
+           and any(by_line.get(c, {}).get("rule") == "NegI" for c in l.get("cites") or [])
+           for l in nd.get("proof") or []):
         out.append("an undictated reductio")
     if nd.get("max_subproof_depth", 0) >= 2:
         out.append("a subproof inside a subproof")

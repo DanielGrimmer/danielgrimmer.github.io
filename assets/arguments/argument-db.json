@@ -16638,12 +16638,11 @@
    "appearances": [
     {
      "type": "discussed",
-     "fidelity": "paraphrase",
+     "fidelity": "our reconstruction",
      "who": "Meyer & Slaney",
-     "work": "Relevance Logic",
-     "locus": "SEP, on Abelian logic",
-     "url": "https://plato.stanford.edu/entries/logic-relevance/",
-     "quote": "Abelian logic takes ((A→B)→B)→A as an axiom; its algebraic models are lattice-ordered abelian groups."
+     "work": "Abelian Logic (from A to Z)",
+     "locus": "in Priest, Routley & Norman (eds.), Paraconsistent Logic: Essays on the Inconsistent (1989)",
+     "url": null
     }
    ],
    "tags": {
@@ -40252,7 +40251,7 @@
    "looks_like": "inconsistent-biconditional-explosion",
    "countermodel_gloss": null,
    "difficulty": {
-    "nd": "medium",
+    "nd": "easy",
     "table": "easy",
     "tree": "easy"
    },
@@ -54618,9 +54617,9 @@
     {
      "type": "used",
      "fidelity": "our reconstruction",
-     "who": "Haskell Curry",
+     "who": "Lionel Shapiro & Jc Beall",
      "work": "Curry's Paradox",
-     "locus": "SEP",
+     "locus": "SEP, on the paradox Curry (1942) originated",
      "url": "https://plato.stanford.edu/entries/curry-paradox/"
     }
    ],
@@ -58030,7 +58029,7 @@
     "used_in": [],
     "problem_set": {},
     "quarantined": false,
-    "note": "Unassigned Restall material (Ch 7, worked in the text) -- Restall's own challenge is to try proving it without DNE first, so it pairs well with a brief remark on why the course's twelve rules include NegE as a primitive rather than deriving it. difficulty.py's heuristic flags this nd score as a suggested 'medium' (an 'undictated reductio', from its blunt uses_indirect_proof check), but that check only looks at whether NegI/NegE appear anywhere in the proof, not whether any assumption was opened -- and this proof has zero subproofs and zero assumptions, just one direct citation of the primitive rule. No reductio, dictated or otherwise, occurs, so 'easy' stands.",
+    "note": "Unassigned Restall material (Ch 7, worked in the text) -- Restall's own challenge is to try proving it without DNE first, so it pairs well with a brief remark on why the course's twelve rules include NegE as a primitive rather than deriving it. Two lines, no assumption opened: one direct citation of the primitive rule.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
@@ -59622,7 +59621,7 @@
     "used_in": [],
     "problem_set": {},
     "quarantined": false,
-    "note": "Unassigned Restall material (Ch 7, Ex {7.1}, 4 of 5) -- the non-DNE half of the De Morgan I pair already in the database as `de-morgan-disjunction`, whose own course.note records that PS5.4 sets exactly this direction as ND graded work. Left withheld from ND practice here too, for the same reason. difficulty.py's heuristic flags this nd score as a suggested 'medium' (an 'undictated reductio', from its blunt uses_indirect_proof check, which only asks whether NegI/NegE appear anywhere), but both reductios here are dictated: each subgoal (~p, then ~q) is itself a negation, which is exactly what §14.3 calls dictated. No undictated choice occurs, so 'easy' stands.",
+    "note": "Unassigned Restall material (Ch 7, Ex {7.1}, 4 of 5) -- the non-DNE half of the De Morgan I pair already in the database as `de-morgan-disjunction`, whose own course.note records that PS5.4 sets exactly this direction as ND graded work. Left withheld from ND practice here too, for the same reason. Both reductios are dictated: each subgoal (~p, then ~q) is itself a negation, which is what §14.3 calls dictated.",
     "earliest_lecture": {
      "table": 4,
      "tree": 6,
@@ -60306,12 +60305,11 @@
    "appearances": [
     {
      "type": "discussed",
-     "fidelity": "paraphrase",
+     "fidelity": "our reconstruction",
      "who": "Meyer & Slaney",
-     "work": "Relevance Logic",
-     "locus": "SEP, on Abelian logic",
-     "url": "https://plato.stanford.edu/entries/logic-relevance/",
-     "quote": "Abelian logic takes ((A→B)→B)→A as an axiom; its algebraic models are lattice-ordered abelian groups."
+     "work": "Abelian Logic (from A to Z)",
+     "locus": "in Priest, Routley & Norman (eds.), Paraconsistent Logic: Essays on the Inconsistent (1989)",
+     "url": null
     }
    ],
    "tags": {

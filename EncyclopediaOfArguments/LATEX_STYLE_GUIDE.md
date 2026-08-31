@@ -1442,6 +1442,21 @@ canonical URL, and **never guess a slug**: §2.8 of the inventory exists partly
 to record that the traditional square of opposition lives at `square`, not at
 `square-of-opposition`.
 
+**`who` is whoever wrote the thing `work` names.** This is the mistake to watch,
+because it is so easy to make and it reads plausibly: the SEP entry *Curry's
+Paradox* is by Shapiro and Beall, not by Haskell Curry, and *Relevance Logic*
+is by Edwin Mares and does not mention Abelian logic at all. Both errors were
+in the database, one of them inherited from an original entry and copied
+forward by a firing that reasonably trusted its sibling. If you are citing the
+philosopher, cite **their own work** and leave `url` null; if you are citing
+the SEP, `who` is the SEP entry's author. Never one with the other's `work`.
+
+**Check a quote against the page, in the same firing.** `build.py` verifies
+course, Restall and archive quotes against `SOURCE_QUOTES.md`; nothing can
+check an SEP quote offline, so fetch the entry and confirm the sentence is
+there before writing `verbatim` beside it. `ross-paradox`'s quote was checked
+this way and is exact, which is the standard.
+
 **When the article is not clear, name the champion instead.** §1 has no `*SEP:*`
 line at all, and elsewhere a section may list six articles with no way to tell
 which covers a given row. Then the honest appearance is the philosopher the row
