@@ -326,6 +326,9 @@
  "material-implication-drill|table": "73bb112cafc8800a",
  "material-implication-drill|table-compact": "db7be1ce47bd1be7",
  "material-implication-drill|tree": "cae679f5ea212885",
+ "mccarthy-qualification-problem|table": "0fa29550f0d7e946",
+ "mccarthy-qualification-problem|table-compact": "4c89cdff2130eabe",
+ "mccarthy-qualification-problem|tree": "53ca9f52c97cce04",
  "minimal-example|table": "c335b5d9b864fc25",
  "minimal-example|table-compact": "dfb6a63af1090dae",
  "minimal-example|tree": "c693e197de3578ba",
@@ -376,6 +379,9 @@
  "peirce-law|table": "5b46908d2e246fa4",
  "peirce-law|table-compact": "bda3876ae4dc5187",
  "peirce-law|tree": "1f96c5a30463ab5a",
+ "peircean-future-excluded-middle|table": "51d4213828e1cd60",
+ "peircean-future-excluded-middle|table-compact": "51d4213828e1cd60",
+ "peircean-future-excluded-middle|tree": "11d27601aeb89c04",
  "permutation-converse|table": "d99312bc2b480884",
  "permutation-converse|table-compact": "d99312bc2b480884",
  "permutation-converse|tree": "f156a85dcb1b49d1",
@@ -484,5 +490,8 @@
  "vacuous-validity-unsat-premises|nd": "8b2e7769e557370f",
  "vacuous-validity-unsat-premises|table": "20f307da6efa4545",
  "vacuous-validity-unsat-premises|table-compact": "d1ff56a38ed4ebaf",
- "vacuous-validity-unsat-premises|tree": "36a5165b997d3e79"
+ "vacuous-validity-unsat-premises|tree": "36a5165b997d3e79",
+ "van-benthem-goodness-preference|table": "ba2bf2c0c5244fc3",
+ "van-benthem-goodness-preference|table-compact": "b157ad38308dbe47",
+ "van-benthem-goodness-preference|tree": "9602c5efbd705db8"
 }

@@ -99,7 +99,7 @@ def _tok_latex(t: Tok) -> str:
 
     if t.kind in ("op", "neg", "bot"):
         return GLYPH[t.text].strip()
-    return t.text
+    return atom_latex(t.text)
 
 
 # --------------------------------------------------------------- single formula

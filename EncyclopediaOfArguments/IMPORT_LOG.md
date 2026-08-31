@@ -30,6 +30,8 @@ be offered a second time). The reason column says which.
 | 2026-08-30 | `p≡q ≡ ∼(∼p∨∼q)∨∼(p∨q)` (locus PS2.4c) | Duplicates `biconditional-as-agreement` already in the database, which carries this exact claim from this exact locus (`(p = q) = (~(~p \| ~q) \| ~(p \| q))`). The row is genuinely ambiguous unbracketed — `≡` is right-associative in `split_sequent`, so the raw row parses as `p ≡ (q ≡ X)` rather than the intended `(p ≡ q) ≡ X` — and the queue's shape-based dedup does not see through that, offering the row again under the wrong bracketing. It is the same form under the reading the course actually poses. |
 | 2026-08-30 | `p≡q, p≡∼q ⊢ ∼p` (OLD-PS3 Q11) | Same unsatisfiable premise pair as `vacuous-validity-unsat-premises` already in the database (`p = q, p = ~q`), differing only in the arbitrary conclusion drawn from the contradiction (`∼p` here, `r` there) — the inventory's own note calls it "the tree version of our PS2.2d table item", i.e. the identical lesson in a different method, not a different form. Importing it would restate `vacuous-validity-unsat-premises` under a second conclusion letter rather than teach anything new. |
 | 2026-08-31 | `⊢ (p ⊃ q) ∨ (p ⊃ r)` (CLI-106, comprehensive §1 rank 5) | No philosopher or champion named in the row, unlike its rank-4 and rank-6 neighbours (van Fraassen, Aristotle) — its own cell only compares it to the course's own *valid* twin `⊢ (q⊃p) ∨ (p⊃r)` (L11/PS5.6) and calls it "the near-miss". §11d's fallback for an unclear SEP article is to name the philosopher the row itself names; here none is named, and §1 carries no `sep` line either, so there is nothing to attribute this to. `appearances_pending` is not a substitute — §13.1 marks that flag as an exception specific to the imports inventory's §3, not a general escape from having a source. Left for a person with a library to find an actual champion, or to import once one turns up; the other three rows from this position in the queue (CLI-107, 108, 109) all name one and are imported this firing. |
+| 2026-08-31 | `p ⊃ q, r ⊃ s ⊢ p ⊃ s` (CLI-110, comprehensive §1 rank 9) | No philosopher named. "The four-terms / equivocation skeleton" names a classical fallacy of the syllogistic tradition generally, not a person the row attributes it to, and §1's own `sep` line is empty for this row. Left for a person with a library to find an actual champion. |
+| 2026-08-31 | `p ⊃ m, s ⊃ m ⊢ s ⊃ p` (CLI-112, comprehensive §1 rank 11) | Same reason as CLI-110: "undistributed middle, propositional shadow" names the fallacy, not a philosopher, and no `sep` line to check against. |
 
 ## Resolved
 
@@ -723,3 +725,85 @@ none needed it. Comprehensive queue: 107 candidates left of 274 (75 now
 in the database, 3 quarantined, 82 unreadable, 7 settled — CLI-106 newly
 logged above). Course and imports queues untouched this firing (both
 already empty) and remain at 0.
+
+## 2026-08-31 (continued) — three more from the Comprehensive Logic
+Inventory: McCarthy, Peirce, van Benthem
+
+Course and imports queues both still empty (checked again this firing);
+comprehensive is the only source with anything left. Took the next three
+candidates §1/§1b offered — CLI-110, CLI-111, CLI-112 — of which only
+CLI-111 names a philosopher in the row (McCarthy's qualification
+problem). CLI-110 and CLI-112 are logged above, same reason as CLI-106:
+a named fallacy, not a named person, and §1 carries no `sep` line to
+check against either. Skipped past them to CLI-122 (Peircean future
+excluded middle, via the two-history modal expansion in §1b) and CLI-137
+(van Benthem's goodness/badness preference identity, §1b), both of which
+do name a philosopher, and imported those alongside CLI-111 —
+`mccarthy-qualification-problem`, `peircean-future-excluded-middle`,
+`van-benthem-goodness-preference`. All three invalid (two blocks each,
+no `nd`), `appearances` attributed per §11d's fallback — the philosopher
+the row names, `fidelity: "our reconstruction"`, `url: null`, no `quote`
+— since none of the three has a `sep` line and none was read from an
+actual SEP article. `derive.py`'s countermodels matched the inventory
+row's own counts exactly for all three before anything was written
+(McCarthy 1 of 8, Peirce 2 of 16, van Benthem 6 of 16). Checked the
+database for near-duplicates first — `peirce-law` and `peirce-detached`
+share a surname but not a form, no other collision — and considered
+`looks_like` against `distributed-knowledge` for the McCarthy entry
+(both an "invisible premise" shape) but left it unset: the two forms are
+not the same schema in different letters, only the same theme, and
+`looks_like` is for the former.
+
+**A real bug in `tables.py` surfaced while checking
+`van-benthem-goodness-preference`, not something specific to this
+import.** Its table is the premise-less, single-formula layout (§4.1),
+which pads every non-connective position — atoms, parentheses — with a
+`\phantom{...}` spacer so that a value under a connective lines up with
+the same column width on every row. The text those phantoms measure came
+from `_tok_latex()`, which for a connective token maps through `GLYPH`
+correctly but for anything else — atoms included — returned the token's
+raw ASCII (`t.text`) rather than routing it through `atom_latex()`, the
+function that braces a subscript (`g_x` → `g_{x}`). `argument_table()`
+already calls `atom_latex()` on its own atom cells and was never
+affected; nothing before this entry had put a subscripted atom in the
+*premise-less* layout, so the bug had nothing to trip it. The result was
+`\phantom{g_x}` reaching the page instead of `\phantom{g_{x}}` — legal
+LaTeX (a single-character subscript needs no braces to compile) but a
+violation of the house rule that a subscript is always braced, caught by
+`node --test`'s "a subscripted atom is typeset as one" check, which
+failed on exactly this entry and nothing else (511/513 before the fix,
+513/513 after). Fixed by making the non-connective branch of
+`_tok_latex()` return `atom_latex(t.text)` instead of `t.text` — a
+no-op on parentheses, correct bracing on a subscripted atom. Verified by
+re-running `build.py --write` (a clean second pass, no further notes)
+and `svg.py` (2 more SVGs regenerated — the one entry's table and
+compact table — everything else already current and untouched).
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled the same package list as every prior firing —
+`texlive-latex-base`, `texlive-latex-extra`, `texlive-fonts-recommended`,
+`dvisvgm`, `texlive-pictures` (for `qtree`), `texlive-humanities` (also
+`qtree` — `texlive-pictures` alone did not carry it this time) and
+`texlive-science` (for `fitch`) — via `apt-get`. All resolved.
+
+`build.py --write` (three entries normalised: atoms renamed to legal
+form on the first pass — `ab → a_b`, `f1/f2/g1/g2 → f_1/f_2/g_1/g_2`,
+`Bx/By/Gx/Gy → b_x/b_y/g_x/g_y` — plus the three difficulty scores each
+method computed; a second clean pass after the `tables.py` fix printed no
+further notes), `python3 difficulty.py --diff` (2 differ, both
+pre-existing overrides already explained in `course.note` —
+`double-negation-elimination` and `de-morgan-disjunction-easy` — nothing
+from this firing), `svg.py` (9 new SVGs on the first pass, 2 more after
+the `tables.py` fix and re-embed), `svg.py --check` (every SVG current),
+`inventory.py --locks` (0 practicable methods locked), `manifest.py
+--check-merge` (134 entries, 131 expected from the merge parents plus 3
+new, nothing lost — the branch was already up to date with `main`, no
+merge to resolve this firing), and `node --test "_tests/*.test.mjs"`
+(513/513, after the `tables.py` fix). `extremely hard` count unchanged
+at 4 of 4 (nd) — all three new entries are invalid and carry no `nd`
+score. `git diff --name-only origin/main...HEAD --
+EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed empty; none of the
+three appearances is a course appearance, so none needed it.
+Comprehensive queue: 104 candidates left of 274 (78 now in the database,
+3 quarantined, 82 unreadable, 7 settled — CLI-110 and CLI-112 newly
+logged above). Course and imports queues remain at 0.

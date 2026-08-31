@@ -129,3 +129,6 @@ quantifier-shift-2x2
 aristotle-second-thesis
 abelard-first-principle
 boethius-nested-consequent
+mccarthy-qualification-problem
+peircean-future-excluded-middle
+van-benthem-goodness-preference
