@@ -141,6 +141,10 @@
  "consensus-theorem|table": "636a1257c3adec17",
  "consensus-theorem|table-compact": "926336dbc7b726ad",
  "consensus-theorem|tree": "b4c2542437a3f49a",
+ "consequentia-mirabilis|nd": "a90cd543425fb20e",
+ "consequentia-mirabilis|table": "5a4e615a605ed890",
+ "consequentia-mirabilis|table-compact": "5a4e615a605ed890",
+ "consequentia-mirabilis|tree": "7a908fef866401e2",
  "constructive-dilemma|nd": "f9a30159f0fd9685",
  "constructive-dilemma|table": "cd47262acedab7e1",
  "constructive-dilemma|table-compact": "525b873dd50bacc4",
@@ -229,6 +233,10 @@
  "disjunction-from-conditional|table": "ac3a1b7dee0584ef",
  "disjunction-from-conditional|table-compact": "158b10544b8797eb",
  "disjunction-from-conditional|tree": "91b2717a855ef1bf",
+ "disjunction-from-negated-conjunction|nd": "b549e4bf64377caf",
+ "disjunction-from-negated-conjunction|table": "8e7025f54804ba4a",
+ "disjunction-from-negated-conjunction|table-compact": "04c8aa496ba9c61d",
+ "disjunction-from-negated-conjunction|tree": "c9fe116e24a30fee",
  "disjunction-not-conjunction|table": "9b2e9a67b6db0cee",
  "disjunction-not-conjunction|table-compact": "9b2e9a67b6db0cee",
  "disjunction-not-conjunction|tree": "d32977ba0f22277f",
@@ -596,5 +604,9 @@
  "vacuous-validity-unsat-premises|tree": "36a5165b997d3e79",
  "van-benthem-goodness-preference|table": "ba2bf2c0c5244fc3",
  "van-benthem-goodness-preference|table-compact": "b157ad38308dbe47",
- "van-benthem-goodness-preference|tree": "9602c5efbd705db8"
+ "van-benthem-goodness-preference|tree": "9602c5efbd705db8",
+ "weak-excluded-middle|nd": "804a36bfb3010edb",
+ "weak-excluded-middle|table": "5101873b70ddefc4",
+ "weak-excluded-middle|table-compact": "5101873b70ddefc4",
+ "weak-excluded-middle|tree": "69b899ae7cbbe18f"
 }

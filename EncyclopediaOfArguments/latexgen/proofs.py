@@ -2278,3 +2278,54 @@ PROOFS["conditional-implies-disjunction"] = [
     _l(15, "~p | q", "NegE", 1, [14]),
     _l(16, "(p > q) > (~p | q)", "CondI", 0, subs=[[1, 15]]),
 ]
+
+# ------------------------------------------------------ weak-excluded-middle
+# `excluded-middle` verbatim with `~p` written for `p` throughout -- the same
+# proof, substituted rather than reinvented.
+PROOFS["weak-excluded-middle"] = [
+    _l(1, "~(~p | ~~p)", "As", 1),
+    _l(2, "~p", "As", 2),
+    _l(3, "~p | ~~p", "DisjI", 2, [2]),
+    _l(4, "!", "FalsumI", 2, [3, 1]),
+    _l(5, "~~p", "NegI", 1, subs=[[2, 4]]),
+    _l(6, "~p | ~~p", "DisjI", 1, [5]),
+    _l(7, "~(~p | ~~p)", "Reit", 1, [1]),
+    _l(8, "!", "FalsumI", 1, [6, 7]),
+    _l(9, "~~(~p | ~~p)", "NegI", 0, subs=[[1, 8]]),
+    _l(10, "~p | ~~p", "NegE", 0, [9]),
+]
+
+# ------------------------------------------------------- consequentia-mirabilis
+# The purest reductio the twelve rules can write: the premise alone refutes
+# ~p, so p follows without a second conditional to unpack first.
+PROOFS["consequentia-mirabilis"] = [
+    _l(1, "~p > p", "As", 1),
+    _l(2, "~p", "As", 2),
+    _l(3, "p", "CondE", 2, [1, 2]),
+    _l(4, "~p", "Reit", 2, [2]),
+    _l(5, "!", "FalsumI", 2, [3, 4]),
+    _l(6, "~~p", "NegI", 1, subs=[[2, 5]]),
+    _l(7, "p", "NegE", 1, [6]),
+    _l(8, "(~p > p) > p", "CondI", 0, subs=[[1, 7]]),
+]
+
+# ------------------------------------------- disjunction-from-negated-conjunction
+# Assume the antecedent, then reductio on the negated goal: extract ~p and ~q
+# separately, each by its own inner reductio, then contradict the antecedent.
+PROOFS["disjunction-from-negated-conjunction"] = [
+    _l(1, "~(~p & ~q)", "As", 1),
+    _l(2, "~(p | q)", "As", 2),
+    _l(3, "p", "As", 3),
+    _l(4, "p | q", "DisjI", 3, [3]),
+    _l(5, "!", "FalsumI", 3, [4, 2]),
+    _l(6, "~p", "NegI", 2, subs=[[3, 5]]),
+    _l(7, "q", "As", 3),
+    _l(8, "p | q", "DisjI", 3, [7]),
+    _l(9, "!", "FalsumI", 3, [8, 2]),
+    _l(10, "~q", "NegI", 2, subs=[[7, 9]]),
+    _l(11, "~p & ~q", "ConjI", 2, [6, 10]),
+    _l(12, "!", "FalsumI", 2, [11, 1]),
+    _l(13, "~~(p | q)", "NegI", 1, subs=[[2, 12]]),
+    _l(14, "p | q", "NegE", 1, [13]),
+    _l(15, "~(~p & ~q) > (p | q)", "CondI", 0, subs=[[1, 14]]),
+]
