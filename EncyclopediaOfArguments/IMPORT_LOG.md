@@ -1928,3 +1928,90 @@ texlive-latex-recommended texlive-latex-extra texlive-pictures
 texlive-binaries dvisvgm texlive-humanities texlive-science
 texlive-fonts-recommended`) via `apt-get` resolved it cleanly. The
 `session-start-hook` suggestion from every prior firing's note is still open.
+
+## 2026-08-31 (continued) — Prefixing's S axiom, Routley's rejected Simplification, and the sea-battle dilemma
+
+Course and imports queues re-confirmed empty (`inventory.py --status` for
+both). `inventory.py --next 3 --source comprehensive` gave CLI-435 (§4.4,
+"Prefixing"), CLI-440 (§4.4, "Conjunctive simplification"), and an
+un-numbered row from §4.5's "Historical forms worth having" table (the
+fatalist's sea-battle argument). All three went in.
+
+**CLI-435** (`⊢ (q⊃r) ⊃ ((p⊃q)⊃(p⊃r))`, "Prefixing — axiom 1 of
+Meyer–Martin **S**") collided on id with an entry already in the database:
+`prefixing` is Restall's Ex 3.4.11 (`p⊃q ⊢ (r⊃p)⊃(r⊃q)`), a different
+formula that happens to carry the same name. Edwin Mares's *Relevance Logic*
+SEP entry was fetched to check the attribution and does discuss Meyer and
+Martin's system S directly — "One extremely weak system is the logic **S**
+of Robert Meyer and Errol Martin. As Martin has proven, this logic contains
+no theorems of the form `A → A`" — but neither the main entry nor its `Logic
+R` supplement (`logicr.html`, fetched directly, eleven numbered axioms, none
+named Prefixing) names "Prefixing" or numbers S's own axioms. §11d's rule for
+an article that does not clearly cover the row is to name the champion the
+row itself names rather than guess a slug or misattribute to Mares, so the
+appearance cites Meyer and Martin directly (`fidelity: our reconstruction`,
+`url: null`, no `quote`) rather than SEP. Imported as `prefixing-axiom` (the
+existing `prefixing` id was not available), with `looks_like: suffixing` (its
+true curried sibling, differing only in premise order — swap which
+conditional discharges first and the proof mirrors `suffixing`'s exactly) and
+both `interest` and `course.note` flag the name collision with the existing
+`prefixing` entry explicitly, so a reader who searches by title and finds two
+is told why.
+
+**CLI-440** (`⊢ (p&q) ⊃ p`, "Conjunctive simplification — rejected by
+Routley for connexive logic") was checked against Heinrich Wansing's SEP
+entry *Connexive Logic* directly (fetched and grepped as raw text, not
+summarised, since a verbatim SEP quote has nothing else to check it against):
+"for Routley (Routley et al. 1982, p. 82) connexivism has two leading theses,
+namely: 1. Simplification (A ∧ B → A, A ∧ B → B) fails to hold, and its use
+... is what is responsible for the paradoxes of implication ..." confirmed
+verbatim in §3.1 of the rendered page. Imported as
+`conjunctive-simplification-connexive` (`type: diagnosed`, `fidelity:
+verbatim`, `who: Heinrich Wansing`, quoting the passage above; `locus` names
+the supplement page and Routley's own citation since that is who Wansing is
+quoting). Classically the schema is untouched — one line of `∧E` — and
+`interest` says so plainly rather than implying any classical divergence.
+
+**The sea-battle row** (`s∨∼s, s⊃n, ∼s⊃m ⊢ n∨m`, **VALID**, "the fatalist's
+argument is valid — it is constructive dilemma... the whole content of *De
+Int.* 9") carries no CLI number and sits outside §4's shared eleven-article
+`sep` line, which does not include *Future Contingents* or anything else
+plainly about Aristotle's sea battle. Per §11d, the unclear case names the
+philosopher the row itself names: imported as `sea-battle-dilemma` with the
+appearance citing Aristotle's *De Interpretatione* ch. 9 directly
+(`fidelity: our reconstruction`, `url: null`, `type: diagnosed` — Aristotle
+is diagnosing where the fault must lie in an argument he treats as valid, not
+endorsing fatalism). `looks_like: constructive-dilemma`, since the row is
+exactly that pattern with the disjunction premise instantiated to `s∨∼s`;
+`derive.py`'s own `premise_analysis` confirms that premise is idle (it never
+rules out a table row, being a tautology already), which `interest` reports
+as the structural point rather than a defect.
+
+All three proofs (8, 3, and 10 lines) were checked with `nd.check()` before
+being written into `proofs.py`: `prefixing-axiom` mirrors `suffixing`'s three
+nested `⊃I`s with the two assumptions swapped; `conjunctive-simplification-
+connexive` is a single `∧E` behind one `⊃I`, nothing else available to go
+wrong; `sea-battle-dilemma` is `constructive-dilemma`'s own shape with the
+disjunction premise renamed, `∨E` firing on the (idle but still cited)
+first premise. `difficulty.py --diff` came back clean on all three hand-scored
+`nd` values (`medium`, `easy`, `medium`) without an override.
+
+`build.py --write` (three entries normalised, no atom renaming needed),
+`svg.py` (12 SVGs), `inventory.py --locks` (0 practicable methods locked),
+`manifest.py --check-merge` (174 entries, 171 expected from the merge
+parents, nothing lost, checked both before resolving anything — there was
+nothing to resolve, `git merge origin/main` reported already up to date —
+and again after committing), and `node --test "_tests/*.test.mjs"`
+(514/514) all clean. `git diff --name-only origin/main...HEAD --
+EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed empty; none of the three
+appearances is a course appearance, so nothing was ever at stake there.
+Comprehensive queue: 40 candidates left of 274 (116 now in the database, 3
+quarantined, 82 unreadable, 33 settled). Course and imports queues remain at
+0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**; the
+same package list every prior firing has recorded (`texlive-latex-base
+texlive-latex-recommended texlive-latex-extra texlive-pictures
+texlive-humanities texlive-science dvisvgm`, texlive-fonts-recommended
+pulled in as a dependency) via `apt-get` resolved it cleanly. The
+`session-start-hook` suggestion from every prior firing's note is still open.

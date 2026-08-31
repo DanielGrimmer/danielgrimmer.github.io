@@ -169,3 +169,6 @@ hypothetical-syllogism-theorem
 disjunction-elimination-axiom
 suffixing
 antilogism
+prefixing-axiom
+conjunctive-simplification-connexive
+sea-battle-dilemma

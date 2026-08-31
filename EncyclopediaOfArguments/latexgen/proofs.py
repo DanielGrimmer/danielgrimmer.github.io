@@ -2423,3 +2423,47 @@ PROOFS["antilogism"] = [
     _l(10, "(p & ~r) > ~q", "CondI", 1, subs=[[2, 9]]),
     _l(11, "((p & q) > r) > ((p & ~r) > ~q)", "CondI", 0, subs=[[1, 10]]),
 ]
+
+# --------------------------------------------------------------- prefixing-axiom
+# suffixing's own eight lines with the two assumptions swapped: (q>r) opens
+# first, (p>q) second, and CondE fires in the order that swap dictates. Same
+# shape, same length, no ConjE either -- the mirror image is the whole point.
+PROOFS["prefixing-axiom"] = [
+    _l(1, "q > r", "As", 1),
+    _l(2, "p > q", "As", 2),
+    _l(3, "p", "As", 3),
+    _l(4, "q", "CondE", 3, [2, 3]),
+    _l(5, "r", "CondE", 3, [1, 4]),
+    _l(6, "p > r", "CondI", 2, subs=[[3, 5]]),
+    _l(7, "(p > q) > (p > r)", "CondI", 1, subs=[[2, 6]]),
+    _l(8, "(q > r) > ((p > q) > (p > r))", "CondI", 0, subs=[[1, 7]]),
+]
+
+# ------------------------------------- conjunctive-simplification-connexive
+# The one-line reason Routley has to reject it: assume p&q, take p by ConjE,
+# discharge. Nothing else is available to go wrong, which is the entry's
+# whole point about how innocent-looking the target is.
+PROOFS["conjunctive-simplification-connexive"] = [
+    _l(1, "p & q", "As", 1),
+    _l(2, "p", "ConjE", 1, [1]),
+    _l(3, "(p & q) > p", "CondI", 0, subs=[[1, 2]]),
+]
+
+# --------------------------------------------------------------- sea-battle-dilemma
+# constructive-dilemma's own shape, with the disjunction premise renamed to
+# s|~s instead of an unrelated p|q: case s gives n by CondE and DisjI, case
+# ~s gives m the same way, and DisjE off the (tautologous) first premise
+# joins them. The idle premise is still cited -- DisjE needs it to open the
+# case split even though no row of the table needed it to close one.
+PROOFS["sea-battle-dilemma"] = [
+    P(1, "s | ~s"),
+    P(2, "s > n"),
+    P(3, "~s > m"),
+    _l(4, "s", "As", 1),
+    _l(5, "n", "CondE", 1, [2, 4]),
+    _l(6, "n | m", "DisjI", 1, [5]),
+    _l(7, "~s", "As", 1),
+    _l(8, "m", "CondE", 1, [3, 7]),
+    _l(9, "n | m", "DisjI", 1, [8]),
+    _l(10, "n | m", "DisjE", 0, [1], subs=[[4, 6], [7, 9]]),
+]
