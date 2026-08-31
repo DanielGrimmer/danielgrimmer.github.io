@@ -472,3 +472,57 @@ now in the database).
 **The sandbox again had no LaTeX toolchain in this fresh container**;
 reinstalled the same package list as every prior firing via `apt-get`. The
 `session-start-hook` suggestion from those notes is still open.
+
+**2026-08-31, `imports`-source firing.** Course queue still empty
+(`inventory.py --status`). The imports queue held exactly two rows, both
+from Restall's Chapter 7 and both De Morgan directions the two existing
+entries had already left as open loops:
+`de-morgan-disjunction-easy` (`∼(A∨B) ⊢ ∼A&∼B`, Ex {7.1}, item 4 of 5,
+valid) and `de-morgan-conjunction-hard` (`∼(A&B) ⊢ ∼A∨∼B`, "the hard De
+Morgan," Ex {7.2}, item 2 of 5, valid). Both cleared the queue; the imports
+inventory now reports zero candidates left.
+
+Checked both against the database before writing. `de-morgan-conjunction-hard`
+is exactly the row `de-morgan-conjunction-easy`'s own `course.note` already
+named as "still in the imports queue" — no new lookup needed, just closing
+the loop. `de-morgan-disjunction-easy` is the → half of the existing
+`de-morgan-disjunction` biconditional, and that entry's `course.note` records
+PS5.4 as having set precisely this direction for graded ND work — so rather
+than treat it as a plain duplicate (per the near-duplicate check in §6) or
+leave it a silent gap in ND practice, it is imported as its own entry
+(`looks_like: de-morgan-disjunction`, mirroring the precedent
+`de-morgan-conjunction-easy` already set for isolating one half of a
+biconditional Restall poses as a standalone exercise) with its
+`course.problem_set` left empty per §11c's rule for this file, and the PS5.4
+relationship stated directly in `course.note` instead so a reader is told
+the gap is accounted for, not hidden. `inventory.py --locks` still reports
+zero after the import, confirming no lock was missed.
+
+`de-morgan-disjunction-easy`'s two reductios are each dictated (their
+subgoals `~p` and `~q` are themselves negations), so `nd` is `easy`, an
+overridden `medium` from `difficulty.py`'s blunt `uses_indirect_proof` check
+— the same false positive already on record for `double-negation-elimination`,
+explained the same way in `course.note`. `de-morgan-conjunction-hard`'s
+reductio assumes the negation of a disjunctive goal, which is genuinely
+undictated, plus one subproof nested inside another and 15 derived lines:
+three real triggers, `hard`, and `difficulty.py --diff` agrees.
+
+`build.py --write`, `python3 difficulty.py --diff` (2 differ: the
+pre-existing `double-negation-elimination` override and the new
+`de-morgan-disjunction-easy` override, both already explained in
+`course.note`), `svg.py` (8 SVGs, 4 blocks × 2 entries), `svg.py --check`,
+`inventory.py --locks` (0 practicable methods locked), `manifest.py
+--check-merge` (123 entries before, 125 after, nothing lost — the branch
+was already up to date with `main`, no merge to resolve this firing), and
+`node --test "_tests/*.test.mjs"` (513/513) all clean. `extremely hard`
+(nd) count unchanged at 4 of 4 allowed. Imports queue: 0 candidates left of
+48 (47 now in the database, 1 settled). Comprehensive queue (untouched this
+firing, since the imports queue was non-empty and sources are not mixed
+within a firing): 114 candidates.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled `texlive-latex-base texlive-latex-recommended
+texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
+texlive-humanities texlive-science texlive-fonts-recommended` via
+`apt-get`, matching every prior firing's note. The `session-start-hook`
+suggestion from those notes is still open.

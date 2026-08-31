@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 123,
+ "count": 125,
  "entries": [
   {
    "id": "ex-falso",
@@ -59578,6 +59578,717 @@
     ],
     "conclusion": "∼(p & q)",
     "sequent": "∼p ∨ ∼q  ⊨ ∼(p & q)"
+   }
+  },
+  {
+   "id": "de-morgan-disjunction-easy",
+   "cli_ref": "—",
+   "premises": [
+    "~(p | q)"
+   ],
+   "conclusion": "~p & ~q",
+   "names": [
+    "De Morgan's Law (disjunction), the easy direction"
+   ],
+   "english": [
+    {
+     "gloss": "If it's not the case that it's raining or snowing, then it's not raining, and it's not snowing.",
+     "faithful": true
+    }
+   ],
+   "interest": "The non-DNE half of Restall's Ex {7.1}, and the mirror case to `de-morgan-conjunction-easy`: the goal is a conjunction of two negations, so `ConjI` names the shape and each conjunct's own goal -- a negation -- names `NegI` in turn. Nothing about the route is chosen; the only work is running it twice. The full biconditional is already in the database as `de-morgan-disjunction`, whose derivation runs this exact half before turning to the harder converse; this entry isolates it because it is precisely the half PS5.4 sets as graded ND work, so it is worth having on its own rather than only inside the iff.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Greg Restall",
+     "work": "Logic",
+     "locus": "Ch 7, Ex {7.1} (4 of 5)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "propositional logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": [
+     "intuitionistic"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Unassigned Restall material (Ch 7, Ex {7.1}, 4 of 5) -- the non-DNE half of the De Morgan I pair already in the database as `de-morgan-disjunction`, whose own course.note records that PS5.4 sets exactly this direction as ND graded work. Left withheld from ND practice here too, for the same reason. difficulty.py's heuristic flags this nd score as a suggested 'medium' (an 'undictated reductio', from its blunt uses_indirect_proof check, which only asks whether NegI/NegE appear anywhere), but both reductios here are dictated: each subgoal (~p, then ~q) is itself a negation, which is exactly what §14.3 calls dictated. No undictated choice occurs, so 'easy' stands.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "premise_analysis": [
+    {
+     "premise": "~(p | q)",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 3
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 1,
+    "connectives": [
+     "conjunction",
+     "disjunction",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 9,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 2,
+    "tree_branch_depth": 1,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "looks_like": "de-morgan-disjunction",
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "∼(p ∨ q)",
+     "∼p & ∼q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg (p\\Disj q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg p\\Conj \\Neg q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Conj \\Neg q}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg (p\\Disj q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg p\\Conj \\Neg q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Conj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Disj q)}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Conj \\Neg q}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼(p ∨ q)",
+     "∼(∼p & ∼q)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼p",
+       "from": "∼(p ∨ q)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "∼q",
+       "from": "∼(p ∨ q)",
+       "rule": "∼∨"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼∼p",
+         "from": "∼(∼p & ∼q)",
+         "rule": "∼&"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼∼q",
+         "from": "∼(∼p & ∼q)",
+         "rule": "∼&"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼(∼p & ∼q)",
+     "branch_rule": "∼&"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad \\Neg (p\\Disj q)$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (\\Neg p\\Conj \\Neg q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg q$} [.{$\\Neg \\Neg p$ \\\\ x} ] [.{$\\Neg \\Neg q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~(p | q)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "p | q",
+      "rule": "DisjI",
+      "depth": 1,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       3,
+       1
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~p",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 7,
+      "f": "p | q",
+      "rule": "DisjI",
+      "depth": 1,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       7,
+       1
+      ]
+     },
+     {
+      "n": 9,
+      "f": "~q",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        6,
+        8
+       ]
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~p & ~q",
+      "rule": "ConjI",
+      "depth": 0,
+      "cites": [
+       5,
+       9
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{\\Neg (p\\Disj q)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Disj q}\\by{\\DisjI}{2}\n\\have{4}{\\Falsum}\\by{\\FalsumI}{3,1}\n\\close\n\\have{5}{\\Neg p}\\by{\\NegI}{2,4}\n\\open\n\\hypo{6}{q}\n\\have{7}{p\\Disj q}\\by{\\DisjI}{6}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,1}\n\\close\n\\have{9}{\\Neg q}\\by{\\NegI}{6,8}\n\\have{10}{\\Neg p\\Conj \\Neg q}\\by{\\ConjI}{5,9}\n\\end{nd}\n\\end{align*}",
+    "lines": 10,
+    "max_subproof_depth": 1,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "ConjI",
+     "DisjI",
+     "FalsumI",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "display": {
+    "premises": [
+     "∼(p ∨ q)"
+    ],
+    "conclusion": "∼p & ∼q",
+    "sequent": "∼(p ∨ q)  ⊨ ∼p & ∼q"
+   }
+  },
+  {
+   "id": "de-morgan-conjunction-hard",
+   "cli_ref": "—",
+   "premises": [
+    "~(p & q)"
+   ],
+   "conclusion": "~p | ~q",
+   "names": [
+    "De Morgan's Law (conjunction), the hard direction",
+    "the hard De Morgan"
+   ],
+   "english": [
+    {
+     "gloss": "If it's not the case that the printer is both out of paper and out of toner, then either it's not out of paper, or it's not out of toner.",
+     "faithful": true
+    }
+   ],
+   "interest": "Restall's own name for this row is \"the hard De Morgan,\" and the derivation earns it: the goal `~p | ~q` names no rule directly, so the route is indirect from the start -- assume its negation, extract `p` and `q` by cracking open two double negations with `NegE`, and collide the reconstructed conjunction with the premise you started from. `de-morgan-conjunction-easy` already covers the converse (`~p | ~q ⊢ ~(p & q)`), which needs only a case split and no `NegE` at all; the asymmetry between the two is the whole point of Restall setting them as a pair in Ex {7.1} and Ex {7.2}, one on each side of the DNE line. Intuitionistically the direction proved here fails outright -- `NegE` is exactly the rule intuitionistic logic withholds -- while its mirror survives without it.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Greg Restall",
+     "work": "Logic",
+     "locus": "Ch 7, Ex {7.2} (2 of 5)",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "propositional logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": [
+     "intuitionistic-fails"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Unassigned Restall material (Ch 7, Ex {7.2}, 2 of 5) -- the hard half of the De Morgan II pair, promised in `de-morgan-conjunction-easy`'s own course.note as still waiting in the imports queue. difficulty.py agrees with 'hard' (an undictated reductio on the disjunctive goal, a subproof nested inside another, and 15 derived lines -- three triggers).",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 3,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "premise_analysis": [
+    {
+     "premise": "~(p & q)",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 1,
+    "connectives": [
+     "conjunction",
+     "disjunction",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 9,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 2,
+    "tree_branch_depth": 1,
+    "countermodel_count": 0,
+    "premise_true_rows": 3,
+    "idle_premises": []
+   },
+   "difficulty": {
+    "nd": "hard",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "looks_like": "de-morgan-conjunction-easy",
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "∼(p & q)",
+     "∼p ∨ ∼q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg (p\\Conj q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg p\\Disj \\Neg q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Conj q)}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Disj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Conj q)}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Disj \\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Conj q)}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Disj \\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Conj q)}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Disj \\Neg q}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad \\Neg (p\\Conj q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg p\\Disj \\Neg q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Conj q)}{F} \\quad$ & $\\quad \\uv{\\Neg p\\Disj \\Neg q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Conj q)}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Disj \\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{\\Neg (p\\Conj q)}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Disj \\Neg q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{\\Neg (p\\Conj q)}{T} \\quad$ & $\\quad \\uv{\\Neg p\\Disj \\Neg q}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼(p & q)",
+     "∼(∼p ∨ ∼q)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼∼p",
+       "from": "∼(∼p ∨ ∼q)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "∼∼q",
+       "from": "∼(∼p ∨ ∼q)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "p",
+       "from": "∼∼p",
+       "rule": "∼∼"
+      },
+      {
+       "formula": "q",
+       "from": "∼∼q",
+       "rule": "∼∼"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "∼(p & q)",
+         "rule": "∼&"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼q",
+         "from": "∼(p & q)",
+         "rule": "∼&"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "∼(p & q)",
+     "branch_rule": "∼&"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad \\Neg (p\\Conj q)$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (\\Neg p\\Disj \\Neg q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $\\Neg \\Neg p$\\quad\\checkmark \\\\ \\ckpad $\\Neg \\Neg q$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\vert$ \\\\ $q$} [.{$\\Neg p$ \\\\ x} ] [.{$\\Neg q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~(p & q)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "~(~p | ~q)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "~p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 4,
+      "f": "~p | ~q",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       4,
+       2
+      ]
+     },
+     {
+      "n": 6,
+      "f": "~~p",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        3,
+        5
+       ]
+      ]
+     },
+     {
+      "n": 7,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~q",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 9,
+      "f": "~p | ~q",
+      "rule": "DisjI",
+      "depth": 2,
+      "cites": [
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 2,
+      "cites": [
+       9,
+       2
+      ]
+     },
+     {
+      "n": 11,
+      "f": "~~q",
+      "rule": "NegI",
+      "depth": 1,
+      "subs": [
+       [
+        8,
+        10
+       ]
+      ]
+     },
+     {
+      "n": 12,
+      "f": "q",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       11
+      ]
+     },
+     {
+      "n": 13,
+      "f": "p & q",
+      "rule": "ConjI",
+      "depth": 1,
+      "cites": [
+       7,
+       12
+      ]
+     },
+     {
+      "n": 14,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       13,
+       1
+      ]
+     },
+     {
+      "n": 15,
+      "f": "~~(~p | ~q)",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        14
+       ]
+      ]
+     },
+     {
+      "n": 16,
+      "f": "~p | ~q",
+      "rule": "NegE",
+      "depth": 0,
+      "cites": [
+       15
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{\\Neg (p\\Conj q)}\n\\open\n\\hypo{2}{\\Neg (\\Neg p\\Disj \\Neg q)}\n\\open\n\\hypo{3}{\\Neg p}\n\\have{4}{\\Neg p\\Disj \\Neg q}\\by{\\DisjI}{3}\n\\have{5}{\\Falsum}\\by{\\FalsumI}{4,2}\n\\close\n\\have{6}{\\Neg \\Neg p}\\by{\\NegI}{3,5}\n\\have{7}{p}\\by{\\NegE}{6}\n\\open\n\\hypo{8}{\\Neg q}\n\\have{9}{\\Neg p\\Disj \\Neg q}\\by{\\DisjI}{8}\n\\have{10}{\\Falsum}\\by{\\FalsumI}{9,2}\n\\close\n\\have{11}{\\Neg \\Neg q}\\by{\\NegI}{8,10}\n\\have{12}{q}\\by{\\NegE}{11}\n\\have{13}{p\\Conj q}\\by{\\ConjI}{7,12}\n\\have{14}{\\Falsum}\\by{\\FalsumI}{13,1}\n\\close\n\\have{15}{\\Neg \\Neg (\\Neg p\\Disj \\Neg q)}\\by{\\NegI}{2,14}\n\\have{16}{\\Neg p\\Disj \\Neg q}\\by{\\NegE}{15}\n\\end{nd}\n\\end{align*}",
+    "lines": 16,
+    "max_subproof_depth": 2,
+    "subproof_count": 3,
+    "assumption_count": 3,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "ConjI",
+     "DisjI",
+     "FalsumI",
+     "NegE",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "display": {
+    "premises": [
+     "∼(p & q)"
+    ],
+    "conclusion": "∼p ∨ ∼q",
+    "sequent": "∼(p & q)  ⊨ ∼p ∨ ∼q"
    }
   }
  ],

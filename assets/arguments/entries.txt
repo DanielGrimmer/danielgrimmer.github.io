@@ -121,3 +121,5 @@ double-negated-excluded-middle
 incompatibility-swap
 triple-negation-elimination
 de-morgan-conjunction-easy
+de-morgan-disjunction-easy
+de-morgan-conjunction-hard

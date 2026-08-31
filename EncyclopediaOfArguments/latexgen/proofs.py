@@ -1927,3 +1927,44 @@ PROOFS["de-morgan-conjunction-easy"] = [
     _l(11, "!", "DisjE", 1, [1], subs=[[3, 6], [7, 10]]),
     _l(12, "~(p & q)", "NegI", 0, subs=[[2, 11]]),
 ]
+
+# --------------------------------------------------- de-morgan-disjunction-easy
+# The non-DNE half of De Morgan I, isolated: two dictated reductios (each
+# subgoal ~p, ~q is itself a negation) followed by ConjI. No case split, no
+# nesting -- the "undictated reductio" difficulty.py flags is a false positive
+# of its blunt uses_indirect_proof check; see the entry's course.note.
+PROOFS["de-morgan-disjunction-easy"] = [
+    P(1, "~(p | q)"),
+    _l(2, "p", "As", 1),
+    _l(3, "p | q", "DisjI", 1, [2]),
+    _l(4, "!", "FalsumI", 1, [3, 1]),
+    _l(5, "~p", "NegI", 0, subs=[[2, 4]]),
+    _l(6, "q", "As", 1),
+    _l(7, "p | q", "DisjI", 1, [6]),
+    _l(8, "!", "FalsumI", 1, [7, 1]),
+    _l(9, "~q", "NegI", 0, subs=[[6, 8]]),
+    _l(10, "~p & ~q", "ConjI", 0, [5, 9]),
+]
+
+# ----------------------------------------------------- de-morgan-conjunction-hard
+# "The hard De Morgan" (Restall's own name): the goal is a disjunction, so
+# nothing names a rule directly -- assume its negation, crack open two double
+# negations with NegE, collide the reconstructed conjunction with the premise.
+PROOFS["de-morgan-conjunction-hard"] = [
+    P(1, "~(p & q)"),
+    _l(2, "~(~p | ~q)", "As", 1),
+    _l(3, "~p", "As", 2),
+    _l(4, "~p | ~q", "DisjI", 2, [3]),
+    _l(5, "!", "FalsumI", 2, [4, 2]),
+    _l(6, "~~p", "NegI", 1, subs=[[3, 5]]),
+    _l(7, "p", "NegE", 1, [6]),
+    _l(8, "~q", "As", 2),
+    _l(9, "~p | ~q", "DisjI", 2, [8]),
+    _l(10, "!", "FalsumI", 2, [9, 2]),
+    _l(11, "~~q", "NegI", 1, subs=[[8, 10]]),
+    _l(12, "q", "NegE", 1, [11]),
+    _l(13, "p & q", "ConjI", 1, [7, 12]),
+    _l(14, "!", "FalsumI", 1, [13, 1]),
+    _l(15, "~~(~p | ~q)", "NegI", 0, subs=[[2, 14]]),
+    _l(16, "~p | ~q", "NegE", 0, [15]),
+]
