@@ -32,6 +32,17 @@ be offered a second time). The reason column says which.
 | 2026-08-31 | `⊢ (p ⊃ q) ∨ (p ⊃ r)` (CLI-106, comprehensive §1 rank 5) | No philosopher or champion named in the row, unlike its rank-4 and rank-6 neighbours (van Fraassen, Aristotle) — its own cell only compares it to the course's own *valid* twin `⊢ (q⊃p) ∨ (p⊃r)` (L11/PS5.6) and calls it "the near-miss". §11d's fallback for an unclear SEP article is to name the philosopher the row itself names; here none is named, and §1 carries no `sep` line either, so there is nothing to attribute this to. `appearances_pending` is not a substitute — §13.1 marks that flag as an exception specific to the imports inventory's §3, not a general escape from having a source. Left for a person with a library to find an actual champion, or to import once one turns up; the other three rows from this position in the queue (CLI-107, 108, 109) all name one and are imported this firing. |
 | 2026-08-31 | `p ⊃ q, r ⊃ s ⊢ p ⊃ s` (CLI-110, comprehensive §1 rank 9) | No philosopher named. "The four-terms / equivocation skeleton" names a classical fallacy of the syllogistic tradition generally, not a person the row attributes it to, and §1's own `sep` line is empty for this row. Left for a person with a library to find an actual champion. |
 | 2026-08-31 | `p ⊃ m, s ⊃ m ⊢ s ⊃ p` (CLI-112, comprehensive §1 rank 11) | Same reason as CLI-110: "undistributed middle, propositional shadow" names the fallacy, not a philosopher, and no `sep` line to check against. |
+| 2026-08-31 | `(p ∨ q) ⊃ r ⊢ ∼(p ∨ q) ⊃ ∼r` (CLI-113, comprehensive §1 rank 12) | "Illicit contraposition" names the fallacy, not a person, and no `sep` line. Same reason as CLI-110/112. |
+| 2026-08-31 | `p ⊃ r ⊢ (p ⊃ q) & (q ⊃ r)` (CLI-115, comprehensive §1 rank 14) | No philosopher named — "a real implication must factor through a middle term" states the relevance intuition itself, attributing it to no one, and no `sep` line. |
+| 2026-08-31 | `(p & q) ⊃ r, r ⊢ p & q` (CLI-116, comprehensive §1 rank 15) | "Affirming the consequent" names the fallacy, not a person. Same reason as CLI-110/112/113. |
+| 2026-08-31 | `(p1⊃q1)&(p2⊃q2), p1 ⊢ q1&q2` (CLI-121, comprehensive §1b) | "The scope fallacy" (necessity of the consequence read as necessity of the consequent) is described but attributed to no one in the row. |
+| 2026-08-31 | `⊢ ((p1∨q1)&(p2∨q2)) ⊃ ((p1&p2)∨(q1&q2))` (CLI-124, comprehensive §1b) | `□(A∨B) ⊃ □A∨□B`, compared only to its ∃-analogue (CLI-125) and to the quantifier form it previews — no philosopher named. |
+| 2026-08-31 | `(a1⊃b1)&(a2⊃b2), a0 ⊢ b1&b2` (CLI-126, comprehensive §1b) | "Factual detachment in deontic dress" — the scope fallacy again, no person named, its valid twin (deontic detachment) also unattributed in the row. |
+| 2026-08-31 | `b∨∼b, b⊃a, ∼b⊃c, (u∨w)⊃∼f ⊢ ∼f` (CLI-127, comprehensive §1b) | The fatalism chain reads like Aristotle's sea battle or a Taylor-style fatalism argument, but the row names neither — attributing it to either would be a guess, not a reading of the row. |
+| 2026-08-31 | `t ⊃ (d∨f), d ⊃ t, t ⊢ d` (CLI-129, comprehensive §1b) | "Base-rate neglect", the disease/test example — no person named in the row. |
+| 2026-08-31 | `p&(q∨r), q⊃s, r⊃t ⊢ p&(s&t)` (CLI-130, comprehensive §1b) | The row names "Adams' half-essentialness", and Ernest W. Adams is a real, checkable logician (*The Logic of Conditionals*, 1965/1975) — but a dedicated check could not confirm "half-essentialness" as his genuine terminology. The verified, related term in his own work is "marginal essentialness of premises" (Adams 1981, *Journal of Philosophical Logic* 10), a different paper and not obviously the same concept. Attributing the row's own label to Adams without that confirmation risks putting a term in his mouth he may never have used — exactly the error §13.1 calls the worst in the file. Left for a person with the actual paper in hand to confirm the term (or correct the inventory) before this is imported. |
+| 2026-08-31 | `c⊃a, c⊃b, a, b ⊢ c` (CLI-131, comprehensive §1b) | "Agglomeration", and the open branch is called "the lottery paradox" — but the row names no person (not Kyburg, to whom the paradox is usually credited in the literature). |
+| 2026-08-31 | `Kbr, Ki ⊢ Kb` (CLI-132, comprehensive §1b) | "The Red Barn" — a named case, not a named person; the row credits no one. |
 
 ## Resolved
 
@@ -807,3 +818,112 @@ three appearances is a course appearance, so none needed it.
 Comprehensive queue: 104 candidates left of 274 (78 now in the database,
 3 quarantined, 82 unreadable, 7 settled — CLI-110 and CLI-112 newly
 logged above). Course and imports queues remain at 0.
+
+## 2026-08-31 (continued) — three more from the Comprehensive Logic
+Inventory: Sobel, Ockham, Boole
+
+Course and imports queues both re-confirmed empty
+(`inventory.py --status`, `--status --source imports`); comprehensive is
+the only source with anything left. `inventory.py --next 3 --source
+comprehensive` offered CLI-113, CLI-114, CLI-115, of which only CLI-114
+names a real, checkable person in the row (the "Sobel-sequence"
+intuition). CLI-113 and CLI-115 are logged above, same reason as CLI-110
+et al.: a named fallacy or intuition, not a named person. Widened the
+search (`--next 20`) rather than stop at one importable row out of
+three, and worked forward in queue order evaluating each row for an
+explicit named philosopher before importing or logging it — eleven more
+rows skipped and logged above (CLI-116, 121, 124, 126, 127, 129, 130,
+131, 132), stopping once three were in hand: `sobel-sequence-defeater`
+(CLI-114), `theological-fatalism-minus-necessity` (CLI-128), and
+`boole-cancellation-fallacy` (CLI-138). All three invalid, so two blocks
+each and no `proofs.py` entry.
+
+`sobel-sequence-defeater` (`p⊃q, (p&r)⊃∼q ⊢ ∼r`, 2 of 8 countermodels,
+matching the row exactly) is a material-conditional skeleton of the
+phenomenon the conditionals literature calls a Sobel sequence, after
+Howard Sobel — verified via a dedicated research pass (Lewis's
+*Counterfactuals*, 1973, crediting an unpublished Sobel manuscript; the
+term itself popularised later, in the literature on counterfactuals) *before*
+writing the appearance, rather than trusting the row's own label at
+face value. `appearances` cites the manuscript as reported by Lewis
+(`fidelity: "our reconstruction"`, `url: null`, no `quote` — nothing
+verbatim is on hand), `type: "diagnosed"` since the entry stages the
+shape of Sobel's phenomenon in material `⊃` rather than reproducing his
+own counterfactual argument, and `interest` says so directly: the real
+Sobel-sequence effect is about non-monotonic revision under a shifting
+counterfactual context, which `⊃` has no mechanism to model. The valid
+twin from the same two premises, `∼(p & r)`, is stated in `interest` and
+checked against `derive.py` before being written down, per the file's
+standing caution about a claim quoted from the computed data.
+
+`theological-fatalism-minus-necessity` (`k, k⊃t, n⊃∼f ⊢ ∼f`, 1 of 16,
+matching the row exactly) is the cleanest of the three: the classical
+foreknowledge-implies-no-freedom chain needs a fourth premise, `t⊃n`
+("a true past fact is a necessary one"), that this row omits, and the
+single open branch (`k=T, t=T, n=F, f=T`) is exactly William of Ockham's
+own move against the argument — a past truth that depends on the future
+is a *soft* fact, not a *hard* one, and does not inherit necessity.
+Verified the citation chain independently (Ockham's *Tractatus de
+Praedestinatione et de Praescientia Dei..., c. 1321–23*, standard
+translation by Marilyn McCord Adams and Norman Kretzmann) rather than
+trust the row's bare "Ockhamism" label, and `course.note` flags —
+following `boethius-thesis`'s own precedent — that "Ockhamist" here is
+the modern analytic-philosophy-of-religion label for Ockham's move, not
+a quotation from the Latin. `type: "diagnosed"`, `fidelity: "our
+reconstruction"`, `url: null`, no `quote`.
+
+`boole-cancellation-fallacy` (`(p&q) ≡ (p&r) ⊢ q ≡ r`, 2 of 8, matching
+the row exactly) is George Boole's own algebra of logic tempting a
+cancellation it cannot license: `(p&q)≡(p&r)` reads like `pq=pr`, and
+ordinary algebra cancels the `p`, but classical logic has no such law.
+A dedicated research pass confirmed the chapter reference before
+writing it down rather than guessing one: Chapter II §14 of *Laws of
+Thought* (1854) is where Boole notes division has no general logical
+interpretation, and Chapter V ("Of the Fundamental Principles of
+Symbolical Reasoning, and of the Expansion or Development of
+Expressions...") supplies the Development/Expansion theorem in its
+place — not Chapter VII, which is "Of Elimination", a plausible-looking
+guess that turned out wrong on checking. `course.note` also cites
+Hailperin's "Boole's Algebra Isn't Boolean Algebra" (*Mathematics
+Magazine* 54(4), 1981) for a reader who wants the full history.
+`type: "diagnosed"`, `fidelity: "our reconstruction"`, `url: null`, no
+`quote`.
+
+All three countermodel counts and the associated `interest` claims
+(the valid twin `∼(p&r)`, the single open branch's exact assignment,
+the "1 of 16" / "2 of 8" counts) were checked against `derive.py`'s own
+output before being written down, per the file's standing caution about
+a superlative or a countermodel claim not matching the computed data —
+none of the three make a superlative claim, and all three countermodel
+counts matched the inventory rows exactly on the first check. Checked
+the database for near-duplicates and existing `sobel`/`ockham`/`boole`
+ids first — none found. `course.note` on `sobel-sequence-defeater`
+notes the thematic (not schema-level) connection to the existing
+`antecedent-strengthening`, so no `looks_like` was set anywhere.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled `texlive-latex-base texlive-latex-recommended
+texlive-latex-extra texlive-pictures texlive-binaries dvisvgm
+texlive-humanities texlive-science texlive-fonts-recommended` via
+`apt-get`, matching every prior firing's note.
+
+`build.py --write` (three entries normalised, no atom renames needed —
+all atoms already legal single letters; difficulty scores newly written
+for all three), `python3 difficulty.py --diff` (2 differ, both
+pre-existing overrides already explained in `course.note` —
+`double-negation-elimination` and `de-morgan-disjunction-easy` —
+nothing from this firing), `svg.py` (9 SVGs, 3 blocks × 3 invalid
+entries), `svg.py --check` (every SVG current), `inventory.py --locks`
+(0 practicable methods locked), `manifest.py --check-merge` (137
+entries, 134 expected from the merge parents plus 3 new, nothing lost —
+the branch was already up to date with `main`, no merge to resolve this
+firing), and `node --test "_tests/*.test.mjs"` (513/513) all clean.
+`extremely hard` count unchanged at 4 of 4 (nd) — all three new entries
+are invalid and carry no `nd` score. `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty; none of the three appearances is a course appearance,
+so none needed it. Comprehensive queue: 88 candidates left of 274 (79
+now in the database, 3 quarantined, 82 unreadable, 22 settled — eleven
+more rows newly logged above, the rest pre-existing stray backtick
+matches `inventory.py`'s settled-scan has always picked up from the
+log's own prose). Course and imports queues remain at 0.

@@ -132,3 +132,6 @@ boethius-nested-consequent
 mccarthy-qualification-problem
 peircean-future-excluded-middle
 van-benthem-goodness-preference
+sobel-sequence-defeater
+theological-fatalism-minus-necessity
+boole-cancellation-fallacy
