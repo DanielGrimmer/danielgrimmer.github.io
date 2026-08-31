@@ -144,3 +144,6 @@ self-distribution-axiom
 nicods-rule
 necessarium-ad-quodlibet
 ex-impossibili-contradiction
+structural-weakening
+entt-axiom
+double-negation-theorem

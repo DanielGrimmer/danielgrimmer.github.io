@@ -2039,3 +2039,35 @@ PROOFS["ex-impossibili-contradiction"] = [
     _l(9, "~q", "NegI", 0, subs=[[7, 8]]),
     _l(10, "q & ~q", "ConjI", 0, [6, 9]),
 ]
+
+# ------------------------------------------------------------ structural-weakening
+# The whole rule in one reiteration: `q` is a premise the conclusion never
+# touches, so nothing beyond citing `p` again is needed to reach it.
+PROOFS["structural-weakening"] = [
+    P(1, "p"),
+    P(2, "q"),
+    _l(3, "p", "Reit", 0, [1]),
+]
+
+# ------------------------------------------------------------------- entt-axiom
+# `(p>p)>q` is the outer assumption; to use it, `p>p` has to be built as its
+# own line, which is a subproof inside the outer one -- assume `p`,
+# reiterate it (CondI's discharge cannot cite the assumption line itself,
+# per the one-line-subproof rule), and discharge.
+PROOFS["entt-axiom"] = [
+    _l(1, "(p > p) > q", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p", "Reit", 2, [2]),
+    _l(4, "p > p", "CondI", 1, subs=[[2, 3]]),
+    _l(5, "q", "CondE", 1, [1, 4]),
+    _l(6, "((p > p) > q) > q", "CondI", 0, subs=[[1, 5]]),
+]
+
+# ------------------------------------------------------ double-negation-theorem
+# The deduction-theorem shadow of `double-negation-elimination`: assume the
+# antecedent, cite `NegE`, discharge. One line longer than the rule itself.
+PROOFS["double-negation-theorem"] = [
+    _l(1, "~~p", "As", 1),
+    _l(2, "p", "NegE", 1, [1]),
+    _l(3, "~~p > p", "CondI", 0, subs=[[1, 2]]),
+]

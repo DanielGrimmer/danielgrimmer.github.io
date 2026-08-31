@@ -69475,6 +69475,612 @@
     "conclusion": "q & ∼q",
     "sequent": "p, ∼p  ⊨ q & ∼q"
    }
+  },
+  {
+   "id": "structural-weakening",
+   "cli_ref": "CLI-208",
+   "names": [
+    "Structural weakening",
+    "Monotonicity"
+   ],
+   "premises": [
+    "p",
+    "q"
+   ],
+   "conclusion": "p",
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p",
+     "q",
+     "p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "p",
+     "q",
+     "∼p"
+    ],
+    "tree": {
+     "added": [],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad p$ \\\\ $\\qquad q$ \\\\ $\\Neg A:\\quad \\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "interest": "This is the whole rule laid bare: from any premises whatever, an extra one costs nothing. The table shows why -- `q` is idle on every row, true or false, and the argument's validity never consults it. That is exactly the feature relevance logicians single out: SEP's *Logical Consequence* article states the objection to weakening as \"the extra premise A need not be used in the derivation of the conclusion C and hence, that C does not follow from the premises X,A in the appropriate sense,\" and relevant logics are built to do without the rule for that reason. Classically the objection has no force -- an argument with true premises and a false conclusion is what invalidity means, and `p, q ⊢ p` can never have that shape -- but the rejection is not a mistake about validity, it is a different question about what a premise is for.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "verbatim",
+     "who": "Jc Beall, Greg Restall & Gil Sagi",
+     "work": "Logical Consequence",
+     "locus": "SEP, §4 (Premises and Conclusions)",
+     "url": "https://plato.stanford.edu/entries/logical-consequence/",
+     "quote": "the extra premise A need not be used in the derivation of the conclusion C and hence, that C does not follow from the premises X,A in the appropriate sense"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "substructural",
+     "philosophy of logic"
+    ],
+    "figure": [
+     "Anderson",
+     "Belnap"
+    ],
+    "defect": [],
+    "nonclassical": [
+     "relevant-fails"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "The shortest entry in the set by every measure -- three-line proof, one derived line, no subproof. Good as the first example when introducing the twelve rules: `Reit` earns its keep here rather than being decoration.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "q",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "Reit",
+      "depth": 0,
+      "cites": [
+       1
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p}\n\\hypo{2}{q}\n\\have{3}{p}\\by{\\Reit}{1}\n\\end{nd}\n\\end{align*}",
+    "lines": 3,
+    "max_subproof_depth": 0,
+    "subproof_count": 0,
+    "assumption_count": 0,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "display": {
+    "premises": [
+     "p",
+     "q"
+    ],
+    "conclusion": "p",
+    "sequent": "p, q  ⊨ p"
+   }
+  },
+  {
+   "id": "entt-axiom",
+   "cli_ref": "CLI-211",
+   "names": [
+    "EntT",
+    "Axiom 2 of the logic E"
+   ],
+   "premises": [],
+   "conclusion": "((p > p) > q) > q",
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "((p ⊃ p) ⊃ q) ⊃ q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $((p\\Cond p)\\Cond q)\\Cond q$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}$ \\\\\n        T & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}$ \\\\\n        F & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}$ \\\\\n        F & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{p}\\phantom{)}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{M}\\phantom{q}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $((p\\Cond p)\\Cond q)\\Cond q$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}\\phantom{)}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Cond}{T}\\phantom{q}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{p}\\phantom{)}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Cond}{M}\\phantom{q}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼(((p ⊃ p) ⊃ q) ⊃ q)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "(p ⊃ p) ⊃ q",
+       "from": "∼(((p ⊃ p) ⊃ q) ⊃ q)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼q",
+       "from": "∼(((p ⊃ p) ⊃ q) ⊃ q)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼(p ⊃ p)",
+         "from": "(p ⊃ p) ⊃ q",
+         "rule": "⊃"
+        },
+        {
+         "formula": "p",
+         "from": "∼(p ⊃ p)",
+         "rule": "∼⊃"
+        },
+        {
+         "formula": "∼p",
+         "from": "∼(p ⊃ p)",
+         "rule": "∼⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "q",
+         "from": "(p ⊃ p) ⊃ q",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "(p ⊃ p) ⊃ q",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (((p\\Cond p)\\Cond q)\\Cond q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $(p\\Cond p)\\Cond q$\\quad\\checkmark \\\\ $\\Neg q$} [.{\\ckpad $\\Neg (p\\Cond p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg p$ \\\\ x} ] [.{$q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "interest": "Anderson and Belnap's system E of relevant entailment takes this as one of its axioms, labelled EntT. It is a theorem of classical logic too -- the table below is unanimous -- so nothing about its truth value marks it as belonging to a nonclassical system. What marks it is where it sits in E's own list of axioms: R, the more permissive system of relevant implication built alongside E, states Identity, Suffixing, Assertion, Contraction and the rest, but EntT is not among them. A theorem this shape can hold in a system without being one of its axioms, of course, but the choice to make it primitive in E and not in R is part of what keeps the two systems distinct -- E is meant to be entailment under necessity, R only relevant implication, and EntT is doing some of the work of enforcing that difference.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Alan Ross Anderson & Nuel D. Belnap Jr.",
+     "work": "Entailment: The Logic of Relevance and Necessity, Vol. I",
+     "locus": "1975, the axiomatisation of the system E",
+     "url": null
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "philosophy of logic"
+    ],
+    "figure": [
+     "Anderson",
+     "Belnap"
+    ],
+    "defect": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "A clean two-level CondI exercise -- the inner `p>p` needs its own subproof, nested inside the one for the whole theorem, so it is a good first example of a subproof inside a subproof.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "(p > p) > q",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "Reit",
+      "depth": 2,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "p > p",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        3
+       ]
+      ]
+     },
+     {
+      "n": 5,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "((p > p) > q) > q",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        5
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{(p\\Cond p)\\Cond q}\n\\open\n\\hypo{2}{p}\n\\have{3}{p}\\by{\\Reit}{2}\n\\close\n\\have{4}{p\\Cond p}\\by{\\CondI}{2,3}\n\\have{5}{q}\\by{\\CondE}{1,4}\n\\close\n\\have{6}{((p\\Cond p)\\Cond q)\\Cond q}\\by{\\CondI}{1,5}\n\\end{nd}\n\\end{align*}",
+    "lines": 6,
+    "max_subproof_depth": 2,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "((p ⊃ p) ⊃ q) ⊃ q",
+    "sequent": "⊨ ((p ⊃ p) ⊃ q) ⊃ q"
+   }
+  },
+  {
+   "id": "double-negation-theorem",
+   "cli_ref": "CLI-401",
+   "names": [
+    "Double negation elimination, conditional form"
+   ],
+   "premises": [],
+   "conclusion": "~~p > p",
+   "truth_table": {
+    "atoms": [
+     "p"
+    ],
+    "columns": [
+     "∼∼p ⊃ p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $\\Neg \\Neg p\\Cond p$ \\\\\n        \\hline\n        T & $\\uv{\\Neg}{T}\\uv{\\Neg}{F}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        F & $\\uv{\\Neg}{F}\\uv{\\Neg}{T}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $\\uv{\\Neg}{.}\\uv{\\Neg}{.}\\phantom{p}\\uv{\\Cond}{M}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c| c}\n        $p$ & $\\Neg \\Neg p\\Cond p$ \\\\\n        \\hline\n        T & $\\uv{\\Neg}{T}\\uv{\\Neg}{F}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        F & $\\uv{\\Neg}{F}\\uv{\\Neg}{T}\\phantom{p}\\uv{\\Cond}{T}\\phantom{p}$ \\\\\n        \\hline\n        $.$ & $\\uv{\\Neg}{.}\\uv{\\Neg}{.}\\phantom{p}\\uv{\\Cond}{M}\\phantom{p}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 2,
+    "premise_true_rows": 2,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼(∼∼p ⊃ p)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼∼p",
+       "from": "∼(∼∼p ⊃ p)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼p",
+       "from": "∼(∼∼p ⊃ p)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (\\Neg \\Neg p\\Cond p)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg \\Neg p$ \\\\ $\\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "interest": "`double-negation-elimination` is the one-line argument `∼∼p ⊢ p`; this is its deduction-theorem shadow, `⊢ ∼∼p ⊃ p`, and the two proofs show exactly what the theorem costs beyond the rule -- one `CondI` wrapped around the same single citation of `NegE`. Both fail intuitionistically, and the reason is the same reason in both cases: on the BHK reading a proof of `∼∼p` is a construction that refutes every refutation of `p`, and that is weaker than a construction of `p` itself. Refuting the refutations is not the same as having the thing. Peirce's Law fails intuitionistically too, but its formula has no `∼` in it at all, so it cannot be the clean case for what negation is doing wrong. This one can: the failing connective is sitting right in the formula.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "verbatim",
+     "who": "Joan Rand Moschovakis",
+     "work": "Intuitionistic Logic",
+     "locus": "SEP, §1 (Rejection of Tertium Non Datur)",
+     "url": "https://plato.stanford.edu/entries/logic-intuitionistic/",
+     "quote": "the classical law of double negation elimination: ¬¬A → A"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "proof theory",
+     "propositional logic"
+    ],
+    "figure": [],
+    "defect": [],
+    "nonclassical": [
+     "intuitionistic-fails"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "Pairs with `double-negation-elimination`: same rule, argument form vs. conditional form. Good for making the deduction theorem visible as a move rather than a slogan -- literally one more line.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "~~p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "NegE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 3,
+      "f": "~~p > p",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{\\Neg \\Neg p}\n\\have{2}{p}\\by{\\NegE}{1}\n\\close\n\\have{3}{\\Neg \\Neg p\\Cond p}\\by{\\CondI}{1,2}\n\\end{nd}\n\\end{align*}",
+    "lines": 3,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "CondI",
+     "NegE"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "∼∼p ⊃ p",
+    "sequent": "⊨ ∼∼p ⊃ p"
+   },
+   "looks_like": "double-negation-elimination"
   }
  ],
  "latex_requires": [
