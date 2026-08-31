@@ -47,6 +47,9 @@ be offered a second time). The reason column says which.
 | 2026-08-31 | `⊢ p ⊃ (q⊃p)` (CLI-203, comprehensive §2.1) | Duplicates `positive-paradox` already in the database (`p ⊢ q⊃p`) — the closed axiom and the premised sequent are the same principle one deduction-theorem step apart, and §2's own `sep` line lists eight articles with no way to tell which covers this row, so there is no independent source to justify treating them as separate entries. |
 | 2026-08-31 | `⊢ (p∨q) ≡ ((p∨q) & (r∨∼r))` (CLI-210, comprehensive §2.1) | The row's own gloss calls this "SEP's 'contaminated disjunction'," naming SEP but not which of it — §2.1's `sep` line lists eight general articles. Checked five of the eight directly (`logic: classical`, `logic: propositional`, `logical consequence`, `logical form`, `logical truth`) for this specific example (a disjunction padded with a tautologous, atom-disjoint conjunct) and none of the five contains it; the row names no philosopher to fall back on either. Left for a person who can identify which SEP article (if any of the eight, rather than a ninth this firing did not think to check) the phrase is drawn from. |
 | 2026-08-31 | `⊢ (p⊃q) ∨ p` (CLI-212, comprehensive §2.1) | Duplicates `disjunction-with-vacuous-conditional` already in the database (`⊢ p ∨ (p⊃q)`) — the identical tautology with its two disjuncts swapped, which `inventory.py`'s shape-match dedup does not catch since it does not normalise disjunct order. Caught by a manual search per §6 before writing. (Its sibling `⊢ a ∨ (a⊃b)`, CLI-214, does not appear in the queue at all — same theorem, same disjunct order up to renaming `a→p, b→q`, which the dedup does catch.) |
+| 2026-08-31 | `(∼(∼p ∨ ∼q) ∨ ∼(∼p ∨ q)) ≡ p` (comprehensive, "Identities students will not guess" — Huntington's equation, 1933) | Valid, and the SEP article names it exactly — fetched Burris & Legris's *The Algebra of Logic Tradition* (§8, "Huntington: Axiomatic Investigations of the Algebra of Logic") and confirmed the equation, `who`, and canonical URL directly, rather than trust the row's own gloss. The obstacle is the derivation. Direction `p ⊢ (∼(∼p∨∼q) ∨ ∼(∼p∨q))` needs a case split on `q`, which the goal itself never pins down (the two disjuncts hold under opposite values of `q`), and no route tried avoided it: an explicit `q∨∼q` lemma ran the whole biconditional to 49 lines, and a leaner double-negation extraction of `∼p∨∼q` and `∼p∨q` directly from the negated goal still ran 41 — both comfortably past the 29-line floor with all five §14.3 triggers present, which would make this a fifth `extremely hard` nd entry against the cap of four the test suite enforces (`worn.length <= 4`). The style guide's own instruction for that situation is to raise `ND_EXTREME_LINES` rather than excuse the entry, but this firing's own earlier precedent (`conditional-crossover`, below) is to look for a shorter proof first, since the threshold also governs the four entries already wearing the band. No proof under 29 lines was found. Left for a firing or a person with time for either a cleverer derivation or a considered decision to raise the constant. |
+| 2026-08-31 | `∼(∼(p ∨ q) ∨ ∼(p ∨ ∼q)) ≡ p` (comprehensive, "Identities students will not guess" — the Robbins equation) | Same SEP section (Burris & Legris, §8) names this one too, conjectured by Robbins as a simplification of Huntington's third axiom and settled only by McCune's automated prover in 1996. Not attempted in full: it is structurally the same shape as Huntington's equation directly above it in the queue (a case split on `q` is unavoidable in the same direction), so it is presumed to hit the same 29-line wall rather than re-derive it to confirm. Left for the same reason and alongside it. |
+| 2026-08-31 | `⊢ ((p∨q) & ∼(p&q)) ≡ ∼(p≡q)` (CLI-313, comprehensive §3.6) | The row is "exclusive-or is definable — the logician's reply to the ambiguity thesis," naming no philosopher. §3's own `sep` line lists seven general articles (`conditionals`, `conditionals: counterfactual`, `connectives: sentence connectives in formal logic`, `contradiction`, `disjunction`, `logical constants`, `negation`) with no way to tell which covers this specific row — exactly §11d's case for naming the champion instead, except the row names none. Checked the likeliest candidate directly: Aloni's *Disjunction* discusses exclusive `⊕` and its problems but not this identity or this reply. Left for a person who can identify the actual source, if one of the seven names it at all. |
 
 ## Resolved
 
@@ -1511,3 +1514,86 @@ hard` (nd) count unchanged at 4 of 4 — none of the three new entries
 is close (`easy`, invalid/no-nd, invalid/no-nd). Comprehensive queue:
 66 candidates left of 274 (97 now in the database). Course and
 imports queues remain at 0.
+
+**2026-08-31, `comprehensive`-source firing: two entries, three skipped over the
+`extremely hard` cap and an unattributable row.** Course and imports queues
+both re-confirmed empty. `inventory.py --next 3 --source comprehensive` gave
+Huntington's equation and the Robbins equation (both from "Identities students
+will not guess," §2.6) and CLI-313 ("exclusive-or is definable"); none of the
+three went in cleanly, each logged above with its own reason. Continued into
+the queue rather than stop the firing over three bad rows in a row, and landed
+on a clean pair: `⊢ Tp∨Fp` and `⊢ ∼(Tp&Fp)`, from §3.8's "forms that separate
+[excluded middle from bivalence]" — imported as `bivalence-schema` and
+`no-gluts`.
+
+Huntington's and Robbins's equations were the SEP-article part of §11d done
+right: their shared `sep` line names three general algebra-of-logic articles,
+but the file's own table calls each identity by name, and fetching Burris &
+Legris's *The Algebra of Logic Tradition* confirmed both are stated verbatim in
+its §8 — Huntington's third 1933 axiom and Robbins's 1963 simplification of it,
+with the equations themselves (translated out of `+`/`'`/`=` into `∨`/`∼`/`≡`)
+matching the row exactly. Getting the citation right was not the obstacle this
+time; the derivation was. Both identities need a case split on `q` in one
+direction (the two disjuncts hold under opposite values of `q`, and the goal
+`p` never mentions it), and every route tried for Huntington's alone — an
+explicit `q∨∼q` lemma, and a leaner extraction of `∼p∨∼q` and `∼p∨q` straight
+out of the negated goal — landed at 49 and 41 lines respectively, both with all
+five §14.3 triggers and both well past the 29-line floor. That would make
+either entry a fifth `extremely hard` nd, one past the cap `worn.length <= 4`
+enforces, and `bivalence-pigeonhole`'s own note (above) already flagged this
+exact cap as reached with nothing to spare. Robbins's equation was not
+attempted in full — same section, same shape, presumed to hit the same wall —
+and both are left in the skip table for a cleverer proof or a considered
+decision to raise `ND_EXTREME_LINES`, which is a bigger, more consequential
+change than a routine firing's two-or-three-row scope, and affects the other
+four entries already scored against it.
+
+CLI-313 named no philosopher and its enclosing section's `sep` line lists seven
+general articles with no way to tell which one, if any, covers this specific
+identity. Checked the likeliest of the seven — Aloni's *Disjunction* — directly
+rather than guess: it discusses exclusive `⊕` and where it breaks down, but not
+this identity or the "logician's reply" framing the row gives it. Left rather
+than attributed on a guess, per §11d's own warning that a wrong SEP slug puts a
+real author's name on a page they may never have written.
+
+`bivalence-schema` and `no-gluts` are `p∨∼p` and `∼(p&∼p)` themselves —
+`excluded-middle` and `non-contradiction`, both already in the database —
+written one level up, over deliberately opaque atoms `Tp`/`Fp` proxying the
+metalinguistic claims "p is true"/"p is false" rather than `p`/`∼p`
+themselves. `looks_like` set to each accordingly. Both invalid, with
+countermodels checked against `derive.py`'s own output before writing (`Tp=F,
+Fp=F` — the gap; `Tp=T, Fp=T` — the glut — both matching the file's stated
+countermodels exactly) rather than copied from the row. `interest` also claims
+that adding Convention T (`Tp≡p, Fp≡∼p`) as a premise makes `Tp∨Fp` valid,
+which the file states but this firing checked independently with `derive.py`
+before writing it down, per this file's standing caution about claims that
+sound right and are not verified. The SEP quote (bivalence "taken as a
+metatheoretical principle, viz. that there exist only two distinct logical
+values") was fetched from the live page and confirmed verbatim before being
+written into `appearances`, not copied from the inventory file's own
+paraphrase of it. `Tp`/`Fp` are not legal atom names (uppercase first letter),
+so `build.py` renamed them to `t_p`/`f_p` throughout, prose included.
+
+`build.py --write` (two entries normalised, `Tp→t_p`/`Fp→f_p` renamed
+everywhere including `interest` and `nd.note`; difficulty `easy`/`easy`/`null`
+for both, matching the rubric), `python3 difficulty.py --diff` (clean, 0
+differ), `svg.py` (6 SVGs — table and tree only, no `nd` block for either
+invalid entry), `svg.py --check` (every SVG current), `inventory.py --locks`
+(0 practicable methods locked — neither entry carries a `problem_set`),
+`manifest.py --check-merge` (157 entries, 155 expected from the merge
+parents, nothing lost), and `node --test "_tests/*.test.mjs"` (513/513) all
+clean. `extremely hard` (nd) count unchanged at 4 of 4 — both new entries are
+invalid and carry no `nd` score, which is exactly why they were the pair that
+went in this firing. Comprehensive queue: 61 candidates left of 274 (99 now
+in the database, 3 quarantined, 82 unreadable, 29 settled — the three rows
+above newly logged). Course and imports queues remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**; `apt-get
+install` of the same package list every prior firing has recorded
+(`texlive-latex-base texlive-latex-recommended texlive-latex-extra
+texlive-pictures texlive-binaries dvisvgm texlive-humanities texlive-science
+texlive-fonts-recommended`) needed `--fix-missing` after two unrelated 404s
+(`libegl-mesa0`, `ruby3.2` — neither on this project's own package list) on
+the first attempt; the retry installed cleanly and both `latex` and `dvisvgm`
+resolved. The `session-start-hook` suggestion from every prior firing's note
+is still open.

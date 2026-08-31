@@ -153,3 +153,5 @@ mcgee-counterexample
 conjunctive-sufficiency
 addition-converse
 distribution-botched
+bivalence-schema
+no-gluts

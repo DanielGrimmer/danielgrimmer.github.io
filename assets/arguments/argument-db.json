@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 155,
+ "count": 157,
  "entries": [
   {
    "id": "ex-falso",
@@ -72158,6 +72158,374 @@
     ],
     "conclusion": "(p ∨ q) & r",
     "sequent": "p ∨ (q & r)  ⊭ (p ∨ q) & r"
+   }
+  },
+  {
+   "id": "bivalence-schema",
+   "cli_ref": "—",
+   "names": [
+    "Bivalence as a schema"
+   ],
+   "premises": [],
+   "conclusion": "t_p | f_p",
+   "interest": "`t_p` and `f_p` are deliberately opaque atoms proxying the metalinguistic claims \"p is true\" and \"p is false\" -- not `p` and `∼p` themselves, which the object language already handles on its own (see `excluded-middle`, a theorem regardless of what `p` says). Write bivalence itself as a schema over those two opaque atoms and it stops being a theorem: the one countermodel sets both false, which is exactly Shramko and Wansing's underdetermined value, the gap a logic like Kleene's K3 is built to hold open. Nothing in the bare schema connects `t_p` and `f_p` to a single valuation or to each other -- supplying that connection is what Convention T does (`t_p≡p, f_p≡∼p ⊢ t_p∨f_p` is valid, checked directly), and only once it is supplied does bivalence follow. Paired with `no-gluts`, its glut-side twin.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "discussed",
+     "fidelity": "our reconstruction",
+     "who": "Yaroslav Shramko & Heinrich Wansing",
+     "work": "Truth Values",
+     "locus": "SEP",
+     "url": "https://plato.stanford.edu/entries/truth-values/",
+     "quote": "the principle of bivalence taken as a metatheoretical principle, viz. that there exist only two distinct logical values"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "philosophy of logic",
+     "truth values",
+     "bivalence"
+    ],
+    "figure": [],
+    "defect": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §3.8 (\"Truth values -- excluded middle versus bivalence, and Suszko's thesis\") -- no course locus, not a set question. The row's own point is a level distinction: `p∨∼p` and `∼(p&∼p)` are theorems, and their metalinguistic shadows, written with opaque `t_p`/`f_p` atoms, are not.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": null,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": false,
+    "note": "Assume `∼(t_p∨f_p)` and aim at `⊥`, the standard route into a disjunction goal with no premises to eliminate. That extracts `∼t_p` and `∼f_p` separately (the same case-and-collide move `de-morgan-disjunction` already uses), and there the derivation stops: nothing else names either atom, so nothing turns the pair into a contradiction. The open branch is exactly the countermodel, `t_p=F, f_p=F` -- the gap.",
+    "verified": true
+   },
+   "truth_table": {
+    "atoms": [
+     "t_p",
+     "f_p"
+    ],
+    "columns": [
+     "t_p ∨ f_p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "t_p": "T",
+       "f_p": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "t_p": "T",
+       "f_p": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "t_p": "F",
+       "f_p": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "t_p": "F",
+       "f_p": "F"
+      },
+      "premises": [],
+      "conclusion": "F",
+      "premises_all_true": true,
+      "countermodel": true
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $t_{p}$ & $f_{p}$ & $t_{p}\\Disj f_{p}$ \\\\\n        \\hline\n        T & T & $\\phantom{t_{p}}\\uv{\\Disj}{T}\\phantom{f_{p}}$ \\\\\n        T & F & $\\phantom{t_{p}}\\uv{\\Disj}{T}\\phantom{f_{p}}$ \\\\\n        F & T & $\\phantom{t_{p}}\\uv{\\Disj}{T}\\phantom{f_{p}}$ \\\\\n        F & F & $\\phantom{t_{p}}\\uv{\\Disj}{F}\\phantom{f_{p}}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{t_{p}}\\uv{\\Disj}{M}\\phantom{f_{p}}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $t_{p}$ & $f_{p}$ & $t_{p}\\Disj f_{p}$ \\\\\n        \\hline\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & $\\phantom{t_{p}}\\uv{\\Disj}{F}\\phantom{f_{p}}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{t_{p}}\\uv{\\Disj}{M}\\phantom{f_{p}}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼(t_p ∨ f_p)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "∼t_p",
+       "from": "∼(t_p ∨ f_p)",
+       "rule": "∼∨"
+      },
+      {
+       "formula": "∼f_p",
+       "from": "∼(t_p ∨ f_p)",
+       "rule": "∼∨"
+      }
+     ],
+     "children": [],
+     "status": "open",
+     "model": {
+      "t_p": "F",
+      "f_p": "F"
+     },
+     "unconstrained": []
+    },
+    "open_branches": 1,
+    "closed_branches": 0,
+    "branch_depth": 0,
+    "branch_models": [
+     {
+      "t_p": "F",
+      "f_p": "F"
+     }
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg (t_{p}\\Disj f_{p})$\\quad\\checkmark \\\\ $\\vert$ \\\\ $\\Neg t_{p}$ \\\\ $\\Neg f_{p}$ \\\\ o} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "verdict": {
+    "valid": false,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 1,
+    "countermodels": [
+     {
+      "t_p": "F",
+      "f_p": "F"
+     }
+    ],
+    "premises_satisfiable": true
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "disjunction"
+    ],
+    "max_formula_depth": 1,
+    "total_formula_size": 3,
+    "table_rows": 4,
+    "tree_open_branches": 1,
+    "tree_closed_branches": 0,
+    "tree_branch_depth": 0,
+    "countermodel_count": 1,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "looks_like": "excluded-middle",
+   "display": {
+    "premises": [],
+    "conclusion": "t_p ∨ f_p",
+    "sequent": "⊭ t_p ∨ f_p"
+   },
+   "difficulty": {
+    "table": "easy",
+    "tree": "easy",
+    "search_sharpness": 0.25,
+    "nd": null
+   }
+  },
+  {
+   "id": "no-gluts",
+   "cli_ref": "—",
+   "names": [
+    "No gluts"
+   ],
+   "premises": [],
+   "conclusion": "~(t_p & f_p)",
+   "interest": "The mirror case: the one countermodel sets both `t_p` and `f_p` true, Priest's overdetermined value, the glut a paraconsistent logic like LP is built to hold open. `∼(p&∼p)`, non-contradiction, stays a theorem regardless of what `p` says (see `non-contradiction`); this is its own metalinguistic shadow, written over the same opaque `t_p`/`f_p` pair as `bivalence-schema`, and like its partner it fails for want of anything connecting the two atoms to a single valuation. Together the two open countermodels are exactly the gap and the glut: classical semantics rules both out, but not by deriving that exclusion from `p∨∼p` and `∼(p&∼p)` alone.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "discussed",
+     "fidelity": "our reconstruction",
+     "who": "Yaroslav Shramko & Heinrich Wansing",
+     "work": "Truth Values",
+     "locus": "SEP",
+     "url": "https://plato.stanford.edu/entries/truth-values/",
+     "quote": "the principle of bivalence taken as a metatheoretical principle, viz. that there exist only two distinct logical values"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "philosophy of logic",
+     "truth values",
+     "bivalence"
+    ],
+    "figure": [],
+    "defect": [],
+    "nonclassical": [
+     "paraconsistent"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §3.8, the glut-side twin of `bivalence-schema` -- no course locus, not a set question.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": null,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": false,
+    "note": "Assume `t_p & f_p` and aim at `⊥`, the dictated route for a negation goal (`∼I`). `&E` hands back `t_p` and `f_p` separately, and there the derivation stops: nothing else names either atom, so nothing turns the pair into a contradiction. The open branch is exactly the countermodel, `t_p=T, f_p=T` -- the glut.",
+    "verified": true
+   },
+   "truth_table": {
+    "atoms": [
+     "t_p",
+     "f_p"
+    ],
+    "columns": [
+     "∼(t_p & f_p)"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "t_p": "T",
+       "f_p": "T"
+      },
+      "premises": [],
+      "conclusion": "F",
+      "premises_all_true": true,
+      "countermodel": true
+     },
+     {
+      "assignment": {
+       "t_p": "T",
+       "f_p": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "t_p": "F",
+       "f_p": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "t_p": "F",
+       "f_p": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $t_{p}$ & $f_{p}$ & $\\Neg (t_{p}\\Conj f_{p})$ \\\\\n        \\hline\n        T & T & $\\uv{\\Neg}{F}\\phantom{(}\\phantom{t_{p}}\\uv{\\Conj}{T}\\phantom{f_{p}}\\phantom{)}$ \\\\\n        T & F & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{t_{p}}\\uv{\\Conj}{F}\\phantom{f_{p}}\\phantom{)}$ \\\\\n        F & T & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{t_{p}}\\uv{\\Conj}{F}\\phantom{f_{p}}\\phantom{)}$ \\\\\n        F & F & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{t_{p}}\\uv{\\Conj}{F}\\phantom{f_{p}}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\uv{\\Neg}{M}\\phantom{(}\\phantom{t_{p}}\\uv{\\Conj}{.}\\phantom{f_{p}}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $t_{p}$ & $f_{p}$ & $\\Neg (t_{p}\\Conj f_{p})$ \\\\\n        \\hline\n        T & T & $\\uv{\\Neg}{F}\\phantom{(}\\phantom{t_{p}}\\uv{\\Conj}{T}\\phantom{f_{p}}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        \\hline\n        $.$ & $.$ & $\\uv{\\Neg}{M}\\phantom{(}\\phantom{t_{p}}\\uv{\\Conj}{.}\\phantom{f_{p}}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼∼(t_p & f_p)"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "t_p & f_p",
+       "from": "∼∼(t_p & f_p)",
+       "rule": "∼∼"
+      },
+      {
+       "formula": "t_p",
+       "from": "t_p & f_p",
+       "rule": "&"
+      },
+      {
+       "formula": "f_p",
+       "from": "t_p & f_p",
+       "rule": "&"
+      }
+     ],
+     "children": [],
+     "status": "open",
+     "model": {
+      "t_p": "T",
+      "f_p": "T"
+     },
+     "unconstrained": []
+    },
+    "open_branches": 1,
+    "closed_branches": 0,
+    "branch_depth": 0,
+    "branch_models": [
+     {
+      "t_p": "T",
+      "f_p": "T"
+     }
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg \\Neg (t_{p}\\Conj f_{p})$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $t_{p}\\Conj f_{p}$\\quad\\checkmark \\\\ $\\vert$ \\\\ $t_{p}$ \\\\ $f_{p}$ \\\\ o} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "verdict": {
+    "valid": false,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 1,
+    "countermodels": [
+     {
+      "t_p": "T",
+      "f_p": "T"
+     }
+    ],
+    "premises_satisfiable": true
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "conjunction",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 4,
+    "table_rows": 4,
+    "tree_open_branches": 1,
+    "tree_closed_branches": 0,
+    "tree_branch_depth": 0,
+    "countermodel_count": 1,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "looks_like": "non-contradiction",
+   "display": {
+    "premises": [],
+    "conclusion": "∼(t_p & f_p)",
+    "sequent": "⊭ ∼(t_p & f_p)"
+   },
+   "difficulty": {
+    "table": "easy",
+    "tree": "easy",
+    "search_sharpness": 0.25,
+    "nd": null
    }
   }
  ],
