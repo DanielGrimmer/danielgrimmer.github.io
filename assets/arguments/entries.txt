@@ -126,3 +126,6 @@ de-morgan-conjunction-hard
 abelian-axiom-nested
 boethius-thesis
 quantifier-shift-2x2
+aristotle-second-thesis
+abelard-first-principle
+boethius-nested-consequent

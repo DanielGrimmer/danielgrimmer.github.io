@@ -131,9 +131,24 @@ def decompose(node: Node) -> tuple[str, bool, list[list[Node]]] | None:
     return None
 
 
-def closes(branch: list[str]) -> bool:
-    have = set(branch)
-    return any(("∼" + f if not f.startswith("∼") else f[1:]) in have for f in have)
+def closes(pending: list[Node]) -> bool:
+    """Whether the branch holds a formula and its negation.
+
+    Checked structurally, on the parsed formulas -- not by stripping a
+    leading `∼` off the *string*. A conditional whose antecedent happens to
+    be a negated atom, `∼p ⊃ (q & r)`, renders as a string that starts with
+    `∼`, but its main connective is `⊃`, not `~`: it is not the negation of
+    `p ⊃ (q & r)`, and treating it as one closes branches that are not
+    actually contradictory.
+    """
+    keys = {show(f) for f in pending}
+    for f in pending:
+        if f.op == "~":
+            if show(f.kids[0]) in keys:
+                return True
+        elif show(negate(f)) in keys:
+            return True
+    return False
 
 
 def build_tree(roots: list[Node], atoms: list[str]) -> dict:
@@ -152,7 +167,7 @@ def build_tree(roots: list[Node], atoms: list[str]) -> dict:
 
         # Everything forced, before anything chosen.
         while True:
-            if closes(branch):
+            if closes(pending):
                 node["status"] = "closed"
                 return node
             nxt = None
@@ -173,7 +188,7 @@ def build_tree(roots: list[Node], atoms: list[str]) -> dict:
                 branch.append(show(r))
                 pending.append(r)
 
-        if closes(branch):
+        if closes(pending):
             node["status"] = "closed"
             return node
 

@@ -29,6 +29,7 @@ be offered a second time). The reason column says which.
 | 2026-08-30 | `(p&q)&∼p` (inventory name: "contradiction") | Not skipped — imported as `conjunction-with-its-own-negation`, but reshaped as `(p&q)&∼p ⊢ ⊥` rather than the bare `⊨ (p&q)&∼p` reading `split_sequent` gives a turnstile-free row by default. The row's own annotation names the derivation target directly — **ND untouched (`⊢ND ⊥` in 4 lines)** — which only makes sense if the goal is `⊥`, not the formula; §11c calls this the author's judgement to make. Logged so the row is not re-offered under a shape the database does not carry. |
 | 2026-08-30 | `p≡q ≡ ∼(∼p∨∼q)∨∼(p∨q)` (locus PS2.4c) | Duplicates `biconditional-as-agreement` already in the database, which carries this exact claim from this exact locus (`(p = q) = (~(~p \| ~q) \| ~(p \| q))`). The row is genuinely ambiguous unbracketed — `≡` is right-associative in `split_sequent`, so the raw row parses as `p ≡ (q ≡ X)` rather than the intended `(p ≡ q) ≡ X` — and the queue's shape-based dedup does not see through that, offering the row again under the wrong bracketing. It is the same form under the reading the course actually poses. |
 | 2026-08-30 | `p≡q, p≡∼q ⊢ ∼p` (OLD-PS3 Q11) | Same unsatisfiable premise pair as `vacuous-validity-unsat-premises` already in the database (`p = q, p = ~q`), differing only in the arbitrary conclusion drawn from the contradiction (`∼p` here, `r` there) — the inventory's own note calls it "the tree version of our PS2.2d table item", i.e. the identical lesson in a different method, not a different form. Importing it would restate `vacuous-validity-unsat-premises` under a second conclusion letter rather than teach anything new. |
+| 2026-08-31 | `⊢ (p ⊃ q) ∨ (p ⊃ r)` (CLI-106, comprehensive §1 rank 5) | No philosopher or champion named in the row, unlike its rank-4 and rank-6 neighbours (van Fraassen, Aristotle) — its own cell only compares it to the course's own *valid* twin `⊢ (q⊃p) ∨ (p⊃r)` (L11/PS5.6) and calls it "the near-miss". §11d's fallback for an unclear SEP article is to name the philosopher the row itself names; here none is named, and §1 carries no `sep` line either, so there is nothing to attribute this to. `appearances_pending` is not a substitute — §13.1 marks that flag as an exception specific to the imports inventory's §3, not a general escape from having a source. Left for a person with a library to find an actual champion, or to import once one turns up; the other three rows from this position in the queue (CLI-107, 108, 109) all name one and are imported this firing. |
 
 ## Resolved
 
@@ -607,3 +608,118 @@ empty; none of the three appearances is a course appearance, so none
 needed it. Comprehensive queue: 111 candidates left of 274 (72 now in the
 database, 3 quarantined, 82 unreadable, 6 settled). Course and imports
 queues untouched this firing (both already empty) and remain at 0.
+
+**2026-08-31, second `comprehensive`-source firing.** Course and imports
+queues re-confirmed empty; continued the Comprehensive Logic Inventory
+where the last firing left off, still §1 ("THE VOID"), still no `sep`
+line. Took `--next 4` rather than 3, since the row at position 0
+(CLI-106) turned out to have no named champion — logged above, in the
+skip table, rather than imported.
+
+- **`aristotle-second-thesis`** (CLI-107, `⊢ ∼((p⊃(q&r)) & (∼p⊃(q&r)))`).
+  The row names "Aristotle's Second Thesis" directly. Fetched SEP's
+  *Connexive Logic* article (Wansing) to confirm the exact schema and its
+  source rather than guess: it gives `∼((A→B) ∧ (∼A→B))`, attributes the
+  label to McCall (2012), and cites *Prior Analytics* II.4, 57b3–14 — the
+  same passage that grounds Aristotle's Thesis proper. This instance's
+  schema matches exactly, substituting `q & r` for the bare consequent, so
+  the appearance names Aristotle directly (`work: "Prior Analytics (per
+  Storrs McCall's reading)"`, `locus: "II.4, 57b3–14"`, `url: null`) —
+  not the SEP article, per §11d's rule for a section with no `sep` line.
+  Countermodel count (2 of 8) matches the row exactly.
+- **`abelard-first-principle`** (CLI-108,
+  `⊢ ∼(((p∨q)⊃r) & ((p∨q)⊃∼r))`). The row names "Abelard's First
+  Principle". Same SEP article gives `∼((A→B) ∧ (A→∼B))` for this one,
+  attributes it (via Martin 2004) to Abelard's *Dialectica*, and notes
+  Routley and Angell later gave the same schema other names without
+  crediting him. Confirmed Martin's actual citation independently
+  (Christopher J. Martin, "Logic", in *The Cambridge Companion to
+  Abelard*, 2004, pp. 158–199) rather than take the SEP article's word for
+  it, since that citation — not the SEP page — is what the appearance
+  names, again per §11d. No precise page-in-*Dialectica* locus was found
+  for this specific principle, so the citation stops at Martin's chapter
+  rather than inventing one. Countermodel count (2 of 8) matches.
+- **`boethius-nested-consequent`** (CLI-109, `p⊃(q⊃r) ⊢ ∼(p⊃(q⊃∼r))`).
+  The row's own description is "Boethius nested one level", but checked
+  the claim rather than passed it through: a genuine nested instance of
+  Boethius' Thesis would negate the inner conditional outright
+  (`∼(q⊃r)`), and this row instead flips only its consequent (`q⊃∼r`) —
+  a different formula, not a substitution instance of the theorem already
+  in the database as `boethius-thesis`. Imported it anyway, since the row
+  does name Boethius and the file's own closing note on §1 groups CLI-109
+  with CLI-102 and CLI-108 under "vacuous truth is the culprit" — but
+  `type: "discussed"` rather than `"used"`, and both `interest` and
+  `course.note` say plainly that this is a cousin, not a literal
+  instance, so no connexive-logic verdict is claimed for it (unlike the
+  other two, which are exact substitution instances and do stay theorems
+  under a connexive reading). Countermodel count (6 of 8) matches.
+
+**A real bug in `derive.py` surfaced while checking `aristotle-second-
+thesis`, not something specific to this import.** Its truth table came
+back invalid (2 countermodels), but its tableau came back fully closed —
+tree and table disagreeing about the same entry. Traced it to `closes()`
+(then at line 134): it detected a branch contradiction by string surgery
+— "does some formula on the branch start with `∼`, and if so is the rest
+of that string, after dropping the first character, also on the branch"
+— rather than by checking, structurally, whether one formula's main
+connective is negation over another. `∼p ⊃ (q & r)` renders as a string
+starting with `∼` purely because its *antecedent* is a negated atom; its
+main connective is `⊃`, and it is not the negation of `p ⊃ (q & r)`. With
+both on the same branch (from `&`-splitting the assumed conjunction), the
+old check closed the branch on a false contradiction — reporting the
+theorem *valid* by tree while it is *invalid* by table, and invalid in
+fact (2 real countermodels). Rewrote `closes()` to take the branch's
+parsed `Node`s instead of `show()`-rendered strings, and to check each
+formula's actual top-level connective against `negate()` of the others,
+rather than truncate the string. Verified three ways before trusting it:
+`derive.py --check` still reproduces all existing entries; a fresh scan
+comparing `derive()`'s table verdict against its own tree verdict across
+all 131 entries (128 existing plus the three new) turned up zero
+mismatches, where it had found exactly one (`aristotle-second-thesis`)
+before the fix; and `aristotle-second-thesis`'s tree, rebuilt after the
+fix, now opens on exactly the two rows the table already gave as
+countermodels. No other of the 128 pre-existing entries was affected —
+the bug needed a conditional with a negated-atom antecedent sitting
+alongside the same conditional's unnegated form on one branch, a shape
+that happens to be exactly what `aristotle-second-thesis` decomposes
+into and that nothing already in the database triggers.
+
+Neither `abelard-first-principle` (antecedent a disjunction) nor
+`boethius-nested-consequent` (no negated-atom antecedent at the point
+where its branches split) triggers the shape the bug needed, so both
+were already correct on the first `derive()` call and are unchanged by
+the fix, beyond being re-embedded for consistency —
+`boethius-nested-consequent`'s tree was `hard` (9 rule applications) in
+both the pre-fix and post-fix run. Only `aristotle-second-thesis`
+moved: from the bug's spurious `easy` (tree fully closed, nothing left
+to explore) to the correct `hard` (8 applications, 3 open branches) —
+`build.py --write`'s difficulty diff printed exactly that one change and
+nothing else.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+reinstalled the same `texlive-*`/`dvisvgm` package list as every prior
+firing via `apt-get` (two unrelated packages, `mesa` and `ruby3.2`,
+404'd from the mirror and were left uninstalled — neither is on the
+package list this project needs, and `latex`/`dvisvgm` both resolved
+afterward).
+
+`build.py --write` (three entries normalised, atoms already legal so no
+renames; the one difficulty note was `aristotle-second-thesis`'s tree
+score correcting itself post-fix, above), `python3 difficulty.py --diff`
+(2 differ, both pre-existing overrides already explained in
+`course.note` — `double-negation-elimination` and
+`de-morgan-disjunction-easy` — nothing from this firing), `svg.py` (9 new
+SVGs on the first pass, 1 more — `aristotle-second-thesis`'s tree — after
+the `derive.py` fix and re-embed), `svg.py --check` (every SVG current),
+`inventory.py --locks` (0 practicable methods locked), `manifest.py
+--check-merge` (131 entries, 128 expected from the merge parents plus 3
+new, nothing lost — the branch was already up to date with `main`, no
+merge to resolve this firing), and `node --test "_tests/*.test.mjs"`
+(513/513) all clean. `extremely hard` count unchanged at 4 of 4 (nd) —
+all three new entries are invalid and carry no `nd` score. `git diff
+--name-only origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty; none of the three appearances is a course appearance, so
+none needed it. Comprehensive queue: 107 candidates left of 274 (75 now
+in the database, 3 quarantined, 82 unreadable, 7 settled — CLI-106 newly
+logged above). Course and imports queues untouched this firing (both
+already empty) and remain at 0.
