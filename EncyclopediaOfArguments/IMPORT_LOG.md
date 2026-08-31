@@ -1597,3 +1597,81 @@ texlive-fonts-recommended`) needed `--fix-missing` after two unrelated 404s
 the first attempt; the retry installed cleanly and both `latex` and `dvisvgm`
 resolved. The `session-start-hook` suggestion from every prior firing's note
 is still open.
+
+**2026-08-31, `comprehensive`-source firing: the six-row exercise, three more
+rows.** Course and imports queues both confirmed empty again
+(`inventory.py --status`, `--status --source imports`). `inventory.py --next 3
+--source comprehensive` gave the next three rows of §3.8's own "forms that
+separate them" table, continuing straight on from the pair (`bivalence-schema`,
+`no-gluts`) the previous comprehensive firing took from the same eight-row
+table — checked against the inventory file directly (line 1731 onward) rather
+than assumed, since the file's own prose says "six rows" while the table prints
+eight; the four already accounted for (`excluded-middle`, `non-contradiction`
+pre-existing; `bivalence-schema`, `no-gluts` from the last firing) plus the
+three taken this firing leave exactly one row of the table still queued (the
+"Gaps + Gluts = Bivalence" row), for a future firing.
+
+`bivalence-not-from-lem` (`p∨∼p ⊢ Tp∨Fp`, **invalid**) is `bivalence-schema`
+with the theorem `p∨∼p` bolted on as a premise — checked with `derive.py`
+before writing that the premise is genuinely idle (`premise_analysis` marks it
+so, and the countermodel count stays at what `bivalence-schema` alone carries,
+just once per value of `p`), which is exactly the inventory row's own point:
+excluded middle does not hand you bivalence. No derivation needed (invalid);
+`nd.note` says where the attempt breaks down, the same wall `bivalence-schema`
+already hits.
+
+`convention-t-gives-bivalence` (`Tp≡p, Fp≡∼p ⊢ Tp∨Fp`, **valid**) is the
+sequent `bivalence-schema`'s own `interest` field already named, from the
+previous firing, as the fix for its missing connection — written now and
+checked directly rather than left as a forward reference. The derivation
+cannot eliminate either premise directly (neither names `p∨∼p`), so excluded
+middle has to be proved first as an undictated lemma (`excluded-middle`'s own
+ten lines, reused verbatim as the opening of a 19-line proof) before a case
+split lets `BicondE` read off `t_p` or `f_p` in each branch.
+
+`bivalence-is-no-gap` (`(Tp∨Fp)≡∼(∼Tp&∼Fp)`, **valid**) is a near-duplicate
+caught by the required search before writing: both sides of
+`de-morgan-disjunction`'s own theorem (`∼(p∨q)≡(∼p&∼q)`) negated once, atoms
+renamed — logically the identical theorem, since `A≡B` and `∼A≡∼B` always
+agree — so `looks_like: de-morgan-disjunction` rather than a bare import, and
+`interest` says how they relate rather than repeating the table. First
+draft of `interest` called this transformation "doubly negated", which is
+wrong (a single negation of each side, one of which happens to cancel against
+the left side's own pre-existing negation) and contradicts the correct rule
+stated one clause later in the same sentence — caught on the §7a re-read
+before committing, not by any test, and fixed. The 27-line derivation is the
+same shape as `de-morgan-disjunction`'s own proof, one level removed (the
+outer premise is the disjunction itself rather than a separate premise about
+it).
+
+All three reuse `bivalence-schema`'s already-verified SEP appearance (Shramko
+& Wansing, "Truth Values", quote checked against the live page by the prior
+firing) rather than re-fetching, since all three continue the same §3.8
+discussion the quote is drawn from.
+
+Every `difficulty.nd` scored by hand against §14.3 before checking: both valid
+proofs hit all five triggers (`∨E`, an undictated reductio, nesting, four or
+more subproofs, more than ten derived lines) but fall short of the 29-line
+`extremely hard` floor (19 and 27 lines) — `hard`, confirmed by
+`python3 difficulty.py --diff` printing "0 scores differ from the rubric"
+after `build.py --write`. `extremely hard` (nd) count unchanged at 4 of 4.
+
+`build.py --write` (three entries normalised — no atom renaming needed, since
+this firing wrote `t_p`/`f_p` directly rather than relying on the `Tp`/`Fp`
+auto-rename the previous firing used; two proof profiles recomputed from
+`proofs.py` and matched what was authored), `difficulty.py --diff` (clean, 0
+differ, both before and after the `interest` wording fix), `svg.py` (11 SVGs:
+table and tree for all three, plus `nd` for the two valid ones), `svg.py
+--check` (every SVG current), `inventory.py --locks` (0 practicable methods
+locked — none of the three carries a `problem_set`; comprehensive is not a
+practice lock at all per §11d), `manifest.py --check-merge` (160 entries, 157
+expected from the merge parents, nothing lost), and `node --test
+"_tests/*.test.mjs"` (513/513) all clean. Comprehensive queue: 58 candidates
+left of 274 (102 now in the database, 3 quarantined, 82 unreadable, 29
+settled). Course and imports queues remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**;
+`apt-get install --fix-missing` of the same package list every prior firing
+has recorded resolved it after the same two unrelated 404s
+(`libegl-mesa0`, `ruby3.2`) on the first attempt. The `session-start-hook`
+suggestion from every prior firing's note is still open.

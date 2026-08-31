@@ -2145,3 +2145,69 @@ PROOFS["consensus-theorem"] = [
     _l(27, "(((p & q) | (~p & r)) | (q & r)) = ((p & q) | (~p & r))",
        "BicondI", 0, subs=[[1, 24], [25, 26]]),
 ]
+
+# ------------------------------------------------------- convention-t-gives-bivalence
+# `t_p, f_p` are opaque; nothing connects them to `p` except the two premises.
+# Excluded middle is not among them, so it is proved first as an undictated
+# lemma (`excluded-middle`'s own ten lines, shifted two for the premises), then
+# split by cases: each case names `p` or `~p` directly, and `BicondE` against
+# the matching premise reads off `t_p` or `f_p` outright.
+PROOFS["convention-t-gives-bivalence"] = [
+    P(1, "t_p = p"),
+    P(2, "f_p = ~p"),
+    _l(3, "~(p | ~p)", "As", 1),
+    _l(4, "p", "As", 2),
+    _l(5, "p | ~p", "DisjI", 2, [4]),
+    _l(6, "!", "FalsumI", 2, [5, 3]),
+    _l(7, "~p", "NegI", 1, subs=[[4, 6]]),
+    _l(8, "p | ~p", "DisjI", 1, [7]),
+    _l(9, "~(p | ~p)", "Reit", 1, [3]),
+    _l(10, "!", "FalsumI", 1, [8, 9]),
+    _l(11, "~~(p | ~p)", "NegI", 0, subs=[[3, 10]]),
+    _l(12, "p | ~p", "NegE", 0, [11]),
+    _l(13, "p", "As", 1),
+    _l(14, "t_p", "BicondE", 1, [1, 13]),
+    _l(15, "t_p | f_p", "DisjI", 1, [14]),
+    _l(16, "~p", "As", 1),
+    _l(17, "f_p", "BicondE", 1, [2, 16]),
+    _l(18, "t_p | f_p", "DisjI", 1, [17]),
+    _l(19, "t_p | f_p", "DisjE", 0, [12], subs=[[13, 15], [16, 18]]),
+]
+
+# ------------------------------------------------------------- bivalence-is-no-gap
+# `de-morgan-disjunction` itself, one level up: both sides of `~(p|q)=(~p&~q)`
+# doubly negated (which preserves the biconditional, since `A=B` and `~A=~B`
+# always agree) and the atoms renamed to the opaque `t_p`/`f_p` pair. The proof
+# is the identical shape, not merely the identical theorem: -> assumes the
+# disjunction and refutes the negated conjunction by cases on it; <- assumes
+# the negated goal, extracts `~t_p` and `~f_p` each by a dictated reductio, and
+# collides their conjunction with the premise.
+PROOFS["bivalence-is-no-gap"] = [
+    _l(1, "t_p | f_p", "As", 1),
+    _l(2, "~t_p & ~f_p", "As", 2),
+    _l(3, "~t_p", "ConjE", 2, [2]),
+    _l(4, "~f_p", "ConjE", 2, [2]),
+    _l(5, "t_p", "As", 3),
+    _l(6, "t_p", "Reit", 3, [5]),
+    _l(7, "!", "FalsumI", 3, [6, 3]),
+    _l(8, "f_p", "As", 3),
+    _l(9, "f_p", "Reit", 3, [8]),
+    _l(10, "!", "FalsumI", 3, [9, 4]),
+    _l(11, "!", "DisjE", 2, [1], subs=[[5, 7], [8, 10]]),
+    _l(12, "~(~t_p & ~f_p)", "NegI", 1, subs=[[2, 11]]),
+    _l(13, "~(~t_p & ~f_p)", "As", 1),
+    _l(14, "~(t_p | f_p)", "As", 2),
+    _l(15, "t_p", "As", 3),
+    _l(16, "t_p | f_p", "DisjI", 3, [15]),
+    _l(17, "!", "FalsumI", 3, [16, 14]),
+    _l(18, "~t_p", "NegI", 2, subs=[[15, 17]]),
+    _l(19, "f_p", "As", 3),
+    _l(20, "t_p | f_p", "DisjI", 3, [19]),
+    _l(21, "!", "FalsumI", 3, [20, 14]),
+    _l(22, "~f_p", "NegI", 2, subs=[[19, 21]]),
+    _l(23, "~t_p & ~f_p", "ConjI", 2, [18, 22]),
+    _l(24, "!", "FalsumI", 2, [23, 13]),
+    _l(25, "~~(t_p | f_p)", "NegI", 1, subs=[[14, 24]]),
+    _l(26, "t_p | f_p", "NegE", 1, [25]),
+    _l(27, "(t_p | f_p) = ~(~t_p & ~f_p)", "BicondI", 0, subs=[[1, 12], [13, 26]]),
+]

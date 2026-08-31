@@ -155,3 +155,6 @@ addition-converse
 distribution-botched
 bivalence-schema
 no-gluts
+bivalence-not-from-lem
+convention-t-gives-bivalence
+bivalence-is-no-gap
