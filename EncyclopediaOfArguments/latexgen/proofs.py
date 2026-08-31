@@ -1879,3 +1879,51 @@ PROOFS["double-negated-excluded-middle"] = [
     _l(8, "!", "FalsumI", 1, [6, 7]),
     _l(9, "~~(p | ~p)", "NegI", 0, subs=[[1, 8]]),
 ]
+
+# ------------------------------------------------------------- incompatibility-swap
+# CondE on the assumed antecedent, straight into the outer assumption -- both
+# reductios sit on negation goals, so neither is undictated even though the
+# blunt uses_indirect_proof heuristic flags one as such.
+PROOFS["incompatibility-swap"] = [
+    P(1, "p > ~q"),
+    _l(2, "q", "As", 1),
+    _l(3, "p", "As", 2),
+    _l(4, "~q", "CondE", 2, [1, 3]),
+    _l(5, "!", "FalsumI", 2, [2, 4]),
+    _l(6, "~p", "NegI", 1, subs=[[3, 5]]),
+    _l(7, "q > ~p", "CondI", 0, subs=[[2, 6]]),
+]
+
+# ---------------------------------------------------- triple-negation-elimination
+# Two nested NegI's and nothing else -- the last negation is never stripped,
+# only the outer pair, which is exactly what stays available intuitionistically.
+PROOFS["triple-negation-elimination"] = [
+    P(1, "~~~p"),
+    _l(2, "p", "As", 1),
+    _l(3, "~p", "As", 2),
+    _l(4, "~p", "Reit", 2, [3]),
+    _l(5, "!", "FalsumI", 2, [2, 4]),
+    _l(6, "~~p", "NegI", 1, subs=[[3, 5]]),
+    _l(7, "!", "FalsumI", 1, [6, 1]),
+    _l(8, "~p", "NegI", 0, subs=[[2, 7]]),
+]
+
+# --------------------------------------------------------- de-morgan-conjunction-easy
+# The easy half of the De Morgan pair: ∨E on the premise, one short reductio
+# per disjunct, no NegE. Its converse -- still in the imports queue -- is the
+# one Restall calls "the hard De Morgan" for needing exactly the rule this
+# proof avoids.
+PROOFS["de-morgan-conjunction-easy"] = [
+    P(1, "~p | ~q"),
+    _l(2, "p & q", "As", 1),
+    _l(3, "~p", "As", 2),
+    _l(4, "~p", "Reit", 2, [3]),
+    _l(5, "p", "ConjE", 2, [2]),
+    _l(6, "!", "FalsumI", 2, [5, 4]),
+    _l(7, "~q", "As", 2),
+    _l(8, "~q", "Reit", 2, [7]),
+    _l(9, "q", "ConjE", 2, [2]),
+    _l(10, "!", "FalsumI", 2, [9, 8]),
+    _l(11, "!", "DisjE", 1, [1], subs=[[3, 6], [7, 10]]),
+    _l(12, "~(p & q)", "NegI", 0, subs=[[2, 11]]),
+]

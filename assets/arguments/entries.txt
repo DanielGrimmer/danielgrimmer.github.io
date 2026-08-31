@@ -118,3 +118,6 @@ exportation-reordered
 double-negation-elimination
 contraposition-recovered
 double-negated-excluded-middle
+incompatibility-swap
+triple-negation-elimination
+de-morgan-conjunction-easy
