@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 171,
+ "count": 183,
  "entries": [
   {
    "id": "ex-falso",
@@ -82586,6 +82586,942 @@
     "premises": [],
     "conclusion": "(p ≡ (p ⊃ q)) ≡ (p & q)",
     "sequent": "⊨ (p ≡ (p ⊃ q)) ≡ (p & q)"
+   }
+  },
+  {
+   "id": "curry-antecedent",
+   "cli_ref": "—",
+   "names": [
+    "Curry entails its own antecedent",
+    "Half of Curry's sequent, stopped early"
+   ],
+   "premises": [
+    "p = (p > q)"
+   ],
+   "conclusion": "p",
+   "interest": "`curry-sequent`'s seven-line proof reaches this conclusion at line six, one step before its own last line goes on to detach `q` -- so this entry is that proof stopped early, and the point it isolates is worth stopping for on its own. The reductio-free route runs entirely through `p`: assuming `p`, the biconditional hands back `p⊃q` (`≡E`), and closing that subproof discharges it as a standing `⊃I`; the *same* biconditional then reads that discharged conditional back into `p` -- no negation, no case split, in six lines. So whatever `q` says -- rain tomorrow, `1=0`, anything at all -- a Curry sentence that promises it makes *itself* true before it ever makes good on the promise. `curry-is-conjunction` says the same thing truth-functionally: the one row where the biconditional holds already has `p=T`.",
+   "english": [
+    {
+     "gloss": "Let C be the sentence 'if this very sentence is true, then it will rain tomorrow.' Whatever the weather turns out to be, C itself is true.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Lionel Shapiro & Jc Beall",
+     "work": "Curry's Paradox",
+     "locus": "SEP, the half of the paradox Curry (1942) originated that the biconditional forces on its own",
+     "url": "https://plato.stanford.edu/entries/curry-paradox/"
+    }
+   ],
+   "looks_like": "curry-sequent",
+   "tags": {
+    "topic": [
+     "paradox",
+     "self-reference",
+     "structural rules"
+    ],
+    "defect": [],
+    "figure": [
+     "Curry"
+    ],
+    "nonclassical": [
+     "contraction-free-blocks"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.1 (CLI-504), champion via the same SEP article as curry-sequent. Teach directly after curry-sequent: the identical six lines, stopped one line early, isolating the fact that the biconditional forces p regardless of what q says.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "mechanically available from Lecture 10 -- ≡E, ⊃I, ⊃E only, no reductio -- same rule inventory as curry-sequent"
+    }
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p = (p > q)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 3,
+      "f": "p > q",
+      "rule": "BicondE",
+      "depth": 1,
+      "cites": [
+       1,
+       2
+      ]
+     },
+     {
+      "n": 4,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       3,
+       2
+      ]
+     },
+     {
+      "n": 5,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        2,
+        4
+       ]
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p",
+      "rule": "BicondE",
+      "depth": 0,
+      "cites": [
+       1,
+       5
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Bicond (p\\Cond q)}\n\\open\n\\hypo{2}{p}\n\\have{3}{p\\Cond q}\\by{\\BicondE}{1,2}\n\\have{4}{q}\\by{\\CondE}{3,2}\n\\close\n\\have{5}{p\\Cond q}\\by{\\CondI}{2,4}\n\\have{6}{p}\\by{\\BicondE}{1,5}\n\\end{nd}\n\\end{align*}",
+    "lines": 6,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "BicondE",
+     "CondE",
+     "CondI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p ≡ (p ⊃ q)",
+     "p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Bicond (p\\Cond q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Bicond (p\\Cond q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Bicond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "p ≡ (p ⊃ q)",
+     "∼p"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "p",
+         "from": "p ≡ (p ⊃ q)",
+         "rule": "≡"
+        },
+        {
+         "formula": "p ⊃ q",
+         "from": "p ≡ (p ⊃ q)",
+         "rule": "≡"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "p ≡ (p ⊃ q)",
+         "rule": "≡"
+        },
+        {
+         "formula": "∼(p ⊃ q)",
+         "from": "p ≡ (p ⊃ q)",
+         "rule": "≡"
+        },
+        {
+         "formula": "p",
+         "from": "∼(p ⊃ q)",
+         "rule": "∼⊃"
+        },
+        {
+         "formula": "∼q",
+         "from": "∼(p ⊃ q)",
+         "rule": "∼⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ≡ (p ⊃ q)",
+     "branch_rule": "≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 2,
+    "branch_depth": 1,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Bicond (p\\Cond q)$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg p$} [.{$p$ \\\\ $p\\Cond q$ \\\\ x} ] [.{$\\Neg p$ \\\\ \\ckpad $\\Neg (p\\Cond q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg q$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p = (p > q)",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 2
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 1,
+    "connectives": [
+     "biconditional",
+     "conditional"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 6,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 2,
+    "tree_branch_depth": 1,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "p ≡ (p ⊃ q)"
+    ],
+    "conclusion": "p",
+    "sequent": "p ≡ (p ⊃ q)  ⊨ p"
+   }
+  },
+  {
+   "id": "curry-implicational",
+   "cli_ref": "—",
+   "names": [
+    "Curry's paradox, pure implicational fragment",
+    "Curry's biconditional split into two conditionals"
+   ],
+   "premises": [
+    "p > (p > q)",
+    "(p > q) > p"
+   ],
+   "conclusion": "q",
+   "interest": "Split the Curry biconditional `p ≡ (p⊃q)` into its two directions and hand them over as separate premises, and `curry-sequent`'s negation-free proof survives untouched -- not one line calls on `≡`, because there is no `≡` left to call on. It is the same two-premise skeleton `curry-complete` already exploits, minus `curry-complete`'s third premise `p⊃q` relaying the result to a fresh atom: here the derivation goes straight for `q`, the very atom the first premise already names, so `p⊃(p⊃q)` does double duty as both the contraction step and the statement of what gets proved. Two premises, two atoms, and the pure `{⊃}` fragment of positive logic is already enough to trivialise -- which is exactly Shapiro & Beall's point that the paradox needs no negation and no disjunction, only `⊃` used twice on the one formula. Neither half is enough alone: `curry-w-axiom-alone` is this entry's first premise by itself, refutable at `p=F,q=F`.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Lionel Shapiro & Jc Beall",
+     "work": "Curry's Paradox",
+     "locus": "SEP, the paradox Curry (1942) originated, in its pure implicational form",
+     "url": "https://plato.stanford.edu/entries/curry-paradox/"
+    }
+   ],
+   "looks_like": "curry-complete",
+   "tags": {
+    "topic": [
+     "paradox",
+     "self-reference",
+     "structural rules"
+    ],
+    "defect": [],
+    "figure": [
+     "Curry"
+    ],
+    "nonclassical": [
+     "contraction-free-blocks"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.1 (CLI-505), champion via the same SEP article as curry-complete. Best taught beside curry-w-axiom-alone: together they show which of the two premises is load-bearing and which is decoration.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "mechanically available from Lecture 10 -- same rule inventory as curry-complete, one premise fewer"
+    }
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p > (p > q)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "(p > q) > p",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "p",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 4,
+      "f": "p > q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       4,
+       3
+      ]
+     },
+     {
+      "n": 6,
+      "f": "p > q",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        3,
+        5
+       ]
+      ]
+     },
+     {
+      "n": 7,
+      "f": "p",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       2,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "q",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       6,
+       7
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p\\Cond (p\\Cond q)}\n\\hypo{2}{(p\\Cond q)\\Cond p}\n\\open\n\\hypo{3}{p}\n\\have{4}{p\\Cond q}\\by{\\CondE}{1,3}\n\\have{5}{q}\\by{\\CondE}{4,3}\n\\close\n\\have{6}{p\\Cond q}\\by{\\CondI}{3,5}\n\\have{7}{p}\\by{\\CondE}{2,6}\n\\have{8}{q}\\by{\\CondE}{6,7}\n\\end{nd}\n\\end{align*}",
+    "lines": 8,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p ⊃ (p ⊃ q)",
+     "(p ⊃ q) ⊃ p",
+     "q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Cond (p\\Cond q) \\qquad (p\\Cond q)\\Cond p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\qquad \\uv{(p\\Cond q)\\Cond p}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{F} \\qquad \\uv{(p\\Cond q)\\Cond p}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\qquad \\uv{(p\\Cond q)\\Cond p}{F} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\qquad \\uv{(p\\Cond q)\\Cond p}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Cond (p\\Cond q) \\qquad (p\\Cond q)\\Cond p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\qquad \\uv{(p\\Cond q)\\Cond p}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{F} \\qquad \\uv{(p\\Cond q)\\Cond p}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\qquad \\uv{(p\\Cond q)\\Cond p}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "p ⊃ (p ⊃ q)",
+     "(p ⊃ q) ⊃ p",
+     "∼q"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "p ⊃ (p ⊃ q)",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼(p ⊃ q)",
+           "from": "(p ⊃ q) ⊃ p",
+           "rule": "⊃"
+          },
+          {
+           "formula": "p",
+           "from": "∼(p ⊃ q)",
+           "rule": "∼⊃"
+          },
+          {
+           "formula": "∼q",
+           "from": "∼(p ⊃ q)",
+           "rule": "∼⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "p",
+           "from": "(p ⊃ q) ⊃ p",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "(p ⊃ q) ⊃ p",
+       "branch_rule": "⊃"
+      },
+      {
+       "added": [
+        {
+         "formula": "p ⊃ q",
+         "from": "p ⊃ (p ⊃ q)",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼(p ⊃ q)",
+           "from": "(p ⊃ q) ⊃ p",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "p",
+           "from": "(p ⊃ q) ⊃ p",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼p",
+             "from": "p ⊃ q",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "q",
+             "from": "p ⊃ q",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "p ⊃ q",
+         "branch_rule": "⊃"
+        }
+       ],
+       "status": null,
+       "branched_on": "(p ⊃ q) ⊃ p",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ⊃ (p ⊃ q)",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 5,
+    "branch_depth": 3,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Cond (p\\Cond q)$\\quad\\checkmark \\\\ \\ckpad $\\qquad (p\\Cond q)\\Cond p$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg q$} [.{$\\Neg p$} [.{\\ckpad $\\Neg (p\\Cond q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p$ \\\\ $\\Neg q$ \\\\ x} ] [.{$p$ \\\\ x} ] ] [.{\\ckpad $p\\Cond q$\\quad\\checkmark} [.{\\ckpad $\\Neg (p\\Cond q)$\\quad\\checkmark \\\\ x} ] [.{$p$} [.{$\\Neg p$ \\\\ x} ] [.{$q$ \\\\ x} ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p > (p > q)",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "(p > q) > p",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 2,
+    "connectives": [
+     "conditional"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 11,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 5,
+    "tree_branch_depth": 3,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "p ⊃ (p ⊃ q)",
+     "(p ⊃ q) ⊃ p"
+    ],
+    "conclusion": "q",
+    "sequent": "p ⊃ (p ⊃ q), (p ⊃ q) ⊃ p  ⊨ q"
+   }
+  },
+  {
+   "id": "curry-w-axiom-alone",
+   "cli_ref": "—",
+   "names": [
+    "The Curry W axiom alone is harmless",
+    "One half of Curry's implicational fragment, refuted"
+   ],
+   "premises": [
+    "p > (p > q)"
+   ],
+   "conclusion": "q",
+   "interest": "This is `curry-implicational`'s first premise, alone, and the tree stays open: a false `p` makes `p⊃(p⊃q)` vacuously true whatever `q` is, so the countermodel is `p=F,q=F`. `curry-implicational` supplies the missing half, `(p⊃q)⊃p`, and the two together derive `q` outright -- so the moral is the same one `curry-contraction-only` draws by a different route: contraction alone does not produce Curry's paradox, it needs the fixed point too. That entry demonstrates the point with an explicit contraction-elimination premise bolted onto a `c/p/q` skeleton; this one isolates it with nothing but the bare self-implication schema itself, which is what the inventory calls 'the W axiom' -- `Wxy = xyy` read as a conditional, `p` implying its own implying of `q`.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "discussed",
+     "fidelity": "our reconstruction",
+     "who": "Lionel Shapiro & Jc Beall",
+     "work": "Curry's Paradox",
+     "locus": "SEP, the contraction half of the paradox Curry (1942) originated, shown insufficient alone",
+     "url": "https://plato.stanford.edu/entries/curry-paradox/"
+    }
+   ],
+   "looks_like": "curry-contraction-only",
+   "tags": {
+    "topic": [
+     "paradox",
+     "self-reference",
+     "structural rules"
+    ],
+    "defect": [
+     "missing premise"
+    ],
+    "figure": [
+     "Curry"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.1 (CLI-506) -- no course locus. Pairs with curry-implicational: run this one first as the open tree, then add the second premise and watch it close.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": null,
+     "note": "invalid; no derivation"
+    }
+   },
+   "difficulty": {
+    "nd": null,
+    "table": "easy",
+    "tree": "easy",
+    "search_sharpness": 0.25
+   },
+   "nd": {
+    "exists": false,
+    "note": "No derivation exists. `p⊃(p⊃q)` licenses `p⊃q` -- and then `q` -- only once `p` is independently in hand, and nothing here supplies it: the countermodel `p=F,q=F` witnesses this directly, since a false antecedent makes the whole conditional vacuously true whatever `q` is. `curry-implicational` supplies the missing piece."
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "p ⊃ (p ⊃ q)",
+     "q"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": true,
+      "countermodel": true
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Cond (p\\Cond q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\qquad q \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p\\Cond (p\\Cond q) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{T} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{F} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{T} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{q}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\qquad \\uv{q}{F} \\quad$ & $\\quad \\uv{p\\Cond (p\\Cond q)}{T} \\quad$ & $\\quad \\uv{q}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": false,
+    "rows": 4,
+    "premise_true_rows": 3,
+    "countermodel_count": 1,
+    "countermodels": [
+     {
+      "p": "F",
+      "q": "F"
+     }
+    ],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "p ⊃ (p ⊃ q)",
+     "∼q"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼p",
+         "from": "p ⊃ (p ⊃ q)",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "open",
+       "model": {
+        "p": "F",
+        "q": "F"
+       },
+       "unconstrained": []
+      },
+      {
+       "added": [
+        {
+         "formula": "p ⊃ q",
+         "from": "p ⊃ (p ⊃ q)",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p",
+           "from": "p ⊃ q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "open",
+         "model": {
+          "p": "F",
+          "q": "F"
+         },
+         "unconstrained": []
+        },
+        {
+         "added": [
+          {
+           "formula": "q",
+           "from": "p ⊃ q",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "p ⊃ q",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "p ⊃ (p ⊃ q)",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 2,
+    "closed_branches": 1,
+    "branch_depth": 2,
+    "branch_models": [
+     {
+      "p": "F",
+      "q": "F"
+     },
+     {
+      "p": "F",
+      "q": "F"
+     }
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad p\\Cond (p\\Cond q)$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg q$} [.{$\\Neg p$ \\\\ o} ] [.{\\ckpad $p\\Cond q$\\quad\\checkmark} [.{$\\Neg p$ \\\\ o} ] [.{$q$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p > (p > q)",
+     "index": 0,
+     "load_bearing": false,
+     "idle": false,
+     "countermodels_without_it": 2
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 1,
+    "connectives": [
+     "conditional"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 6,
+    "table_rows": 4,
+    "tree_open_branches": 2,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 2,
+    "countermodel_count": 1,
+    "premise_true_rows": 3,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "p ⊃ (p ⊃ q)"
+    ],
+    "conclusion": "q",
+    "sequent": "p ⊃ (p ⊃ q)  ⊭ q"
    }
   }
  ],

@@ -178,3 +178,6 @@ deontic-exhaustion
 deontic-no-gaps
 curry-conditional
 curry-is-conjunction
+curry-antecedent
+curry-implicational
+curry-w-axiom-alone

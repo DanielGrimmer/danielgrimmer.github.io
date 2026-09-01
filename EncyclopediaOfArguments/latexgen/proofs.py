@@ -1775,6 +1775,33 @@ PROOFS["curry-is-conjunction"] = [
     _l(19, "(p = (p > q)) = (p & q)", "BicondI", 0, subs=[[1, 8], [9, 18]]),
 ]
 
+# ----------------------------------------------------- curry-antecedent
+# curry-sequent's own first six lines, stopped before its last CondE: the
+# biconditional forces p on its own, before q is ever detached from it.
+PROOFS["curry-antecedent"] = [
+    P(1, "p = (p > q)"),
+    _l(2, "p", "As", 1),
+    _l(3, "p > q", "BicondE", 1, [1, 2]),
+    _l(4, "q", "CondE", 1, [3, 2]),
+    _l(5, "p > q", "CondI", 0, subs=[[2, 4]]),
+    _l(6, "p", "BicondE", 0, [1, 5]),
+]
+
+# --------------------------------------------------- curry-implicational
+# curry-complete's own shape with the third premise dropped: no BicondE
+# anywhere, just the two ⊃ premises doing what the biconditional's two
+# halves did in curry-sequent.
+PROOFS["curry-implicational"] = [
+    P(1, "p > (p > q)"),
+    P(2, "(p > q) > p"),
+    _l(3, "p", "As", 1),
+    _l(4, "p > q", "CondE", 1, [1, 3]),
+    _l(5, "q", "CondE", 1, [4, 3]),
+    _l(6, "p > q", "CondI", 0, subs=[[3, 5]]),
+    _l(7, "p", "CondE", 0, [2, 6]),
+    _l(8, "q", "CondE", 0, [6, 7]),
+]
+
 # ------------------------------------------------------- double-negation intro
 # The mirror image of NegE, and the shortest reductio in the system: the
 # premise is already one half of the contradiction, so the only thing the
