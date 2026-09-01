@@ -1717,6 +1717,64 @@ PROOFS["curry-sequent"] = [
     _l(7, "q", "CondE", 0, [5, 6]),
 ]
 
+# ------------------------------------------------------- deontic-no-gaps
+# No case split, no reductio: the premise is unsatisfiable outright, so the
+# proof is just taking it apart. Peel the two conjuncts, peel the left one
+# again to get ~a and the negated middle disjunct, rebuild ~a & ~b by ConjI,
+# and it lands exactly on the formula the premise already denied.
+PROOFS["deontic-no-gaps"] = [
+    P(1, "(~a & ~(~a & ~b)) & ~b"),
+    _l(2, "~a & ~(~a & ~b)", "ConjE", 0, [1]),
+    _l(3, "~b", "ConjE", 0, [1]),
+    _l(4, "~a", "ConjE", 0, [2]),
+    _l(5, "~(~a & ~b)", "ConjE", 0, [2]),
+    _l(6, "~a & ~b", "ConjI", 0, [4, 3]),
+    _l(7, "!", "FalsumI", 0, [6, 5]),
+]
+
+# ----------------------------------------------------- curry-conditional
+# curry-sequent's own seven lines, run one scope deeper: the biconditional
+# that curry-sequent takes as a premise is assumed here instead, so the whole
+# thing discharges into a single closed conditional at the end.
+PROOFS["curry-conditional"] = [
+    _l(1, "p = (p > q)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p > q", "BicondE", 2, [1, 2]),
+    _l(4, "q", "CondE", 2, [3, 2]),
+    _l(5, "p > q", "CondI", 1, subs=[[2, 4]]),
+    _l(6, "p", "BicondE", 1, [1, 5]),
+    _l(7, "q", "CondE", 1, [5, 6]),
+    _l(8, "(p = (p > q)) > q", "CondI", 0, subs=[[1, 7]]),
+]
+
+# --------------------------------------------------- curry-is-conjunction
+# Two ≡I halves. Forward: assume the Curry biconditional, run
+# curry-conditional's own seven lines to get p and q separately, ConjI them.
+# Backward: assume p & q, pull out p and q, then build the biconditional the
+# only way the twelve rules allow -- a ⊃I for each direction, each one
+# needing its own nested ⊃I to produce p > q as a formula rather than just q.
+PROOFS["curry-is-conjunction"] = [
+    _l(1, "p = (p > q)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "p > q", "BicondE", 2, [1, 2]),
+    _l(4, "q", "CondE", 2, [3, 2]),
+    _l(5, "p > q", "CondI", 1, subs=[[2, 4]]),
+    _l(6, "p", "BicondE", 1, [1, 5]),
+    _l(7, "q", "CondE", 1, [5, 6]),
+    _l(8, "p & q", "ConjI", 1, [6, 7]),
+    _l(9, "p & q", "As", 1),
+    _l(10, "p", "ConjE", 1, [9]),
+    _l(11, "q", "ConjE", 1, [9]),
+    _l(12, "p", "As", 2),
+    _l(13, "p", "As", 3),
+    _l(14, "q", "Reit", 3, [11]),
+    _l(15, "p > q", "CondI", 2, subs=[[13, 14]]),
+    _l(16, "p > q", "As", 2),
+    _l(17, "p", "Reit", 2, [10]),
+    _l(18, "p = (p > q)", "BicondI", 1, subs=[[12, 15], [16, 17]]),
+    _l(19, "(p = (p > q)) = (p & q)", "BicondI", 0, subs=[[1, 8], [9, 18]]),
+]
+
 # ------------------------------------------------------- double-negation intro
 # The mirror image of NegE, and the shortest reductio in the system: the
 # premise is already one half of the contradiction, so the only thing the

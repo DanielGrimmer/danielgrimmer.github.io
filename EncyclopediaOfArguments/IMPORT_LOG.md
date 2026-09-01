@@ -2163,3 +2163,96 @@ texlive-science` once `qtree.sty`/`fitch.sty` and `stmaryrd.sty` turned out
 not to be pulled in by the first set) via `apt-get` resolved it cleanly. The
 `session-start-hook` suggestion from every prior firing's note is still
 open — this is the ninth or tenth firing in a row to need the same install.
+
+## 2026-09-01 — three from the comprehensive sweep: a deontic refutation and two Curry siblings
+
+Course and imports queues were both at 0 (checked with `--status` on each
+before touching the comprehensive one), so all three candidates came from
+`--source comprehensive --next 3`.
+
+`deontic-no-gaps` (`∼a & ∼(∼a&∼b) & ∼b ⊢ ⊥`, §4.7 "The rest, verified").
+Content-wise this is `deontic-exhaustion`'s exact contrapositive — a formula
+is a tautology exactly when its negation is unsatisfiable — so it was
+weighed as a possible near-duplicate skip before writing (§6). Went ahead
+and imported it anyway, `looks_like: deontic-exhaustion`, because the
+refutation form is not decorative: it is the shape von Wright's (1968)
+objection to SDL actually takes, and the section's `sep` line (McNamara and
+Van De Putte) is unambiguous. Fetched `logic-deontic` directly rather than
+trust the row's one-line note, and it locates the discussion precisely —
+§5.3 ("Other Modalities"), not §1.2 where `deontic-exhaustion` sits — and
+names von Wright by name for the objection: "There is no place for this
+fourth category in SDL... (von Wright 1968)." `appearances[0].fidelity`
+is "our reconstruction" rather than "verbatim" since no sentence of the
+article states this exact refutation; the surrounding exhaustion-thesis
+quote is close enough to the LaTeX-laden original that it was left out of
+`quote` rather than transcribed loosely. Concludes `⊥`, so per §6.6 the
+table carries no falsum column and the tree roots at the premise alone —
+`build.py` enforces both. Trivial derivation: unpack the two conjunctions,
+rebuild `∼a & ∼b`, and it lands directly on the negated conjunct already in
+hand — 7 lines, no case split, `nd: easy`.
+
+`curry-conditional` (`⊢ (p≡(p⊃q)) ⊃ q`, CLI-502) and `curry-is-conjunction`
+(`⊢ (p≡(p⊃q)) ≡ (p&q)`, CLI-503), both from §5.1 ("Curry's paradox — the
+strongest single candidate in the sweep"), the same section `curry-sequent`
+came from. Checked both against the database for near-duplication first:
+`curry-conditional` is `curry-sequent`'s premise discharged by the
+deduction theorem into a closed conditional — same content, different
+turnstile shape — and was imported rather than skipped because it makes a
+clean point §14.4 half-states and this pair demonstrates directly: pushing
+the biconditional from premise to assumption adds one scope level and
+nothing else, and that alone trips the "subproof inside a subproof"
+trigger and moves `nd` from easy to medium, though no new reasoning
+appears anywhere in the proof (which is literally `curry-sequent`'s seven
+lines, unchanged, run one level deeper, plus a wrapping `⊃I`). Checked with
+`nd.check()` directly before writing: 8 lines, `nd: medium`, matches
+`difficulty.py`'s own suggestion exactly. `curry-is-conjunction` states the
+"classical surprise" the section's own prose makes explicit — the Curry
+biconditional is truth-functionally `p & q`, true on the identical single
+row of four — proved as a theorem rather than read off a table; verified by
+hand against the four-row table before writing anything (`p=T,q=T` is the
+only row where both `p≡(p⊃q)` and `p&q` come out true, confirmed one
+assignment at a time). Its derivation needs both directions of a `≡I`, each
+one needing its own nested `⊃I` to produce `p⊃q` as a formula rather than
+just `q` — 19 lines, three triggers (nested subproof, six subproofs,
+19 derived lines), `nd: hard`, well short of `extremely hard`'s 29-line
+floor. `appearances` for both cite Shapiro & Beall's SEP *Curry's Paradox*
+(already the verified attribution `curry-sequent` uses — the same mistake
+the style guide itself warns against, crediting Haskell Curry, was not
+repeated), `fidelity: "our reconstruction"` since neither the conditionalised
+form nor the classical-content observation is a sentence SEP states, only
+the sequent both are built from.
+
+Caught one authoring slip before committing, on the read-back §7a asks for:
+`deontic-no-gaps`'s `interest` and `course.note` both had "SS5.3" where "§
+5.3" was meant (a section-symbol substitution that slipped through while
+drafting) — fixed and rebuilt; `svg.py` correctly reported nothing to
+recompile, since prose does not touch any LaTeX-bearing field.
+
+`build.py --write` (three entries normalised: none needed
+reparenthesising — all three were already written in the left-associative,
+fully-parenthesised form the earlier `deontic-exhaustion`/`curry-sequent`
+firings established), `python3 difficulty.py --diff` (clean, 0 differ —
+every authored `nd` score matched the rubric's own suggestion exactly, no
+override needed anywhere), `svg.py` (12 SVGs, 4 blocks × 3 entries — a
+fresh container again needed the LaTeX toolchain installed, see below),
+`inventory.py --locks` (0 practicable methods locked — comprehensive
+carries no `problem_set`), `manifest.py --check-merge` (180 entries, 177
+expected from the merge parents, nothing lost — `git merge origin/main`
+reported already up to date, nothing to resolve, so nothing needed the
+"copy this branch's database over and let the build reapply main's
+changes" recovery). `node --test "_tests/*.test.mjs"` found two more
+hardcoded contradiction-entry counts, this time needing nine bumped to ten
+(`deontic-no-gaps` is the tenth entry concluding `⊥`) — updated, then
+514/514 clean. `git diff --name-only origin/main...HEAD --
+EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed empty; none of the
+three appearances is a course appearance, so none needed it. `extremely
+hard` (nd) count unchanged at 4 of 4. Comprehensive queue: 31 candidates
+left of 274 (122 now in the database, 3 quarantined, 82 unreadable, 36
+settled). Course and imports queues remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**; the
+same package list recorded by essentially every prior firing
+(`texlive-latex-base texlive-latex-extra texlive-pictures dvisvgm
+texlive-humanities texlive-science`) resolved it in one `apt-get install`
+this time, no second round needed. The `session-start-hook` suggestion is
+still open.

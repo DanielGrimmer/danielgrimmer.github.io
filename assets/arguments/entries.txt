@@ -175,3 +175,6 @@ sea-battle-dilemma
 diodorus-master-argument
 preface-paradox
 deontic-exhaustion
+deontic-no-gaps
+curry-conditional
+curry-is-conjunction
