@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 197,
+ "count": 199,
  "entries": [
   {
    "id": "ex-falso",
@@ -89223,6 +89223,718 @@
     ],
     "conclusion": "∼k & l",
     "sequent": "l ≡ ∼k, k ⊃ l  ⊨ ∼k & l"
+   }
+  },
+  {
+   "id": "montague-knower-detonation",
+   "cli_ref": "—",
+   "names": [
+    "The Knower paradox, detonated",
+    "Montague's proof, both halves combined"
+   ],
+   "premises": [
+    "l = ~k",
+    "k > l",
+    "l > k"
+   ],
+   "conclusion": "!",
+   "interest": "`montague-knower-factivity` needs only two premises to reach `∼k & l`. Add the converse direction, `l⊃k` -- 'we've proved it, so we know it', the internalization step Montague's own proof spends its second half deriving with a parallel run of the same steps, `K` prefixed throughout -- and the set collapses outright: no row makes all three premises true. Every premise is load-bearing (verified by deletion): drop `l⊃k` and `k=F, l=T` is a model; drop `k⊃l` and `k=T, l=F` is. So the paradox needs factivity and internalization both, and this is the propositional demonstration of exactly that -- a four-row table settling in an instant what Montague's own proof needs many more lines and a knowledge operator to reach. What the compression loses is exactly what the sweep flags: `l⊃k` stands in for that whole modal derivation, and the propositional rendering can hold this fixed point but never earn one.",
+   "english": [
+    {
+     "gloss": "Say a sentence λ is equivalent to the claim that λ is not known; that whatever is knowable is true; and -- the added assumption -- that λ, being true, is therefore knowable. Those three cannot all hold together.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Thomas Bolander",
+     "work": "Self-Reference and Paradox",
+     "locus": "SEP §2.3, Montague's full proof of the Knower theorem (both directions compressed into k⊃l and l⊃k)",
+     "url": "https://plato.stanford.edu/entries/self-reference/"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "paradox",
+     "epistemic logic",
+     "self-reference",
+     "knowability"
+    ],
+    "defect": [
+     "jointly inconsistent"
+    ],
+    "figure": [
+     "Montague",
+     "Kaplan"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.9 ('The Knower — an unclaimed propositional core'), citing Bolander's SEP entry on self-reference, §2.3. No course locus. Companion to montague-knower-factivity and montague-knower-tautology, which share these atoms and this source.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "falsum appears, so no earlier than Lecture 10"
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "l = ~k",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "k > l",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "l > k",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "k",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 5,
+      "f": "l",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "~k",
+      "rule": "BicondE",
+      "depth": 1,
+      "cites": [
+       1,
+       5
+      ]
+     },
+     {
+      "n": 7,
+      "f": "k",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       4
+      ]
+     },
+     {
+      "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       7,
+       6
+      ]
+     },
+     {
+      "n": 9,
+      "f": "~k",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        4,
+        8
+       ]
+      ]
+     },
+     {
+      "n": 10,
+      "f": "l",
+      "rule": "BicondE",
+      "depth": 0,
+      "cites": [
+       1,
+       9
+      ]
+     },
+     {
+      "n": 11,
+      "f": "k",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       3,
+       10
+      ]
+     },
+     {
+      "n": 12,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 0,
+      "cites": [
+       11,
+       9
+      ]
+     }
+    ],
+    "lines": 12,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "BicondE",
+     "CondE",
+     "FalsumI",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py",
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{l\\Bicond \\Neg k}\n\\hypo{2}{k\\Cond l}\n\\hypo{3}{l\\Cond k}\n\\open\n\\hypo{4}{k}\n\\have{5}{l}\\by{\\CondE}{2,4}\n\\have{6}{\\Neg k}\\by{\\BicondE}{1,5}\n\\have{7}{k}\\by{\\Reit}{4}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,6}\n\\close\n\\have{9}{\\Neg k}\\by{\\NegI}{4,8}\n\\have{10}{l}\\by{\\BicondE}{1,9}\n\\have{11}{k}\\by{\\CondE}{3,10}\n\\have{12}{\\Falsum}\\by{\\FalsumI}{11,9}\n\\end{nd}\n\\end{align*}"
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "looks_like": "montague-knower-factivity",
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 0,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": false
+   },
+   "truth_table": {
+    "atoms": [
+     "l",
+     "k"
+    ],
+    "columns": [
+     "l ≡ ∼k",
+     "k ⊃ l",
+     "l ⊃ k",
+     "⊥"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "l": "T",
+       "k": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "l": "T",
+       "k": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "l": "F",
+       "k": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "l": "F",
+       "k": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c}\n        $\\overbrace{\\quad l \\qquad k \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad l\\Bicond \\Neg k \\qquad k\\Cond l \\qquad l\\Cond k \\quad}^\\text{Premises}$ \\\\\n        \\hline\n        $\\quad \\uv{l}{T} \\qquad \\uv{k}{T} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{F} \\qquad \\uv{k\\Cond l}{T} \\qquad \\uv{l\\Cond k}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{k}{F} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{T} \\qquad \\uv{k\\Cond l}{T} \\qquad \\uv{l\\Cond k}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{k}{T} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{T} \\qquad \\uv{k\\Cond l}{F} \\qquad \\uv{l\\Cond k}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{k}{F} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{F} \\qquad \\uv{k\\Cond l}{T} \\qquad \\uv{l\\Cond k}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c}\n        $\\overbrace{\\quad l \\qquad k \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad l\\Bicond \\Neg k \\qquad k\\Cond l \\qquad l\\Cond k \\quad}^\\text{Premises}$ \\\\\n        \\hline\n        $\\quad \\uv{l}{T} \\qquad \\uv{k}{T} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{F} \\qquad \\uv{k\\Cond l}{T} \\qquad \\uv{l\\Cond k}{T} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{k}{F} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{F} \\qquad \\uv{k\\Cond l}{T} \\qquad \\uv{l\\Cond k}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "l ≡ ∼k",
+     "k ⊃ l",
+     "l ⊃ k"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "l",
+         "from": "l ≡ ∼k",
+         "rule": "≡"
+        },
+        {
+         "formula": "∼k",
+         "from": "l ≡ ∼k",
+         "rule": "≡"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼k",
+           "from": "k ⊃ l",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼l",
+             "from": "l ⊃ k",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "k",
+             "from": "l ⊃ k",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "l ⊃ k",
+         "branch_rule": "⊃"
+        },
+        {
+         "added": [
+          {
+           "formula": "l",
+           "from": "k ⊃ l",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼l",
+             "from": "l ⊃ k",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "k",
+             "from": "l ⊃ k",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "l ⊃ k",
+         "branch_rule": "⊃"
+        }
+       ],
+       "status": null,
+       "branched_on": "k ⊃ l",
+       "branch_rule": "⊃"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼l",
+         "from": "l ≡ ∼k",
+         "rule": "≡"
+        },
+        {
+         "formula": "∼∼k",
+         "from": "l ≡ ∼k",
+         "rule": "≡"
+        },
+        {
+         "formula": "k",
+         "from": "∼∼k",
+         "rule": "∼∼"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼k",
+           "from": "k ⊃ l",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "l",
+           "from": "k ⊃ l",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "k ⊃ l",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "l ≡ ∼k",
+     "branch_rule": "≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 6,
+    "branch_depth": 3,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad l\\Bicond \\Neg k$\\quad\\checkmark \\\\ \\ckpad $\\qquad k\\Cond l$\\quad\\checkmark \\\\ \\ckpad $\\qquad l\\Cond k$\\quad\\checkmark} [.{$l$ \\\\ $\\Neg k$} [.{$\\Neg k$} [.{$\\Neg l$ \\\\ x} ] [.{$k$ \\\\ x} ] ] [.{$l$} [.{$\\Neg l$ \\\\ x} ] [.{$k$ \\\\ x} ] ] ] [.{$\\Neg l$ \\\\ \\ckpad $\\Neg \\Neg k$\\quad\\checkmark \\\\ $\\vert$ \\\\ $k$} [.{$\\Neg k$ \\\\ x} ] [.{$l$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "l = ~k",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 2
+    },
+    {
+     "premise": "k > l",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "l > k",
+     "index": 2,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 3,
+    "connectives": [
+     "biconditional",
+     "conditional",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 10,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 6,
+    "tree_branch_depth": 3,
+    "countermodel_count": 0,
+    "premise_true_rows": 0,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "l ≡ ∼k",
+     "k ⊃ l",
+     "l ⊃ k"
+    ],
+    "conclusion": "⊥",
+    "sequent": "l ≡ ∼k, k ⊃ l, l ⊃ k  ⊨ ⊥"
+   }
+  },
+  {
+   "id": "dutch-book-pivot",
+   "cli_ref": "DB2c (§5.10g)",
+   "names": [
+    "The Dutch book argument's is/ought pivot",
+    "Sure loss without contradiction"
+   ],
+   "premises": [
+    "v > l_s"
+   ],
+   "conclusion": "~v",
+   "interest": "Whether the Dutch Book argument is a reductio turns entirely on what `l_s` means. Read as an outright contradiction, this same shape is a completely uncontroversial `∼I` -- assume `v`, reach ⊥, discharge -- and nobody would call it invalid. Read as a mere possibility of a sure loss, which is what the Dutch Book *theorem* actually delivers, it is this: **invalid**, with the one open branch a world where the agent has violated the axioms, is exploitable, and is still under no obligation to stop. `dutch-book-is-ought`'s third premise, `(b_l&k)⊃l_s`, is this same pivot with the intervening machinery restored; both need the same repair, `l_s⊃o` or `∼l_s` supplied from outside, and neither the Dutch Book theorem nor the probability axioms themselves supply it.",
+   "english": [
+    {
+     "gloss": "If violating the probability axioms leaves you open to a sure loss, then you don't violate them.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Susan Vineberg",
+     "work": "Dutch Book Arguments",
+     "locus": "SEP, §1.2–1.4",
+     "url": "https://plato.stanford.edu/entries/dutch-book/"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "probability",
+     "epistemology",
+     "metaethics",
+     "decision theory"
+    ],
+    "defect": [
+     "missing bridge premise",
+     "is/ought gap"
+    ],
+    "figure": [
+     "Vineberg",
+     "Ramsey",
+     "de Finetti"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.10g ('The Dutch book argument'). No course locus. The sweep's own DB2 -- the same conditional with the consequent strengthened to ⊥, 'the genuine reductio' -- could not be entered as a separate database row: ⊥ may never appear inside a formula (style guide §2.2), and 'V ⊃ ⊥' is not a well-formed formula of this language. Skipped and logged in IMPORT_LOG.md, 2026-09-01; this entry stands alone rather than as half of the pair the SEP sweep draws.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": null,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": false,
+    "note": "No derivation exists: the only bridge between `v` and `l_s` runs one way, from `v` to `l_s`. Turning that into `∼v` needs either `∼l_s` supplied from outside (the modus tollens reading) or `l_s` strengthened to an outright contradiction (the reductio reading) -- and the one countermodel, `v=T, l_s=T`, is exactly a world satisfying the premise without forcing either.",
+    "verified": true
+   },
+   "verdict": {
+    "valid": false,
+    "rows": 4,
+    "premise_true_rows": 3,
+    "countermodel_count": 1,
+    "countermodels": [
+     {
+      "v": "T",
+      "l_s": "T"
+     }
+    ],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "v",
+     "l_s"
+    ],
+    "columns": [
+     "v ⊃ l_s",
+     "∼v"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "v": "T",
+       "l_s": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": true,
+      "countermodel": true
+     },
+     {
+      "assignment": {
+       "v": "T",
+       "l_s": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "v": "F",
+       "l_s": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "v": "F",
+       "l_s": "F"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad v \\qquad l_{s} \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad v\\Cond l_{s} \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg v \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{v}{T} \\qquad \\uv{l_{s}}{T} \\quad$ & $\\quad \\uv{v\\Cond l_{s}}{T} \\quad$ & $\\quad \\uv{\\Neg v}{F} \\quad$ \\\\\n        $\\quad \\uv{v}{T} \\qquad \\uv{l_{s}}{F} \\quad$ & $\\quad \\uv{v\\Cond l_{s}}{F} \\quad$ & $\\quad \\uv{\\Neg v}{F} \\quad$ \\\\\n        $\\quad \\uv{v}{F} \\qquad \\uv{l_{s}}{T} \\quad$ & $\\quad \\uv{v\\Cond l_{s}}{T} \\quad$ & $\\quad \\uv{\\Neg v}{T} \\quad$ \\\\\n        $\\quad \\uv{v}{F} \\qquad \\uv{l_{s}}{F} \\quad$ & $\\quad \\uv{v\\Cond l_{s}}{T} \\quad$ & $\\quad \\uv{\\Neg v}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad v \\qquad l_{s} \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad v\\Cond l_{s} \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg v \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{v}{T} \\qquad \\uv{l_{s}}{T} \\quad$ & $\\quad \\uv{v\\Cond l_{s}}{T} \\quad$ & $\\quad \\uv{\\Neg v}{F} \\quad$ \\\\\n        $\\quad \\uv{v}{T} \\qquad \\uv{l_{s}}{F} \\quad$ & $\\quad \\uv{v\\Cond l_{s}}{F} \\quad$ & $\\quad \\uv{\\Neg v}{F} \\quad$ \\\\\n        $\\quad \\uv{v}{F} \\qquad \\uv{l_{s}}{T} \\quad$ & $\\quad \\uv{v\\Cond l_{s}}{T} \\quad$ & $\\quad \\uv{\\Neg v}{T} \\quad$ \\\\\n        $\\quad \\uv{v}{F} \\qquad \\uv{l_{s}}{F} \\quad$ & $\\quad \\uv{v\\Cond l_{s}}{T} \\quad$ & $\\quad \\uv{\\Neg v}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "v ⊃ l_s",
+     "∼∼v"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "v",
+       "from": "∼∼v",
+       "rule": "∼∼"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼v",
+         "from": "v ⊃ l_s",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "l_s",
+         "from": "v ⊃ l_s",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "open",
+       "model": {
+        "v": "T",
+        "l_s": "T"
+       },
+       "unconstrained": []
+      }
+     ],
+     "status": null,
+     "branched_on": "v ⊃ l_s",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 1,
+    "closed_branches": 1,
+    "branch_depth": 1,
+    "branch_models": [
+     {
+      "v": "T",
+      "l_s": "T"
+     }
+    ],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad v\\Cond l_{s}$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg v$\\quad\\checkmark \\\\ $\\vert$ \\\\ $v$} [.{$\\Neg v$ \\\\ x} ] [.{$l_{s}$ \\\\ o} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "v > l_s",
+     "index": 0,
+     "load_bearing": false,
+     "idle": false,
+     "countermodels_without_it": 2
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 1,
+    "connectives": [
+     "conditional",
+     "negation"
+    ],
+    "max_formula_depth": 1,
+    "total_formula_size": 5,
+    "table_rows": 4,
+    "tree_open_branches": 1,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 1,
+    "countermodel_count": 1,
+    "premise_true_rows": 3,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "v ⊃ l_s"
+    ],
+    "conclusion": "∼v",
+    "sequent": "v ⊃ l_s  ⊭ ∼v"
+   },
+   "difficulty": {
+    "table": "easy",
+    "tree": "easy",
+    "search_sharpness": 0.25,
+    "nd": null
    }
   }
  ],

@@ -63,6 +63,7 @@ be offered a second time). The reason column says which.
 | 2026-09-01 | `{p ≡ p}` (CLI-515, comprehensive §5.2, "the truth-teller") | No philosopher named in the row, and the section's own text says outright that "the truth-teller does not appear in SEP *Liar Paradox* as fetched (checked twice)." No other article in §5's shared `sep` line is a better candidate — it is a Liar-family row and that is the Liar-specific entry. Left for a person who can find an actual discussion of the truth-teller by name. |
 | 2026-09-01 | `∼(p&q), ∼p ⊢ q` (CLI-524, comprehensive §5.3, "Denying a conjunct") | No philosopher named in the row. §5.3's own prose warns that SEP *Fallacies* "names only Copi's five, not affirming a disjunct, denying a conjunct, or improper transposition" and says to cite those three as standard textbook forms rather than to SEP — but every other appearance in the database is a real, named person or the course itself, and "the informal-logic textbook tradition" is not a checkable source, only a description of one. Fetched *Fallacies* directly this firing and confirmed it does not name this form. Left for a person who can find an actual textbook citation (Copi, Hurley, or another) for it. |
 | 2026-09-01 | `h ≡ e, e ⊢ h` (CLI-529, comprehensive §5.3, "Inference to the **only** explanation") | No philosopher named in the row — unlike its neighbours in the same teaching sequence (CLI-528 van Fraassen, CLI-532 Burke 1994), this one names no one. Fetched SEP *Abduction* (Douven) directly, since the surrounding prose leans on it for the rest of the sequence: it discusses affirming-the-consequent and Peirce's own schema, but does not discuss inference to the *only* explanation or a uniqueness-based repair of IBE. Left for a person who can find an actual discussion of this specific move. |
+| 2026-09-01 | `V ⊃ ⊥ ⊨ ∼V` (DB2, comprehensive §5.10g, "the Dutch book argument's genuine reductio") | Not a provenance problem — same Susan Vineberg *Dutch Book Arguments* citation `dutch-book-is-ought` and its siblings already carry. Skipped because the row cannot be written as a formula of this language at all: `V ⊃ ⊥` puts `⊥` inside a conditional, and style guide §2.2 is explicit that falsum "must never appear inside a formula" — it is a proof-level marker, legitimate only as a bare ND conclusion (`X ⊢ND ⊥`), never as a subformula, "not even unofficially." Unlike `conjunction-with-its-own-negation`'s reshape (2026-08-30 row above), there is no faithful reshaping here: the row's `⊥` is not standing in for "this premise set is unsatisfiable" (`V` alone is satisfiable) but for "assuming `V` derives a contradiction," which is the *content* of `∼I` itself, not a fact expressible by choosing a different conclusion. DB2c, the neighbouring row with the consequent left as an ordinary atom (`V ⊃ L_s ⊨ ∼V`, ★invalid, the SEP sweep's own "pivot"), has no such problem and was imported this firing as `dutch-book-pivot`. |
 
 ## Resolved
 
@@ -2454,3 +2455,75 @@ EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed empty. `extremely hard`
 (nd) count unchanged at 4 of 4. Comprehensive queue: 17 candidates left of
 274 (133 now in the database, 3 quarantined, 82 unreadable, 42 settled).
 Course and imports queues remain at 0.
+
+## 2026-09-01 (continued) — the Knower detonated, and the Dutch book's is/ought pivot
+
+Course and imports queues both confirmed empty again this firing
+(`inventory.py --status` / `--source imports`), so this firing worked
+`--source comprehensive` from its top three candidates: the Knower's third
+row (`{l≡∼k, k⊃l, l⊃k}`, UNSAT), and DB2/DB2c from §5.10g's Dutch book
+table (`V⊃⊥⊨∼V` and `V⊃L_s⊨∼V`).
+
+`montague-knower-detonation` is the Knower's remaining propositional row —
+`montague-knower-factivity` and `montague-knower-tautology` (already in the
+database) carry the other two lines of Montague's proof, and this one adds
+the internalization direction `l⊃k` ("we've proved it, so we know it") to
+factivity's `l≡∼k, k⊃l`, collapsing the set outright: no row of four makes
+all three premises true. Cites Thomas Bolander's SEP entry *Self-Reference
+and Paradox*, §2.3, `fidelity: "our reconstruction"` (the three-premise
+propositional rendering is ours; Bolander's article names Kaplan & Montague
+1960 and gives the paradox but not this compressed form) — same citation
+`montague-knower-factivity` and `montague-knower-tautology` already carry,
+confirmed by re-fetching the article rather than trusted from the sibling
+entries (it does discuss the Knower paradox by name, §1.3, and the
+citation-info endpoint gives the byline as Bolander, not a name any row's
+gloss suggested). All three premises verified load-bearing by deletion
+(`derive.py`, not asserted): drop `l⊃k` and `k=F, l=T` is a model; drop
+`k⊃l` and `k=T, l=F` is. Derivation is one reductio (assume `k`, the
+dictated route to the `∼k` lemma) followed by a direct chain to a second
+`⊥I` — no second reductio needed, 12 lines, 0 of 5 §14.3 triggers, `nd:
+easy`, matching both siblings.
+
+`dutch-book-pivot` is DB2c, the SEP sweep's own "pivot": the same
+conditional as DB2 but with an ordinary atom, `l_s`, in the consequent's
+place instead of falsum, and correspondingly invalid (one countermodel,
+`v=T, l_s=T`, matching the sweep's own verdict). DB2 itself — literally the
+same conditional with the consequent strengthened to `⊥` — could not be
+entered as a separate database row and is logged as skipped above; see that
+row for why. Cites Vineberg's *Dutch Book Arguments* again,
+`fidelity: "our reconstruction"` and no `quote` — checked directly
+(fetched the live SEP entry, asked pointedly whether it frames the
+argument as a reductio-versus-modus-tollens choice) and confirmed the
+framing is the comprehensive sweep's own, not a passage on the page, so no
+text was invented for `SOURCE_QUOTES.md` or written into `appearances[].quote`
+as if it were one.
+
+Both `interest` fields were checked against the computed data before
+writing (this file's standing caution): the deletion countermodels above,
+and `dutch-book-pivot`'s one open branch, both matched `derive.py`'s
+output exactly. An early draft of `montague-knower-detonation`'s `interest`
+claimed the real Montague proof runs "sixteen lines" and "a parallel run of
+the same seven lines, `K` prefixed throughout" for the internalization
+half — sourced from a fetched summary of Bolander's article rather than
+something checked line-by-line, so both numbers were cut before commit;
+the phrase "`K` prefixed throughout" is kept because it is the comprehensive
+inventory's own text (its §5.9 note on what `l⊃k` compresses), not
+something fetched.
+
+`python3 difficulty.py --diff` reported nothing to override (0 `nd`
+triggers on `montague-knower-detonation`, `easy`; `dutch-book-pivot` is
+invalid, `nd: null`). `build.py --write`, `svg.py` (7 SVGs: 4 blocks for
+`montague-knower-detonation`, 3 for `dutch-book-pivot`, which carries no
+`nd` block), `inventory.py --locks` (0 practicable methods locked),
+`manifest.py --check-merge` (199 entries, 197 expected from the merge
+parents, nothing lost — checked before touching the database and again
+after), and `node --test "_tests/*.test.mjs"` all clean, after updating
+two hardcoded falsum-conclusion counts the new `montague-knower-detonation`
+entry pushed from thirteen to fourteen (`_tests/argument-forms.test.mjs`,
+the same kind of narrow count fix this file has recorded before, not a
+loosened check). `git diff --name-only origin/main...HEAD --
+EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed empty. `extremely hard`
+(nd) count unchanged at 4 of 4. Comprehensive queue: 5 candidates left of
+274 (141 now in the database, 3 quarantined, 82 unreadable, 43 settled),
+all five in §7 ("TRAPS — forms that look plausible or connexive and are
+classically VALID"). Course and imports queues remain at 0.

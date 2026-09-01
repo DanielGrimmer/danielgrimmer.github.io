@@ -2806,3 +2806,24 @@ PROOFS["montague-knower-factivity"] = [
     _l(9, "l", "BicondE", 0, [1, 8]),
     _l(10, "~k & l", "ConjI", 0, [8, 9]),
 ]
+
+# ------------------------------------------------- montague-knower-detonation
+# `montague-knower-factivity`'s reductio gets `~k` at depth 0 (line 9); from
+# there the biconditional runs the other way to hand back `l` (10), the third
+# premise turns that into `k` (11), and `k` collides with the `~k` already in
+# hand -- no second reductio needed, the added premise finishes the job
+# `FalsumI` can reach on its own.
+PROOFS["montague-knower-detonation"] = [
+    P(1, "l = ~k"),
+    P(2, "k > l"),
+    P(3, "l > k"),
+    _l(4, "k", "As", 1),
+    _l(5, "l", "CondE", 1, [2, 4]),
+    _l(6, "~k", "BicondE", 1, [1, 5]),
+    _l(7, "k", "Reit", 1, [4]),
+    _l(8, "!", "FalsumI", 1, [7, 6]),
+    _l(9, "~k", "NegI", 0, subs=[[4, 8]]),
+    _l(10, "l", "BicondE", 0, [1, 9]),
+    _l(11, "k", "CondE", 0, [3, 10]),
+    _l(12, "!", "FalsumI", 0, [11, 9]),
+]

@@ -547,7 +547,7 @@ test('every entry carries its method blocks', async (t) => {
     // Not every contradiction claim is true -- a jointly satisfiable set
     // reads `X ⊬ND`, and has an `nd.note` in place of a proof (§13.2).
     const falsums = entries.filter((e) => e.conclusion.trim() === '!');
-    assert.equal(falsums.length, 13, 'expected thirteen contradiction entries');
+    assert.equal(falsums.length, 14, 'expected fourteen contradiction entries');
     for (const e of falsums) {
       assert.ok(!e.truth_table.latex.includes('Conclusion'), `${e.id}: table still has a conclusion group`);
       if (e.verdict.valid) {
@@ -884,7 +884,7 @@ test('sibling subproofs are drawn, and checked, as two', async (t) => {
  */
 test('an inconsistency claim is not dressed as an argument', () => {
   const claims = entries.filter((e) => e.conclusion === '!');
-  assert.equal(claims.length, 13);
+  assert.equal(claims.length, 14);
   for (const e of claims) {
     assert.ok(e.premises.length, `${e.id}: an inconsistency claim needs premises`);
     assert.ok(!e.truth_table.latex.includes('Conclusion'),
