@@ -192,3 +192,6 @@ analogy-determination-rule
 conditional-perfection-explicit-converse
 tweety-classical-monotonicity
 fitch-knowability-core
+fitch-knowability-sequent
+montague-knower-tautology
+montague-knower-factivity

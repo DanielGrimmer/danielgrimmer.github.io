@@ -34,7 +34,7 @@
   "nonclassical",
   "topic"
  ],
- "count": 194,
+ "count": 197,
  "entries": [
   {
    "id": "ex-falso",
@@ -88017,6 +88017,1212 @@
     ],
     "conclusion": "⊥",
     "sequent": "a, a ⊃ (b & c), c ⊃ ∼b  ⊨ ⊥"
+   }
+  },
+  {
+   "id": "fitch-knowability-sequent",
+   "cli_ref": "—",
+   "names": [
+    "Fitch's paradox, as a sequent",
+    "The unknowable Moore conjunction"
+   ],
+   "premises": [
+    "a > (b & c)",
+    "c > ~b"
+   ],
+   "conclusion": "~a",
+   "interest": "`fitch-knowability-core` sets these same three lines up as a set and asks whether they can jointly hold; this entry drops the assumption `a` and proves its negation directly, which is one reductio step further and closer to what Brogaard and Salerno's own presentation of Fitch's argument is actually doing. `∼a` says nobody can know the Moore-paradoxical conjunction \"p, and it is not known that p\": knowing it would mean knowing each conjunct, and knowing the second -- that p is unknown -- would, by factivity, make the first conjunct false. The quoted line is exactly this result stated in prose: \"it can be shown independently that it is impossible to know this conjunction\" is `∼a`, argued from nothing but the two conditionals here. What survives the abbreviation is the shape of the reductio; what is lost, as in the sibling entry, is everything modal -- the possibility operator, necessitation, and the knowability thesis the full paradox is actually about.",
+   "english": [
+    {
+     "gloss": "Knowing both that p is true and that it is not known that p would mean knowing each part on its own -- and knowing that p is unknown would, since knowledge requires truth, mean p really is not known. So nobody can know, of a truth that happens to be unknown, that it is both true and unknown.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "our reconstruction",
+     "who": "Berit Brogaard and Joe Salerno",
+     "work": "Fitch's Paradox of Knowability",
+     "locus": "SEP §2, \"Fitch's Argument\", lines 4-7",
+     "url": "https://plato.stanford.edu/entries/fitch-paradox/",
+     "quote": "However, it can be shown independently that it is impossible to know this conjunction. Line 3 is false. The independent result presupposes two very modest epistemic principles: first, knowing a conjunction entails knowing each of the conjuncts. Second, knowledge entails truth."
+    }
+   ],
+   "looks_like": "fitch-knowability-core",
+   "tags": {
+    "topic": [
+     "paradox",
+     "epistemic logic",
+     "knowability"
+    ],
+    "figure": [
+     "Fitch"
+    ],
+    "defect": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.4 (CLI-546) -- the same three premises as fitch-knowability-core's CLI-545, but concluding ∼a as a sequent rather than assuming a and closing on ⊥. No course locus.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "falsum appears inside the derivation, so no earlier than Lecture 10"
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "a > (b & c)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "c > ~b",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "a",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 4,
+      "f": "b & c",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "b",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "c",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       4
+      ]
+     },
+     {
+      "n": 7,
+      "f": "~b",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       5,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "~a",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        3,
+        8
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{a\\Cond (b\\Conj c)}\n\\hypo{2}{c\\Cond \\Neg b}\n\\open\n\\hypo{3}{a}\n\\have{4}{b\\Conj c}\\by{\\CondE}{1,3}\n\\have{5}{b}\\by{\\ConjE}{4}\n\\have{6}{c}\\by{\\ConjE}{4}\n\\have{7}{\\Neg b}\\by{\\CondE}{2,6}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{5,7}\n\\close\n\\have{9}{\\Neg a}\\by{\\NegI}{3,8}\n\\end{nd}\n\\end{align*}",
+    "lines": 9,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "CondE",
+     "ConjE",
+     "FalsumI",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 8,
+    "premise_true_rows": 3,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "a",
+     "b",
+     "c"
+    ],
+    "columns": [
+     "a ⊃ (b & c)",
+     "c ⊃ ∼b",
+     "∼a"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "F"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "T"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "F"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad a \\qquad b \\qquad c \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad a\\Cond (b\\Conj c) \\qquad c\\Cond \\Neg b \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg a \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{F} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{F} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{F} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad a \\qquad b \\qquad c \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad a\\Cond (b\\Conj c) \\qquad c\\Cond \\Neg b \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg a \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{F} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{F} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{F} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\quad$ & $\\quad \\uv{a\\Cond (b\\Conj c)}{T} \\qquad \\uv{c\\Cond \\Neg b}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "a ⊃ (b & c)",
+     "c ⊃ ∼b",
+     "∼∼a"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "a",
+       "from": "∼∼a",
+       "rule": "∼∼"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼a",
+         "from": "a ⊃ (b & c)",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "b & c",
+         "from": "a ⊃ (b & c)",
+         "rule": "⊃"
+        },
+        {
+         "formula": "b",
+         "from": "b & c",
+         "rule": "&"
+        },
+        {
+         "formula": "c",
+         "from": "b & c",
+         "rule": "&"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼c",
+           "from": "c ⊃ ∼b",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "∼b",
+           "from": "c ⊃ ∼b",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "c ⊃ ∼b",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "a ⊃ (b & c)",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 3,
+    "branch_depth": 2,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad a\\Cond (b\\Conj c)$\\quad\\checkmark \\\\ \\ckpad $\\qquad c\\Cond \\Neg b$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg a$\\quad\\checkmark \\\\ $\\vert$ \\\\ $a$} [.{$\\Neg a$ \\\\ x} ] [.{\\ckpad $b\\Conj c$\\quad\\checkmark \\\\ $\\vert$ \\\\ $b$ \\\\ $c$} [.{$\\Neg c$ \\\\ x} ] [.{$\\Neg b$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "a > (b & c)",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 3
+    },
+    {
+     "premise": "c > ~b",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 3,
+    "premise_count": 2,
+    "connectives": [
+     "conditional",
+     "conjunction",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 11,
+    "table_rows": 8,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 3,
+    "tree_branch_depth": 2,
+    "countermodel_count": 0,
+    "premise_true_rows": 3,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "a ⊃ (b & c)",
+     "c ⊃ ∼b"
+    ],
+    "conclusion": "∼a",
+    "sequent": "a ⊃ (b & c), c ⊃ ∼b  ⊨ ∼a"
+   }
+  },
+  {
+   "id": "montague-knower-tautology",
+   "cli_ref": "—",
+   "names": [
+    "The Knower's propositional tautology",
+    "Montague's line 4"
+   ],
+   "premises": [],
+   "conclusion": "(k > l) > ((l > ~k) > ~k)",
+   "interest": "Montague's own proof of the Knower theorem calls this line 4 a \"propositional tautology\" and puts it to work turning two independent premises -- factivity (`k⊃l`, \"whatever is knowable is true\") and one direction of the Knower sentence's own biconditional (`l⊃∼k`) -- straight into the theorem's contradiction. Written out rather than asserted, it is three `⊃I`s deep: assume `k⊃l`, assume `l⊃∼k`, assume `k`, and the goal at each stage is exactly what the next assumption names, so nothing beyond the nesting itself makes it hard to write. It shares its atoms, its source, and the factivity premise `k⊃l` with `montague-knower-factivity`, which puts that premise to different work -- deriving a conclusion from premises rather than validating a bare schema -- and between them the two entries are the whole propositional skeleton under the Knower paradox. What the abstraction loses is the reading of `k` as knowability and `l` as the Knower sentence itself, which is where the paradox's bite actually comes from.",
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Thomas Bolander",
+     "work": "Self-Reference and Paradox",
+     "locus": "SEP §2.3, line 4 of Montague's proof of the Knower theorem",
+     "url": "https://plato.stanford.edu/entries/self-reference/"
+    }
+   ],
+   "tags": {
+    "topic": [
+     "paradox",
+     "epistemic logic",
+     "self-reference",
+     "knowability"
+    ],
+    "figure": [
+     "Montague",
+     "Kaplan"
+    ],
+    "defect": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.9 ('The Knower — an unclaimed propositional core'), citing Bolander's SEP entry on self-reference, §2.3, line 4 of Montague's proof. No course locus. Companion to montague-knower-factivity, which shares these atoms and this source.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "falsum appears inside the derivation, so no earlier than Lecture 10"
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "k > l",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "l > ~k",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 3,
+      "f": "k",
+      "rule": "As",
+      "depth": 3
+     },
+     {
+      "n": 4,
+      "f": "l",
+      "rule": "CondE",
+      "depth": 3,
+      "cites": [
+       1,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~k",
+      "rule": "CondE",
+      "depth": 3,
+      "cites": [
+       2,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "k",
+      "rule": "Reit",
+      "depth": 3,
+      "cites": [
+       3
+      ]
+     },
+     {
+      "n": 7,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 3,
+      "cites": [
+       6,
+       5
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~k",
+      "rule": "NegI",
+      "depth": 2,
+      "subs": [
+       [
+        3,
+        7
+       ]
+      ]
+     },
+     {
+      "n": 9,
+      "f": "(l > ~k) > ~k",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        2,
+        8
+       ]
+      ]
+     },
+     {
+      "n": 10,
+      "f": "(k > l) > ((l > ~k) > ~k)",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        9
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{k\\Cond l}\n\\open\n\\hypo{2}{l\\Cond \\Neg k}\n\\open\n\\hypo{3}{k}\n\\have{4}{l}\\by{\\CondE}{1,3}\n\\have{5}{\\Neg k}\\by{\\CondE}{2,4}\n\\have{6}{k}\\by{\\Reit}{3}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,5}\n\\close\n\\have{8}{\\Neg k}\\by{\\NegI}{3,7}\n\\close\n\\have{9}{(l\\Cond \\Neg k)\\Cond \\Neg k}\\by{\\CondI}{2,8}\n\\close\n\\have{10}{(k\\Cond l)\\Cond ((l\\Cond \\Neg k)\\Cond \\Neg k)}\\by{\\CondI}{1,9}\n\\end{nd}\n\\end{align*}",
+    "lines": 10,
+    "max_subproof_depth": 3,
+    "subproof_count": 3,
+    "assumption_count": 3,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "CondE",
+     "CondI",
+     "FalsumI",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "k",
+     "l"
+    ],
+    "columns": [
+     "(k ⊃ l) ⊃ ((l ⊃ ∼k) ⊃ ∼k)"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "k": "T",
+       "l": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "k": "T",
+       "l": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "k": "F",
+       "l": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "k": "F",
+       "l": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $k$ & $l$ & $(k\\Cond l)\\Cond ((l\\Cond \\Neg k)\\Cond \\Neg k)$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{k}\\uv{\\Cond}{T}\\phantom{l}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{l}\\uv{\\Cond}{F}\\uv{\\Neg}{F}\\phantom{k}\\phantom{)}\\uv{\\Cond}{T}\\uv{\\Neg}{F}\\phantom{k}\\phantom{)}$ \\\\\n        T & F & $\\phantom{(}\\phantom{k}\\uv{\\Cond}{F}\\phantom{l}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{l}\\uv{\\Cond}{T}\\uv{\\Neg}{F}\\phantom{k}\\phantom{)}\\uv{\\Cond}{F}\\uv{\\Neg}{F}\\phantom{k}\\phantom{)}$ \\\\\n        F & T & $\\phantom{(}\\phantom{k}\\uv{\\Cond}{T}\\phantom{l}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{l}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{k}\\phantom{)}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{k}\\phantom{)}$ \\\\\n        F & F & $\\phantom{(}\\phantom{k}\\uv{\\Cond}{T}\\phantom{l}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{l}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{k}\\phantom{)}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{k}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{k}\\uv{\\Cond}{.}\\phantom{l}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{(}\\phantom{l}\\uv{\\Cond}{.}\\uv{\\Neg}{.}\\phantom{k}\\phantom{)}\\uv{\\Cond}{.}\\uv{\\Neg}{.}\\phantom{k}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $k$ & $l$ & $(k\\Cond l)\\Cond ((l\\Cond \\Neg k)\\Cond \\Neg k)$ \\\\\n        \\hline\n        T & T & $\\phantom{(}\\phantom{k}\\uv{\\Cond}{T}\\phantom{l}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{l}\\uv{\\Cond}{F}\\uv{\\Neg}{F}\\phantom{k}\\phantom{)}\\uv{\\Cond}{T}\\uv{\\Neg}{F}\\phantom{k}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & $\\phantom{(}\\phantom{k}\\uv{\\Cond}{T}\\phantom{l}\\phantom{)}\\uv{\\Cond}{T}\\phantom{(}\\phantom{(}\\phantom{l}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{k}\\phantom{)}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{k}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\phantom{(}\\phantom{k}\\uv{\\Cond}{.}\\phantom{l}\\phantom{)}\\uv{\\Cond}{M}\\phantom{(}\\phantom{(}\\phantom{l}\\uv{\\Cond}{.}\\uv{\\Neg}{.}\\phantom{k}\\phantom{)}\\uv{\\Cond}{.}\\uv{\\Neg}{.}\\phantom{k}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "∼((k ⊃ l) ⊃ ((l ⊃ ∼k) ⊃ ∼k))"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "k ⊃ l",
+       "from": "∼((k ⊃ l) ⊃ ((l ⊃ ∼k) ⊃ ∼k))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼((l ⊃ ∼k) ⊃ ∼k)",
+       "from": "∼((k ⊃ l) ⊃ ((l ⊃ ∼k) ⊃ ∼k))",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "l ⊃ ∼k",
+       "from": "∼((l ⊃ ∼k) ⊃ ∼k)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼∼k",
+       "from": "∼((l ⊃ ∼k) ⊃ ∼k)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "k",
+       "from": "∼∼k",
+       "rule": "∼∼"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼k",
+         "from": "k ⊃ l",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "l",
+         "from": "k ⊃ l",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼l",
+           "from": "l ⊃ ∼k",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "∼k",
+           "from": "l ⊃ ∼k",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "l ⊃ ∼k",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "k ⊃ l",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 3,
+    "branch_depth": 2,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg ((k\\Cond l)\\Cond ((l\\Cond \\Neg k)\\Cond \\Neg k))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $k\\Cond l$\\quad\\checkmark \\\\ \\ckpad $\\Neg ((l\\Cond \\Neg k)\\Cond \\Neg k)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $l\\Cond \\Neg k$\\quad\\checkmark \\\\ \\ckpad $\\Neg \\Neg k$\\quad\\checkmark \\\\ $\\vert$ \\\\ $k$} [.{$\\Neg k$ \\\\ x} ] [.{$l$} [.{$\\Neg l$ \\\\ x} ] [.{$\\Neg k$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "conditional",
+     "negation"
+    ],
+    "max_formula_depth": 4,
+    "total_formula_size": 11,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 3,
+    "tree_branch_depth": 2,
+    "countermodel_count": 0,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "(k ⊃ l) ⊃ ((l ⊃ ∼k) ⊃ ∼k)",
+    "sequent": "⊨ (k ⊃ l) ⊃ ((l ⊃ ∼k) ⊃ ∼k)"
+   }
+  },
+  {
+   "id": "montague-knower-factivity",
+   "cli_ref": "—",
+   "names": [
+    "The Knower sentence is true and unknown",
+    "Montague's lines 1-2 and 6-7"
+   ],
+   "premises": [
+    "l = ~k",
+    "k > l"
+   ],
+   "conclusion": "~k & l",
+   "interest": "The other half of the Knower's propositional skeleton, and different work from `montague-knower-tautology`: instead of a bare validity, this is what the biconditional defining the Knower sentence actually forces once factivity is added. One reductio does it -- assume `k`, use factivity to get `l`, use the biconditional to send `l` back to `∼k`, contradiction -- and it proves both halves of the paradox's informal punchline at once: the sentence is unknown, and it is nonetheless true. That is the striking move Montague's own presentation is built to make, recovered here as a four-row derivation from nothing but the sentence's defining biconditional and one factivity premise.",
+   "english": [
+    {
+     "gloss": "Say a sentence λ is equivalent to the claim that λ is not known -- so if it's known, it isn't, and if it isn't, it is -- and that whatever is known is true. Then λ is not known, and λ is true.",
+     "faithful": true
+    }
+   ],
+   "appearances": [
+    {
+     "type": "used",
+     "fidelity": "our reconstruction",
+     "who": "Thomas Bolander",
+     "work": "Self-Reference and Paradox",
+     "locus": "SEP §2.3, lines 1-2 and 6-7 of Montague's proof of the Knower theorem",
+     "url": "https://plato.stanford.edu/entries/self-reference/"
+    }
+   ],
+   "looks_like": "montague-knower-tautology",
+   "tags": {
+    "topic": [
+     "paradox",
+     "epistemic logic",
+     "self-reference",
+     "knowability"
+    ],
+    "figure": [
+     "Montague",
+     "Kaplan"
+    ],
+    "defect": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.9 ('The Knower — an unclaimed propositional core'), citing Bolander's SEP entry on self-reference, §2.3, lines 1-2 and 6-7 of Montague's proof. No course locus. Companion to montague-knower-tautology, which shares these atoms and this source.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "falsum appears inside the derivation, so no earlier than Lecture 10"
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "l = ~k",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "k > l",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "k",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 4,
+      "f": "l",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       3
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~k",
+      "rule": "BicondE",
+      "depth": 1,
+      "cites": [
+       1,
+       4
+      ]
+     },
+     {
+      "n": 6,
+      "f": "k",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       3
+      ]
+     },
+     {
+      "n": 7,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       6,
+       5
+      ]
+     },
+     {
+      "n": 8,
+      "f": "~k",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        3,
+        7
+       ]
+      ]
+     },
+     {
+      "n": 9,
+      "f": "l",
+      "rule": "BicondE",
+      "depth": 0,
+      "cites": [
+       1,
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "~k & l",
+      "rule": "ConjI",
+      "depth": 0,
+      "cites": [
+       8,
+       9
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{l\\Bicond \\Neg k}\n\\hypo{2}{k\\Cond l}\n\\open\n\\hypo{3}{k}\n\\have{4}{l}\\by{\\CondE}{2,3}\n\\have{5}{\\Neg k}\\by{\\BicondE}{1,4}\n\\have{6}{k}\\by{\\Reit}{3}\n\\have{7}{\\Falsum}\\by{\\FalsumI}{6,5}\n\\close\n\\have{8}{\\Neg k}\\by{\\NegI}{3,7}\n\\have{9}{l}\\by{\\BicondE}{1,8}\n\\have{10}{\\Neg k\\Conj l}\\by{\\ConjI}{8,9}\n\\end{nd}\n\\end{align*}",
+    "lines": 10,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "BicondE",
+     "CondE",
+     "ConjI",
+     "FalsumI",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "l",
+     "k"
+    ],
+    "columns": [
+     "l ≡ ∼k",
+     "k ⊃ l",
+     "∼k & l"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "l": "T",
+       "k": "T"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "l": "T",
+       "k": "F"
+      },
+      "premises": [
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "l": "F",
+       "k": "T"
+      },
+      "premises": [
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "l": "F",
+       "k": "F"
+      },
+      "premises": [
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad l \\qquad k \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad l\\Bicond \\Neg k \\qquad k\\Cond l \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg k\\Conj l \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{l}{T} \\qquad \\uv{k}{T} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{F} \\qquad \\uv{k\\Cond l}{T} \\quad$ & $\\quad \\uv{\\Neg k\\Conj l}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{k}{F} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{T} \\qquad \\uv{k\\Cond l}{T} \\quad$ & $\\quad \\uv{\\Neg k\\Conj l}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{k}{T} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{T} \\qquad \\uv{k\\Cond l}{F} \\quad$ & $\\quad \\uv{\\Neg k\\Conj l}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{k}{F} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{F} \\qquad \\uv{k\\Cond l}{T} \\quad$ & $\\quad \\uv{\\Neg k\\Conj l}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad l \\qquad k \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad l\\Bicond \\Neg k \\qquad k\\Cond l \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg k\\Conj l \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{l}{T} \\qquad \\uv{k}{T} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{F} \\qquad \\uv{k\\Cond l}{T} \\quad$ & $\\quad \\uv{\\Neg k\\Conj l}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{T} \\qquad \\uv{k}{F} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{T} \\qquad \\uv{k\\Cond l}{T} \\quad$ & $\\quad \\uv{\\Neg k\\Conj l}{T} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{k}{T} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{T} \\qquad \\uv{k\\Cond l}{F} \\quad$ & $\\quad \\uv{\\Neg k\\Conj l}{F} \\quad$ \\\\\n        $\\quad \\uv{l}{F} \\qquad \\uv{k}{F} \\quad$ & $\\quad \\uv{l\\Bicond \\Neg k}{F} \\qquad \\uv{k\\Cond l}{T} \\quad$ & $\\quad \\uv{\\Neg k\\Conj l}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "l ≡ ∼k",
+     "k ⊃ l",
+     "∼(∼k & l)"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "l",
+         "from": "l ≡ ∼k",
+         "rule": "≡"
+        },
+        {
+         "formula": "∼k",
+         "from": "l ≡ ∼k",
+         "rule": "≡"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼k",
+           "from": "k ⊃ l",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼∼k",
+             "from": "∼(∼k & l)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "∼l",
+             "from": "∼(∼k & l)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "∼(∼k & l)",
+         "branch_rule": "∼&"
+        },
+        {
+         "added": [
+          {
+           "formula": "l",
+           "from": "k ⊃ l",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼∼k",
+             "from": "∼(∼k & l)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "∼l",
+             "from": "∼(∼k & l)",
+             "rule": "∼&"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "∼(∼k & l)",
+         "branch_rule": "∼&"
+        }
+       ],
+       "status": null,
+       "branched_on": "k ⊃ l",
+       "branch_rule": "⊃"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼l",
+         "from": "l ≡ ∼k",
+         "rule": "≡"
+        },
+        {
+         "formula": "∼∼k",
+         "from": "l ≡ ∼k",
+         "rule": "≡"
+        },
+        {
+         "formula": "k",
+         "from": "∼∼k",
+         "rule": "∼∼"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼k",
+           "from": "k ⊃ l",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "l",
+           "from": "k ⊃ l",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        }
+       ],
+       "status": null,
+       "branched_on": "k ⊃ l",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "l ≡ ∼k",
+     "branch_rule": "≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 6,
+    "branch_depth": 3,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad l\\Bicond \\Neg k$\\quad\\checkmark \\\\ \\ckpad $\\qquad k\\Cond l$\\quad\\checkmark \\\\ \\ckpad $\\Neg A:\\quad \\Neg (\\Neg k\\Conj l)$\\quad\\checkmark} [.{$l$ \\\\ $\\Neg k$} [.{$\\Neg k$} [.{\\ckpad $\\Neg \\Neg k$\\quad\\checkmark \\\\ x} ] [.{$\\Neg l$ \\\\ x} ] ] [.{$l$} [.{\\ckpad $\\Neg \\Neg k$\\quad\\checkmark \\\\ x} ] [.{$\\Neg l$ \\\\ x} ] ] ] [.{$\\Neg l$ \\\\ \\ckpad $\\Neg \\Neg k$\\quad\\checkmark \\\\ $\\vert$ \\\\ $k$} [.{$\\Neg k$ \\\\ x} ] [.{$l$ \\\\ x} ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "l = ~k",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 2
+    },
+    {
+     "premise": "k > l",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 2,
+    "connectives": [
+     "biconditional",
+     "conditional",
+     "conjunction",
+     "negation"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 11,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 6,
+    "tree_branch_depth": 3,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "l ≡ ∼k",
+     "k ⊃ l"
+    ],
+    "conclusion": "∼k & l",
+    "sequent": "l ≡ ∼k, k ⊃ l  ⊨ ∼k & l"
    }
   }
  ],

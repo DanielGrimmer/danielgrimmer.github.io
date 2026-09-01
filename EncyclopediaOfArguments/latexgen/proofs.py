@@ -2757,3 +2757,52 @@ PROOFS["fitch-knowability-core"] = [
     _l(7, "~b", "CondE", 0, [3, 6]),
     _l(8, "!", "FalsumI", 0, [5, 7]),
 ]
+
+# -------------------------------------------------- fitch-knowability-sequent
+# One reductio past fitch-knowability-core: instead of assuming `a` and
+# reaching `!`, assume `a` to prove `~a`. Same inner shape, `~I` on top.
+PROOFS["fitch-knowability-sequent"] = [
+    P(1, "a > (b & c)"),
+    P(2, "c > ~b"),
+    _l(3, "a", "As", 1),
+    _l(4, "b & c", "CondE", 1, [1, 3]),
+    _l(5, "b", "ConjE", 1, [4]),
+    _l(6, "c", "ConjE", 1, [4]),
+    _l(7, "~b", "CondE", 1, [2, 6]),
+    _l(8, "!", "FalsumI", 1, [5, 7]),
+    _l(9, "~a", "NegI", 0, subs=[[3, 8]]),
+]
+
+# ------------------------------------------------- montague-knower-tautology
+# Three `⊃I`s deep: assume `k > l`, assume `l > ~k`, assume `k` (dictated by
+# the ~k goal one level up), derive `~k` two ways and let it collide with the
+# assumption itself -- reiterated, since a `⊥I` may not cite its own
+# subproof's assumption directly.
+PROOFS["montague-knower-tautology"] = [
+    _l(1, "k > l", "As", 1),
+    _l(2, "l > ~k", "As", 2),
+    _l(3, "k", "As", 3),
+    _l(4, "l", "CondE", 3, [1, 3]),
+    _l(5, "~k", "CondE", 3, [2, 4]),
+    _l(6, "k", "Reit", 3, [3]),
+    _l(7, "!", "FalsumI", 3, [6, 5]),
+    _l(8, "~k", "NegI", 2, subs=[[3, 7]]),
+    _l(9, "(l > ~k) > ~k", "CondI", 1, subs=[[2, 8]]),
+    _l(10, "(k > l) > ((l > ~k) > ~k)", "CondI", 0, subs=[[1, 9]]),
+]
+
+# -------------------------------------------------- montague-knower-factivity
+# `~k` first (a single reductio, the goal being a negation), then the
+# biconditional runs the other way to hand back `l`, and `&I` closes it.
+PROOFS["montague-knower-factivity"] = [
+    P(1, "l = ~k"),
+    P(2, "k > l"),
+    _l(3, "k", "As", 1),
+    _l(4, "l", "CondE", 1, [2, 3]),
+    _l(5, "~k", "BicondE", 1, [1, 4]),
+    _l(6, "k", "Reit", 1, [3]),
+    _l(7, "!", "FalsumI", 1, [6, 5]),
+    _l(8, "~k", "NegI", 0, subs=[[3, 7]]),
+    _l(9, "l", "BicondE", 0, [1, 8]),
+    _l(10, "~k & l", "ConjI", 0, [8, 9]),
+]
