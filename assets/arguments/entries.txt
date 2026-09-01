@@ -189,3 +189,6 @@ conditional-perfection-repaired
 slippery-slope-mt
 begging-the-question
 analogy-determination-rule
+conditional-perfection-explicit-converse
+tweety-classical-monotonicity
+fitch-knowability-core

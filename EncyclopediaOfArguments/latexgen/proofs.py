@@ -2714,3 +2714,46 @@ PROOFS["analogy-determination-rule"] = [
     _l(8, "p_t > q_t", "BicondE", 0, [4, 7]),
     _l(9, "q_t", "CondE", 0, [8, 3]),
 ]
+
+# ------------------------------------- conditional-perfection-explicit-converse
+# Straight modus tollens via reductio on q > p and ~p alone. p > q sits at line 1
+# and is never cited again -- exactly what the entry's own premise_analysis
+# reports: Burke's "invited converse" repair makes the original conditional
+# idle rather than needed alongside the one that is added.
+PROOFS["conditional-perfection-explicit-converse"] = [
+    P(1, "p > q"),
+    P(2, "q > p"),
+    P(3, "~p"),
+    _l(4, "q", "As", 1),
+    _l(5, "p", "CondE", 1, [2, 4]),
+    _l(6, "!", "FalsumI", 1, [5, 3]),
+    _l(7, "~q", "NegI", 0, subs=[[4, 6]]),
+]
+
+# ---------------------------------------------- tweety-classical-monotonicity
+# Plain modus ponens; `p_en` sits at line 3 and is never cited -- the whole
+# point of the entry is that a classically valid inference cannot be undone by
+# an added premise, however dramatic. (`pen` is not a legal atom name -- §2.4
+# -- and build.py legalises it to `p_en`, so the proof is written that way to
+# start with.)
+PROOFS["tweety-classical-monotonicity"] = [
+    P(1, "b > f"),
+    P(2, "b"),
+    P(3, "p_en"),
+    _l(4, "f", "CondE", 0, [1, 2]),
+]
+
+# ----------------------------------------------------- fitch-knowability-core
+# No reductio needed: the three premises reach `!` directly. `a` forces
+# `b & c` by CondE, both conjuncts come out by ConjE, and `c > ~b` turns `c`
+# into the `~b` that closes against `b`.
+PROOFS["fitch-knowability-core"] = [
+    P(1, "a"),
+    P(2, "a > (b & c)"),
+    P(3, "c > ~b"),
+    _l(4, "b & c", "CondE", 0, [2, 1]),
+    _l(5, "b", "ConjE", 0, [4]),
+    _l(6, "c", "ConjE", 0, [4]),
+    _l(7, "~b", "CondE", 0, [3, 6]),
+    _l(8, "!", "FalsumI", 0, [5, 7]),
+]
