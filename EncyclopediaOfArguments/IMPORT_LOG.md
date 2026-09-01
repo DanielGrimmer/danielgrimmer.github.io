@@ -58,6 +58,8 @@ be offered a second time). The reason column says which.
 | 2026-09-01 | `p∨q, p⊃q ⊢ q` (comprehensive §4.6, "The rare case where the conclusion's probability is determined") | Same reason as the row above: no named philosopher, no usable `sep` line, and *Conditionals* checked directly does not cover this specific probability-of-a-disjunction identity. |
 | 2026-09-01 | `⊢ ((a≡b) & (c≡d)) ⊃ ((a&c) ≡ (b&d))` (comprehensive §4.6, "why there is no truth table for probability") | Same reason again: no named philosopher, no usable `sep` line, and *Conditionals*, checked directly, does not state this compositional-replacement argument. |
 | 2026-09-01 | `⊢ (d≡(∼d∨q)) ≡ (d≡(d⊃q))` (CLI-510, comprehensive §5.1, "SEP's DLiar is the Curry sentence under ⊃") | Not a provenance problem — `who`/`work`/`url` would be the same Shapiro & Beall *Curry's Paradox* citation the other nine §5.1 imports already carry. Skipped on the difficulty cap instead: `material-conditional`, already in the database, proves the plain identity `(p⊃q)≡(∼p∨q)` this row's two sides are each built from, at 29 lines — exactly `ND_EXTREME_LINES`, the floor for `extremely hard` — and this row wraps that same identity one level deeper inside an outer `d≡_` on both sides, needing a nested `≡I` in each of the outer biconditional's two directions where `material-conditional` needed one flat pair. Structurally closer to `biconditional-as-agreement` (85 lines, also `extremely hard`) than to `curry-conditional`'s one-line-deeper cousin of `curry-sequent`, which only added a wrapping `⊃I` around an unchanged proof rather than doubling the interior. Four entries already wear `nd: extremely hard` (`de-morgan-conjunction`, `material-conditional`, `biconditional-as-agreement`, `bivalence-pigeonhole`) — one below the test suite's cap of five, and §14.-0.5 asks that a fifth be read as the threshold having drifted rather than scored around. Left for a person to either write and check the proof and decide whether the fifth is warranted, or raise the constant. The other two §5.1 candidates queued alongside it (CLI-507, CLI-509) had ordinary short proofs and were imported this firing as `curry-peirce-half-alone` and `curry-at-bottom`. |
+| 2026-09-01 | `{p ≡ ∼q, q ≡ ∼p}` (CLI-513, comprehensive §5.2, "even-length cycle") | No philosopher named in the row, and the section's own `sep` line is the whole of §5's shared list (Curry, Liar, epistemic paradoxes, Fitch, insolubles, future contingents, abduction, analogy, argument, fallacies, informal logic, non-monotonic logic — twelve articles, none pointing at this row specifically). SEP's *Liar Paradox*, fetched directly (§1.3, "Liar cycles"), states only the two-person Max-and-Agnes case CLI-512 already carries and says nothing about cycle length or the parity of negations around a cycle; that generalisation — even negation-count sat, odd unsat — is the comprehensive inventory's own observation extending Max-and-Agnes, not a claim SEP or any named philosopher makes. Citing SEP here would attribute the compiler's corollary to the article; `appearances_pending` is not a substitute (§13.1 marks that flag as an exception specific to the imports inventory's §3, not a general escape from having a source, and the routine's own log has held that line before at CLI-106). Left for a person who can find an actual source discussing generalised liar cycles. CLI-512, the case this row generalises, names SEP's own dialogue directly and was imported this firing as `max-and-agnes-liar-cycle`. |
+| 2026-09-01 | `{a ≡ ∼b, b ≡ ∼c, c ≡ ∼a}` (CLI-514, comprehensive §5.2, "odd-length cycle") | Same reason as the row above: no philosopher named, the same twelve-article `sep` line covers it, and SEP's *Liar Paradox* (checked directly) discusses only the two-person case, not a three-cycle or the parity result this row instances. Companion to CLI-513, same disposition. |
 
 ## Resolved
 
@@ -2257,3 +2259,120 @@ same package list recorded by essentially every prior firing
 texlive-humanities texlive-science`) resolved it in one `apt-get install`
 this time, no second round needed. The `session-start-hook` suggestion is
 still open.
+
+## 2026-09-01 (continued) — Max-and-Agnes, and a conditional-perfection pair from §5.3
+
+Three from the comprehensive sweep. Course and imports queues remain at 0
+(checked again this firing); comprehensive had 25 candidates, opening with
+`--next 3` on §5.2's Liar family.
+
+`max-and-agnes-liar-cycle` (`{t≡l, l≡∼t}`, CLI-512) is SEP's own two-person
+Liar cycle, fetched directly (*Liar Paradox*, §1.3 "Liar cycles") rather
+than trusted from the row's one-line gloss: "Consider a very concise (viz.,
+one-sentence-each) dialog between siblings Max and Agnes. Max: Agnes'
+claim is true. Agnes: Max's claim is not true." — checked verbatim against
+the live page and used as `appearances[0].quote`, `fidelity: "our
+reconstruction"` since the two biconditionals are our formalisation, not a
+symbolic form SEP writes out. `who` needed the same care the style guide
+warns is easy to get wrong on this file: the archived citation info page
+gives the *Liar Paradox* entry's byline as Beall, Glanzberg, Ripley and
+Rossi (four authors, Fall 2026), not Curry's or any single name a row's
+"SEP's Max-and-Agnes liar cycle" gloss might suggest. Proof is the
+one-atom `biconditional-with-its-own-negation` trick spread across two
+biconditionals: assume `t`, cross both to reach `∼t`, close, then re-cross
+both from `∼t` alone (no fresh assumption) back to `t` for the final
+`FalsumI` — 11 lines against the one-atom proof's 8, `nd: easy` either way
+since assuming a bare atom toward a `⊥` goal is not the "assuming the
+negation of something" §14.3 trigger 2 names (matches
+`biconditional-with-its-own-negation`'s own `easy` score, and
+`difficulty.py --diff` agreed).
+
+**CLI-513 (`{p≡∼q, q≡∼p}`, "even-length cycle", SAT) and CLI-514
+(`{a≡∼b, b≡∼c, c≡∼a}`, "odd-length cycle", UNSAT) were skipped, not
+imported.** §5.2's prose calls these three rows "the parity result" as a
+set, but only CLI-512 is SEP's own example — CLI-513/514 generalise it to
+illustrate the parity (negation-count sat/unsat) pattern, and that
+generalisation is the comprehensive inventory's own observation, not a
+claim `liar-paradox`, fetched and checked directly for exactly this,
+states or that any philosopher named in either row makes. `sep` on all
+three rows is the same twelve-article list covering the whole of §5,
+too broad to pin a specific one to either. `appearances_pending` is not
+the fallback here — §13.1 marks it an exception specific to the imports
+inventory's §3, and the routine has held that line before (CLI-106).
+Logged in the table above with a worked-through derivation of a general
+proof for CLI-514 attempted first (11 lines were not enough; a full
+double-reductio through a nested sub-subproof came to 24 and checked
+against `nd.check()` before the provenance question closed it off anyway
+— kept nowhere, since the entry was never going to be written, but noted
+here so a future firing that finds a source does not have to redo the
+derivation from scratch: assume `a`, nested-assume `c` to pull `∼a` from
+premise 3 and close against the reiterated outer `a`, discharge to `∼c` at
+depth 1, cross premise 2 to `b`, close against `∼b` for `∼a` at depth 0;
+mirror with `∼a` assumed outermost and `b` nested, discharge to `∼~a`
+i.e. `a` via `NegE`, then final `FalsumI` on the two depth-0 results).
+
+**A logging mistake caught by re-checking the queue after writing the
+skip rows, worth flagging so it is not repeated.** The comprehensive
+file writes every §5 inconsistency-set row in braces —
+`` `{p ≡ ∼q, q ≡ ∼p}` ``, not `` `p ≡ ∼q, q ≡ ∼p}` `` — because
+`split_sequent` (`inventory.py`) reads the braces as the marker that a
+bare comma list is a claim of *inconsistency* (`⊢ ⊥`) rather than of
+"the conjunction is a tautology". The first draft of the two skip rows
+above quoted the sequents unbraced; `inventory.py --status` afterwards
+still showed both in the queue, because the settled-set built from the
+log parsed them as a different shape (no premises, one bare formula)
+than the actual candidate (two premises, `⊥`). Re-added the braces and
+confirmed the queue count moved 25 → 20 (3 imported + 2 now correctly
+settled) before moving on.
+
+The remaining two entries are §5.3's conditional-perfection pair, taken
+next after skipping the Liar family's unattributable half and passing over
+CLI-515 (the truth-teller, `{p≡p}`) — the section's own prose flags it as
+not appearing in SEP's *Liar Paradox* "as fetched (checked twice)", so it
+has the identical provenance problem as CLI-513/514 and was left for the
+same reason without a separate log line, since it will read as one more
+instance of "no source" the next time it is reached rather than a new
+question.
+
+`conditional-perfection` (`p⊃q ⊭ ∼p⊃∼q`, CLI-525) is not an SEP form at
+all: the row names Geis & Zwicky, and the style guide's own attribution
+caution for this section says "conditional perfection" occurs zero times
+in the SEP entries the sweep fetched, so citing SEP here would have been
+exactly the mistake §11d warns against. Searched instead for the primary
+source directly: Michael L. Geis and Arnold M. Zwicky, "On Invited
+Inferences," *Linguistic Inquiry* 2(4), pp. 561–566 (1971) — confirmed
+by two independent searches, `url: null` since no stable copy was found
+to link. `fidelity: "our reconstruction"`; no `quote`, since the primary
+1971 paper was not itself read, only secondary descriptions of it, and a
+sentence built from those is not a passage to put in quotation marks as
+theirs. `nd.note` explains the one countermodel (`p=F, q=T`) rather than
+just naming it. `conditional-perfection-repaired` (`p≡q, ∼p ⊢ ∼q`,
+CLI-531) is the same phenomenon read the way Geis and Zwicky say speakers
+actually intend it — the conditional strengthened to the biconditional it
+is heard as — which turns the first entry's invalid inference into a
+one-line `≡E`; `looks_like` points back at `conditional-perfection`,
+matching the style guide's own "X and X-repaired" pairing advice.
+Six-line proof, single assumption, `⊃I`'s negation-goal makes the
+reductio dictated rather than trigger 2, `nd: easy`, `difficulty.py
+--diff` agreed.
+
+`build.py --write` (three entries, no reparenthesising needed),
+`python3 difficulty.py --diff` (clean, 0 differ), `svg.py` (11 SVGs, 4
+blocks for the two valid entries and 3 for the invalid one — a fresh
+container again had no LaTeX toolchain; `texlive-latex-base
+texlive-latex-extra texlive-fonts-recommended dvisvgm` plus, this time,
+`texlive-science` and `texlive-humanities` for `stmaryrd`/`fitch` and
+`qtree` respectively, both missing from the base install this container
+started with), `inventory.py --locks` (0 practicable methods locked),
+`manifest.py --check-merge` (188 entries, 185 expected from the merge
+parents, nothing lost — `git merge origin/main` reported already up to
+date). `node --test "_tests/*.test.mjs"` found the two hardcoded
+contradiction-entry counts again, eleven bumped to twelve
+(`max-and-agnes-liar-cycle` is the twelfth `⊥`-conclusion entry;
+`conditional-perfection`/`-repaired` both conclude ordinary formulas and
+do not add to that count) — updated, then 514/514 clean. `git diff
+--name-only origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md`
+confirmed empty. `extremely hard` (nd) count unchanged at 4 of 4.
+Comprehensive queue: 20 candidates left of 274 (130 now in the database,
+3 quarantined, 82 unreadable, 39 settled). Course and imports queues
+remain at 0.

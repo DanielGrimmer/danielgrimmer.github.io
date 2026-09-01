@@ -183,3 +183,6 @@ curry-implicational
 curry-w-axiom-alone
 curry-peirce-half-alone
 curry-at-bottom
+max-and-agnes-liar-cycle
+conditional-perfection
+conditional-perfection-repaired

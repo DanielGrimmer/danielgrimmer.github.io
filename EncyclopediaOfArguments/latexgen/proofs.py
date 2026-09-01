@@ -1832,6 +1832,39 @@ PROOFS["double-negation-introduction"] = [
     _l(5, "~~p", "NegI", 0, subs=[[2, 4]]),
 ]
 
+# ------------------------------------------------- max-and-agnes-liar-cycle
+# biconditional-with-its-own-negation's one-atom trick, spread across two
+# atoms and two premises: assume t, cross both biconditionals to reach ~t,
+# then re-cross them from ~t alone (no fresh assumption) to reach t back.
+# Longer than the one-atom proof for exactly that reason -- each leg of the
+# reductio has to visit the *other* biconditional before it can close.
+PROOFS["max-and-agnes-liar-cycle"] = [
+    P(1, "t = l"),
+    P(2, "l = ~t"),
+    _l(3, "t", "As", 1),
+    _l(4, "l", "BicondE", 1, [1, 3]),
+    _l(5, "~t", "BicondE", 1, [2, 4]),
+    _l(6, "t", "Reit", 1, [3]),
+    _l(7, "!", "FalsumI", 1, [6, 5]),
+    _l(8, "~t", "NegI", 0, subs=[[3, 7]]),
+    _l(9, "l", "BicondE", 0, [2, 8]),
+    _l(10, "t", "BicondE", 0, [1, 9]),
+    _l(11, "!", "FalsumI", 0, [10, 8]),
+]
+
+# ------------------------------------------------- conditional-perfection-repaired
+# Denying the antecedent, licensed once the conditional is read as the
+# biconditional Geis and Zwicky say speakers actually intend: a single
+# reductio pulls the "perfected" reading's other direction out of premise 1.
+PROOFS["conditional-perfection-repaired"] = [
+    P(1, "p = q"),
+    P(2, "~p"),
+    _l(3, "q", "As", 1),
+    _l(4, "p", "BicondE", 1, [1, 3]),
+    _l(5, "!", "FalsumI", 1, [4, 2]),
+    _l(6, "~q", "NegI", 0, subs=[[3, 5]]),
+]
+
 # ----------------------------------------------------------- destructive dilemma
 # constructive-dilemma's dual, and not as easy: neither case gets its disjunct
 # by a bare ⊃E, since what each needs is a *negative* conclusion the goal
