@@ -2528,3 +2528,10 @@ EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed empty. `extremely hard`
 274 (141 now in the database, 3 quarantined, 82 unreadable, 43 settled),
 all five in §7 ("TRAPS — forms that look plausible or connexive and are
 classically VALID"). Course and imports queues remain at 0.
+
+**2026-09-01 — all three queues ran out.** The comprehensive sweep's last
+five candidates (§7 TRAPS) went in across the two firings after the note
+above; `inventory.py --status` now reports 0 candidates left on `course`,
+`imports`, and `comprehensive` alike. Every firing from here finds the same
+empty queues and, per this file's own instruction just above, does nothing
+further: no commit, no push, no repeat of this line.
