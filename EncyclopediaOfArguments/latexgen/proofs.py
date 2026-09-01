@@ -1802,6 +1802,24 @@ PROOFS["curry-implicational"] = [
     _l(8, "q", "CondE", 0, [6, 7]),
 ]
 
+# ------------------------------------------------------- curry-at-bottom
+# curry-sequent's own seven lines, unchanged, with q replaced throughout by
+# the explicit contradiction r & ~r: the proof runs to that conjunction
+# instead of stopping at an arbitrary atom, then two ConjE peel it apart and
+# FalsumI reads the contradiction straight off. No NegI, no NegE anywhere.
+PROOFS["curry-at-bottom"] = [
+    P(1, "p = (p > (r & ~r))"),
+    _l(2, "p", "As", 1),
+    _l(3, "p > (r & ~r)", "BicondE", 1, [1, 2]),
+    _l(4, "r & ~r", "CondE", 1, [3, 2]),
+    _l(5, "p > (r & ~r)", "CondI", 0, subs=[[2, 4]]),
+    _l(6, "p", "BicondE", 0, [1, 5]),
+    _l(7, "r & ~r", "CondE", 0, [5, 6]),
+    _l(8, "r", "ConjE", 0, [7]),
+    _l(9, "~r", "ConjE", 0, [7]),
+    _l(10, "!", "FalsumI", 0, [8, 9]),
+]
+
 # ------------------------------------------------------- double-negation intro
 # The mirror image of NegE, and the shortest reductio in the system: the
 # premise is already one half of the contradiction, so the only thing the

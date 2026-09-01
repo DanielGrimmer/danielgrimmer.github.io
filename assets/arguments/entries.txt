@@ -181,3 +181,5 @@ curry-is-conjunction
 curry-antecedent
 curry-implicational
 curry-w-axiom-alone
+curry-peirce-half-alone
+curry-at-bottom
