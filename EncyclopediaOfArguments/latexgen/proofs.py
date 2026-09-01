@@ -2827,3 +2827,56 @@ PROOFS["montague-knower-detonation"] = [
     _l(11, "k", "CondE", 0, [3, 10]),
     _l(12, "!", "FalsumI", 0, [11, 9]),
 ]
+
+# ------------------------------------------------- boethius-thesis-converse
+# The trap's classical mechanism: ~(p > ~q) forces both p and q out by
+# reductio. Depth 4 is the price of the second one -- q is not itself the
+# thing being assumed against, so getting it costs a full double-negation
+# detour: assume ~q, rebuild p > ~q from scratch (a second, nested `p`
+# assumption, since ⊃I never reuses an outer one), collide with line 1, and
+# only then NegE turns ~~q into q.
+PROOFS["boethius-thesis-converse"] = [
+    _l(1, "~(p > ~q)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "~q", "As", 3),
+    _l(4, "p", "As", 4),
+    _l(5, "~q", "Reit", 4, [3]),
+    _l(6, "p > ~q", "CondI", 3, subs=[[4, 5]]),
+    _l(7, "!", "FalsumI", 3, [6, 1]),
+    _l(8, "~~q", "NegI", 2, subs=[[3, 7]]),
+    _l(9, "q", "NegE", 2, [8]),
+    _l(10, "p > q", "CondI", 1, subs=[[2, 9]]),
+    _l(11, "~(p > ~q) > (p > q)", "CondI", 0, subs=[[1, 10]]),
+]
+
+# ------------------------------------------------- boethius-variant-converse
+# One level shallower than its sibling above: the target consequent is
+# already a negation, ~q, so `NegI` is dictated directly from the assumption
+# `q` -- no double-negation detour needed. The nested `p` assumption at depth
+# 4 is still forced, since `⊃I` cannot discharge a conditional it did not
+# open its own subproof for.
+PROOFS["boethius-variant-converse"] = [
+    _l(1, "~(p > q)", "As", 1),
+    _l(2, "p", "As", 2),
+    _l(3, "q", "As", 3),
+    _l(4, "p", "As", 4),
+    _l(5, "q", "Reit", 4, [3]),
+    _l(6, "p > q", "CondI", 3, subs=[[4, 5]]),
+    _l(7, "!", "FalsumI", 3, [6, 1]),
+    _l(8, "~q", "NegI", 2, subs=[[3, 7]]),
+    _l(9, "p > ~q", "CondI", 1, subs=[[2, 8]]),
+    _l(10, "~(p > q) > (p > ~q)", "CondI", 0, subs=[[1, 9]]),
+]
+
+# ------------------------------------------------- leibniz-thesis-material
+# The shortest of the three: no reductio at all beyond the one `NegI` already
+# names. Assume p, assume p > ~p, `CondE` the two together for ~p, and p
+# together with ~p is the whole contradiction -- nothing hidden.
+PROOFS["leibniz-thesis-material"] = [
+    _l(1, "p", "As", 1),
+    _l(2, "p > ~p", "As", 2),
+    _l(3, "~p", "CondE", 2, [2, 1]),
+    _l(4, "!", "FalsumI", 2, [1, 3]),
+    _l(5, "~(p > ~p)", "NegI", 1, subs=[[2, 4]]),
+    _l(6, "p > ~(p > ~p)", "CondI", 0, subs=[[1, 5]]),
+]

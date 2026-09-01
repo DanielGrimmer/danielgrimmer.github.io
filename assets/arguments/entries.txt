@@ -197,3 +197,6 @@ montague-knower-tautology
 montague-knower-factivity
 montague-knower-detonation
 dutch-book-pivot
+boethius-thesis-converse
+boethius-variant-converse
+leibniz-thesis-material
