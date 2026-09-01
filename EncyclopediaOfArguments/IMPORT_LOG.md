@@ -54,6 +54,9 @@ be offered a second time). The reason column says which.
 | 2026-08-31 | `⊢ (∼p⊃(q∨r)) ⊃ ((∼p⊃q) ∨ (∼p⊃r))` (CLI-412, comprehensive §4.1, Harrop's rule) | Not a provenance problem — the SEP *Intuitionistic Logic* entry (Moschovakis, §4.2, "Admissible rules of intuitionistic logic and arithmetic") names this exact schema and Harrop [1960] by name, confirmed on a direct fetch, and would have made a clean `diagnosed` appearance. The obstacle is the derivation. A classical proof needs `p∨∼p` built from scratch (10 lines, no primitive LEM in the twelve rules), then a case split: the `p` branch needs `∼p⊃q` built vacuously through the no-explosion reductio machinery (8 lines, the same shape as the standalone `ex-falso` entry), and the `∼p` branch needs the premise applied and a second `∨E` on `q∨r`, each of *its* two cases building a vacuous conditional the cheap way (reiterating a formula already in hand, 5 lines each) before `∨I` closes it. Assembled and checked against `nd.check()`: 34 lines, all five §14.3 triggers (`∨E` more than once, an undictated reductio building `p∨∼p`, a subproof four deep, eleven subproofs, well past ten derived lines) — a fifth `extremely hard` `nd` entry against the cap of four the test suite enforces (`worn.length <= 4`; the database already carries `de-morgan-conjunction`, `material-conditional`, `biconditional-as-agreement` and `bivalence-pigeonhole`). Tried restructuring before giving up on the firing, per §6.4a's instruction to write the proof again rather than reach for a flag: extracting `∼(∼p⊃q)` and `∼(∼p⊃r)` from a top-level reductio on the negated goal, hoping to skip the `p∨∼p` lemma entirely, but recovering `∼p` from `∼(∼p⊃q)` needs the identical vacuous-conditional-via-reductio machinery the case-split approach already pays for, so nothing was saved. No proof under 29 lines was found. Left for a firing or a person with time for either a cleverer derivation or a considered decision to raise `ND_EXTREME_LINES`, per the same reasoning `conditional-crossover` and the Huntington/Robbins equations record above. |
 | 2026-08-31 | `⊢ (p⊃(q∨r)) ⊃ ((p⊃q) ∨ (p⊃r))` (CLI-413, comprehensive §4.1) | No philosopher named in the row ("Memorable one-line refutation: set p := q∨r" states the point itself). Checked the SEP *Intuitionistic Logic* entry directly for this specific schema (unnegated antecedent, unlike CLI-412's Harrop rule immediately above it in the queue, which the article does name) — not found; the article's admissible-rules section covers Harrop's rule and Mints's rule, both negated-antecedent, and neither is this one substituted or generalised. Left for a person who can find an actual discussion of this specific form. |
 | 2026-08-31 | `⊢ ((p⊃q)⊃q)⊃((q⊃p)⊃p)` (comprehensive §4.2, "Ł's axiom") | The row's own label names Łukasiewicz, but §4 carries one `sep` line covering §4.1–§4.9 jointly (eleven articles), too broad to point at any one of them for a §4.2 row, and fetching the likeliest candidate directly (SEP's *Many-Valued Logic*) found it discusses Ł3/K3/LP/G3 at length but never states this specific axiom in the text retrieved. A web search for the schema itself turned up Wajsberg's 1931 axiomatisation of Łukasiewicz's three-valued calculus without confirming whether this exact schema (as opposed to a variant) is among Wajsberg's axioms or original to Łukasiewicz. Rather than write `who: Jan Łukasiewicz` against a work this firing could not pin down and verify — exactly the guessed-attribution mistake §11d warns against, on the champion fallback as much as on an SEP slug — left for a person who can confirm the actual source. The two other §4.4 candidates queued alongside it (CLI-433, CLI-434) had clean citations and were imported this firing. |
+| 2026-09-01 | `p, q, r, s ⊢ p&q&r&s` (comprehensive §4.6, "Same, by conjunction rather than chaining") | No philosopher named in the row or the surrounding prose; illustrates a general point about probabilistic semantics attributed to no one by name in this row's own cell. §4.6 carries no `sep` line, and the one plausible candidate among §4.5/§4.6's shared boilerplate list — SEP's *Conditionals*, for Adams's probabilistic semantics — was fetched directly and does not contain this row's content. Left for a person who can find the actual source. |
+| 2026-09-01 | `p∨q, p⊃q ⊢ q` (comprehensive §4.6, "The rare case where the conclusion's probability is determined") | Same reason as the row above: no named philosopher, no usable `sep` line, and *Conditionals* checked directly does not cover this specific probability-of-a-disjunction identity. |
+| 2026-09-01 | `⊢ ((a≡b) & (c≡d)) ⊃ ((a&c) ≡ (b&d))` (comprehensive §4.6, "why there is no truth table for probability") | Same reason again: no named philosopher, no usable `sep` line, and *Conditionals*, checked directly, does not state this compositional-replacement argument. |
 
 ## Resolved
 
@@ -2015,3 +2018,148 @@ texlive-latex-recommended texlive-latex-extra texlive-pictures
 texlive-humanities texlive-science dvisvgm`, texlive-fonts-recommended
 pulled in as a dependency) via `apt-get` resolved it cleanly. The
 `session-start-hook` suggestion from every prior firing's note is still open.
+
+## 2026-09-01 — Diodorus's Master Argument, the preface paradox, deontic exhaustion
+
+Course and imports queues re-confirmed empty (`inventory.py --status` for
+both). `inventory.py --next 3 --source comprehensive` gave the un-numbered
+row from §4.5 ("Diodorus's Master Argument"), an un-numbered row from §4.6
+(the preface paradox at four atoms), and a third §4.6 row (`p, q, r, s ⊢
+p&q&r&s`, "Same, by conjunction rather than chaining"). All three of §4.6's
+rows were previewed with `--next 6` before committing to which to import,
+since the section carries no `sep` line and two of its four candidates
+turned out to have nothing in the row's own text to attribute to a person —
+see below.
+
+**The Diodorus row** (`c⊃t, t⊃n, n⊃(p∨h), c, ∼p, ∼h ⊢ ⊥`, **VALID**
+(unsatisfiable), §4.5) sits under the same shared, unhelpful eleven-article
+`sep` line that `sea-battle-dilemma` already worked around two firings ago —
+confirmed by reading §4.5's header directly, no `*SEP:*` line of its own.
+Per §11d, named the philosophers the row itself names: Diodorus Cronus (who
+used the argument, per Epictetus and Cicero's secondhand reports) and Arthur
+Prior (who made reconstructing it propositionally a running project across
+his tense-logic work — *Diodoran Modalities*, 1955, checked as a real,
+findable paper rather than asserted from memory of the general connection).
+Both appearances cite the philosophers' own work directly rather than an SEP
+article, `fidelity: our reconstruction`, `url: null`. Imported as
+`diodorus-master-argument`. The row's own caution — `n⊃(p∨h)` is a
+reconstruction of a modal rule, not a translation — is carried into both
+`interest` and `course.note`, since the tree closing here shows Prior's
+propositional rendering is inconsistent, not that Diodorus's original modal
+argument is classically valid. No English gloss: the five-letter
+reconstruction (`c, t, n, p, h`) is not one this firing could confidently
+assign real-world referents to without inventing content the source does not
+supply, so `english` is left empty per the rule for a bare schema with
+nothing honest to gloss.
+
+**The preface paradox** (`{p,q,r,s,∼(p&q&r&s)}`, **VALID** (unsatisfiable),
+§4.6) also sits under a section with no `sep` line at all. The paradox has a
+real, checkable origin, so this one got the same treatment via a direct
+source lookup rather than the champion-of-last-resort route: D. C. Makinson,
+*The Paradox of the Preface* (Analysis 25(6), 1965) — confirmed by fetching
+SEP's own *Epistemic Paradoxes* entry (Sorensen), which credits Makinson by
+name with extracting the paradox from a real apology in Raymond Wilder's
+1952 preface and quotes the 1965 page number directly. That SEP entry is not
+itself cited as the appearance, since nothing ties this specific §4.6 row to
+it having been the sweep's actual source (the section's `sep` field is
+empty, and the caution two rows later in the same file — "the preface
+paradox and Makinson: zero hits" — is about the *games/dialogical* SEP
+entries specifically, not a statement that this row came from nowhere);
+Makinson's own paper is the safer, independently-verified citation. Imported
+as `preface-paradox`, with an English gloss this time (`faithful: true`),
+since the paradox's content, unlike Diodorus's five opaque letters, is
+exactly what the SEP passage independently confirms. `course.note` flags
+the companion lottery-paradox row in §5.4 of the same file (same structure,
+three atoms instead of four) for a later firing.
+
+**`p, q, r, s ⊢ p&q&r&s`** ("Same, by conjunction rather than chaining") and
+the two other §4.6 rows previewed alongside it (`p∨q, p⊃q ⊢ q`; the
+probability/truth compositional-replacement tautology) were left out this
+firing. None names a philosopher in its own text or in the surrounding
+prose — they illustrate a general point about probabilistic semantics
+(Adams's framework, named only later in the section's own caution
+paragraph, not beside any of these three rows specifically) rather than an
+argument anyone is credited with making. Checked whether the section's
+boilerplate `sep` field (which lists eleven broad articles identically
+across every §4.5/§4.6 row, clearly a default rather than a detected match)
+could stand in for one of them: fetched SEP's *Conditionals* — the one
+plausible candidate, since Adams's probabilistic semantics for conditionals
+is its subject — directly, and it does not contain the P(q) = P(p∨q) +
+P(p⊃q) − 1 identity or the compositional-replacement-fails-for-probability
+argument these rows state. Rather than guess a different one of the eleven
+or invent a champion, all three are logged in the skip table below for a
+person who can find the actual source.
+
+Proofs for both valid entries checked with `nd.check()` before being written
+into `proofs.py`. `diodorus-master-argument` chains the six premises down to
+`p∨h` by `⊃E`, then closes both disjuncts against `∼p` and `∼h` by `∨E`;
+each case's contradiction is the case's own assumption, so both required the
+reiteration §6.4 forces before citing it in `⊥I` (16 lines, one trigger —
+proof by cases — `medium`). `preface-paradox` is nothing but `∧I` four times
+into a single `⊥I` (9 lines, no triggers, `easy`). `difficulty.py --diff`
+came back clean on both hand-scored values without an override.
+
+Also took `deontic-exhaustion` (`⊢ a∨(∼a&∼b)∨b`, **TAUT**, §4.7's "The rest,
+verified" table, "Deontic exhaustion"), since this section, unlike its two
+neighbours, does carry a clean `*SEP:*` line naming McNamara and Van De
+Putte — fetched their *Deontic Logic* SEP entry directly and confirmed the
+principle under §1.2's "Traditional Threefold Classification" (labelled
+`OB`-Exhaustion in the rendered text) rather than trust the row's own gloss,
+and confirmed the current byline via the entry's own citation info rather
+than guess it from the inventory's shorthand. Quoted the article's own
+sentence stating the exhaustion/exclusiveness principle in prose, checked
+against the fetched page rather than composed. `interest` and `course.note`
+both note what makes this entry unusual in its own neighbourhood: the
+section's other principles (inheritance, aggregation, K-distribution) need
+explicit bridge premises to become propositionally visible at all, but
+exhaustion needs none, since "exhaustive and mutually exclusive" is already
+truth-functional before any normative operator is attached.
+
+Its proof needed a genuinely nested reductio -- no premises to chain from,
+so the whole thing opens by assuming the negation of the target, splits on
+`a` (each case's contradiction closing against the outer `∼D`, reiterated
+where required exactly as in `diodorus-master-argument`), recombines `∼a`
+and `∼b` into the middle disjunct, and takes double-negation elimination to
+finish. 17 lines, three triggers (an undictated reductio, a subproof nested
+inside another, seventeen derived lines past the ten-line mark) — `hard`,
+and `difficulty.py --diff` agreed without an override.
+
+Checked before writing: `interest`'s claim that the preface paradox's tree
+"closes on all sixteen rows" was wrong on a first draft — conflating the
+16-row table (all sixteen falsify the premise set) with the tree, which
+actually closes in four branches via the nested `∼&` decomposition of the
+negated four-way conjunction — caught by checking the claim against
+`derive()`'s own output per this file's standing caution about superlatives
+and countermodel claims, and corrected before the entry was built. A second
+phrase in the same field ("differ only in provenance, as the source... puts
+it") echoed the source file's own wording too closely without being in the
+`quote` field; reworded to a plain statement of the structural relationship
+instead.
+
+`build.py --write` (three entries normalised: `p&q&r&s` reparenthesised
+left-associatively as `((p&q)&r)&s`, and `a|(∼a&∼b)|b` as
+`(a|(∼a&∼b))|b`, both idempotent normalisations rather than anything
+authored by hand), `python3 difficulty.py --diff` (clean, 0 differ),
+`svg.py` (12 SVGs, 4 blocks × 3 entries — a fresh container needed the
+LaTeX toolchain reinstalled first, see below), `inventory.py --locks` (0
+practicable methods locked — comprehensive carries no `problem_set`),
+`manifest.py --check-merge` (177 entries, 174 expected from the merge
+parents, nothing lost, checked before and after — `git merge origin/main`
+reported already up to date, nothing to resolve), and `node --test
+"_tests/*.test.mjs"` found two hardcoded contradiction-entry counts that
+needed bumping from seven to nine (both entries added this firing conclude
+`⊥`) — updated, then 514/514 clean. `git diff --name-only
+origin/main...HEAD -- EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed
+empty; none of the three appearances is a course appearance. `extremely
+hard` (nd) count unchanged at 4 of 4. Comprehensive queue: 37 candidates
+left of 274 (119 now in the database, 3 quarantined, 82 unreadable, 36
+settled — three §4.6 rows newly logged above). Course and imports queues
+remain at 0.
+
+**The sandbox again had no LaTeX toolchain in this fresh container**; the
+same package list every prior firing has recorded (`texlive-latex-base
+texlive-latex-extra texlive-pictures dvisvgm`, then `texlive-humanities
+texlive-science` once `qtree.sty`/`fitch.sty` and `stmaryrd.sty` turned out
+not to be pulled in by the first set) via `apt-get` resolved it cleanly. The
+`session-start-hook` suggestion from every prior firing's note is still
+open — this is the ninth or tenth firing in a row to need the same install.

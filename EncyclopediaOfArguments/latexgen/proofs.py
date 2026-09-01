@@ -2467,3 +2467,70 @@ PROOFS["sea-battle-dilemma"] = [
     _l(9, "n | m", "DisjI", 1, [8]),
     _l(10, "n | m", "DisjE", 0, [1], subs=[[4, 6], [7, 9]]),
 ]
+
+# ---------------------------------------------------- diodorus-master-argument
+# Chain the six premises down to `p | h`, then close both disjuncts against
+# `~p` and `~h`. Each case's contradiction is the case assumption itself, so
+# both need the required reiteration before FalsumI (§6.4): citing the `As`
+# line directly would be citing the subproof's own assumption as half of its
+# contradiction.
+PROOFS["diodorus-master-argument"] = [
+    P(1, "c > t"),
+    P(2, "t > n"),
+    P(3, "n > (p | h)"),
+    P(4, "c"),
+    P(5, "~p"),
+    P(6, "~h"),
+    _l(7, "t", "CondE", 0, [1, 4]),
+    _l(8, "n", "CondE", 0, [2, 7]),
+    _l(9, "p | h", "CondE", 0, [3, 8]),
+    _l(10, "p", "As", 1),
+    _l(11, "p", "Reit", 1, [10]),
+    _l(12, "!", "FalsumI", 1, [11, 5]),
+    _l(13, "h", "As", 1),
+    _l(14, "h", "Reit", 1, [13]),
+    _l(15, "!", "FalsumI", 1, [14, 6]),
+    _l(16, "!", "DisjE", 0, [9], subs=[[10, 12], [13, 15]]),
+]
+
+# ---------------------------------------------------------------- preface-paradox
+# Nothing but conjunction-building and one ⊥I -- the whole difficulty of the
+# paradox is philosophical, not proof-theoretic.
+PROOFS["preface-paradox"] = [
+    P(1, "p"),
+    P(2, "q"),
+    P(3, "r"),
+    P(4, "s"),
+    P(5, "~(p & q & r & s)"),
+    _l(6, "p & q", "ConjI", 0, [1, 2]),
+    _l(7, "(p & q) & r", "ConjI", 0, [6, 3]),
+    _l(8, "((p & q) & r) & s", "ConjI", 0, [7, 4]),
+    _l(9, "!", "FalsumI", 0, [8, 5]),
+]
+
+# ------------------------------------------------------------- deontic-exhaustion
+# No premises, so the whole thing is one big reductio: assume the negation of
+# the target, case-split on `a` (each case closing against the same outer
+# `~D`, reiterated when it is the enclosing subproof's own assumption),
+# recombine `~a` and `~b` into the middle disjunct, and take DNE to discharge.
+# An undictated reductio around two case splits nested inside it -- the
+# proof's difficulty is exactly that nothing in the goal names any of this.
+PROOFS["deontic-exhaustion"] = [
+    _l(1, "~((a | (~a & ~b)) | b)", "As", 1),
+    _l(2, "a", "As", 2),
+    _l(3, "a | (~a & ~b)", "DisjI", 2, [2]),
+    _l(4, "(a | (~a & ~b)) | b", "DisjI", 2, [3]),
+    _l(5, "!", "FalsumI", 2, [4, 1]),
+    _l(6, "~a", "NegI", 1, subs=[[2, 5]]),
+    _l(7, "b", "As", 2),
+    _l(8, "(a | (~a & ~b)) | b", "DisjI", 2, [7]),
+    _l(9, "!", "FalsumI", 2, [8, 1]),
+    _l(10, "~b", "NegI", 1, subs=[[7, 9]]),
+    _l(11, "~a & ~b", "ConjI", 1, [6, 10]),
+    _l(12, "a | (~a & ~b)", "DisjI", 1, [11]),
+    _l(13, "(a | (~a & ~b)) | b", "DisjI", 1, [12]),
+    _l(14, "~((a | (~a & ~b)) | b)", "Reit", 1, [1]),
+    _l(15, "!", "FalsumI", 1, [13, 14]),
+    _l(16, "~~((a | (~a & ~b)) | b)", "NegI", 0, subs=[[1, 15]]),
+    _l(17, "(a | (~a & ~b)) | b", "NegE", 0, [16]),
+]
