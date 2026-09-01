@@ -1550,6 +1550,15 @@ excuse the entries. The test suite fails at five, which is the reminder. This
 is the one boundary that is *not* governed by the numerical-balance rule
 below: it is meant to be lopsided.
 
+**The cap is never a reason to leave a form out.** It polices the label, not
+the encyclopedia, and a fifth genuinely-extreme entry means the threshold has
+drifted — so raise it *in the same change* that adds the entry, and the test
+goes green because the calibration is right again, not because the form was
+refused. An import firing read this the other way once and skipped CLI-510 (the
+Curry sentence under `⊃`) rather than become the fifth, which was careful and
+was the wrong shape of careful: it left a real form out of the database over
+the wording of a rubric. Recalibrate and import.
+
 ### 14.-1 The boundaries are provisional
 
 The thresholds below (48/160/256 calls; 3/7/16 applications) were set against

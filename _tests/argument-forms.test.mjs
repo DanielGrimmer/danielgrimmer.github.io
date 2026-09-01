@@ -274,6 +274,10 @@ test('every difficulty is a band, and a departure from the rubric is explained',
     // dozen entries wear it. Calibrated at two or three per method; if a new
     // import pushes a method past four, the threshold has drifted and wants
     // raising rather than the entry excusing.
+    //
+    // Raising it is the fix, in the same change that adds the entry. This
+    // failing never means "leave the form out" — a firing read it that way
+    // once and skipped a real form rather than become the fifth.
     for (const m of ['table', 'tree', 'nd']) {
       const worn = entries.filter((e) => e.difficulty[m] === 'extremely hard');
       assert.ok(worn.length >= 1 && worn.length <= 4,
@@ -1248,12 +1252,16 @@ test('every source link is one a reader could follow', () => {
 // something bigger, and this has now happened three times — twice in a firing's
 // prose, once in a correction written to fix one of those. A claim to be the
 // longest derivation is checkable, so it is checked.
-test('an entry claiming to be the longest derivation is the longest', () => {
-  const withProofs = entries.filter((e) => e.nd?.exists);
-  const max = Math.max(...withProofs.map((e) => e.nd.lines));
+test('an entry claiming the longest or shortest derivation has it', () => {
+  const lines = entries.filter((e) => e.nd?.exists).map((e) => e.nd.lines);
+  const bounds = { longest: Math.max(...lines), shortest: Math.min(...lines) };
   for (const e of entries) {
-    if (!/longest derivation in the database|the longest in the database/i.test(e.interest ?? '')) continue;
-    assert.equal(e.nd?.lines, max,
-      `${e.id} claims the longest derivation at ${e.nd?.lines} lines, but the longest is ${max}`);
+    for (const [which, want] of Object.entries(bounds)) {
+      const claims = new RegExp(
+        `${which} (?:natural-deduction )?derivation in the database|the ${which} in the database`, 'i');
+      if (!claims.test(e.interest ?? '')) continue;
+      assert.equal(e.nd?.lines, want,
+        `${e.id} claims the ${which} derivation at ${e.nd?.lines} lines, but the ${which} is ${want}`);
+    }
   }
 });
