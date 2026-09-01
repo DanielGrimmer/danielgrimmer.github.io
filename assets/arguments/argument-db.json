@@ -85105,6 +85105,1796 @@
     "conclusion": "∼q",
     "sequent": "p ≡ q, ∼p  ⊨ ∼q"
    }
+  },
+  {
+   "id": "slippery-slope-mt",
+   "cli_ref": "—",
+   "names": [
+    "Slippery slope (modus tollens form)"
+   ],
+   "premises": [
+    "a > b",
+    "b > c",
+    "c > d",
+    "d > e",
+    "~e"
+   ],
+   "conclusion": "~a",
+   "interest": "The propositional skeleton behind the everyday \"slippery slope\" complaint, and SEP's own diagnosis is not that the reasoning fails: \"the weakness in this argument, the reason why it is a fallacy, lies in the second and third causal claims,\" not in the chain of conditionals joining them. This entry's own table bears that out -- a clean, valid form with exactly one premise-true row of thirty-two -- so whatever is wrong with a slippery-slope argument in practice is a fact about specific premises, never about the inference itself. The natural-deduction proof is a single dictated reductio, and the easiest of the entry's three blocks despite the table's own hard rating (192 truth-functional calls) and the tree's five closed branches -- length in a table or a tree is not the same thing as a hard proof to find.",
+   "english": [
+    {
+     "gloss": "Skip breakfast and you will be hungry by ten; get hungry and you will snack on junk food; snack on junk food and you will ruin your appetite for lunch; ruin your appetite and you will skip lunch outright -- but you will not skip lunch today, so you never skipped breakfast.",
+     "faithful": false
+    }
+   ],
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "verbatim",
+     "who": "Hans Hansen",
+     "work": "Fallacies",
+     "locus": "SEP, §1 (list item 15, \"The slippery slope\")",
+     "url": "https://plato.stanford.edu/entries/fallacies/",
+     "quote": "The weakness in this argument, the reason why it is a fallacy, lies in the second and third causal claims."
+    }
+   ],
+   "tags": {
+    "topic": [
+     "informal fallacies",
+     "propositional logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.3 (CLI-534) -- no course locus.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "a > b",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "b > c",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "c > d",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "d > e",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "~e",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 6,
+      "f": "a",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 7,
+      "f": "b",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       1,
+       6
+      ]
+     },
+     {
+      "n": 8,
+      "f": "c",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       2,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "d",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       3,
+       8
+      ]
+     },
+     {
+      "n": 10,
+      "f": "e",
+      "rule": "CondE",
+      "depth": 1,
+      "cites": [
+       4,
+       9
+      ]
+     },
+     {
+      "n": 11,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       10,
+       5
+      ]
+     },
+     {
+      "n": 12,
+      "f": "~a",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        6,
+        11
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{a\\Cond b}\n\\hypo{2}{b\\Cond c}\n\\hypo{3}{c\\Cond d}\n\\hypo{4}{d\\Cond e}\n\\hypo{5}{\\Neg e}\n\\open\n\\hypo{6}{a}\n\\have{7}{b}\\by{\\CondE}{1,6}\n\\have{8}{c}\\by{\\CondE}{2,7}\n\\have{9}{d}\\by{\\CondE}{3,8}\n\\have{10}{e}\\by{\\CondE}{4,9}\n\\have{11}{\\Falsum}\\by{\\FalsumI}{10,5}\n\\close\n\\have{12}{\\Neg a}\\by{\\NegI}{6,11}\n\\end{nd}\n\\end{align*}",
+    "lines": 12,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "CondE",
+     "FalsumI",
+     "NegI"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "hard",
+    "tree": "medium"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 32,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "a",
+     "b",
+     "c",
+     "d",
+     "e"
+    ],
+    "columns": [
+     "a ⊃ b",
+     "b ⊃ c",
+     "c ⊃ d",
+     "d ⊃ e",
+     "∼e",
+     "∼a"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "T",
+       "d": "T",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "T",
+       "d": "T",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "T",
+       "d": "F",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "T",
+       "d": "F",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "F",
+       "d": "T",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "F",
+       "d": "T",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "F",
+       "d": "F",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "T",
+       "c": "F",
+       "d": "F",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "T",
+       "d": "T",
+       "e": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "T",
+       "d": "T",
+       "e": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "T",
+       "d": "F",
+       "e": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "T",
+       "d": "F",
+       "e": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "F",
+       "d": "T",
+       "e": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "F",
+       "d": "T",
+       "e": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "F",
+       "d": "F",
+       "e": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "T",
+       "b": "F",
+       "c": "F",
+       "d": "F",
+       "e": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "T",
+       "d": "T",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "T",
+       "d": "T",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "T",
+       "d": "F",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "T",
+       "d": "F",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "F",
+       "d": "T",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "F",
+       "d": "T",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "F",
+       "d": "F",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "T",
+       "c": "F",
+       "d": "F",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "T",
+       "d": "T",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "T",
+       "d": "T",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "T",
+       "d": "F",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "T",
+       "d": "F",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "F",
+       "d": "T",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "F",
+       "d": "T",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "F",
+       "d": "F",
+       "e": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "a": "F",
+       "b": "F",
+       "c": "F",
+       "d": "F",
+       "e": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad a \\qquad b \\qquad c \\qquad d \\qquad e \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad a\\Cond b \\qquad b\\Cond c \\qquad c\\Cond d \\qquad d\\Cond e \\qquad \\Neg e \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg a \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad a \\qquad b \\qquad c \\qquad d \\qquad e \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad a\\Cond b \\qquad b\\Cond c \\qquad c\\Cond d \\qquad d\\Cond e \\qquad \\Neg e \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad \\Neg a \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{T} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{F} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{T} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{F} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{T} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{F} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{T} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{F} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\quad \\uv{a}{T} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{F} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{a}{F} \\qquad \\uv{b}{F} \\qquad \\uv{c}{F} \\qquad \\uv{d}{F} \\qquad \\uv{e}{F} \\quad$ & $\\quad \\uv{a\\Cond b}{T} \\qquad \\uv{b\\Cond c}{T} \\qquad \\uv{c\\Cond d}{T} \\qquad \\uv{d\\Cond e}{T} \\qquad \\uv{\\Neg e}{T} \\quad$ & $\\quad \\uv{\\Neg a}{T} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "a ⊃ b",
+     "b ⊃ c",
+     "c ⊃ d",
+     "d ⊃ e",
+     "∼e",
+     "∼∼a"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "a",
+       "from": "∼∼a",
+       "rule": "∼∼"
+      }
+     ],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "∼a",
+         "from": "a ⊃ b",
+         "rule": "⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      },
+      {
+       "added": [
+        {
+         "formula": "b",
+         "from": "a ⊃ b",
+         "rule": "⊃"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼b",
+           "from": "b ⊃ c",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "c",
+           "from": "b ⊃ c",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼c",
+             "from": "c ⊃ d",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "d",
+             "from": "c ⊃ d",
+             "rule": "⊃"
+            }
+           ],
+           "children": [
+            {
+             "added": [
+              {
+               "formula": "∼d",
+               "from": "d ⊃ e",
+               "rule": "⊃"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            },
+            {
+             "added": [
+              {
+               "formula": "e",
+               "from": "d ⊃ e",
+               "rule": "⊃"
+              }
+             ],
+             "children": [],
+             "status": "closed"
+            }
+           ],
+           "status": null,
+           "branched_on": "d ⊃ e",
+           "branch_rule": "⊃"
+          }
+         ],
+         "status": null,
+         "branched_on": "c ⊃ d",
+         "branch_rule": "⊃"
+        }
+       ],
+       "status": null,
+       "branched_on": "b ⊃ c",
+       "branch_rule": "⊃"
+      }
+     ],
+     "status": null,
+     "branched_on": "a ⊃ b",
+     "branch_rule": "⊃"
+    },
+    "open_branches": 0,
+    "closed_branches": 5,
+    "branch_depth": 4,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $X:\\quad a\\Cond b$\\quad\\checkmark \\\\ \\ckpad $\\qquad b\\Cond c$\\quad\\checkmark \\\\ \\ckpad $\\qquad c\\Cond d$\\quad\\checkmark \\\\ \\ckpad $\\qquad d\\Cond e$\\quad\\checkmark \\\\ $\\qquad \\Neg e$ \\\\ \\ckpad $\\Neg A:\\quad \\Neg \\Neg a$\\quad\\checkmark \\\\ $\\vert$ \\\\ $a$} [.{$\\Neg a$ \\\\ x} ] [.{$b$} [.{$\\Neg b$ \\\\ x} ] [.{$c$} [.{$\\Neg c$ \\\\ x} ] [.{$d$} [.{$\\Neg d$ \\\\ x} ] [.{$e$ \\\\ x} ] ] ] ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "a > b",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "b > c",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "c > d",
+     "index": 2,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "d > e",
+     "index": 3,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "~e",
+     "index": 4,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 5,
+    "premise_count": 5,
+    "connectives": [
+     "conditional",
+     "negation"
+    ],
+    "max_formula_depth": 1,
+    "total_formula_size": 16,
+    "table_rows": 32,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 5,
+    "tree_branch_depth": 4,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "a ⊃ b",
+     "b ⊃ c",
+     "c ⊃ d",
+     "d ⊃ e",
+     "∼e"
+    ],
+    "conclusion": "∼a",
+    "sequent": "a ⊃ b, b ⊃ c, c ⊃ d, d ⊃ e, ∼e  ⊨ ∼a"
+   }
+  },
+  {
+   "id": "begging-the-question",
+   "cli_ref": "—",
+   "names": [
+    "Begging the question"
+   ],
+   "premises": [
+    "p"
+   ],
+   "conclusion": "p",
+   "interest": "The shortest natural-deduction derivation in the database: one line, because the premise already is the conclusion. Hansen's own diagnosis is that begging the question happens exactly here, when \"the premise and conclusion are the very same proposition, albeit expressed in different words\" -- the entry's own illustration (quoting Whately) dresses up freedom of speech and unlimited liberty of expression as two different claims, and this entry strips the dressing off entirely. Valid, sound whenever `p` happens to be true, and the paradigm case of an argument that proves nothing despite proving something: there was never an inference here at all.",
+   "english": [
+    {
+     "gloss": "Everyone deserves complete freedom of speech, because everyone has an unlimited right to say what they think.",
+     "faithful": false
+    }
+   ],
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "verbatim",
+     "who": "Hans Hansen",
+     "work": "Fallacies",
+     "locus": "SEP, §1 (list item 5, \"Begging the question\")",
+     "url": "https://plato.stanford.edu/entries/fallacies/",
+     "quote": "This argument begs the question because the premise and conclusion are the very same proposition, albeit expressed in different words."
+    }
+   ],
+   "tags": {
+    "topic": [
+     "informal fallacies",
+     "propositional logic"
+    ],
+    "defect": [],
+    "figure": [],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.3 (CLI-537) -- no course locus.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": "the one-line derivation is just the premise itself; no rule beyond `Pr` is needed once the ND unit exists"
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p",
+      "rule": "Pr",
+      "depth": 0
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p}\n\\end{nd}\n\\end{align*}",
+    "lines": 1,
+    "max_subproof_depth": 0,
+    "subproof_count": 0,
+    "assumption_count": 0,
+    "uses_indirect_proof": false,
+    "rules_used": [],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "easy"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 2,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p"
+    ],
+    "columns": [
+     "p",
+     "p"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T"
+      },
+      "premises": [
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F"
+      },
+      "premises": [
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad p \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ & $\\quad \\uv{p}{T} \\quad$ \\\\\n        $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ & $\\quad \\uv{p}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "p",
+     "∼p"
+    ],
+    "tree": {
+     "added": [],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad p$ \\\\ $\\Neg A:\\quad \\Neg p$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p",
+     "index": 0,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 1,
+    "premise_count": 1,
+    "connectives": [],
+    "max_formula_depth": 0,
+    "total_formula_size": 2,
+    "table_rows": 2,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 0,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": []
+   },
+   "display": {
+    "premises": [
+     "p"
+    ],
+    "conclusion": "p",
+    "sequent": "p  ⊨ p"
+   }
+  },
+  {
+   "id": "analogy-determination-rule",
+   "cli_ref": "—",
+   "names": [
+    "Analogical inference by determination rule",
+    "Davies and Russell's determination rule"
+   ],
+   "premises": [
+    "p_s",
+    "q_s",
+    "p_t",
+    "(p_s > q_s) = (p_t > q_t)"
+   ],
+   "conclusion": "q_t",
+   "interest": "Bartha's SEP entry on analogical reasoning is explicit that most analogical arguments are ampliative, never deductively guaranteed -- but Davies and Russell's determination rule is the one repair that makes an analogy genuinely valid, by asserting in advance that whatever links the property to the outcome in the source domain is exactly the same link in the target domain: \"Davies and Russell introduce a version that relies upon what they call determination rules.\" Written propositionally, that promise is the biconditional tying the two domains' conditionals together, and once it is granted the inference goes through with nothing more than `≡E` and `⊃E`. What is worth noticing is what the derivation never touches: `p_s`, the fact that the source case actually had the property, is idle -- the entry's own premise analysis marks it non-load-bearing, since `q_s` alone already makes `p_s ⊃ q_s` true whatever `p_s` is. The determination rule's real work falls entirely on the target side, `p_t`; the most intuitive-looking premise in the analogy is the one the proof can do without.",
+   "english": [
+    {
+     "gloss": "Kim took the new drug and recovered; Jordan took the same drug too; and whatever link explains why the drug works is exactly the same for Kim's case as for Jordan's -- so Jordan will recover as well.",
+     "faithful": false
+    }
+   ],
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "verbatim",
+     "who": "Paul Bartha",
+     "work": "Analogy and Analogical Reasoning",
+     "locus": "SEP, §4.1 (\"Deductive justification\")",
+     "url": "https://plato.stanford.edu/entries/reasoning-analogy/",
+     "quote": "Davies and Russell introduce a version that relies upon what they call determination rules (Russell 1986; Davies and Russell 1987; Davies 1988)."
+    }
+   ],
+   "tags": {
+    "topic": [
+     "analogy",
+     "propositional logic"
+    ],
+    "defect": [],
+    "figure": [
+     "Davies",
+     "Russell"
+    ],
+    "nonclassical": []
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §5.3 (CLI-533) -- no course locus.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "p_s",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 2,
+      "f": "q_s",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 3,
+      "f": "p_t",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 4,
+      "f": "(p_s > q_s) = (p_t > q_t)",
+      "rule": "Pr",
+      "depth": 0
+     },
+     {
+      "n": 5,
+      "f": "p_s",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 6,
+      "f": "q_s",
+      "rule": "Reit",
+      "depth": 1,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 7,
+      "f": "p_s > q_s",
+      "rule": "CondI",
+      "depth": 0,
+      "subs": [
+       [
+        5,
+        6
+       ]
+      ]
+     },
+     {
+      "n": 8,
+      "f": "p_t > q_t",
+      "rule": "BicondE",
+      "depth": 0,
+      "cites": [
+       4,
+       7
+      ]
+     },
+     {
+      "n": 9,
+      "f": "q_t",
+      "rule": "CondE",
+      "depth": 0,
+      "cites": [
+       8,
+       3
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\hypo{1}{p_{s}}\n\\hypo{2}{q_{s}}\n\\hypo{3}{p_{t}}\n\\hypo{4}{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}\n\\open\n\\hypo{5}{p_{s}}\n\\have{6}{q_{s}}\\by{\\Reit}{2}\n\\close\n\\have{7}{p_{s}\\Cond q_{s}}\\by{\\CondI}{5,6}\n\\have{8}{p_{t}\\Cond q_{t}}\\by{\\BicondE}{4,7}\n\\have{9}{q_{t}}\\by{\\CondE}{8,3}\n\\end{nd}\n\\end{align*}",
+    "lines": 9,
+    "max_subproof_depth": 1,
+    "subproof_count": 1,
+    "assumption_count": 1,
+    "uses_indirect_proof": false,
+    "rules_used": [
+     "As",
+     "BicondE",
+     "CondE",
+     "CondI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "difficulty": {
+    "nd": "easy",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 16,
+    "premise_true_rows": 1,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "truth_table": {
+    "atoms": [
+     "p_s",
+     "q_s",
+     "p_t",
+     "q_t"
+    ],
+    "columns": [
+     "p_s",
+     "q_s",
+     "p_t",
+     "(p_s ⊃ q_s) ≡ (p_t ⊃ q_t)",
+     "q_t"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p_s": "T",
+       "q_s": "T",
+       "p_t": "T",
+       "q_t": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "T",
+       "q_s": "T",
+       "p_t": "T",
+       "q_t": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "T",
+       "q_s": "T",
+       "p_t": "F",
+       "q_t": "T"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "T",
+       "q_s": "T",
+       "p_t": "F",
+       "q_t": "F"
+      },
+      "premises": [
+       "T",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "T",
+       "q_s": "F",
+       "p_t": "T",
+       "q_t": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "T",
+       "q_s": "F",
+       "p_t": "T",
+       "q_t": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "T",
+       "q_s": "F",
+       "p_t": "F",
+       "q_t": "T"
+      },
+      "premises": [
+       "T",
+       "F",
+       "F",
+       "F"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "T",
+       "q_s": "F",
+       "p_t": "F",
+       "q_t": "F"
+      },
+      "premises": [
+       "T",
+       "F",
+       "F",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "F",
+       "q_s": "T",
+       "p_t": "T",
+       "q_t": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "F",
+       "q_s": "T",
+       "p_t": "T",
+       "q_t": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "F",
+       "q_s": "T",
+       "p_t": "F",
+       "q_t": "T"
+      },
+      "premises": [
+       "F",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "F",
+       "q_s": "T",
+       "p_t": "F",
+       "q_t": "F"
+      },
+      "premises": [
+       "F",
+       "T",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "F",
+       "q_s": "F",
+       "p_t": "T",
+       "q_t": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "F",
+       "q_s": "F",
+       "p_t": "T",
+       "q_t": "F"
+      },
+      "premises": [
+       "F",
+       "F",
+       "T",
+       "F"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "F",
+       "q_s": "F",
+       "p_t": "F",
+       "q_t": "T"
+      },
+      "premises": [
+       "F",
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "T",
+      "premises_all_true": false,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p_s": "F",
+       "q_s": "F",
+       "p_t": "F",
+       "q_t": "F"
+      },
+      "premises": [
+       "F",
+       "F",
+       "F",
+       "T"
+      ],
+      "conclusion": "F",
+      "premises_all_true": false,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p_{s} \\qquad q_{s} \\qquad p_{t} \\qquad q_{t} \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p_{s} \\qquad q_{s} \\qquad p_{t} \\qquad (p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t}) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q_{t} \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c | c | c}\n        $\\overbrace{\\quad p_{s} \\qquad q_{s} \\qquad p_{t} \\qquad q_{t} \\quad}^\\text{Atomic Formulas}$\n      & $\\overbrace{\\quad p_{s} \\qquad q_{s} \\qquad p_{t} \\qquad (p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t}) \\quad}^\\text{Premises}$\n      & $\\overbrace{\\quad q_{t} \\quad}^\\text{Conclusion}$ \\\\\n        \\hline\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{T} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{T} \\quad$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{T} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{T} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{T} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{F} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{q_{t}}{F} \\quad$ & $\\quad \\uv{p_{s}}{F} \\qquad \\uv{q_{s}}{F} \\qquad \\uv{p_{t}}{F} \\qquad \\uv{(p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})}{T} \\quad$ & $\\quad \\uv{q_{t}}{F} \\quad$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "tree": {
+    "roots": [
+     "p_s",
+     "q_s",
+     "p_t",
+     "(p_s ⊃ q_s) ≡ (p_t ⊃ q_t)",
+     "∼q_t"
+    ],
+    "tree": {
+     "added": [],
+     "children": [
+      {
+       "added": [
+        {
+         "formula": "p_s ⊃ q_s",
+         "from": "(p_s ⊃ q_s) ≡ (p_t ⊃ q_t)",
+         "rule": "≡"
+        },
+        {
+         "formula": "p_t ⊃ q_t",
+         "from": "(p_s ⊃ q_s) ≡ (p_t ⊃ q_t)",
+         "rule": "≡"
+        }
+       ],
+       "children": [
+        {
+         "added": [
+          {
+           "formula": "∼p_s",
+           "from": "p_s ⊃ q_s",
+           "rule": "⊃"
+          }
+         ],
+         "children": [],
+         "status": "closed"
+        },
+        {
+         "added": [
+          {
+           "formula": "q_s",
+           "from": "p_s ⊃ q_s",
+           "rule": "⊃"
+          }
+         ],
+         "children": [
+          {
+           "added": [
+            {
+             "formula": "∼p_t",
+             "from": "p_t ⊃ q_t",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          },
+          {
+           "added": [
+            {
+             "formula": "q_t",
+             "from": "p_t ⊃ q_t",
+             "rule": "⊃"
+            }
+           ],
+           "children": [],
+           "status": "closed"
+          }
+         ],
+         "status": null,
+         "branched_on": "p_t ⊃ q_t",
+         "branch_rule": "⊃"
+        }
+       ],
+       "status": null,
+       "branched_on": "p_s ⊃ q_s",
+       "branch_rule": "⊃"
+      },
+      {
+       "added": [
+        {
+         "formula": "∼(p_s ⊃ q_s)",
+         "from": "(p_s ⊃ q_s) ≡ (p_t ⊃ q_t)",
+         "rule": "≡"
+        },
+        {
+         "formula": "∼(p_t ⊃ q_t)",
+         "from": "(p_s ⊃ q_s) ≡ (p_t ⊃ q_t)",
+         "rule": "≡"
+        },
+        {
+         "formula": "p_s",
+         "from": "∼(p_s ⊃ q_s)",
+         "rule": "∼⊃"
+        },
+        {
+         "formula": "∼q_s",
+         "from": "∼(p_s ⊃ q_s)",
+         "rule": "∼⊃"
+        }
+       ],
+       "children": [],
+       "status": "closed"
+      }
+     ],
+     "status": null,
+     "branched_on": "(p_s ⊃ q_s) ≡ (p_t ⊃ q_t)",
+     "branch_rule": "≡"
+    },
+    "open_branches": 0,
+    "closed_branches": 4,
+    "branch_depth": 3,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $X$ and $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{$X:\\quad p_{s}$ \\\\ $\\qquad q_{s}$ \\\\ $\\qquad p_{t}$ \\\\ \\ckpad $\\qquad (p_{s}\\Cond q_{s})\\Bicond (p_{t}\\Cond q_{t})$\\quad\\checkmark \\\\ $\\Neg A:\\quad \\Neg q_{t}$} [.{\\ckpad $p_{s}\\Cond q_{s}$\\quad\\checkmark \\\\ \\ckpad $p_{t}\\Cond q_{t}$\\quad\\checkmark} [.{$\\Neg p_{s}$ \\\\ x} ] [.{$q_{s}$} [.{$\\Neg p_{t}$ \\\\ x} ] [.{$q_{t}$ \\\\ x} ] ] ] [.{\\ckpad $\\Neg (p_{s}\\Cond q_{s})$\\quad\\checkmark \\\\ $\\Neg (p_{t}\\Cond q_{t})$ \\\\ $\\vert$ \\\\ $p_{s}$ \\\\ $\\Neg q_{s}$ \\\\ x} ] ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "premise_analysis": [
+    {
+     "premise": "p_s",
+     "index": 0,
+     "load_bearing": false,
+     "idle": true,
+     "countermodels_without_it": 0
+    },
+    {
+     "premise": "q_s",
+     "index": 1,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "p_t",
+     "index": 2,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    },
+    {
+     "premise": "(p_s > q_s) = (p_t > q_t)",
+     "index": 3,
+     "load_bearing": true,
+     "idle": false,
+     "countermodels_without_it": 1
+    }
+   ],
+   "metrics": {
+    "atom_count": 4,
+    "premise_count": 4,
+    "connectives": [
+     "biconditional",
+     "conditional"
+    ],
+    "max_formula_depth": 2,
+    "total_formula_size": 11,
+    "table_rows": 16,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 4,
+    "tree_branch_depth": 3,
+    "countermodel_count": 0,
+    "premise_true_rows": 1,
+    "idle_premises": [
+     "p_s"
+    ]
+   },
+   "display": {
+    "premises": [
+     "p_s",
+     "q_s",
+     "p_t",
+     "(p_s ⊃ q_s) ≡ (p_t ⊃ q_t)"
+    ],
+    "conclusion": "q_t",
+    "sequent": "p_s, q_s, p_t, (p_s ⊃ q_s) ≡ (p_t ⊃ q_t)  ⊨ q_t"
+   }
   }
  ],
  "latex_requires": [

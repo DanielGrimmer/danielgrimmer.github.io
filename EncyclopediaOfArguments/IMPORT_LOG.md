@@ -60,6 +60,9 @@ be offered a second time). The reason column says which.
 | 2026-09-01 | `⊢ (d≡(∼d∨q)) ≡ (d≡(d⊃q))` (CLI-510, comprehensive §5.1, "SEP's DLiar is the Curry sentence under ⊃") | Not a provenance problem — `who`/`work`/`url` would be the same Shapiro & Beall *Curry's Paradox* citation the other nine §5.1 imports already carry. Skipped on the difficulty cap instead: `material-conditional`, already in the database, proves the plain identity `(p⊃q)≡(∼p∨q)` this row's two sides are each built from, at 29 lines — exactly `ND_EXTREME_LINES`, the floor for `extremely hard` — and this row wraps that same identity one level deeper inside an outer `d≡_` on both sides, needing a nested `≡I` in each of the outer biconditional's two directions where `material-conditional` needed one flat pair. Structurally closer to `biconditional-as-agreement` (85 lines, also `extremely hard`) than to `curry-conditional`'s one-line-deeper cousin of `curry-sequent`, which only added a wrapping `⊃I` around an unchanged proof rather than doubling the interior. Four entries already wear `nd: extremely hard` (`de-morgan-conjunction`, `material-conditional`, `biconditional-as-agreement`, `bivalence-pigeonhole`) — one below the test suite's cap of five, and §14.-0.5 asks that a fifth be read as the threshold having drifted rather than scored around. Left for a person to either write and check the proof and decide whether the fifth is warranted, or raise the constant. The other two §5.1 candidates queued alongside it (CLI-507, CLI-509) had ordinary short proofs and were imported this firing as `curry-peirce-half-alone` and `curry-at-bottom`. |
 | 2026-09-01 | `{p ≡ ∼q, q ≡ ∼p}` (CLI-513, comprehensive §5.2, "even-length cycle") | No philosopher named in the row, and the section's own `sep` line is the whole of §5's shared list (Curry, Liar, epistemic paradoxes, Fitch, insolubles, future contingents, abduction, analogy, argument, fallacies, informal logic, non-monotonic logic — twelve articles, none pointing at this row specifically). SEP's *Liar Paradox*, fetched directly (§1.3, "Liar cycles"), states only the two-person Max-and-Agnes case CLI-512 already carries and says nothing about cycle length or the parity of negations around a cycle; that generalisation — even negation-count sat, odd unsat — is the comprehensive inventory's own observation extending Max-and-Agnes, not a claim SEP or any named philosopher makes. Citing SEP here would attribute the compiler's corollary to the article; `appearances_pending` is not a substitute (§13.1 marks that flag as an exception specific to the imports inventory's §3, not a general escape from having a source, and the routine's own log has held that line before at CLI-106). Left for a person who can find an actual source discussing generalised liar cycles. CLI-512, the case this row generalises, names SEP's own dialogue directly and was imported this firing as `max-and-agnes-liar-cycle`. |
 | 2026-09-01 | `{a ≡ ∼b, b ≡ ∼c, c ≡ ∼a}` (CLI-514, comprehensive §5.2, "odd-length cycle") | Same reason as the row above: no philosopher named, the same twelve-article `sep` line covers it, and SEP's *Liar Paradox* (checked directly) discusses only the two-person case, not a three-cycle or the parity result this row instances. Companion to CLI-513, same disposition. |
+| 2026-09-01 | `{p ≡ p}` (CLI-515, comprehensive §5.2, "the truth-teller") | No philosopher named in the row, and the section's own text says outright that "the truth-teller does not appear in SEP *Liar Paradox* as fetched (checked twice)." No other article in §5's shared `sep` line is a better candidate — it is a Liar-family row and that is the Liar-specific entry. Left for a person who can find an actual discussion of the truth-teller by name. |
+| 2026-09-01 | `∼(p&q), ∼p ⊢ q` (CLI-524, comprehensive §5.3, "Denying a conjunct") | No philosopher named in the row. §5.3's own prose warns that SEP *Fallacies* "names only Copi's five, not affirming a disjunct, denying a conjunct, or improper transposition" and says to cite those three as standard textbook forms rather than to SEP — but every other appearance in the database is a real, named person or the course itself, and "the informal-logic textbook tradition" is not a checkable source, only a description of one. Fetched *Fallacies* directly this firing and confirmed it does not name this form. Left for a person who can find an actual textbook citation (Copi, Hurley, or another) for it. |
+| 2026-09-01 | `h ≡ e, e ⊢ h` (CLI-529, comprehensive §5.3, "Inference to the **only** explanation") | No philosopher named in the row — unlike its neighbours in the same teaching sequence (CLI-528 van Fraassen, CLI-532 Burke 1994), this one names no one. Fetched SEP *Abduction* (Douven) directly, since the surrounding prose leans on it for the rest of the sequence: it discusses affirming-the-consequent and Peirce's own schema, but does not discuss inference to the *only* explanation or a uniqueness-based repair of IBE. Left for a person who can find an actual discussion of this specific move. |
 
 ## Resolved
 
@@ -2376,3 +2379,78 @@ confirmed empty. `extremely hard` (nd) count unchanged at 4 of 4.
 Comprehensive queue: 20 candidates left of 274 (130 now in the database,
 3 quarantined, 82 unreadable, 39 settled). Course and imports queues
 remain at 0.
+
+**2026-09-01, comprehensive-source firing.** Course and imports queues both
+confirmed empty (`inventory.py --status` / `--source imports`), so this
+firing worked `--source comprehensive` from its top three candidates:
+`{p ≡ p}` (CLI-515), `∼(p&q), ∼p ⊢ q` (CLI-524), and `h ≡ e, e ⊢ h`
+(CLI-529). All three name no philosopher and, checked directly against the
+SEP articles the surrounding prose leans on (*Fallacies* for CLI-524,
+*Abduction* for CLI-529; *Liar Paradox* already ruled out for CLI-515 by
+the inventory's own text), none of those articles discusses the specific
+form. Logged as skipped in the table above rather than forced into a
+citation — see those three rows for the detail — and this firing took the
+next three importable rows from §5.3 instead: `slippery-slope-mt` (CLI-534,
+`a⊃b, b⊃c, c⊃d, d⊃e, ∼e ⊢ ∼a`), `begging-the-question` (CLI-537, `p ⊢ p`),
+and `analogy-determination-rule` (CLI-533, `p_s, q_s, p_t, (p_s⊃q_s) ≡
+(p_t⊃q_t) ⊢ q_t`). All three valid, verified against `derive.py` before
+writing.
+
+`slippery-slope-mt` and `begging-the-question` cite Hans Hansen's SEP entry
+*Fallacies* — fetched directly rather than trusted from the inventory's own
+paraphrase, twice over: once to confirm the byline (the page's visible text
+does not carry it; the citation-info endpoint,
+`archinfo.cgi?entry=fallacies`, does), and once more to get each quote's
+exact wording, which differs slightly from the inventory's own paraphrase
+in both cases ("The weakness in this argument, the reason why it is a
+fallacy, lies in the second and third causal claims" — the inventory drops
+the opening clause and a comma). The same fetch confirmed what CLI-524's
+own row had already warned: *Fallacies* discusses slippery slope and
+begging the question by name, in a numbered list under §1 with no decimal
+subheadings, but does not name "denying a conjunct," "affirming a
+disjunct," or "improper transposition" at all — consistent with skipping
+CLI-524 above.
+
+`analogy-determination-rule` cites Paul Bartha's SEP entry *Analogy and
+Analogical Reasoning*, §4.1 ("Deductive justification") — fetched and
+confirmed it names Davies and Russell by name for exactly this repair,
+verbatim: "Davies and Russell introduce a version that relies upon what
+they call determination rules." Its premise analysis is the interesting
+find: `p_s` (that the source case had the property) is idle — `load_bearing:
+false`, `countermodels_without_it: 0` — because the premise `q_s` alone
+already makes `p_s ⊃ q_s` true regardless of `p_s`, so the determination
+rule's whole inferential weight falls on the target side, `p_t`. Checked
+against `derive.py`'s own output before writing it into `interest`, per
+this file's standing caution about claims that need checking against the
+actual computed data.
+
+`begging-the-question`'s derivation is one line — the premise itself,
+since it already is the conclusion — genuinely the shortest `nd` proof in
+the database (previous minimum: 2 lines, `ross-paradox` and
+`double-negation-elimination`; checked against every existing entry's
+`nd.lines` before writing the claim). This broke a test's assumption that
+every valid entry's `nd.latex` contains at least one `\by{` citation:
+`_tests/argument-forms.test.mjs`'s "citations live in the justification
+column, not the formula" check now skips that assertion for a proof with
+no non-premise line, since there is no rule application for a `\by` to
+name. A narrow fix to a genuinely new shape, not a loosened check — the
+padding/width assertions in the same test still run unconditionally.
+
+All three difficulty scores matched `difficulty.py`'s own rubric (0
+`nd` triggers each, so `easy` on all three) — `python3 difficulty.py
+--diff` reported nothing to override.
+
+`build.py --write`, `svg.py` (12 SVGs, 4 blocks × 3 entries; a fresh
+container again had no LaTeX toolchain — reinstalled
+`texlive-latex-base texlive-latex-recommended texlive-latex-extra
+texlive-pictures texlive-binaries dvisvgm texlive-humanities
+texlive-science texlive-fonts-recommended` via `apt-get`, matching every
+prior firing's note), `svg.py --check`, `inventory.py --locks` (0
+practicable methods locked), `manifest.py --check-merge` (191 entries, 188
+expected from the merge parents, nothing lost), and `node --test
+"_tests/*.test.mjs"` (514/514, after the citation-test fix above) all
+clean. `git diff --name-only origin/main...HEAD --
+EncyclopediaOfArguments/SOURCE_QUOTES.md` confirmed empty. `extremely hard`
+(nd) count unchanged at 4 of 4. Comprehensive queue: 17 candidates left of
+274 (133 now in the database, 3 quarantined, 82 unreadable, 42 settled).
+Course and imports queues remain at 0.

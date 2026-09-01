@@ -2670,3 +2670,47 @@ PROOFS["deontic-exhaustion"] = [
     _l(16, "~~((a | (~a & ~b)) | b)", "NegI", 0, subs=[[1, 15]]),
     _l(17, "(a | (~a & ~b)) | b", "NegE", 0, [16]),
 ]
+
+# ------------------------------------------------------- slippery slope, MT form
+# Four links and a final collision -- the same technique as lecture8-chain, one
+# link longer, and simpler in one way: the contradiction falls out of the last
+# premise (~e) against the chain's own end (e), never against the subproof's
+# own assumption (a), so no reiteration is needed before the FalsumI.
+PROOFS["slippery-slope-mt"] = [
+    P(1, "a > b"),
+    P(2, "b > c"),
+    P(3, "c > d"),
+    P(4, "d > e"),
+    P(5, "~e"),
+    _l(6, "a", "As", 1),
+    _l(7, "b", "CondE", 1, [1, 6]),
+    _l(8, "c", "CondE", 1, [2, 7]),
+    _l(9, "d", "CondE", 1, [3, 8]),
+    _l(10, "e", "CondE", 1, [4, 9]),
+    _l(11, "!", "FalsumI", 1, [10, 5]),
+    _l(12, "~a", "NegI", 0, subs=[[6, 11]]),
+]
+
+# ---------------------------------------------------------- begging the question
+# The premise already is the conclusion, so the derivation is the premise line
+# itself -- nothing to apply a rule to.
+PROOFS["begging-the-question"] = [
+    P(1, "p"),
+]
+
+# --------------------------------------------------- analogy determination rule
+# The vacuous-conditional move (`redundant-disjunct`, `two-switches-lightbulb`):
+# q_s is already in hand, so p_s > q_s is built by assuming p_s and reiterating
+# q_s down into the subproof, never touching p_s itself. That is exactly why
+# p_s is idle in the entry's own premise analysis.
+PROOFS["analogy-determination-rule"] = [
+    P(1, "p_s"),
+    P(2, "q_s"),
+    P(3, "p_t"),
+    P(4, "(p_s > q_s) = (p_t > q_t)"),
+    _l(5, "p_s", "As", 1),
+    _l(6, "q_s", "Reit", 1, [2]),
+    _l(7, "p_s > q_s", "CondI", 0, subs=[[5, 6]]),
+    _l(8, "p_t > q_t", "BicondE", 0, [4, 7]),
+    _l(9, "q_t", "CondE", 0, [8, 3]),
+]

@@ -923,7 +923,13 @@ test('a discharged subproof is cited the way the handouts cite it', async (t) =>
       assert.ok(!e.nd.latex.includes('\\mathmakebox'),
         `${e.id}: a citation is still padded into the formula column`);
       assert.ok(!e.nd.latex.includes('\\widthof'), `${e.id}: leftover width machinery`);
-      assert.match(e.nd.latex, /\\by\{/, `${e.id}: no \\by citations at all`);
+      // A derivation with no non-premise line -- `begging-the-question`,
+      // where the premise already is the conclusion -- cites nothing, and
+      // that is correct rather than an omission: there is no rule applied
+      // for a \by to name.
+      if (e.nd.proof.some((line) => line.rule !== 'Pr')) {
+        assert.match(e.nd.latex, /\\by\{/, `${e.id}: no \\by citations at all`);
+      }
     }
   });
 

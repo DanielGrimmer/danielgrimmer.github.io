@@ -186,3 +186,6 @@ curry-at-bottom
 max-and-agnes-liar-cycle
 conditional-perfection
 conditional-perfection-repaired
+slippery-slope-mt
+begging-the-question
+analogy-determination-rule
