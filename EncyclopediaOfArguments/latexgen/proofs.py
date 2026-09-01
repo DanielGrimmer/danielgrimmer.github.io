@@ -2880,3 +2880,20 @@ PROOFS["leibniz-thesis-material"] = [
     _l(5, "~(p > ~p)", "NegI", 1, subs=[[2, 4]]),
     _l(6, "p > ~(p > ~p)", "CondI", 0, subs=[[1, 5]]),
 ]
+
+# ------------------------------------------------- negation-closure-trap
+# `p > q` is never used. `~q` alone forces `~p > ~q` vacuously true (a
+# conditional with a true consequent is true whatever the antecedent), which
+# collides with the third conjunct directly -- the reductio does not need the
+# first conjunct at all, which is the entry's whole point.
+PROOFS["negation-closure-trap"] = [
+    _l(1, "((p > q) & ~q) & ~(~p > ~q)", "As", 1),
+    _l(2, "(p > q) & ~q", "ConjE", 1, [1]),
+    _l(3, "~(~p > ~q)", "ConjE", 1, [1]),
+    _l(4, "~q", "ConjE", 1, [2]),
+    _l(5, "~p", "As", 2),
+    _l(6, "~q", "Reit", 2, [4]),
+    _l(7, "~p > ~q", "CondI", 1, subs=[[5, 6]]),
+    _l(8, "!", "FalsumI", 1, [7, 3]),
+    _l(9, "~(((p > q) & ~q) & ~(~p > ~q))", "NegI", 0, subs=[[1, 8]]),
+]

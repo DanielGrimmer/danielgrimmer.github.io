@@ -90792,6 +90792,298 @@
     "conclusion": "p ⊃ ∼(p ⊃ ∼p)",
     "sequent": "⊨ p ⊃ ∼(p ⊃ ∼p)"
    }
+  },
+  {
+   "id": "negation-closure-trap",
+   "cli_ref": "—",
+   "names": [
+    "The negation-closure trap",
+    "Jarmużek–Malinowski's unwanted validity"
+   ],
+   "premises": [],
+   "conclusion": "~(((p > q) & ~q) & ~(~p > ~q))",
+   "interest": "Boolean connexive relatedness logic is built to block trivial validities like `(p⊃q) & (p⊃∼q)` unless `p` and `q` are shown to be topically related, which is the point of adding a relatedness condition `R` to the language at all. Negation closure -- the requirement that `R` treat a formula and its negation alike -- is one of five conditions Jarmużek and Malinowski impose to keep the resulting logics well-behaved, and they show it comes at a price: it validates this formula with respect to *any* relation `R`, however unrelated `p` and `q` are declared to be. The derivation never needs `p⊃q` at all -- `∼q` alone forces `∼p⊃∼q` to hold vacuously, since a conditional with a true consequent is true whatever the antecedent, so the relatedness machinery never gets anything to bite on. Classically the formula is simply a tautology; inside Jarmużek and Malinowski's own system it is a tautology too, and an unwanted one, since the whole apparatus was meant to keep exactly this kind of connective-blind validity out.",
+   "english": [],
+   "appearances": [
+    {
+     "type": "diagnosed",
+     "fidelity": "verbatim",
+     "who": "Heinrich Wansing",
+     "work": "Connexive Logic",
+     "locus": "SEP §4.4",
+     "url": "https://plato.stanford.edu/entries/logic-connexive/",
+     "quote": "Jarmużek and Malinowski point out that imposing negation closure validates the otherwise refutable formula ∼((A →w B) ∧ ∼B ∧ ∼(∼A →w ∼B)) with respect to any relation R."
+    }
+   ],
+   "tags": {
+    "topic": [
+     "philosophy of logic",
+     "conditionals"
+    ],
+    "defect": [],
+    "figure": [
+     "Jarmużek",
+     "Malinowski"
+    ],
+    "nonclassical": [
+     "connexive-holds"
+    ]
+   },
+   "course": {
+    "used_in": [],
+    "problem_set": {},
+    "quarantined": false,
+    "note": "From the comprehensive sweep's §7 (\"TRAPS — forms that look plausible or connexive and are classically VALID\"); no course locus, not a set question.",
+    "earliest_lecture": {
+     "table": 4,
+     "tree": 6,
+     "nd": 10,
+     "note": null
+    }
+   },
+   "nd": {
+    "exists": true,
+    "proof": [
+     {
+      "n": 1,
+      "f": "((p > q) & ~q) & ~(~p > ~q)",
+      "rule": "As",
+      "depth": 1
+     },
+     {
+      "n": 2,
+      "f": "(p > q) & ~q",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 3,
+      "f": "~(~p > ~q)",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       1
+      ]
+     },
+     {
+      "n": 4,
+      "f": "~q",
+      "rule": "ConjE",
+      "depth": 1,
+      "cites": [
+       2
+      ]
+     },
+     {
+      "n": 5,
+      "f": "~p",
+      "rule": "As",
+      "depth": 2
+     },
+     {
+      "n": 6,
+      "f": "~q",
+      "rule": "Reit",
+      "depth": 2,
+      "cites": [
+       4
+      ]
+     },
+     {
+      "n": 7,
+      "f": "~p > ~q",
+      "rule": "CondI",
+      "depth": 1,
+      "subs": [
+       [
+        5,
+        6
+       ]
+      ]
+     },
+     {
+      "n": 8,
+      "f": "!",
+      "rule": "FalsumI",
+      "depth": 1,
+      "cites": [
+       7,
+       3
+      ]
+     },
+     {
+      "n": 9,
+      "f": "~(((p > q) & ~q) & ~(~p > ~q))",
+      "rule": "NegI",
+      "depth": 0,
+      "subs": [
+       [
+        1,
+        8
+       ]
+      ]
+     }
+    ],
+    "latex": "\\begin{align*}\n\\begin{nd}\n\\open\n\\hypo{1}{((p\\Cond q)\\Conj \\Neg q)\\Conj \\Neg (\\Neg p\\Cond \\Neg q)}\n\\have{2}{(p\\Cond q)\\Conj \\Neg q}\\by{\\ConjE}{1}\n\\have{3}{\\Neg (\\Neg p\\Cond \\Neg q)}\\by{\\ConjE}{1}\n\\have{4}{\\Neg q}\\by{\\ConjE}{2}\n\\open\n\\hypo{5}{\\Neg p}\n\\have{6}{\\Neg q}\\by{\\Reit}{4}\n\\close\n\\have{7}{\\Neg p\\Cond \\Neg q}\\by{\\CondI}{5,6}\n\\have{8}{\\Falsum}\\by{\\FalsumI}{7,3}\n\\close\n\\have{9}{\\Neg (((p\\Cond q)\\Conj \\Neg q)\\Conj \\Neg (\\Neg p\\Cond \\Neg q))}\\by{\\NegI}{1,8}\n\\end{nd}\n\\end{align*}",
+    "lines": 9,
+    "max_subproof_depth": 2,
+    "subproof_count": 2,
+    "assumption_count": 2,
+    "uses_indirect_proof": true,
+    "rules_used": [
+     "As",
+     "CondI",
+     "ConjE",
+     "FalsumI",
+     "NegI",
+     "Reit"
+    ],
+    "checked_by": "latexgen/nd.py"
+   },
+   "truth_table": {
+    "atoms": [
+     "p",
+     "q"
+    ],
+    "columns": [
+     "∼(((p ⊃ q) & ∼q) & ∼(∼p ⊃ ∼q))"
+    ],
+    "rows": [
+     {
+      "assignment": {
+       "p": "T",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "T",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "T"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     },
+     {
+      "assignment": {
+       "p": "F",
+       "q": "F"
+      },
+      "premises": [],
+      "conclusion": "T",
+      "premises_all_true": true,
+      "countermodel": false
+     }
+    ],
+    "latex": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $\\Neg (((p\\Cond q)\\Conj \\Neg q)\\Conj \\Neg (\\Neg p\\Cond \\Neg q))$ \\\\\n        \\hline\n        T & T & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{(}\\uv{\\Neg}{F}\\phantom{p}\\uv{\\Cond}{T}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}\\phantom{)}$ \\\\\n        T & F & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{(}\\uv{\\Neg}{F}\\phantom{p}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}\\phantom{)}$ \\\\\n        F & T & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{T}\\phantom{(}\\uv{\\Neg}{T}\\phantom{p}\\uv{\\Cond}{F}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}\\phantom{)}$ \\\\\n        F & F & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{(}\\uv{\\Neg}{T}\\phantom{p}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\uv{\\Neg}{M}\\phantom{(}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Conj}{.}\\uv{\\Neg}{.}\\phantom{q}\\phantom{)}\\uv{\\Conj}{.}\\uv{\\Neg}{.}\\phantom{(}\\uv{\\Neg}{.}\\phantom{p}\\uv{\\Cond}{.}\\uv{\\Neg}{.}\\phantom{q}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}",
+    "latex_compact": "\\begin{table}[h!]\n    \\centering\n\\savebox{\\aetabbox}{%\n    \\begin{tabular}{c c| c}\n        $p$ & $q$ & $\\Neg (((p\\Cond q)\\Conj \\Neg q)\\Conj \\Neg (\\Neg p\\Cond \\Neg q))$ \\\\\n        \\hline\n        T & T & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{(}\\uv{\\Neg}{F}\\phantom{p}\\uv{\\Cond}{T}\\uv{\\Neg}{F}\\phantom{q}\\phantom{)}\\phantom{)}$ \\\\\n        $\\vdots$ & $\\vdots$ & $\\vdots$ \\\\\n        F & F & $\\uv{\\Neg}{T}\\phantom{(}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{T}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}\\uv{\\Conj}{F}\\uv{\\Neg}{F}\\phantom{(}\\uv{\\Neg}{T}\\phantom{p}\\uv{\\Cond}{T}\\uv{\\Neg}{T}\\phantom{q}\\phantom{)}\\phantom{)}$ \\\\\n        \\hline\n        $.$ & $.$ & $\\uv{\\Neg}{M}\\phantom{(}\\phantom{(}\\phantom{(}\\phantom{p}\\uv{\\Cond}{.}\\phantom{q}\\phantom{)}\\uv{\\Conj}{.}\\uv{\\Neg}{.}\\phantom{q}\\phantom{)}\\uv{\\Conj}{.}\\uv{\\Neg}{.}\\phantom{(}\\uv{\\Neg}{.}\\phantom{p}\\uv{\\Cond}{.}\\uv{\\Neg}{.}\\phantom{q}\\phantom{)}\\phantom{)}$ \\\\\n    \\end{tabular}\n}%\n\\ifdim\\wd\\aetabbox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetabbox}}%\n\\else\n  \\usebox{\\aetabbox}%\n\\fi\n\\end{table}"
+   },
+   "verdict": {
+    "valid": true,
+    "rows": 4,
+    "premise_true_rows": 4,
+    "countermodel_count": 0,
+    "countermodels": [],
+    "premises_satisfiable": true
+   },
+   "tree": {
+    "roots": [
+     "∼∼(((p ⊃ q) & ∼q) & ∼(∼p ⊃ ∼q))"
+    ],
+    "tree": {
+     "added": [
+      {
+       "formula": "((p ⊃ q) & ∼q) & ∼(∼p ⊃ ∼q)",
+       "from": "∼∼(((p ⊃ q) & ∼q) & ∼(∼p ⊃ ∼q))",
+       "rule": "∼∼"
+      },
+      {
+       "formula": "(p ⊃ q) & ∼q",
+       "from": "((p ⊃ q) & ∼q) & ∼(∼p ⊃ ∼q)",
+       "rule": "&"
+      },
+      {
+       "formula": "∼(∼p ⊃ ∼q)",
+       "from": "((p ⊃ q) & ∼q) & ∼(∼p ⊃ ∼q)",
+       "rule": "&"
+      },
+      {
+       "formula": "p ⊃ q",
+       "from": "(p ⊃ q) & ∼q",
+       "rule": "&"
+      },
+      {
+       "formula": "∼q",
+       "from": "(p ⊃ q) & ∼q",
+       "rule": "&"
+      },
+      {
+       "formula": "∼p",
+       "from": "∼(∼p ⊃ ∼q)",
+       "rule": "∼⊃"
+      },
+      {
+       "formula": "∼∼q",
+       "from": "∼(∼p ⊃ ∼q)",
+       "rule": "∼⊃"
+      }
+     ],
+     "children": [],
+     "status": "closed"
+    },
+    "open_branches": 0,
+    "closed_branches": 1,
+    "branch_depth": 0,
+    "branch_models": [],
+    "latex": "\\begin{center}\n$\\text{Start from $\\Neg A$:}$ \\\\[0.5em]\n\\savebox{\\aetreebox}{\\mbox{\\Tree[.{\\ckpad $\\Neg A:\\quad \\Neg \\Neg (((p\\Cond q)\\Conj \\Neg q)\\Conj \\Neg (\\Neg p\\Cond \\Neg q))$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $((p\\Cond q)\\Conj \\Neg q)\\Conj \\Neg (\\Neg p\\Cond \\Neg q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ \\ckpad $(p\\Cond q)\\Conj \\Neg q$\\quad\\checkmark \\\\ \\ckpad $\\Neg (\\Neg p\\Cond \\Neg q)$\\quad\\checkmark \\\\ $\\vert$ \\\\ $p\\Cond q$ \\\\ $\\Neg q$ \\\\ $\\vert$ \\\\ $\\Neg p$ \\\\ $\\Neg \\Neg q$ \\\\ x} ]}}%\n\\ifdim\\wd\\aetreebox>\\linewidth\n  \\resizebox{\\linewidth}{!}{\\usebox{\\aetreebox}}%\n\\else\n  \\usebox{\\aetreebox}%\n\\fi\n\\end{center}"
+   },
+   "metrics": {
+    "atom_count": 2,
+    "premise_count": 0,
+    "connectives": [
+     "conditional",
+     "conjunction",
+     "negation"
+    ],
+    "max_formula_depth": 5,
+    "total_formula_size": 14,
+    "table_rows": 4,
+    "tree_open_branches": 0,
+    "tree_closed_branches": 1,
+    "tree_branch_depth": 0,
+    "countermodel_count": 0,
+    "premise_true_rows": 4,
+    "idle_premises": []
+   },
+   "premise_analysis": [],
+   "difficulty": {
+    "nd": "medium",
+    "table": "easy",
+    "tree": "medium"
+   },
+   "display": {
+    "premises": [],
+    "conclusion": "∼(((p ⊃ q) & ∼q) & ∼(∼p ⊃ ∼q))",
+    "sequent": "⊨ ∼(((p ⊃ q) & ∼q) & ∼(∼p ⊃ ∼q))"
+   }
   }
  ],
  "latex_requires": [
