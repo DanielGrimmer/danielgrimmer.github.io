@@ -12,10 +12,17 @@ youtube_id: oxfordspacetime
 orcid_id: 0000-0002-8449-3775
 scholar_userid: -R31VGwAAAAJ # Google Scholar
 
+# PhilPeople is not one of jekyll-socials' built-in keys, so it is a custom
+# entry: url, hover title and an icon class. PhilPeople is PhilPapers' profile
+# service and academicons has no separate glyph for it, so the PhilPapers one.
+philpeople:
+  url: https://philpeople.org/profiles/daniel-grimmer-1
+  title: PhilPeople
+  logo: ai ai-philpapers
+
 cv_pdf: /assets/pdf/CV_Grimmer.pdf # the old site's "Long CV" link
 
 # Uncomment and fill if you want these too:
-# philpeople_id:
 # bluesky_url:
 # linkedin_username:
 

@@ -43,8 +43,9 @@ cd ../.. && node --test "_tests/*.test.mjs"
 All four must be clean. `build.py` refuses a table that does not recompute, a
 tree node that is not a subformula, a proof with a dead line or a missing
 reiteration, and a quote it cannot find in `SOURCE_QUOTES.md`. The test suite
-covers both the games and the encyclopedia and runs in CI on those paths, but
-CI does not gate the deploy; run it here.
+covers both the games and the encyclopedia; it also runs as the `test` job of
+`.github/workflows/deploy.yml`, and a red suite holds the deploy. Run it here
+first all the same: a failed deploy leaves the previous build live, silently.
 
 # Rules for the encyclopedia that hold whatever else happens
 

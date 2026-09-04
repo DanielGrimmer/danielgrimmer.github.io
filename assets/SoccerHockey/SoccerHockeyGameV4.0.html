@@ -835,7 +835,11 @@
       });
 
       // Under a board somebody else left finished: clear it and play here.
+      // The button is hidden unless this visitor holds a seat, and the rules
+      // refuse a reset from anyone who does not; the guard keeps a stale
+      // button from asking for a write the server will only turn away.
       el('newGame').addEventListener('click', async () => {
+        if (!room || seat === null) return;
         await resetRoom({ name: room });
       });
 

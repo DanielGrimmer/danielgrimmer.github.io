@@ -142,9 +142,9 @@ node --test --test-reporter=dot _tests/*.test.mjs
 Node 18+. Nothing to install: `node:test` is built in and the engine has no
 dependencies. `assets/games/package.json` exists only to mark this subtree as ES
 modules — the repository root stays CommonJS because `purgecss.config.js` uses
-`module.exports`. Tests also run in CI via `.github/workflows/tests.yml`, kept
-separate from the deploy workflow so a failing test never blocks publishing a
-typo fix.
+`module.exports`. Tests also run in CI as the `test` job of `.github/workflows/deploy.yml`, and
+since 2026-09 a failing suite holds the deploy; a manual run can pass
+`skip_tests` if a test is wrong and the fix is not to hand.
 
 The suite covers the modular arithmetic, lens round-trips, exact agreement with
 V3.1's column formula, the derived move sets, win and stalemate conditions,

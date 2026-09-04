@@ -46,6 +46,11 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: "Deploy even if the test suite fails (emergency only)"
+        type: boolean
+        default: false
 
 # Allow the GITHUB_TOKEN to deploy to GitHub Pages.
 permissions:
@@ -59,6 +64,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # The games and encyclopedia test suite. It gates the deploy: since 2026-09
+  # a red suite keeps the push off the site, where before it only reported on
+  # the commit while the site published anyway. The trade is deliberate -- a
+  # broken engine or a lost encyclopedia entry is worse than a typo fix
+  # waiting an hour -- and the escape hatch is the skip_tests input on a
+  # manual run, for the day a test is wrong and the fix is not to hand.
+  # The suite runs in about fifteen seconds and needs no install.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run the games and encyclopedia tests
+        run: node --test --test-reporter=spec _tests/*.test.mjs
+
   build:
     runs-on: ubuntu-latest
     env:
@@ -110,9 +136,14 @@ jobs:
           path: _site
 
   deploy:
-    # Pull requests build but do not deploy.
-    if: github.event_name != 'pull_request'
-    needs: build
+    # Pull requests build but do not deploy. A failed test job holds the
+    # deploy unless a manual run asked to skip it.
+    if: >-
+      github.event_name != 'pull_request'
+      && !cancelled()
+      && needs.build.result == 'success'
+      && (needs.test.result == 'success' || inputs.skip_tests == true)
+    needs: [build, test]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
