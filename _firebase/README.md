@@ -264,10 +264,36 @@ Rules Playground on that page to spot-check before publishing:
 - a write to `escherRooms/RedPuck` changing `board` while moves stay → **denied**
 - a write to any path under `games/` or `sharedData/` → **denied**
 - a normal move on an existing game document → **allowed**
+- a write to `dualityRooms/RedPuck` from a uid holding neither seat that sets
+  `moves` to `[]` → **denied** (a reset needs a seat, since 2026-09)
+- a write from seat 0's uid that changes `seats[1].lastSeen` → **denied**
+  (a seat write may touch only the writer's own seat, since 2026-09)
 
 If a legitimate write is refused after publishing, the shape check is the first
 suspect: compare the field list in the rule against the object the client
 actually writes.
+
+### The 2026-09 change, and how it was checked
+
+An audit found that `seatWriteOk` let any signed-in caller rewrite the
+timestamps of a seat it did not hold, and that a reset needed no seat at all.
+Both are closed: a seat you do not hold must come back byte-for-byte
+(`seatUntouched`), and `isReset` requires the caller to hold a seat. The
+move, reset and rebrand checks also now compare both seats field by field
+rather than by uid alone, so none of them can carry a timestamp change.
+
+There is no emulator here and the rules cannot be run from this repository, so
+the change was checked by reading every write the client makes —
+`assets/games/core/seats.js` (`claimSeat`, `touchSeat`, `releaseSeat`) and
+`assets/games/net/room.js` (every `tx.update`) — against the new functions.
+Every seat write is a transaction that touches one seat, the caller's, and
+nothing else; every move, reset and rebrand touches `moves` (and `board`) and
+leaves both seats as read. Nothing the client does trips the tighter rules.
+Before publishing, the two Playground checks added above are the ones that
+would show the change had taken; the "normal move" check is the one that
+would show it had broken something. A Firebase emulator test
+(`@firebase/rules-unit-testing`) would make this repeatable and is worth
+adding if the rules change again.
 
 ## Files here
 

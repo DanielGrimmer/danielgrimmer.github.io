@@ -6,7 +6,7 @@ Academic site for Daniel Grimmer, built with [Jekyll](https://jekyllrb.com/) and
 
 Migrated from the old Oxford page (`users.ox.ac.uk/~pemb6003/`). All the prose,
 publications, talks and teaching history from that site are in place; what is
-still outstanding is listed in [CHECKLIST.md](CHECKLIST.md).
+still outstanding is listed in [docs/open-items.md](docs/open-items.md).
 
 ## Where things live
 
@@ -42,7 +42,7 @@ Two gotchas, both learned the hard way during the migration:
   between entries; inside braces they abort the whole build. You also cannot
   comment an entry out by prefixing its lines with `%` — the parser starts an
   entry at the at-sign regardless. Park unwanted entries in
-  `_bibliography/never_published.bib`, which nothing renders. Even a stray
+  `_bibliography/parked.bib`, which nothing renders. Even a stray
   at-sign inside a comment produces a lexer warning.
 - **Avoid `additional_info`.** The theme concatenates it straight onto the
   journal name and markdownifies it, which yields `Journal NameYour note , 2024`.
@@ -125,8 +125,8 @@ edit the pinned versions in the `:al_folio_plugins` group in `Gemfile`, run
 
 ## Still to do
 
-Outstanding items, open questions and decisions-made-on-your-behalf all live in
-**[CHECKLIST.md](CHECKLIST.md)**. Delete that file once it's empty.
+Outstanding items live in **[docs/open-items.md](docs/open-items.md)**. The
+migration checklist they were extracted from is archived under `docs/archive/`.
 
 ## Licence
 

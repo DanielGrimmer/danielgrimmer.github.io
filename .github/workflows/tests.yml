@@ -1,19 +1,30 @@
-name: Engine tests
+name: Games and encyclopedia tests
 
 # Deliberately separate from deploy.yml: a failure here reports on the commit
 # but does not stop the site from publishing. The engine and the site content
 # are independent, and a broken test should not keep a typo fix off the web.
+#
+# The glob runs every suite, so the paths must cover everything any suite
+# reads. Until 2026-09 they covered only the games, and a change to the
+# encyclopedia database or its generators deployed without the tests that
+# check it -- stale SVGs, broken proofs, a lost entry -- ever running.
 
 on:
   push:
     branches: [main]
     paths:
       - "assets/games/**"
+      - "assets/arguments/**"
+      - "EncyclopediaOfArguments/**"
+      - "_pages/arguments*.md"
       - "_tests/**"
       - ".github/workflows/tests.yml"
   pull_request:
     paths:
       - "assets/games/**"
+      - "assets/arguments/**"
+      - "EncyclopediaOfArguments/**"
+      - "_pages/arguments*.md"
       - "_tests/**"
       - ".github/workflows/tests.yml"
   workflow_dispatch:
@@ -30,6 +41,6 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Run the duality games engine tests
+      - name: Run the games and encyclopedia tests
         # No install step: node:test is built in and the engine has no dependencies.
         run: node --test --test-reporter=spec _tests/*.test.mjs

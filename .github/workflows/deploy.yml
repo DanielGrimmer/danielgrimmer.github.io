@@ -99,7 +99,9 @@ jobs:
         # If the site ever renders with missing styles, this is the first thing
         # to disable — add the missing class to the safelist in purgecss.config.js.
         run: |
-          npm install -g purgecss
+          # Pinned: an unpinned install lets a PurgeCSS release change the
+          # live site with no commit here. Bump deliberately.
+          npm install -g purgecss@8.0.0
           purgecss -c purgecss.config.js
 
       - name: Upload Pages artifact

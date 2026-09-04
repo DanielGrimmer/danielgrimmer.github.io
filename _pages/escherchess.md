@@ -184,7 +184,7 @@ nav: false # surfaced via the 'games' dropdown in _pages/games.md
 
   Shares the Firebase Firestore project with Soccer Hockey (same
   firebaseConfig.js) but its own collection, escherRooms, so the notes in
-  CHECKLIST.md section E apply to both games.
+  _firebase/README.md apply to both games.
 
   No sandbox here, unlike Soccer Hockey: the rules are specific enough that
   letting a player design pieces would be a different activity rather than a

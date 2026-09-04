@@ -1,6 +1,6 @@
 """The import queue: which inventory rows are not yet in the encyclopedia.
 
-The hourly import routine (see `.claude/skills/import-entries/SKILL.md`) needs
+The hourly import routine (see `../IMPORTING.md`, now archived) needed
 to know what to work on next, and the one thing it must not do is keep its own
 notion of progress in a file that can drift from the database. So there is no
 progress file. Every firing recomputes the queue from two things that cannot

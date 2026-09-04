@@ -1,9 +1,16 @@
----
-name: import-entries
-description: Import the next two or three argument forms from the course inventory into the encyclopedia database. Use when asked to import inventory rows, add entries to argument-db.json, or work the import queue. Runs hourly as a Routine.
----
+# Importing inventory rows into the encyclopedia (archived procedure)
 
-# Importing inventory rows into the encyclopedia
+> **This procedure is finished.** It ran as an hourly Claude Code routine from
+> 2026-08-28 to 2026-09-03 as the skill `.claude/skills/import-entries`,
+> working the three inventories in this folder until `inventory.py --status`
+> reported every queue empty. The routine is disabled and the skill directory
+> removed; this file is that skill, kept verbatim below the line as the record
+> of how the entries were produced. Do not run it: there is nothing left to
+> import, and the branch it names no longer exists. The rules under *Rules that
+> hold whatever else happens* at the end are still the rules, and now live in
+> `AGENTS.md` at the repository root.
+
+---
 
 Two or three forms per run, from `EncyclopediaOfArguments/Argument Form
 Inventory (2026-08-28).md`, onto the branch `claude/inventory-import` and its

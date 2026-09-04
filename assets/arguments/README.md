@@ -98,11 +98,18 @@ values appear on their own.
 
 Two caveats:
 
-- **Do not hand-edit the JSON.** It is generated: content lives in `author_*.py`
-  and `build.py` regenerates everything else, validating as it goes (it aborts
-  on a valid entry with no proof, a proof whose citations don't check, a
-  duplicate id, or a dangling relation). Direct edits are destroyed on the next
-  build.
+- **The JSON is both authored and generated, and the line between them is
+  exact.** The authored fields -- `premises`, `conclusion`, `names`, `english`,
+  `interest`, `appearances`, `tags`, `course`, `difficulty.nd` -- are edited in
+  `argument-db.json` directly; the derivations are authored in
+  `latexgen/proofs.py`. Everything else (`display.*`, `truth_table.*`, `tree.*`,
+  the `nd` profile and LaTeX, `difficulty.table`/`.tree`, the manifest) is
+  written by `build.py --write` from those, and an edit to a generated field is
+  silently reverted on the next build. `build.py` validates as it goes and
+  refuses a valid entry with no proof, a proof that does not check, a table that
+  does not recompute, a tree node that is not a subformula, or a quote it cannot
+  find. `EncyclopediaOfArguments/LATEX_STYLE_GUIDE.md` §7 lists every field and
+  which side of the line it is on.
 - **Formulas are fully parenthesised, and `build.py` enforces it.** This
   course's language puts a parenthesis around every binary application and lets
   you drop only the outermost pair, so `p & q ∨ r` and `p ⊃ q ⊃ p` are not

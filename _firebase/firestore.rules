@@ -19,6 +19,14 @@ rules_version = '2';
 // an earlier version used both and refused every legitimate move, which is not
 // a failure you can see until two people are sat in front of it.
 //
+// Two holes closed 2026-09 after an audit, both in seat handling and both
+// open to any anonymously signed-in caller who knew a room name: a reset that
+// did not require a seat, and a seat write that was accepted whenever the uid
+// was unchanged, whatever happened to its timestamps. See seatWriteOk and
+// isReset. Verified by hand against every write the client makes
+// (assets/games/net/room.js: join, heartbeat, leave, move, reset, rebrand,
+// config), since the emulator is not available from this repository.
+//
 // The project is on the free Spark plan, where exhausting the daily quota
 // disables Firestore rather than costing anything. Rules cannot rate-limit;
 // App Check is the defence. See README.md in this directory.
@@ -85,12 +93,34 @@ service cloud.firestore {
         return before().seats[i].uid == request.auth.uid;
       }
 
-      // Who holds a seat may only change in your favour, and only from a seat
-      // that is vacant or already yours. Comparing the uid alone rather than
-      // the whole seat map keeps this to primitive equality, and still leaves
-      // a heartbeat free to update its own timestamps.
-      function seatWriteOk(i) {
+      // A seat nobody is writing to must come through byte for byte: four
+      // primitive equalities rather than one map equality, per the note at the
+      // top. Null compares equal to null, and an empty seat carries all four
+      // keys as null (assets/games/core/seats.js, frozenSeat).
+      function seatUntouched(i) {
         return after().seats[i].uid == before().seats[i].uid
+          && after().seats[i].claimedAt == before().seats[i].claimedAt
+          && after().seats[i].lastSeen == before().seats[i].lastSeen
+          && after().seats[i].lastActive == before().seats[i].lastActive;
+      }
+
+      // Who may change what in a seat:
+      //   untouched -- anyone, since nothing moved;
+      //   heartbeat -- its holder only, keeping uid and claimedAt, with a
+      //                lastSeen no further ahead than the clock allows;
+      //   claim     -- the caller, into a vacant seat or back into their own;
+      //   release   -- its holder only.
+      // Until 2026-09 the first clause accepted any write that left the uid
+      // alone, which let a signed-in stranger rewrite an occupied seat's
+      // lastSeen, make it look vacant, and take it on the next write.
+      function seatWriteOk(i) {
+        return seatUntouched(i)
+          || (
+            seatMine(i)
+            && after().seats[i].uid == before().seats[i].uid
+            && after().seats[i].claimedAt == before().seats[i].claimedAt
+            && plausibleBeat(i)
+          )
           || (
             after().seats[i].uid == request.auth.uid
             && plausibleBeat(i)
@@ -99,9 +129,15 @@ service cloud.firestore {
           || (seatMine(i) && after().seats[i].uid == null); // releasing your own
       }
 
+      // Both chairs exactly as they were. Every write that is not a seat
+      // operation is a partial update of `moves` (and, for Escher, `board`),
+      // so the seats arrive byte for byte and this never refuses the client.
       function seatsUnchanged() {
-        return after().seats[0].uid == before().seats[0].uid
-          && after().seats[1].uid == before().seats[1].uid;
+        return seatUntouched(0) && seatUntouched(1);
+      }
+
+      function holdsASeat() {
+        return seatMine(0) || seatMine(1);
       }
 
       // Claiming, beating or releasing. The log does not move.
@@ -123,7 +159,8 @@ service cloud.firestore {
       function isReset() {
         return after().moves.size() == 0
           && before().moves.size() > 0
-          && seatsUnchanged();
+          && seatsUnchanged()
+          && holdsASeat(); // a stranger who knows the room name may not wipe it
       }
 
       // A new room may be born with one seat taken, provided it is taken by
@@ -246,14 +283,40 @@ service cloud.firestore {
         return before().seats[i].uid == request.auth.uid;
       }
 
-      function seatWriteOk(i) {
+      // A seat nobody is writing to must come through byte for byte: four
+      // primitive equalities rather than one map equality, per the note at the
+      // top. Null compares equal to null, and an empty seat carries all four
+      // keys as null (assets/games/core/seats.js, frozenSeat).
+      function seatUntouched(i) {
         return after().seats[i].uid == before().seats[i].uid
+          && after().seats[i].claimedAt == before().seats[i].claimedAt
+          && after().seats[i].lastSeen == before().seats[i].lastSeen
+          && after().seats[i].lastActive == before().seats[i].lastActive;
+      }
+
+      // Who may change what in a seat:
+      //   untouched -- anyone, since nothing moved;
+      //   heartbeat -- its holder only, keeping uid and claimedAt, with a
+      //                lastSeen no further ahead than the clock allows;
+      //   claim     -- the caller, into a vacant seat or back into their own;
+      //   release   -- its holder only.
+      // Until 2026-09 the first clause accepted any write that left the uid
+      // alone, which let a signed-in stranger rewrite an occupied seat's
+      // lastSeen, make it look vacant, and take it on the next write.
+      function seatWriteOk(i) {
+        return seatUntouched(i)
+          || (
+            seatMine(i)
+            && after().seats[i].uid == before().seats[i].uid
+            && after().seats[i].claimedAt == before().seats[i].claimedAt
+            && plausibleBeat(i)
+          )
           || (
             after().seats[i].uid == request.auth.uid
             && plausibleBeat(i)
             && (seatVacant(i) || seatMine(i))
           )
-          || (seatMine(i) && after().seats[i].uid == null);
+          || (seatMine(i) && after().seats[i].uid == null); // releasing your own
       }
 
       // Anything that is not a seat change has to come from somebody sitting
@@ -377,19 +440,51 @@ service cloud.firestore {
         return before().seats[i].uid == request.auth.uid;
       }
 
-      function seatWriteOk(i) {
+      // A seat nobody is writing to must come through byte for byte: four
+      // primitive equalities rather than one map equality, per the note at the
+      // top. Null compares equal to null, and an empty seat carries all four
+      // keys as null (assets/games/core/seats.js, frozenSeat).
+      function seatUntouched(i) {
         return after().seats[i].uid == before().seats[i].uid
+          && after().seats[i].claimedAt == before().seats[i].claimedAt
+          && after().seats[i].lastSeen == before().seats[i].lastSeen
+          && after().seats[i].lastActive == before().seats[i].lastActive;
+      }
+
+      // Who may change what in a seat:
+      //   untouched -- anyone, since nothing moved;
+      //   heartbeat -- its holder only, keeping uid and claimedAt, with a
+      //                lastSeen no further ahead than the clock allows;
+      //   claim     -- the caller, into a vacant seat or back into their own;
+      //   release   -- its holder only.
+      // Until 2026-09 the first clause accepted any write that left the uid
+      // alone, which let a signed-in stranger rewrite an occupied seat's
+      // lastSeen, make it look vacant, and take it on the next write.
+      function seatWriteOk(i) {
+        return seatUntouched(i)
+          || (
+            seatMine(i)
+            && after().seats[i].uid == before().seats[i].uid
+            && after().seats[i].claimedAt == before().seats[i].claimedAt
+            && plausibleBeat(i)
+          )
           || (
             after().seats[i].uid == request.auth.uid
             && plausibleBeat(i)
             && (seatVacant(i) || seatMine(i))
           )
-          || (seatMine(i) && after().seats[i].uid == null);
+          || (seatMine(i) && after().seats[i].uid == null); // releasing your own
       }
 
+      // Both chairs exactly as they were. Every write that is not a seat
+      // operation is a partial update of `moves` (and, for Escher, `board`),
+      // so the seats arrive byte for byte and this never refuses the client.
       function seatsUnchanged() {
-        return after().seats[0].uid == before().seats[0].uid
-          && after().seats[1].uid == before().seats[1].uid;
+        return seatUntouched(0) && seatUntouched(1);
+      }
+
+      function holdsASeat() {
+        return seatMine(0) || seatMine(1);
       }
 
       function isSeatOperation() {
@@ -411,7 +506,8 @@ service cloud.firestore {
       function isReset() {
         return after().moves.size() == 0
           && before().moves.size() > 0
-          && seatsUnchanged();
+          && seatsUnchanged()
+          && holdsASeat(); // a stranger who knows the room name may not wipe it
       }
 
       // Putting a room that has never been played in onto the other board.

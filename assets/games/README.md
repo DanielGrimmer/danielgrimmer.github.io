@@ -135,7 +135,7 @@ lose a stalemate guard the tutorial kept.
 ## Running the tests
 
 ```sh
-node --test _tests/*.test.mjs                      # 379 tests
+node --test _tests/*.test.mjs                      # the whole suite: games and encyclopedia
 node --test --test-reporter=dot _tests/*.test.mjs
 ```
 
