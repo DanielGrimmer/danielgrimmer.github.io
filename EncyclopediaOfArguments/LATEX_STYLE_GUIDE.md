@@ -455,10 +455,10 @@ What it keeps:
 
 | The entry | Rows kept | Why |
 | --- | --- | --- |
-| an argument whose premises something satisfies | every row where **the conclusion is false**, and every row where **all the premises are true** | Those are the two ways it could go wrong: a false conclusion, in which case a premise had better be false too; and all-true premises, in which case the conclusion had better be true. Their intersection is a countermodel, and a reader who checks the union has checked the argument |
-| a premise-less claim that is valid | the **top and bottom rows** — all atoms true, all atoms false | A claimed tautology is true on every row, so no row singles itself out; the ends stand in for all of them |
+| an argument whose premises something satisfies | every row where **the conclusion is false**, and every row where **all the premises are true** | Only their intersection is a countermodel: all premises true and conclusion false. One countermodel establishes invalidity. Checking the union suffices because it contains every possible countermodel |
+| a premise-less claim that is valid | the **top and bottom rows** — all atoms true, all atoms false | These are illustrative samples, not evidence that establishes truth on every row; the full calculation establishes the tautology |
 | a premise-less claim that is not | the rows where the conclusion is false | Which are exactly its countermodels |
-| premises nothing can satisfy | the **top and bottom rows** | Every contradiction claim, and the vacuously valid `ex-falso`. There is no live row to point at |
+| premises nothing can satisfy | the **top and bottom rows** | The full calculation establishes that there is no row making all premises true. The two sample rows alone do not establish inconsistency or validity |
 
 The rules are predicates on the *model*, not the row number, so they do not
 depend on the order the atoms come out in: the top row is the one where every

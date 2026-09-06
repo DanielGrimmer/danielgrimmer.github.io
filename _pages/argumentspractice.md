@@ -3,7 +3,7 @@ layout: page
 permalink: /arguments/practice/
 title: practice # the navbar label, lower-case like its siblings
 display_title: Practice
-description: Draw an argument form at random and work it out before you look. The verdict, the table, the tree and the proof all stay hidden until you ask for them.
+description: Begin with a sequence of truth-table calculations, or draw an argument from the encyclopedia. Worked answers stay hidden until you ask for them.
 nav: false # surfaced via the 'argument forms' dropdown in _pages/arguments.md
 ---
 
@@ -21,14 +21,14 @@ nav: false # surfaced via the 'argument forms' dropdown in _pages/arguments.md
 <div class="ae-scope">
 
   <p>
-    Pick what you want to work on, then draw a problem. You get the argument
-    form and nothing else — no verdict, no commentary — so the question is
-    genuinely open. The worked answer is one click away when you want it, and
-    the full encyclopedia entry is linked underneath.
+    New to truth tables? Begin with constructing tables.
+  </p>
+  <p>
+    Want to practice all three methods (tables, tree, ND proofs)? Click on Assessing arguments / proofs
   </p>
 
   <div id="ae-practice">
-    <p class="ae-loading">Loading the argument database…</p>
+    <p class="ae-loading">Loading practice…</p>
   </div>
 
 </div>

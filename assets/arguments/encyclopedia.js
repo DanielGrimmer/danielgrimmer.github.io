@@ -67,8 +67,8 @@ function svgFigure(entry, method, fallback) {
 /*
  * The truth table, in two views.
  *
- * The full table is the one that establishes anything, because a truth table
- * is an exhaustive check, so it is what the panel opens on. But sixty-four
+ * The full table shows the complete calculation and opens by default. One
+ * countermodel already establishes invalidity. But sixty-four
  * rows is a lot to hold at once, and the rows a reader actually has to look at
  * are far fewer: the ones where the conclusion is false, and the ones where
  * every premise is true. `truth_table.latex_compact` is that portion, with a
@@ -96,8 +96,7 @@ function tableViews(entry, fallback) {
     `<div data-ae-view="table">${svgFigure(entry, "table", fallback)}</div>` +
     `<div data-ae-view="table-compact" hidden>` +
     svgFigure(entry, "table-compact", "<!---->") +
-    `<p class="ae-alt">${compactNote(entry)} Only the full table settles the ` +
-    `question — a truth table is an exhaustive check.</p>` +
+    `<p class="ae-alt">${compactNote(entry)} Use Full table to check the complete calculation.</p>` +
     `</div>`
   );
 }
@@ -113,19 +112,20 @@ function compactNote(entry) {
   if (!asArray(entry._premises).length) {
     return entry.verdict?.valid
       ? `The top and bottom rows — every atom true, then every atom false — with ` +
-        `the rest elided. A claimed tautology is true on every row, so no row ` +
-        `singles itself out.`
+        `the rest elided. These two rows alone do not establish that the formula is a tautology. ` +
+        `That requires checking that its main column is true on every row.`
       : `The rows where the conclusion is false: this form's countermodels, and ` +
         `all that is needed to refute it.`;
   }
   if (!live) {
     return `The top and bottom rows — every atom true, then every atom false — ` +
-      `with the rest elided. Nothing satisfies these premises, so there is no ` +
-      `live row to point at.`;
+      `with the rest elided. The full calculation finds no row where all the premises are true, ` +
+      `so there is no countermodel. These two displayed rows alone do not establish that result.`;
   }
   return `The rows where the conclusion is false, and the rows where every ` +
-    `premise is true — the two ways an argument can go wrong, and their ` +
-    `overlap is a countermodel. Everything else is elided.`;
+    `premise is true. A countermodel has both: all premises true and conclusion false. ` +
+    `One countermodel establishes invalidity. This view keeps every row that could be a ` +
+    `countermodel; if none is one, the argument is valid. Everything else is elided.`;
 }
 
 /* Flip one entry's table between its two views. */
@@ -243,7 +243,9 @@ const ALTERNATIVES = {
   tree:
     `<p class="ae-alt">The order in which the rules are applied is up to you, so ` +
     `a correct tree need not look like this one. What is fixed is the outcome: ` +
-    `every completed tree for this form closes on the same branches.</p>`,
+    `for a valid form, every correctly completed tree closes on every branch. ` +
+    `For an invalid form, a correctly completed tree has an open branch that determines ` +
+    `a countermodel. An unfinished branch does not yet settle the question.</p>`,
   nd:
     `<p class="ae-alt">This is <em>a</em> proof, not <em>the</em> proof. A ` +
     `derivation that reaches the conclusion from the premises by the rules is ` +

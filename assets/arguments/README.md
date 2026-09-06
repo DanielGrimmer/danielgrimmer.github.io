@@ -5,7 +5,8 @@ A browsable catalogue of propositional argument forms, built for PHIL 1115
 
 - **[/arguments/](https://danielgrimmer.github.io/arguments/)** — the overview
 - **[/arguments/browse/](https://danielgrimmer.github.io/arguments/browse/)** — the catalogue
-- **[/arguments/practice/](https://danielgrimmer.github.io/arguments/practice/)** — random-draw practice
+- **[/arguments/practice/](https://danielgrimmer.github.io/arguments/practice/)** — construction practice and random argument/proof practice
+- **[/arguments/practice/#constructing-tables](https://danielgrimmer.github.io/arguments/practice/#constructing-tables)** — the fixed Lecture 3 starting sequence
 
 Everything the site needs is in this folder. The three Jekyll pages live in
 `_pages/` because Jekyll requires it, and they do nothing but load these files.
@@ -37,7 +38,8 @@ metrics are computed from the formulas; nothing is asserted on authority.
 | `argument-db.json` | The database. Generated upstream — see *Do not hand-edit* below |
 | `encyclopedia.js` | Data loading, search, filters, and every renderer. All schema knowledge lives here |
 | `browse.js` | The catalogue controller: search, facets, and the `#/<id>` routes |
-| `practice.js` | The random draw and its shuffled bag |
+| `practice.js` | Activity routing, the random draw and its shuffled bag |
+| `construction.js` | The fixed calculation sequence and worked intermediate columns; see `docs/truth-table-construction.md` |
 | `encyclopedia.css` | All styles, scoped to `.ae-scope` |
 | `svg/` | The typeset LaTeX, one SVG per (form, view) — table, compact table, tree, derivation — plus `index.json`; a build artifact, see below |
 

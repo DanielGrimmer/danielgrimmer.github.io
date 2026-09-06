@@ -1,7 +1,8 @@
 /*
- * The practice drill at /arguments/practice/.
+ * The practice page at /arguments/practice/: a fixed Lecture 3 construction
+ * sequence and the original randomized encyclopedia drill.
  *
- * Two questions, one button, one problem. Which methods do you want to
+ * In the encyclopedia drill: two questions, one button, one problem. Which methods do you want to
  * practise, and at what difficulty — then draw. Everything else is deliberately
  * absent: no search, no facets, no metrics. A student arriving between classes
  * should be able to get a problem in two clicks and read nothing.
@@ -28,6 +29,7 @@ import {
   escapeHtml,
   asArray,
 } from "./encyclopedia.js";
+import { renderConstruction } from "./construction.js";
 
 const STORE = "phil1115.practice.v3";
 
@@ -44,7 +46,40 @@ const LEVELS = ["easy", "medium", "hard", "extremely hard"];
 const root = document.getElementById("ae-practice");
 if (root) start();
 
-async function start() {
+function start() {
+  root.innerHTML =
+    `<nav class="ae-practice-modes" aria-label="Practice activity">` +
+    `<a class="ae-btn" href="#constructing-tables" data-mode="construction">Constructing tables — begin here</a>` +
+    `<a class="ae-btn" href="#arguments" data-mode="arguments">Assessing arguments / proofs</a></nav>` +
+    `<section id="ae-construction" hidden></section><section id="ae-argument-practice" hidden></section>`;
+  const construction = root.querySelector("#ae-construction");
+  const argumentsRoot = root.querySelector("#ae-argument-practice");
+  let argumentsStarted = false;
+  function route(focus = false) {
+    const constructing = location.hash === "#constructing-tables" || location.hash.startsWith("#constructing-tables/");
+    const assessing = location.hash === "#arguments";
+    construction.hidden = !constructing;
+    argumentsRoot.hidden = !assessing;
+    for (const link of root.querySelectorAll("[data-mode]")) {
+      const active = link.dataset.mode === "construction" ? constructing : assessing;
+      link.classList.toggle("ae-btn-primary", active);
+      if (active) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    }
+    if (constructing) {
+      renderConstruction(construction, location.hash);
+      if (focus) construction.querySelector("#ae-ct-heading")?.focus({ preventScroll: true });
+    } else if (assessing && !argumentsStarted) {
+      argumentsStarted = true;
+      startArguments(argumentsRoot);
+    }
+  }
+  window.addEventListener("hashchange", () => route(true));
+  route();
+}
+
+async function startArguments(root) {
+  root.innerHTML = `<p class="ae-loading">Loading the argument database…</p>`;
   let db;
   try {
     db = await loadDatabase();
@@ -176,6 +211,7 @@ async function start() {
 
     els.stage.innerHTML =
       `<div class="ae-problem">` +
+      `<p class="ae-progress">${escapeHtml(m.label)} · ${escapeHtml(entry.difficulty[method])}</p>` +
       `<p class="ae-task">${task}</p>` +
       problemStatement(entry) +
       `<details class="ae-reveal"><summary>Show the answer</summary>` +
@@ -200,6 +236,10 @@ async function start() {
     bag = [];
     persist();
     refresh();
+    if (current) {
+      els.stage.innerHTML = `<p class="ae-empty">Your choices have changed. Draw a new problem to use them.</p>`;
+      current = null;
+    }
   });
 
   els.draw.addEventListener("click", draw);
@@ -218,6 +258,9 @@ function shell() {
       .join("");
 
   return (
+    `<h2>Assessing arguments and finding proofs</h2>` +
+    `<p>Draw a random problem from the encyclopedia. For truth tables, this activity uses the validity test introduced in Lecture 4. ` +
+    `For calculation practice, <a href="#constructing-tables">begin with constructing tables</a>.</p>` +
     `<div id="ae-choices" class="ae-choices">` +
     `<div class="ae-choice">` +
     `<h3>Which method would you like to practise?</h3>` +

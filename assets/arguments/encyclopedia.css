@@ -139,6 +139,118 @@ html[data-theme="dark"] .ae-scope {
   display: none !important;
 }
 
+/* Lecture 3 construction practice. Values and formula symbols share actual
+   table columns, so the intermediate work stays aligned at any text size. */
+.ae-practice-modes,
+.ae-ct-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 1.2rem 0 1.6rem;
+}
+
+.ae-practice-modes a,
+.ae-ct-navigation .ae-btn,
+.ae-ct-stages a {
+  text-decoration: none;
+}
+
+.ae-ct-stages {
+  margin: 1rem 0;
+}
+
+.ae-scope .ae-practice-modes a.ae-btn-primary {
+  color: var(--ae-paper);
+}
+
+.ae-scope .ae-ct-stages a {
+  border: 1px solid var(--ae-rule-2);
+  padding: 0.4rem 0.7rem;
+  font-size: 0.84rem;
+}
+
+.ae-scope .ae-ct-stages a[aria-current="step"] {
+  background: var(--ae-accent-soft);
+  border-color: var(--ae-accent);
+  color: var(--ae-accent-ink);
+}
+
+.ae-scope .ae-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ae-scope a:focus-visible,
+.ae-scope button:focus-visible,
+.ae-scope summary:focus-visible,
+.ae-ct-scroll:focus-visible {
+  outline: 3px solid var(--ae-accent);
+  outline-offset: 3px;
+}
+
+.ae-ct-formula {
+  font-family: var(--ae-serif);
+  font-size: 1.65rem;
+  color: var(--ae-ink);
+  margin: 1.4rem 0;
+}
+
+.ae-ct-scroll {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.ae-scope .ae-construction-table {
+  border-collapse: collapse;
+  width: auto;
+  margin: 0.5rem auto 1.2rem;
+  font-family: var(--ae-serif);
+  font-size: 1.45rem;
+  color: var(--ae-ink);
+  white-space: nowrap;
+}
+
+.ae-scope .ae-construction-table th,
+.ae-scope .ae-construction-table td {
+  border: 0;
+  padding: 0.22rem 0;
+  text-align: center;
+  font-weight: normal;
+  background: transparent;
+}
+
+.ae-scope .ae-construction-table .ae-ct-atom {
+  padding-inline: 0.55rem;
+}
+
+.ae-scope .ae-construction-table .ae-ct-divider {
+  border-right: 1px solid var(--ae-ink);
+}
+
+.ae-scope .ae-construction-table .ae-ct-op {
+  padding-inline: 0.28rem;
+  min-width: 1.4rem;
+}
+
+.ae-scope .ae-construction-table .ae-ct-divider + * {
+  padding-left: 0.6rem;
+}
+
+.ae-scope .ae-construction-table thead th,
+.ae-scope .ae-construction-table tbody tr:last-child td {
+  border-bottom: 1px solid var(--ae-ink);
+}
+
+.ae-scope .ae-construction-table .ae-ct-main {
+  background: var(--ae-accent-soft);
+  font-weight: bold;
+}
+
+.ae-scope .ae-construction-table tfoot .ae-ct-main {
+  font-style: italic;
+}
+
 .ae-scope h2,
 .ae-scope h3,
 .ae-scope h4 {
