@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from formula import (
     GLYPH,
+    atoms_of,
     canonical,
     legal_atom,
     parse,
@@ -33,7 +34,7 @@ from formula import (
 from difficulty import apply as apply_difficulty
 from nd import ProofError, check, render_proof
 from proofs import PROOFS
-from tables import table_block
+from tables import table_block, worked_data
 from trees import tree_block
 
 DB = Path(__file__).resolve().parents[2] / "assets/arguments/argument-db.json"
@@ -50,6 +51,8 @@ PREAMBLE = [
     "mathtools",
     "calc",
     "graphicx",
+    "xcolor",
+    "colortbl",
 ]
 
 # The one macro these blocks need beyond notation.sty: a value centred in the
@@ -291,7 +294,15 @@ def normalise(db: dict) -> tuple[list[str], dict[str, dict[str, str]]]:
             columns.append(entry["conclusion"])
         else:
             columns.append("!")
-        entry["truth_table"]["columns"] = [glyphs(c) for c in columns]
+        tt = entry["truth_table"]
+        tt["columns"] = [glyphs(c) for c in columns]
+        # Imported tables sometimes used alphabetical atom order, while the
+        # typeset tables use first appearance. Align the stored assignments
+        # with that same order before generating token-indexed calculations.
+        tt["atoms"] = list(dict.fromkeys(a for c in columns for a in atoms_of(parse(c)[0])))
+        tt["rows"].sort(key=lambda row: tuple(row["assignment"][a] != "T" for a in tt["atoms"]))
+        for row in tt["rows"]:
+            row["assignment"] = {a: row["assignment"][a] for a in tt["atoms"]}
 
         for line in entry.get("nd", {}).get("proof") or []:
             line["f"] = canonical(line["f"])
@@ -343,6 +354,8 @@ def build(db: dict) -> tuple[dict, list[str]]:
         eid = entry["id"]
 
         entry["truth_table"]["latex"] = table_block(entry)
+        entry["truth_table"]["latex_final"] = table_block(entry, intermediate=False)
+        entry["truth_table"]["worked"] = worked_data(entry)
         # The companion "portion of a truth table", for a handout where
         # sixty-four rows will not fit. See tables.compact_filter for what it
         # keeps. Never a substitute for the full one: a truth table is an

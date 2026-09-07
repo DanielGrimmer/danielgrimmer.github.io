@@ -64,68 +64,19 @@ function svgFigure(entry, method, fallback) {
   );
 }
 
-/*
- * The truth table, in two views.
- *
- * The full table shows the complete calculation and opens by default. One
- * countermodel already establishes invalidity. But sixty-four
- * rows is a lot to hold at once, and the rows a reader actually has to look at
- * are far fewer: the ones where the conclusion is false, and the ones where
- * every premise is true. `truth_table.latex_compact` is that portion, with a
- * ⋮ for each stretch left out, and this is the switch between them.
- *
- * The switch starts hidden and `hydrateSvgs` reveals it, because the compact
- * view exists only as typeset LaTeX -- there is no HTML fallback for it, and
- * offering a button that produces nothing would be worse than not offering it.
- */
-function tableViews(entry, fallback) {
-  const tt = entry.truth_table || {};
-  // Where nothing was elided the two views are the same table, and a button
-  // that changes nothing is worse than no button. Three entries are like this:
-  // every row is a row the reader has to check.
-  if (!tt.latex_compact || tt.latex_compact === tt.latex) {
-    return svgFigure(entry, "table", fallback);
-  }
-
-  const id = escapeHtml(entry.id);
+/* Both table views retain every assignment and the same countermodels.
+ * The saved compact LaTeX remains a handout aid; it is never shown here. */
+function tableViews(entry) {
   return (
-    `<div class="ae-views" data-ae-views="${id}" hidden>` +
-    `<button type="button" class="ae-view-btn ae-view-on" data-view="table" aria-pressed="true">Full table</button>` +
-    `<button type="button" class="ae-view-btn" data-view="table-compact" aria-pressed="false">Key rows</button>` +
+    `<div class="ae-assessment-table">` +
+    `<div class="ae-views" role="group" aria-label="Intermediate calculations">` +
+    `<button type="button" class="ae-view-btn" data-view="table" aria-pressed="false">Show calculations</button>` +
+    `<button type="button" class="ae-view-btn ae-view-on" data-view="table-final" aria-pressed="true">Hide calculations</button>` +
     `</div>` +
-    `<div data-ae-view="table">${svgFigure(entry, "table", fallback)}</div>` +
-    `<div data-ae-view="table-compact" hidden>` +
-    svgFigure(entry, "table-compact", "<!---->") +
-    `<p class="ae-alt">${compactNote(entry)} Use Full table to check the complete calculation.</p>` +
+    `<div data-ae-view="table" hidden>${svgFigure(entry, "table", workedTableFallback(entry, true))}</div>` +
+    `<div data-ae-view="table-final">${svgFigure(entry, "table-final", workedTableFallback(entry, false))}</div>` +
     `</div>`
   );
-}
-
-/*
- * What the compact view kept, in this entry's case. It mirrors
- * `tables.compact_filter`, which has four branches, and a caption naming only
- * one of them would be wrong on eleven entries.
- */
-function compactNote(entry) {
-  const rows = asArray(entry.truth_table?.rows);
-  const live = rows.some((r) => r.premises_all_true);
-  if (!asArray(entry._premises).length) {
-    return entry.verdict?.valid
-      ? `The top and bottom rows — every atom true, then every atom false — with ` +
-        `the rest elided. These two rows alone do not establish that the formula is a tautology. ` +
-        `That requires checking that its main column is true on every row.`
-      : `The rows where the conclusion is false: this form's countermodels, and ` +
-        `all that is needed to refute it.`;
-  }
-  if (!live) {
-    return `The top and bottom rows — every atom true, then every atom false — ` +
-      `with the rest elided. The full calculation finds no row where all the premises are true, ` +
-      `so there is no countermodel. These two displayed rows alone do not establish that result.`;
-  }
-  return `The rows where the conclusion is false, and the rows where every ` +
-    `premise is true. A countermodel has both: all premises true and conclusion false. ` +
-    `One countermodel establishes invalidity. This view keeps every row that could be a ` +
-    `countermodel; if none is one, the argument is valid. Everything else is elided.`;
 }
 
 /* Flip one entry's table between its two views. */
@@ -165,17 +116,18 @@ export function hydrateSvgs(root) {
       }
       try {
         const text = await pending;
+        if (el.dataset.aeSvgDone) return;
         const at = text.indexOf("<svg");
         if (at < 0) return;
-        el.innerHTML = text.slice(at);
-        el.dataset.aeSvgDone = "1";
-        // The switch is only worth offering once the view behind it exists.
-        if (name.endsWith("-table-compact")) {
-          const id = name.slice(0, -"-table-compact".length);
-          for (const bar of root.querySelectorAll(`[data-ae-views="${CSS.escape(id)}"]`)) {
-            bar.hidden = false;
-          }
+        const fallback = el.querySelector(".ae-svg-fallback");
+        if (fallback && (name.endsWith("-table") || name.endsWith("-table-final"))) {
+          // Preserve the semantic table for screen readers after typesetting.
+          fallback.classList.add("ae-sr-only");
+          el.insertAdjacentHTML("afterbegin", `<div aria-hidden="true">${text.slice(at)}</div>`);
+        } else {
+          el.innerHTML = text.slice(at);
         }
+        el.dataset.aeSvgDone = "1";
       } catch {
         // Keep the fallback.
       }
@@ -1129,91 +1081,59 @@ function renderEvidence(entry, spoilers, method) {
 
 /* ------------------------------------------------------------ the table */
 
+/* A semantic HTML fallback from the generator's exact token/value columns.
+ * Its layout matches construction tables, including blank atom occurrences,
+ * formula separators and the main-connective marker. */
+function workedTableFallback(entry, intermediate) {
+  const tt = entry.truth_table;
+  const formulas = asArray(tt.worked);
+  const columns = asArray(tt.atoms).map((atom, i) => ({
+    atom, text: atom, divider: i === tt.atoms.length - 1,
+  })).concat(formulas.flatMap((f, i) => f.tokens.map((t, j) => ({
+    ...t, divider: i < formulas.length - 1 && j === f.tokens.length - 1,
+  }))));
+  const cls = (c) => [c.atom ? "ae-ct-atom" : c.values ? "ae-ct-op" : "ae-ct-syntax",
+    c.main ? "ae-ct-main" : "", c.divider ? "ae-ct-divider" : ""].filter(Boolean).join(" ");
+  const labels = `<tr class="ae-tt-labels"><th colspan="${tt.atoms.length}">Atomic Formulas</th>` +
+    formulas.map((f) => `<th colspan="${f.tokens.length}">${escapeHtml(f.label)}</th>`).join("") + `</tr>`;
+  const head = `<tr>${columns.map((c) => `<th class="${cls(c)}">${subscripts(escapeHtml(c.text))}</th>`).join("")}</tr>`;
+  const body = tt.rows.map((row, i) => `<tr${row.countermodel ? ' class="ae-tt-cm" aria-label="Countermodel"' : ''}>` +
+    columns.map((c) => `<td class="${cls(c)}">${c.atom ? escapeHtml(row.assignment[c.atom]) :
+      c.values && (intermediate || c.main) ? escapeHtml(c.values[i]) : ""}</td>`).join("") + `</tr>`).join("");
+  const foot = `<tr>${columns.map((c) => `<td class="${cls(c)}">${c.marker ? "M" : ""}</td>`).join("")}</tr>`;
+  return `<table class="ae-construction-table ae-worked-argument"><caption class="ae-sr-only">Truth table, ${intermediate ? "with intermediate calculations" : "final values only"}</caption>` +
+    `<thead>${labels}${head}</thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
+}
+
+function tableAssessmentNote(entry) {
+  const rows = entry.truth_table.rows;
+  const countermodel = rows.find((row) => row.countermodel);
+  const noPremises = !asArray(entry.premises).length;
+  const oneSided = claimsInconsistency(entry);
+  if (countermodel) {
+    const assignment = entry.truth_table.atoms.map((atom) =>
+      `${subscripts(escapeHtml(atom))} = ${escapeHtml(countermodel.assignment[atom])}`).join(", ");
+    const pattern = oneSided ? "all the premises are true, so they are consistent" :
+      noPremises ? "the formula is false, so it is not a tautology" :
+      "all the premises are true and the conclusion is false";
+    return `<p class="ae-tt-note"><span class="ae-swatch" style="background:var(--ae-invalid-bg)"></span>` +
+      `Highlighted rows are countermodels. For example, <strong>${assignment}</strong>: ${pattern}.</p>`;
+  }
+  const pattern = oneSided ? "Every row has at least one false premise, so the premises are inconsistent." :
+    noPremises ? "The formula is true on every row, so it is a tautology." :
+    "There is no row with all premises true and conclusion false, so the argument is valid. Namely, when all of the premises are true so is the conclusion. Moreover, when the conclusion is false, so is at least one of the premises.";
+  return `<p class="ae-tt-note">${pattern}</p>`;
+}
+
 function buildTruthTable(entry) {
   const tt = entry.truth_table;
   if (!tt || !asArray(tt.rows).length) return null;
-
   const atoms = asArray(tt.atoms);
-  const cols = asArray(tt.columns);
-  const premCount = asArray(entry._premises).length;
-
-  // `columns` is the premises followed by the conclusion, in the generator's
-  // own display strings. Rebuild it positionally from the corrected formulas
-  // when the shape matches, and fall back to the repair map if it ever doesn't.
-  // An inconsistency claim has no conclusion column. A column of falsum would
-  // be F all the way down and say nothing; the question is whether any row
-  // makes the premises true. The typeset table is one-sided for the same
-  // reason, and this keeps the fallback matching it.
-  const oneSided = claimsInconsistency(entry);
-  const headers =
-    cols.length === premCount + 1
-      ? oneSided
-        ? [...entry._premises]
-        : [...entry._premises, entry._conclusion]
-      : cols.map((c) => fixFormula(entry, c));
-
-  // `columns` is premises followed by the conclusion. Splitting on the premise
-  // count, rather than assuming the last column, keeps a no-premise theorem
-  // (where columns is just the conclusion) correct.
-  const head =
-    `<tr>` +
-    atoms.map((a) => `<th>${subscripts(escapeHtml(a))}</th>`).join("") +
-    headers
-      .map(
-        (c, i) =>
-          `<th class="${i === 0 || i === premCount ? "ae-tt-split" : ""}">${subscripts(escapeHtml(c))}</th>`,
-      )
-      .join("") +
-    `<th class="ae-tt-split"></th>` +
-    `</tr>`;
-
-  const body = tt.rows
-    .map((r) => {
-      const cls = r.countermodel
-        ? "ae-tt-cm"
-        : r.premises_all_true
-          ? "ae-tt-live"
-          : "";
-
-      const cells =
-        atoms
-          .map((a) => `<td>${escapeHtml(r.assignment?.[a] ?? "")}</td>`)
-          .join("") +
-        asArray(r.premises)
-          .map(
-            (v, i) =>
-              `<td class="${i === 0 ? "ae-tt-split" : ""}">${escapeHtml(v)}</td>`,
-          )
-          .join("") +
-        (oneSided
-          ? ""
-          : `<td class="ae-tt-split">${escapeHtml(r.conclusion ?? "")}</td>`) +
-        `<td class="ae-tt-split ae-tt-mark">${r.countermodel ? "←" : ""}</td>`;
-
-      return `<tr class="${cls}">${cells}</tr>`;
-    })
-    .join("");
-
-  const legend =
-    `<div class="ae-tt-legend">` +
-    `<span><span class="ae-swatch" style="background:var(--ae-accent-soft)"></span>all premises true</span>` +
-    (oneSided
-      ? ""
-      : `<span><span class="ae-swatch" style="background:var(--ae-invalid-bg)"></span>countermodel — premises true, conclusion false</span>`) +
-    `</div>`;
-
   return {
     hint: `${tt.rows.length} rows, ${atoms.length} atom${atoms.length === 1 ? "" : "s"}`,
-    html:
-      // The legend explains the row shading, and the shading is a feature of
-      // the HTML table only -- the typeset table marks nothing, exactly as it
-      // does in the handout. So the legend goes inside the fallback and leaves
-      // with it. The countermodels themselves are named in the verdict.
-      tableViews(
-        entry,
-        `<div class="ae-table-wrap"><table class="ae-tt"><thead>${head}</thead><tbody>${body}</tbody></table></div>` +
-          legend,
-      ),
+    html: tableViews(entry) +
+      `<p class="ae-tt-note"><em>M</em> marks the main connective of each compound formula; bold values give each formula’s final result.</p>` +
+      tableAssessmentNote(entry),
   };
 }
 

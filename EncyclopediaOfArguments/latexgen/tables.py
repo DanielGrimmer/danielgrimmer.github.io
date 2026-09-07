@@ -1,38 +1,18 @@
-"""Truth-table blocks in the PHIL 1115 house style.
+"""Token-aligned truth tables, with every row and optional intermediate values.
 
-Two layouts, per LATEX_STYLE_GUIDE.md §4.1:
-
-  * argument layout      -- three \\overbrace groups, one value per premise
-                            (Lecture 4 §1). Used when the entry has premises.
-  * single-formula layout -- one value under each connective, `M` row at the
-                            foot (Lecture 3 §2, Lecture 4). Used for theorems.
-
-Alignment. The handouts place values by hand with \\quad and \\qquad, which is
-approximate: in Lecture 4's own contradiction table the value for `\\Neg p` sits
-under the `p` rather than the `\\Neg`. Since the course's rule is that a value
-belongs to *its* connective, and since the reader has to find the main-connective
-column to read the answer off, this generator places every value in a box
-exactly as wide as the thing it sits under:
-
-    \\newcommand{\\uv}[2]{\\mathmakebox[\\widthof{$#1$}][c]{\\text{#2}}}
-
-Header and value rows are then built from the same pieces with the same
-separators, so they line up by construction rather than by eye. The result is
-visually the handouts' table, correctly registered.
+The same layout supplies the LaTeX blocks and the website's HTML fallback.
+Only connective columns carry calculations inside compound formulas. Each
+formula has a main result column; M marks a compound formula's main connective.
+The compact companion remains available for printed handouts only.
 """
-
 from __future__ import annotations
 
 from formula import (
     Tok,
     atom_latex,
     atoms_of,
-    connective_tokens,
     evaluate,
-    latex,
-    main_connective_index,
     parse,
-    render,
 )
 
 def _fit(tabular_lines: list[str]) -> list[str]:
@@ -89,140 +69,115 @@ def _rows(all_models, row, keep, columns: int) -> list[str]:
     return out
 
 
-def _uv(under: str, value: str) -> str:
-    """A value centred in the width of the thing it belongs to."""
-    return f"\\uv{{{under}}}{{{value}}}"
-
-
 def _tok_latex(t: Tok) -> str:
     from formula import GLYPH
-
     if t.kind in ("op", "neg", "bot"):
         return GLYPH[t.text].strip()
     return atom_latex(t.text)
 
 
-# --------------------------------------------------------------- single formula
+def _layout(entry: dict) -> dict:
+    sources = list(entry["premises"])
+    one_sided = entry["conclusion"].strip() == "!"
+    if not one_sided:
+        sources.append(entry["conclusion"])
+    parsed = [parse(src) for src in sources]
+    atoms = list(dict.fromkeys(a for root, _ in parsed for a in atoms_of(root)))
+    every = models(atoms)
+    glyphs = {"~": "∼", "&": "&", "|": "∨", ">": "⊃", "=": "≡"}
+    formulas = []
+    for n, (root, toks) in enumerate(parsed):
+        columns = []
+        for t in toks:
+            # An atomic premise/conclusion is itself a result column. Atoms
+            # occurring inside a compound formula never repeat their values.
+            node = t.node if t.kind in ("op", "neg") else None
+            if root.op is None and t.kind == "atom":
+                node = root
+            col = {"text": glyphs.get(t.text, t.text), "latex": _tok_latex(t)}
+            if node is not None:
+                col["values"] = ["T" if evaluate(node, m) else "F" for m in every]
+                col["main"] = node is root
+                col["marker"] = node is root and root.op is not None
+            columns.append(col)
+        label = (f"Premise {n + 1}" if n < len(entry["premises"]) else
+                 "Conclusion" if entry["premises"] else "Formula")
+        formulas.append({"label": label, "tokens": columns})
+    prem = [r for r, _ in parsed[:len(entry["premises"])]]
+    conclusion = None if one_sided else parsed[-1][0]
+    return {"atoms": atoms, "formulas": formulas, "models": every,
+            "countermodels": [all(evaluate(r, m) for r in prem) and
+                              (conclusion is None or not evaluate(conclusion, m))
+                              for m in every]}
 
 
-def single_formula_table(src: str, keep=None) -> str:
-    """A theorem's table: a value under every connective, and an `M` row."""
-    root, toks = parse(src)
-    atoms = atoms_of(root)
-    cols = connective_tokens(toks)
-    main = main_connective_index(toks, root)
+def worked_data(entry: dict) -> list[dict]:
+    """Serializable columns for the accessible HTML version of both views."""
+    return [{"label": f["label"],
+             "tokens": [{k: v for k, v in t.items() if k != "latex"}
+                        for t in f["tokens"]]}
+            for f in _layout(entry)["formulas"]]
 
-    # One tabular column per atom, matching the value rows below.
-    header_atoms = " & ".join(f"${atom_latex(a)}$" for a in atoms)
-    header_formula = f"${render(toks)}$"
 
-    def value_row(model) -> str:
-        out = []
-        for i, t in enumerate(toks):
-            if i in cols:
-                v = "T" if evaluate(t.node, model) else "F"
-                out.append(_uv(_tok_latex(t), v))
+def table_block(entry: dict, compact: bool = False, intermediate: bool = True) -> str:
+    layout = _layout(entry)
+    atoms, formulas = layout["atoms"], layout["formulas"]
+    keep = compact_filter(entry) if compact else None
+    columns = [{"latex": atom_latex(a), "atom": a} for a in atoms]
+    columns += [t for f in formulas for t in f["tokens"]]
+    # Real tabular columns give each connective enough room for its T/F value,
+    # unlike boxes only as wide as a narrow negation symbol.
+    specs = ["c" for _ in atoms]
+    for f in formulas:
+        specs.append("|")
+        specs.extend("c" for _ in f["tokens"])
+
+    def shade(col, countermodel=False):
+        return r"\cellcolor[HTML]{E8EEF6}" if col.get("main") and not countermodel else ""
+
+    def heading(col):
+        tex = col["latex"]
+        if col.get("main"):
+            tex = r"\boldsymbol{" + tex + "}"
+        if "values" in col or "atom" in col:
+            tex = r"\mathmakebox[1.25em][c]{" + tex + "}"
+        return shade(col) + "$" + tex + "$"
+
+    def line(cells):
+        return "        " + " & ".join(cells) + r" \\"
+
+    labels = [r"\multicolumn{" + str(len(atoms)) + r"}{c|}{\scriptsize Atomic Formulas}"]
+    for n, f in enumerate(formulas):
+        rule = "|" if n < len(formulas) - 1 else ""
+        labels.append(r"\multicolumn{" + str(len(f["tokens"])) + "}{c" + rule +
+                      r"}{\scriptsize " + f["label"] + "}")
+    table = [r"\setlength{\tabcolsep}{.12em}", r"\renewcommand{\arraystretch}{1.25}",
+             r"\begin{tabular}{" + "".join(specs) + "}",
+             line(labels), line([heading(c) for c in columns]), r"        \hline"]
+
+    def row(model):
+        i = layout["models"].index(model)
+        cm = layout["countermodels"][i]
+        cells = []
+        for c in columns:
+            if "atom" in c:
+                value = "T" if model[c["atom"]] else "F"
+            elif "values" in c and (intermediate or c["main"]):
+                value = c["values"][i]
             else:
-                out.append(f"\\phantom{{{_tok_latex(t)}}}")
-        return "$" + "".join(out) + "$"
+                value = ""
+            if c.get("main"):
+                value = r"\mathbf{" + value + "}"
+            elif value:
+                value = r"\mathrm{" + value + "}"
+            cells.append(shade(c, cm) + "$" + value + "$")
+        return (r"        \rowcolor[HTML]{FBEAE7}" + "\n" if cm else "") + line(cells)
 
-    def marker_row() -> str:
-        out = []
-        for i, t in enumerate(toks):
-            if i in cols:
-                out.append(_uv(_tok_latex(t), "M" if cols.index(i) == main else "."))
-            else:
-                out.append(f"\\phantom{{{_tok_latex(t)}}}")
-        return "$" + "".join(out) + "$"
-
-    lines = [
-        "\\begin{table}[h!]",
-        "    \\centering",
-        "    \\begin{tabular}{" + " ".join("c" for _ in atoms) + "| c}",
-        f"        {header_atoms} & {header_formula} \\\\",
-        "        \\hline",
-    ]
-    def row(model) -> str:
-        vals = " & ".join("T" if model[a] else "F" for a in atoms)
-        return f"        {vals} & {value_row(model)} \\\\"
-
-    lines += _rows(models(atoms), row, keep, len(atoms) + 1)
-    lines += [
-        "        \\hline",
-        "        " + " & ".join("$.$" for _ in atoms) + f" & {marker_row()} \\\\",
-        "    \\end{tabular}",
-    ]
-    return "\n".join(
-        ["\\begin{table}[h!]", "    \\centering"] + _fit(lines[2:]) + ["\\end{table}"]
-    )
-
-
-# ------------------------------------------------------------------- argument
-
-
-def argument_table(premises: list[str], conclusion: str, keep=None) -> str:
-    """An argument's table: atoms | premises | conclusion, one value each.
-
-    Lecture 4 gives one value per premise -- under its main connective -- not a
-    value under every connective. That is what the three \\overbrace groups are
-    for: the reader scans the premise block for a row of all-Ts, then looks
-    across at the conclusion.
-    """
-    parsed = [parse(p) for p in premises]
-    croot, ctoks = parse(conclusion)
-    atoms: list[str] = []
-    for root, _ in parsed:
-        for a in atoms_of(root):
-            if a not in atoms:
-                atoms.append(a)
-    for a in atoms_of(croot):
-        if a not in atoms:
-            atoms.append(a)
-
-    prem_tex = [render(t) for _, t in parsed]
-    concl_tex = render(ctoks)
-
-    def group(items: list[str]) -> str:
-        return "\\quad " + " \\qquad ".join(items) + " \\quad"
-
-    head = (
-        f"$\\overbrace{{{group([atom_latex(a) for a in atoms])}}}^\\text{{Atomic Formulas}}$"
-        f"\n      & $\\overbrace{{{group(prem_tex)}}}^\\text{{Premises}}$"
-        f"\n      & $\\overbrace{{{group([concl_tex])}}}^\\text{{Conclusion}}$"
-    )
-
-    def row(model) -> str:
-        a = group([_uv(atom_latex(x), "T" if model[x] else "F") for x in atoms])
-        p = group(
-            [
-                _uv(prem_tex[i], "T" if evaluate(root, model) else "F")
-                for i, (root, _) in enumerate(parsed)
-            ]
-        )
-        c = group([_uv(concl_tex, "T" if evaluate(croot, model) else "F")])
-        return f"        ${a}$ & ${p}$ & ${c}$ \\\\"
-
-    all_models = models(atoms)
-    lines = [
-        "\\begin{table}[h!]",
-        "    \\centering",
-        "    \\begin{tabular}{c | c | c}",
-        f"        {head} \\\\",
-        "        \\hline",
-    ]
-
-    # Every row, however many there are. Long tables used to be elided down to
-    # the first row, the countermodels and the last -- but a truth table is a
-    # exhaustive check, and a reader who cannot see the rows cannot see that it
-    # is one. The sixty-four-row Dutch book form is exactly the case that
-    # matters: what makes it worth showing is that sixty-three rows behave and
-    # one does not.
-    lines += _rows(all_models, row, keep, 3)
-
-    lines += ["    \\end{tabular}"]
-    return "\n".join(
-        ["\\begin{table}[h!]", "    \\centering"] + _fit(lines[2:]) + ["\\end{table}"]
-    )
+    table += _rows(layout["models"], row, keep, len(columns))
+    table += [r"        \hline",
+              line([shade(c) + ("$M$" if c.get("marker") else "") for c in columns]),
+              r"\end{tabular}"]
+    return "\n".join([r"\begin{table}[h!]", r"    \centering"] + _fit(table) + [r"\end{table}"])
 
 
 def models(atoms: list[str]) -> list[dict[str, bool]]:
@@ -233,36 +188,6 @@ def models(atoms: list[str]) -> list[dict[str, bool]]:
             {a: not bool((n >> (len(atoms) - 1 - i)) & 1) for i, a in enumerate(atoms)}
         )
     return out
-
-
-def contradiction_table(premises: list[str], keep=None) -> str:
-    """A joint-unsatisfiability table: atoms and premises, no conclusion.
-
-    Three entries conclude falsum. That is a contradiction claim, `X ⊨`, in the
-    one-sided form Lecture 4 defines -- not an argument with ⊥ as its
-    conclusion, because ⊥ is not a formula of the language and, in the Notation
-    Guide's own words, "no truth table has a column for it". So the table has
-    two groups rather than three, and what the reader looks for is a row with
-    every premise true. There is none; that is the whole claim.
-    """
-    body = argument_table(premises, premises[-1], keep)
-    # Rebuild without the conclusion group: drop the third column everywhere.
-    out = []
-    for line in body.splitlines():
-        if "\\begin{tabular}{c | c | c}" in line:
-            out.append(line.replace("{c | c | c}", "{c | c}"))
-        elif "^\\text{Conclusion}$" in line:
-            continue
-        elif line.rstrip().endswith("\\\\") and line.count("$ & $") == 2:
-            cells = line.rstrip()[:-2].split(" & ")
-            out.append(" & ".join(cells[:2]) + " \\\\")
-        else:
-            out.append(line)
-    text = "\n".join(out)
-    # The premises header line ended with a continuation; close it off.
-    return text.replace(
-        "^\\text{Premises}$\n", "^\\text{Premises}$ \\\\\n"
-    ).replace(" \\\\ \\\\", " \\\\")
 
 
 def compact_filter(entry: dict):
@@ -328,12 +253,3 @@ def compact_filter(entry: dict):
         return ends
 
     return lambda m: live(m) or concl_false(m)
-
-
-def table_block(entry: dict, compact: bool = False) -> str:
-    keep = compact_filter(entry) if compact else None
-    if entry["conclusion"].strip() == "!":
-        return contradiction_table(entry["premises"], keep)
-    if entry["premises"]:
-        return argument_table(entry["premises"], entry["conclusion"], keep)
-    return single_formula_table(entry["conclusion"], keep)

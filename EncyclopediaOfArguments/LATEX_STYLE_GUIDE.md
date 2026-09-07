@@ -393,17 +393,20 @@ read, never to save parentheses.** §3.1 governs what gets written.
 
 ## 4. Block A — the truth table
 
-### 4.1 Which of the two layouts
+### 4.1 One layout, optional intermediate calculations
 
-Lecture 3–4 use two distinct table layouts, and the choice is not cosmetic:
+The website uses the constructing-tables layout for every form: letters on
+the left, followed by a separate formula block for each premise and the
+conclusion. Vertical rules separate the blocks, and labels identify their
+roles. A premise-less question has one formula block; an inconsistency claim
+has premise blocks only, with no falsum column.
 
-- **Single-formula layout** (Lecture 3 §2, Lecture 4's tautology/contingency
-  examples). Atoms on the left, one formula on the right, an `M` row at the foot
-  marking the main-connective column. Use this when the entry **has no
-  premises** — a theorem like Peirce's Law or `russell-schema`.
-- **Argument layout** (Lecture 4 §1). Three groups separated by vertical rules,
-  each capped with an `\overbrace`: Atomic Formulas | Premises | Conclusion. Use
-  this when the entry **has premises**, which is 24 of the 35.
+`truth_table.latex` shows every connective calculation. The companion
+`truth_table.latex_final` leaves only each formula's final values visible,
+in the same positions. Both contain every row. The website's **Show
+calculations / Hide calculations** control starts with calculations hidden.
+The generated `truth_table.worked` token/value columns provide an equivalent
+HTML table when the SVG is unavailable, and remain accessible to screen readers.
 
 ### 4.2 The rule that catches everyone
 
@@ -428,19 +431,29 @@ four values — one each under `\Disj`, `\Conj`, `\Neg`, `\Conj` — laid out as
 - Atom order is the order they are listed in the header, which should be the
   order of first appearance in the sequent.
 - The **`M` row** goes at the foot, below an `\hline`, with `M` under the main
-  connective's column and `.` under every other. Lecture 4 uses it on
-  single-formula tables; it is optional on argument tables, where the vertical
-  rules already do the work.
+  connective's column, in every compound formula block and in both views.
+  Other footer cells stay blank. A formula consisting of one letter has no
+  main connective, so its result column is bold but has no `M` marker.
 - Lecture 3 also demonstrates a `c1 c2 c3 …` column-index row. That is a
   teaching device for a table being walked through on the board. **Omit it** in
   the encyclopedia unless the entry's prose refers to a column by number.
 
 ### 4.4 Countermodel marking
 
-The course does **not** mark countermodel rows in the table itself — Lecture 4
-identifies them in prose ("Row 3 is a *counterexample*…"). Follow the course:
-**no marker column.** The website already highlights countermodel rows in HTML,
-and the entry's `countermodel_gloss` says it in words.
+Highlight every countermodel row in both LaTeX views and the HTML fallback.
+Use a continuous pale red row background, with no extra marker column. A note
+below the table explicitly gives one highlighted assignment. For ordinary
+arguments it makes every premise true and the conclusion false; for a
+premise-less claim it makes the formula false; for an inconsistency claim it
+makes every premise true.
+
+Other rows are unhighlighted. Each formula's final column is pale blue and its
+values are bold; countermodel shading takes precedence where they intersect.
+When no countermodels exist, the note explains the universal row pattern:
+every row has a false premise or a true conclusion, a tautology is true on
+every row, or inconsistent premises have a false premise on every row.
+
+The website maps the LaTeX highlight colors to its light/dark theme variables.
 
 ### 4.5 Every row, always — and a compact companion
 
@@ -452,9 +465,8 @@ makes it worth showing is that sixty-three rows behave and one does not.
 But sixty-four rows is more than a page of a four-page handout, so each entry
 also carries a **compact table** at `truth_table.latex_compact` — Lecture 8's
 "portion of a truth table", with a `\vdots` standing in for every stretch left
-out. It is a companion, never a substitute: an entry has both, the website
-offers a **Full table / Key rows** switch between them, and a handout takes
-whichever fits.
+out. It is a handout companion only, never displayed on the website.
+The website always shows all rows; its toggle changes calculations, not rows.
 
 What it keeps:
 
@@ -472,8 +484,7 @@ atom is true, the bottom row the one where none is.
 **The compact table is sometimes the full table**, and that is not a fault. On
 `russell-schema`, `distributed-knowledge` and `total-not-determined` every row
 is a row the reader has to check, so nothing is elided and the two blocks come
-out byte-identical — which is how the website knows to drop the switch rather
-than offer a button that changes nothing.
+out byte-identical. This has no effect on the website's calculation toggle.
 
 ### 4.5a Every row, always (the full table)
 

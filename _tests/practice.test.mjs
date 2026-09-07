@@ -6,7 +6,7 @@ const moduleFrom = async (file) => import(`data:text/javascript;base64,${Buffer.
 // The renderer registers a delegated click listener at load. These tests
 // exercise its HTML output; live clicks and answer resets are checked in-browser.
 globalThis.document = { addEventListener() {} };
-const { assessmentSymbol, renderCard, renderEntry, problemStatement, difficultyLabel } = await moduleFrom('../assets/arguments/encyclopedia.js');
+const { assessmentSymbol, renderCard, renderEntry, problemStatement, difficultyLabel, methodPanel } = await moduleFrom('../assets/arguments/encyclopedia.js');
 delete globalThis.document;
 const { METHOD_KEYS, practiceLink, parsePracticeLink, resolvePracticeLink, canPractise } = await moduleFrom('../assets/arguments/practice-links.js');
 const raw = JSON.parse(readFileSync(new URL('../assets/arguments/argument-db.json', import.meta.url), 'utf8'));
@@ -78,4 +78,31 @@ test('optional difficulty labels preserve the underlying filter values', () => {
   assert.equal(difficultyLabel('extremely hard'), 'extremely hard (optional)');
   assert.equal(difficultyLabel('easy'), 'easy');
   assert.equal(difficultyLabel(null), null);
+});
+
+
+test('assessment tables offer calculations without filtering rows, even before SVG loading', () => {
+  for (const e of entries) {
+    const html = methodPanel(e, 'table');
+    assert.match(html, />Show calculations<.*>Hide calculations</s, e.id);
+    assert.match(html, /data-view="table-final" aria-pressed="true"/, e.id);
+    assert.match(html, /data-ae-view="table" hidden/, e.id);
+    assert.match(html, /data-ae-view="table-final">/, e.id);
+    assert.doesNotMatch(html, /Key rows|data-view="table-compact"|all premises true<\/span>/, e.id);
+    const bodies = [...html.matchAll(/<tbody>(.*?)<\/tbody>/gs)].map((m) => m[1]);
+    assert.equal(bodies.length, 2, e.id);
+    for (const body of bodies) {
+      assert.equal((body.match(/<tr[ >]/g) ?? []).length, e.truth_table.rows.length, e.id);
+      assert.equal((body.match(/aria-label="Countermodel"/g) ?? []).length,
+        e.truth_table.rows.filter((r) => r.countermodel).length, e.id);
+    }
+    const cm = e.truth_table.rows.find((r) => r.countermodel);
+    if (cm) {
+      assert.match(html, /Highlighted rows are countermodels. For example,/, e.id);
+      for (const atom of e.truth_table.atoms) assert.ok(plain(html).includes(`${atom.replace('_', '')} = ${cm.assignment[atom]}`), e.id);
+    } else {
+      assert.doesNotMatch(html, /Highlighted rows/, e.id);
+      assert.match(html, /Every row has|true on every row|There is no row with all premises true/, e.id);
+    }
+  }
 });

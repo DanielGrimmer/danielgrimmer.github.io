@@ -55,7 +55,7 @@ first all the same: a failed deploy leaves the previous build live, silently.
    the inventory marks `EX`. `course.note` is instructor-facing and is never
    rendered as body copy.
 3. **Generated fields are not yours to edit.** `display.*`,
-   `truth_table.columns`, `truth_table.latex*`, `tree.latex`, `nd.latex`, the
+   `truth_table.columns`, `truth_table.worked`, `truth_table.latex*`, `tree.latex`, `nd.latex`, the
    whole `nd` profile, and `difficulty.table` / `.tree` / `.search_sharpness`
    are written by `build.py` from `premises`, `conclusion` and
    `latexgen/proofs.py`. Hand-edit one and the next build silently reverts it.

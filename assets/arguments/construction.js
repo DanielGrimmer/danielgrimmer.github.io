@@ -201,7 +201,7 @@ export function renderConstruction(root, hash) {
     `<p>${index < 0 ? "This formula is available as additional practice. You can also return to the numbered sequence above." : stage.note}</p>` +
     `<div class="ae-problem"><h3 id="ae-ct-heading" tabindex="-1">${index < 0 ? "Additional practice" : `Problem ${index + 1} of ${PROBLEMS.length}`}</h3>` +
     `<p class="ae-task">${grouped ? "Construct the truth table for these three formulas side-by-side. Show the intermediate values under each connective and mark each main column with M." : "Construct the truth table for this formula. Show the intermediate values under each connective and mark the main column with M."}</p>` +
-    `<div class="ae-ct-formula${grouped ? " ae-ct-formulas" : ""}"${grouped ? ' tabindex="0" role="region" aria-label="Formulas to compare"' : ""}>${formulas.map((f) => `<span>${esc(formulaText(f))}</span>`).join("")}</div>` +
+    `<div class="ae-ct-formula${grouped ? " ae-ct-formulas" : ""}"${grouped ? ' tabindex="0" role="region" aria-label="Formulas to compare"' : ""}>${formulas.map((f, i) => `<span>${esc(formulaText(f))}${i < formulas.length - 1 ? "," : ""}</span>`).join("")}</div>` +
     `<details class="ae-reveal"><summary>Show the worked table</summary><div class="ae-reveal-body">${workedTable(formulas)}</div></details>` +
     `<p><a href="${exerciseLink(problem)}">Link to this problem</a></p></div>` +
     (index >= 0 ? `<nav class="ae-ct-navigation" aria-label="Construction problems">${nav(index - 1, "Previous problem")}${nav(index + 1, "Next problem")}</nav>` : "") +

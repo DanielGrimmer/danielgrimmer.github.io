@@ -46,7 +46,7 @@ DB = ROOT / "assets/arguments/argument-db.json"
 OUT = ROOT / "assets/arguments/svg"
 NOTATION = HERE.parent / "notation.sty"
 
-METHODS = ("table", "table-compact", "tree", "nd")
+METHODS = ("table", "table-final", "table-compact", "tree", "nd")
 
 
 def preamble(db: dict) -> str:
@@ -58,6 +58,7 @@ def preamble(db: dict) -> str:
             r"\usepackage{qtree}",
             r"\usepackage{fitch}",
             r"\usepackage{graphicx}",
+            r"\usepackage[table]{xcolor}",
             r"\usepackage{notation}",
             m["uv"],
             m["treebox"],
@@ -71,6 +72,8 @@ def preamble(db: dict) -> str:
 
 
 def block_of(entry: dict, method: str) -> str | None:
+    if method == "table-final":
+        return entry["truth_table"].get("latex_final")
     if method == "table-compact":
         return entry["truth_table"].get("latex_compact")
     holder = {"table": "truth_table", "tree": "tree", "nd": "nd"}[method]
@@ -100,6 +103,11 @@ def to_svg(block: str, db: dict, workdir: Path, tag: str) -> str:
     body = block.replace(r"\begin{table}[h!]", r"\begin{center}").replace(
         r"\end{table}", r"\end{center}"
     )
+    # Tables scroll at their natural size on the website. The LaTeX block
+    # retains its fit-to-paper guard for handouts.
+    if "\\begin{tabular}" in body:
+        body = re.sub(r"\\ifdim\\wd\\aetabbox>\\linewidth.*?\\fi",
+                      lambda _: r"\usebox{\aetabbox}", body, flags=re.S)
     tex = (
         preamble(db)
         + "\n"
@@ -179,6 +187,9 @@ def recolour(svg: str, tag: str) -> str:
     # reaches all of them; the rules and branches are stroked, and named.
     svg = svg.replace("stroke='#000'", "stroke='currentColor'")
     svg = svg.replace("stroke='#000000'", "stroke='currentColor'")
+    # Preserve the table's semantic highlights in either page theme.
+    for colour, variable in [("#e8eef6", "--ae-accent-soft"), ("#fbeae7", "--ae-invalid-bg")]:
+        svg = svg.replace(f"fill='{colour}'", f"fill='var({variable})'")
     # Size. dvisvgm writes an absolute width and height in points, which would
     # pin the diagram to one size forever. Replace them with a width in `em`:
     # the blocks were typeset at 11pt, so dividing by 11 makes one em of the

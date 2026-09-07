@@ -236,10 +236,8 @@ test('every truth table is listed in full', () => {
   for (const e of entries) {
     const block = e.truth_table.latex;
     assert.ok(!block.includes('\\vdots'), `${e.id}: table is elided`);
-    // One \\ per row, plus the header. A premise-less entry is a claim that
-    // its one formula is a tautology, so its table is the single-formula
-    // layout and carries an extra row marking the main connective.
-    const chrome = e.premises.length ? 1 : 2;
+    // Every layout has a group-label row, a formula header and an M footer.
+    const chrome = 3; // group labels, formula header and M footer in every layout.
     const breaks = (block.match(/\\\\/g) ?? []).length;
     assert.equal(breaks, e.verdict.rows + chrome,
       `${e.id}: ${breaks - chrome} rows typeset, ${e.verdict.rows} in the data`);
@@ -697,7 +695,9 @@ test('every LaTeX block has a current SVG', async (t) => {
   // carry the argument, with the rest elided. It is a handout aid, not a
   // replacement — only the full table is the exhaustive check.
   const blockOf = (e, m) =>
-    m === 'table-compact'
+    m === 'table-final'
+      ? e.truth_table.latex_final
+      : m === 'table-compact'
       ? e.truth_table.latex_compact
       : m === 'table'
         ? e.truth_table.latex
@@ -707,17 +707,17 @@ test('every LaTeX block has a current SVG', async (t) => {
 
   const blocks = [];
   for (const e of entries) {
-    for (const m of ['table', 'table-compact', 'tree', 'nd']) {
+    for (const m of ['table', 'table-final', 'table-compact', 'tree', 'nd']) {
       const latex = blockOf(e, m);
       if (latex) blocks.push([e.id, m, latex]);
     }
   }
 
-  await t.test('one block per practice problem, plus a compact table each', () => {
-    // A table, a compact table and a tree for every entry, a derivation for
-    // every valid one. Derived rather than pinned: the database grows.
+  await t.test('two complete table views and a handout companion for every form', () => {
+    // Two complete table views, a compact handout table and a tree per entry;
+    // a derivation wherever one is carried.
     const valid = entries.filter((e) => e.nd.exists).length;
-    assert.equal(blocks.length, entries.length * 3 + valid);
+    assert.equal(blocks.length, entries.length * 4 + valid);
     assert.equal(blocks.filter(([, m]) => m === 'table-compact').length, entries.length);
   });
 
@@ -1040,15 +1040,14 @@ test('the compact table keeps the rows that carry the argument', () => {
     // carries `.` and `M` rather than truth values.
     const kept = compact
       .split('\n')
-      .filter((l) => l.includes('\\uv{') || /^\s+[TF] &/.test(l))
+      .filter((l) => /\\mathrm\{[TF]\}/.test(l))
       .filter((l) => !l.includes('}{M}') && !l.includes('}{.}')).length;
     assert.ok(kept >= 1, `${e.id}: the compact table kept no rows`);
 
     if (kept < rows.length) {
       assert.match(compact, /\\vdots/, `${e.id}: rows elided with no vdots to say so`);
     } else {
-      // Nothing elided means the two views are the same table, and the site
-      // drops the switch rather than offer a button that changes nothing.
+      // When no rows are elided, the handout companion is the full table.
       assert.equal(compact, e.truth_table.latex, `${e.id}: kept every row but is not the full table`);
     }
 
@@ -1263,5 +1262,77 @@ test('an entry claiming the longest or shortest derivation has it', () => {
       assert.equal(e.nd?.lines, want,
         `${e.id} claims the ${which} derivation at ${e.nd?.lines} lines, but the ${which} is ${want}`);
     }
+  }
+});
+
+
+test('both table views preserve every row and highlight exactly the countermodels', () => {
+  for (const e of entries) {
+    for (const [key, intermediate] of [['latex', true], ['latex_final', false]]) {
+      const block = e.truth_table[key];
+      assert.doesNotMatch(block, /\\vdots/, `${e.id}/${key}`);
+      const lines = block.split('\n');
+      const data = lines.filter((l) => /\\mathrm\{[TF]\}/.test(l));
+      assert.equal(data.length, e.truth_table.rows.length, `${e.id}/${key}: missing rows`);
+      const columns = e.truth_table.worked.flatMap((f) => f.tokens);
+      data.forEach((line, i) => {
+        const expected = e.truth_table.atoms.map((a) => e.truth_table.rows[i].assignment[a]).concat(
+          columns.map((c) => c.values && (intermediate || c.main) ? c.values[i] : ''));
+        const actual = line.trim().replace(/\\\\$/, '').trim().split(' & ').map((c) =>
+          c.replace(/\\cellcolor\[HTML\]\{[A-F0-9]+\}/g, '').replace(/\\(?:mathbf|mathrm)\{([TF])\}/g, '$1').replace(/\$/g, ''));
+        assert.deepEqual(actual, expected, `${e.id}/${key} row ${i + 1}`);
+        assert.equal(lines[lines.indexOf(line) - 1].includes('rowcolor'), e.truth_table.rows[i].countermodel,
+          `${e.id}/${key}: wrong highlighted row ${i + 1}`);
+      });
+      const svg = readFileSync(new URL(`../assets/arguments/svg/${e.id}-${key === 'latex' ? 'table' : 'table-final'}.svg`, import.meta.url), 'utf8');
+      assert.match(svg, /fill='var\(--ae-accent-soft\)'/, `${e.id}/${key}: missing main-column shading`);
+      assert.equal(svg.includes("fill='var(--ae-invalid-bg)'"), e.truth_table.rows.some((r) => r.countermodel),
+        `${e.id}/${key}: missing or false countermodel shading`);
+    }
+  }
+});
+
+test('every intermediate value is correct and sits under its own connective', () => {
+  const op = { '∼': '~', '&': '&', '∨': '|', '⊃': '>', '≡': '=' };
+  const value = (n, a) => {
+    if (n[0] === 'atom') return a[n[1]] === 'T';
+    if (n[0] === '~') return !value(n[1], a);
+    const left = value(n[1], a), right = value(n[2], a);
+    return n[0] === '&' ? left && right : n[0] === '|' ? left || right : n[0] === '>' ? !left || right : left === right;
+  };
+  for (const e of entries) {
+    const sources = [...e.premises, ...(e.conclusion === '!' ? [] : [e.conclusion])];
+    assert.equal(e.truth_table.worked.length, sources.length, e.id);
+    e.truth_table.worked.forEach((f, j) => {
+      assert.equal(f.tokens.map((t) => t.text).join(''), toGlyphs(sources[j]).replace(/\s/g, ''), e.id);
+      let pos = 0;
+      const calculations = new Map();
+      function unit() {
+        const i = pos++, text = f.tokens[i].text;
+        if (text === '(') { const n = formula(); assert.equal(f.tokens[pos++].text, ')'); return n; }
+        if (text === '∼') { const n = ['~', unit()]; calculations.set(i, n); return n; }
+        return ['atom', text];
+      }
+      function formula() {
+        const a = unit(), i = pos, symbol = f.tokens[pos]?.text;
+        if (symbol && '&∨⊃≡'.includes(symbol)) {
+          pos++; const n = [op[symbol], a, formula()]; calculations.set(i, n); return n;
+        }
+        return a;
+      }
+      const ast = formula();
+      assert.equal(pos, f.tokens.length, e.id);
+      assert.deepEqual(ast, parse(sources[j], ASCII), e.id);
+      if (ast[0] === 'atom') calculations.set(0, ast);
+      assert.equal(f.tokens.filter((t) => t.main).length, 1, e.id);
+      assert.equal(f.tokens.filter((t) => t.marker).length, ast[0] === 'atom' ? 0 : 1, e.id);
+      f.tokens.forEach((col, i) => {
+        assert.equal(!!col.values, calculations.has(i), `${e.id}: values under an atom or missing connective`);
+        if (!calculations.has(i)) return;
+        const node = calculations.get(i);
+        assert.equal(col.main, node === ast, e.id);
+        assert.deepEqual(col.values, e.truth_table.rows.map((row) => value(node, row.assignment) ? 'T' : 'F'), `${e.id}: column ${i}`);
+      });
+    });
   }
 });
