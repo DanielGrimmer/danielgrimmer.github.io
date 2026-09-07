@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 // Browser modules use .js without a package-wide ESM declaration. Loading this
 // self-contained module as ESM also works on the deployment's Node 20 runtime.
 const source = readFileSync(new URL('../assets/arguments/construction.js', import.meta.url), 'utf8');
-const { EXERCISES, LEGACY_EXERCISES, CONNECTIVES, formulaText, tableData, workedTable, exerciseLink, constructionIndex, renderConstruction } =
+const { EXERCISES, PROBLEMS, LEGACY_EXERCISES, CONNECTIVES, formulaText, tableData, workedTable, exerciseLink, constructionIndex, renderConstruction } =
   await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const find = (id) => EXERCISES.find((e) => e.id === id);
 const finalColumn = (id) => {
@@ -21,7 +21,7 @@ test('the fixed sequence begins with exactly the five course connectives', () =>
   assert.deepEqual(EXERCISES.map((e) => e.stage), [...Array(5).fill('connectives'), ...Array(12).fill('pairs'), ...Array(16).fill('further'), ...Array(2).fill('three-letters')]);
 });
 
-test('four pages compare all three placements of negation for every binary connective', () => {
+test('each negation trio is one problem with one combined answer', () => {
   for (const op of ['and', 'or', 'cond', 'bicond']) {
     const trio = EXERCISES.filter((e) => e.group === op);
     assert.equal(trio.length, 3);
@@ -29,11 +29,17 @@ test('four pages compare all three placements of negation for every binary conne
     assert.deepEqual(trio.map((e) => [e.formula.op, e.formula.args.findIndex((n) => n.op)]), [[op, 0], ['neg', 0], [op, 1]]);
     for (const e of trio) assert.equal(tableData(e.formula).columns.length, 2);
     const root = { innerHTML: '' };
+    const problem = PROBLEMS.find((p) => p.group === op);
     renderConstruction(root, exerciseLink(trio[1]));
-    assert.equal((root.innerHTML.match(/Show the worked table/g) || []).length, 3);
-    for (const e of trio) assert.ok(root.innerHTML.includes(exerciseLink(e)));
-    assert.ok(root.innerHTML.includes(`href="${exerciseLink(EXERCISES[EXERCISES.indexOf(trio[2]) + 1])}">Next page`));
-    assert.match(root.innerHTML, /How to check the calculations/);
+    assert.equal((root.innerHTML.match(/Show the worked table/g) || []).length, 1);
+    assert.equal((root.innerHTML.match(/<h3 /g) || []).length, 1);
+    assert.equal((root.innerHTML.match(/<details /g) || []).length, 1);
+    assert.equal((root.innerHTML.match(/<table /g) || []).length, 1);
+    assert.equal((root.innerHTML.match(/>M<\/td>/g) || []).length, 3);
+    assert.ok(root.innerHTML.includes(`href="${exerciseLink(PROBLEMS[PROBLEMS.indexOf(problem) + 1])}">Next problem`));
+    assert.match(root.innerHTML, /Construct the truth table for these three formulas side-by-side/);
+    assert.match(root.innerHTML, /<\/table><\/div><p>Note: When a negation appears right in front of a letter, the first step is to calculate its negation, then compute the binary connective\. By contrast, when the whole formula is negated you first calculate the binary connective and then negate that result\.<\/p>/);
+    assert.doesNotMatch(root.innerHTML, /How to check the calculations/);
     assert.doesNotMatch(root.innerHTML, /<details[^>]* open/);
   }
 });
@@ -109,11 +115,12 @@ test('one course-style table marks the main occurrence and leaves internal atoms
   assert.equal(tableData(find('negated-compound').formula).main, 0);
 });
 
-test('construction shows progress out of 35 and keeps each answer hidden', () => {
+test('construction numbers 27 problems and keeps each combined answer hidden', () => {
   const root = { innerHTML: '' };
-  for (const [i, exercise] of EXERCISES.entries()) {
+  assert.equal(PROBLEMS.length, 27);
+  for (const [i, exercise] of PROBLEMS.entries()) {
     renderConstruction(root, exerciseLink(exercise));
-    assert.match(root.innerHTML, new RegExp(`>Problem ${i + 1} of 35</h3>`));
+    assert.match(root.innerHTML, new RegExp(`>Problem ${i + 1} of 27</h3>`));
     assert.doesNotMatch(root.innerHTML, /<details[^>]* open|Read table by subformula/);
     assert.match(root.innerHTML, /Work through each problem on paper, before checking your calculations, and moving on to the next problem/);
   }
@@ -121,7 +128,9 @@ test('construction shows progress out of 35 and keeps each answer hidden', () =>
 
 test('all problem links restore their position and malformed links cannot select an exercise', () => {
   assert.equal(new Set(EXERCISES.map((e) => e.id)).size, EXERCISES.length);
-  for (const [i, e] of EXERCISES.entries()) assert.equal(constructionIndex(exerciseLink(e)), i);
+  for (const [i, problem] of PROBLEMS.entries()) {
+    for (const e of problem.exercises) assert.equal(constructionIndex(exerciseLink(e)), i);
+  }
   assert.equal(constructionIndex('#constructing-tables'), 0);
   assert.equal(constructionIndex('#arguments'), -1);
   assert.equal(constructionIndex('#constructing-tables/not-a-problem'), -1);
@@ -146,5 +155,22 @@ test('the five replaced formulas remain accessible through their published links
     assert.match(root.innerHTML, /Additional practice/);
     assert.match(root.innerHTML, /Show the worked table/);
     assert.doesNotMatch(root.innerHTML, /could not be found|Problem \d+ of/);
+  }
+});
+
+test('combined answers share assignments and align every calculation and separator', () => {
+  for (const problem of PROBLEMS.filter((p) => p.group)) {
+    const tables = problem.exercises.map((e) => tableData(e.formula));
+    const html = workedTable(problem.exercises.map((e) => e.formula));
+    const rows = [...html.match(/<tbody>(.*?)<\/tbody>/s)[1].matchAll(/<tr>(.*?)<\/tr>/gs)];
+    assert.equal(rows.length, 4);
+    for (const [i, row] of rows.entries()) {
+      const cells = [...row[1].matchAll(/<td class="([^"]+)">(.*?)<\/td>/g)];
+      assert.deepEqual(cells.filter((c) => c[1].includes('ae-ct-atom')).map((c) => c[2]), Object.values(tables[0].rows[i].model).map((v) => v ? 'T' : 'F'));
+      assert.deepEqual(cells.filter((c) => c[1].includes('ae-ct-op')).map((c) => c[2]), tables.flatMap((t) => t.rows[i].values.map((v) => v ? 'T' : 'F')));
+      assert.equal(cells.filter((c) => c[1].includes('ae-ct-divider')).length, 3);
+      assert.equal(cells.filter((c) => c[1].includes('ae-ct-main')).length, 3);
+      assert.ok(cells.filter((c) => c[1].includes('ae-ct-syntax')).every((c) => c[2] === ''));
+    }
   }
 });

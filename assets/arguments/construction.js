@@ -25,7 +25,7 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
 
 export const STAGES = [
   { id: "connectives", title: "The five connectives", note: "Start with one connective at a time." },
-  { id: "pairs", title: "Negation and scope", note: "Compare three placements of negation. Complete all three tables on paper before opening their worked answers." },
+  { id: "pairs", title: "Negation and scope", note: "Compare three placements of negation in one table." },
   { id: "further", title: "Repeated atoms and longer formulas", note: "Keep track of repeated letters as you work through these selected formulas." },
   { id: "three-letters", title: "Three letters", note: "Three different letters need eight rows. Begin with all three true: p stays true for four rows, q for two rows at a time, and r alternates on every row." },
 ];
@@ -34,8 +34,8 @@ export const EXERCISES = CONNECTIVES.map((c) => ({
   id: `connective-${c.key}`, stage: "connectives", formula: simple(c.key),
 }));
 
-// Each consecutive trio shares a page. Count formulas, not pages, so the
-// introductory sequence is still 35 problems, with independent answer reveals.
+// Preserve the formula IDs, including links published before each trio became
+// one problem. PROBLEMS below groups this inventory into the numbered sequence.
 for (const op of ["cond", "and", "or", "bicond"]) {
   EXERCISES.push(
     { id: `pair-${op}-neg-left`, stage: "pairs", group: op, formula: binary(op, unary(p()), q()) },
@@ -79,6 +79,16 @@ EXERCISES.push(
   { id: "three-letter-negation", stage: "three-letters", formula: binary("and", binary("or", p(), q()), unary(r())) },
 );
 
+export const PROBLEMS = [];
+for (const exercise of EXERCISES) {
+  const previous = PROBLEMS[PROBLEMS.length - 1];
+  if (exercise.group && previous?.group === exercise.group) {
+    previous.exercises.push(exercise);
+  } else {
+    PROBLEMS.push({ id: exercise.id, stage: exercise.stage, group: exercise.group, exercises: [exercise] });
+  }
+}
+
 export function formulaText(node, outermost = true) {
   if (node.atom) return node.atom;
   if (node.op === "neg") return `∼${formulaText(node.args[0], false)}`;
@@ -99,6 +109,9 @@ export function evaluate(node, model) {
     default: throw new Error(`Unknown connective: ${node.op}`);
   }
 }
+
+const assignments = (atoms) => Array.from({ length: 2 ** atoms.length }, (_, row) =>
+  Object.fromEntries(atoms.map((a, i) => [a, !(row & (1 << (atoms.length - i - 1)))])));
 
 export function tableData(formula) {
   const atoms = [];
@@ -121,36 +134,41 @@ export function tableData(formula) {
   walk(formula, true);
   const columns = tokens.filter((t) => t.node).map((t) => t.node);
   const main = columns.indexOf(formula);
-  const rows = Array.from({ length: 2 ** atoms.length }, (_, row) => {
-    const model = Object.fromEntries(atoms.map((a, i) => [a, !(row & (1 << (atoms.length - i - 1)))]));
-    return { model, values: columns.map((node) => evaluate(node, model)) };
-  });
+  const rows = assignments(atoms).map((model) => ({ model, values: columns.map((node) => evaluate(node, model)) }));
   return { atoms, tokens, columns, main, rows };
 }
 
 export function workedTable(formula) {
-  const { atoms, tokens, rows } = tableData(formula);
+  const formulas = Array.isArray(formula) ? formula : [formula];
+  const tables = formulas.map(tableData);
+  const atoms = [...new Set(tables.flatMap((t) => t.atoms))];
+  const tokens = tables.flatMap((table, i) => table.tokens.map((t, j) => ({
+    ...t, main: t.node === formulas[i],
+    divider: i < tables.length - 1 && j === table.tokens.length - 1,
+  })));
   const tf = (v) => v ? "T" : "F";
   const atomCells = (tag, value) => atoms.map((a, i) => `<${tag}${tag === "th" ? ' scope="col"' : ""} class="ae-ct-atom${i === atoms.length - 1 ? " ae-ct-divider" : ""}">${value(a)}</${tag}>`).join("");
   const tokenCells = (tag, value) => tokens.map((t) => {
-    const label = tag === "th" && t.node ? ` aria-label="${esc(formulaText(t.node))}${t.node === formula ? " (main column, M)" : ""}"` : "";
-    return `<${tag}${tag === "th" ? ' scope="col"' : ""}${label} class="${t.node ? "ae-ct-op" : "ae-ct-syntax"}${t.node === formula ? " ae-ct-main" : ""}">${value(t)}</${tag}>`;
+    const label = tag === "th" && t.node ? ` aria-label="${esc(formulaText(t.node))}${t.main ? " (main column, M)" : ""}"` : "";
+    return `<${tag}${tag === "th" ? ' scope="col"' : ""}${label} class="${t.node ? "ae-ct-op" : "ae-ct-syntax"}${t.main ? " ae-ct-main" : ""}${t.divider ? " ae-ct-divider" : ""}">${value(t)}</${tag}>`;
   }).join("");
 
   // The visual layout follows the handout exactly: blank below every atom
   // inside the formula. Accessible labels describe this same table's columns.
-  const visual = `<table class="ae-construction-table" aria-label="Truth table for ${esc(formulaText(formula))}. M marks the main column."><thead><tr>` +
+  const visual = `<table class="ae-construction-table" aria-label="Truth table for ${esc(formulas.map((f) => formulaText(f)).join("; "))}. M marks ${formulas.length > 1 ? "each formula's main column" : "the main column"}."><thead><tr>` +
     atomCells("th", (a) => `<i>${a}</i>`) +
     tokenCells("th", (t) => t.atom ? `<i>${t.text}</i>` : esc(t.text)) +
-    `</tr></thead><tbody>` + rows.map(({ model }) => `<tr>` +
+    `</tr></thead><tbody>` + assignments(atoms).map((model) => `<tr>` +
       atomCells("td", (a) => tf(model[a])) +
       tokenCells("td", (t) => t.node ? tf(evaluate(t.node, model)) : "") + `</tr>`).join("") +
     `</tbody><tfoot><tr>` + atomCells("td", () => ".") +
-    tokenCells("td", (t) => t.node ? (t.node === formula ? "M" : ".") : "") +
+    tokenCells("td", (t) => t.node ? (t.main ? "M" : ".") : "") +
     `</tr></tfoot></table>`;
   return `<div class="ae-ct-scroll" tabindex="0" role="region" aria-label="Worked truth table">${visual}</div>` +
-    `<p>The column marked <strong>M</strong> gives the value of the whole formula in each row. ` +
-    `The other connective columns show the intermediate work.</p>`;
+    (formulas.length > 1
+      ? `<p>Note: When a negation appears right in front of a letter, the first step is to calculate its negation, then compute the binary connective. By contrast, when the whole formula is negated you first calculate the binary connective and then negate that result.</p>`
+      : `<p>The column marked <strong>M</strong> gives the value of the whole formula in each row. ` +
+        `The other connective columns show the intermediate work.</p>`);
 }
 
 export const exerciseLink = (exercise) => `#constructing-tables/${exercise.id}`;
@@ -158,42 +176,34 @@ export const exerciseLink = (exercise) => `#constructing-tables/${exercise.id}`;
 export function constructionIndex(hash) {
   if (hash === "#constructing-tables" || hash === "#constructing-tables/") return 0;
   if (!hash.startsWith("#constructing-tables/")) return -1;
-  return EXERCISES.findIndex((e) => exerciseLink(e) === hash);
+  return PROBLEMS.findIndex((p) => p.exercises.some((e) => exerciseLink(e) === hash));
 }
 
 export function renderConstruction(root, hash) {
   const index = constructionIndex(hash);
-  const exercise = EXERCISES[index] || LEGACY_EXERCISES.find((e) => exerciseLink(e) === hash);
-  if (!exercise) {
+  const legacy = LEGACY_EXERCISES.find((e) => exerciseLink(e) === hash);
+  const problem = PROBLEMS[index] || (legacy && { ...legacy, exercises: [legacy] });
+  if (!problem) {
     root.innerHTML = `<p>This practice problem could not be found. <a href="#constructing-tables">Begin with the five connectives.</a></p>`;
     return;
   }
-  const stage = STAGES.find((s) => s.id === exercise.stage);
-  const page = exercise.group ? EXERCISES.filter((e) => e.group === exercise.group) : [exercise];
-  const first = EXERCISES.indexOf(page[0]);
-  const last = EXERCISES.indexOf(page[page.length - 1]);
-  const stageLinks = STAGES.map((s, i) => `<a class="ae-chip${s === stage ? " ae-chip-on" : ""}" href="${exerciseLink(EXERCISES.find((e) => e.stage === s.id))}"${s === stage ? ' aria-current="step"' : ""}>${i + 1}. ${s.title}</a>`).join("");
-  const nav = (i, label) => EXERCISES[i]
-    ? `<a class="ae-btn" href="${exerciseLink(EXERCISES[i])}">${label}</a>`
+  const stage = STAGES.find((s) => s.id === problem.stage);
+  const formulas = problem.exercises.map((e) => e.formula);
+  const grouped = formulas.length > 1;
+  const stageLinks = STAGES.map((s, i) => `<a class="ae-chip${s === stage ? " ae-chip-on" : ""}" href="${exerciseLink(PROBLEMS.find((p) => p.stage === s.id))}"${s === stage ? ' aria-current="step"' : ""}>${i + 1}. ${s.title}</a>`).join("");
+  const nav = (i, label) => PROBLEMS[i]
+    ? `<a class="ae-btn" href="${exerciseLink(PROBLEMS[i])}">${label}</a>`
     : `<button type="button" class="ae-btn" disabled>${label}</button>`;
   root.innerHTML =
     `<h2>Constructing truth tables</h2>` +
     `<p>Work through each problem on paper, before checking your calculations, and moving on to the next problem</p>` +
     `<nav class="ae-chiprow ae-ct-stages" aria-label="Construction stages">${stageLinks}</nav>` +
     `<p>${index < 0 ? "This formula is available as additional practice. You can also return to the numbered sequence above." : stage.note}</p>` +
-    (exercise.group ? `<p><strong>${esc(CONNECTIVES.find((c) => c.key === exercise.group).name)}:</strong> ` +
-      `first negate the left-hand letter, then the whole formula, then the right-hand letter. Compare the three M columns row by row.</p>` : "") +
-    page.map((item) => `<div class="ae-problem"><h3${item === exercise ? ' id="ae-ct-heading" tabindex="-1"' : ""}>${index < 0 ? "Additional practice" : `Problem ${EXERCISES.indexOf(item) + 1} of ${EXERCISES.length}`}</h3>` +
-    `<p class="ae-task">Construct the truth table for this formula. Show the intermediate values under each connective and mark the main column with M.</p>` +
-    `<p class="ae-ct-formula">${esc(formulaText(item.formula))}</p>` +
-    `<details class="ae-reveal"><summary>Show the worked table</summary><div class="ae-reveal-body">${workedTable(item.formula)}</div></details>` +
-    `<p><a href="${exerciseLink(item)}">Link to this problem</a></p></div>`).join("") +
-    (exercise.group ? `<details class="ae-reveal"><summary>How to check the calculations</summary><div class="ae-reveal-body">` +
-      `<p>When only a letter is negated, calculate its negation first, then apply the binary connective. When the whole formula is negated, calculate the binary connective first, then reverse that result.</p>` +
-      `<p>For example, take the row where p and q are both true. In the first table, ∼p is F, so the main step is F ${esc(symbol(exercise.group))} T. ` +
-      `In the second, first calculate T ${esc(symbol(exercise.group))} T, then negate the result. In the third, ∼q is F, so the main step is T ${esc(symbol(exercise.group))} F. ` +
-      `The three main-column values in that row are ${page.map((e) => evaluate(e.formula, { p: true, q: true }) ? "T" : "F").join(", ")}, respectively.</p>` +
-      `<p>If a result differs from yours, find the first incorrect intermediate value and work outward. Different placements can sometimes give the same M column; check every row.</p></div></details>` : "") +
-    (index >= 0 ? `<nav class="ae-ct-navigation" aria-label="Construction problems">${nav(first - 1, "Previous page")}${nav(last + 1, "Next page")}</nav>` : "") +
-    (index === EXERCISES.length - 1 ? `<p>You have reached the end of the sequence. <a href="#constructing-tables">Start again</a>, or try <a href="#arguments">assessing arguments</a> after Lecture 4.</p>` : "");
+    `<div class="ae-problem"><h3 id="ae-ct-heading" tabindex="-1">${index < 0 ? "Additional practice" : `Problem ${index + 1} of ${PROBLEMS.length}`}</h3>` +
+    `<p class="ae-task">${grouped ? "Construct the truth table for these three formulas side-by-side. Show the intermediate values under each connective and mark each main column with M." : "Construct the truth table for this formula. Show the intermediate values under each connective and mark the main column with M."}</p>` +
+    `<div class="ae-ct-formula${grouped ? " ae-ct-formulas" : ""}"${grouped ? ' tabindex="0" role="region" aria-label="Formulas to compare"' : ""}>${formulas.map((f) => `<span>${esc(formulaText(f))}</span>`).join("")}</div>` +
+    `<details class="ae-reveal"><summary>Show the worked table</summary><div class="ae-reveal-body">${workedTable(formulas)}</div></details>` +
+    `<p><a href="${exerciseLink(problem)}">Link to this problem</a></p></div>` +
+    (index >= 0 ? `<nav class="ae-ct-navigation" aria-label="Construction problems">${nav(index - 1, "Previous problem")}${nav(index + 1, "Next problem")}</nav>` : "") +
+    (index === PROBLEMS.length - 1 ? `<p>You have reached the end of the sequence. <a href="#constructing-tables">Start again</a>, or try <a href="#arguments">assessing arguments</a> after Lecture 4.</p>` : "");
 }

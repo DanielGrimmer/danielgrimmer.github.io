@@ -196,6 +196,18 @@ html[data-theme="dark"] .ae-scope {
   margin: 1.4rem 0;
 }
 
+.ae-ct-formulas {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 0.25rem;
+}
+
+.ae-ct-formulas > span {
+  flex: none;
+}
+
 .ae-ct-scroll {
   overflow-x: auto;
   margin: 1rem 0;
@@ -226,6 +238,10 @@ html[data-theme="dark"] .ae-scope {
 
 .ae-scope .ae-construction-table .ae-ct-divider {
   border-right: 1px solid var(--ae-ink);
+}
+
+.ae-scope .ae-construction-table .ae-ct-syntax.ae-ct-divider {
+  padding-right: 0.6rem;
 }
 
 .ae-scope .ae-construction-table .ae-ct-op {
