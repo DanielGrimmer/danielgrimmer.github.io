@@ -421,6 +421,17 @@ function sequentText(entry, turnstile) {
 
 export { sequentText };
 
+// The computed verdict is authoritative. Older entries can omit the display
+// turnstiles; missing metadata must never turn an invalid form into an entailment.
+export function assessmentSymbol(entry, method = "table") {
+  const valid = entry.verdict?.valid;
+  if (valid !== true && valid !== false) return "∴";
+  const symbols = { table: ["⊭", "⊨"], tree: ["⊬", "⊢"], nd: ["⊬ND", "⊢ND"] };
+  return symbols[method]?.[Number(valid)] || "∴";
+}
+
+export const difficultyLabel = (level) => level === "extremely hard" ? "extremely hard (optional)" : level;
+
 /** The per-method earliest lecture, as a plain `{table, tree, nd}` of numbers. */
 function lectureMap(entry) {
   const src = entry.course?.earliest_lecture || {};
@@ -781,7 +792,7 @@ function renderHead(entry, spoilers) {
 function renderSequent(entry, spoilers = false) {
   const prems = asArray(entry._premises);
   const concl = entry._conclusion || "";
-  const turnstile = entry.display?.turnstiles?.table || "⊨";
+  const turnstile = assessmentSymbol(entry);
 
   const rows = prems.map(
     (p, i) =>
@@ -1101,7 +1112,7 @@ function renderEvidence(entry, spoilers, method) {
       if (!built) return "";
       // The turnstile is ⊨/⊭ by verdict, so it only goes in the heading when
       // the answer is already on the page.
-      const turnstile = spoilers ? null : entry.display?.turnstiles?.[key];
+      const turnstile = spoilers ? null : assessmentSymbol(entry, key);
       const heading = turnstile ? `${label}  ${turnstile}` : label;
       return revealPanel(heading, built.html, built.hint);
     })
@@ -1569,7 +1580,7 @@ function renderRelations(entry, db) {
       `<a class="ae-relation" href="#/${encodeURIComponent(id)}">` +
       `<span class="ae-rel-kind">${escapeHtml(kind)}</span>` +
       `<span class="ae-rel-name">${escapeHtml(name)}</span>` +
-      `<div class="ae-rel-seq">${f(sequentText(target, target.display?.turnstiles?.table || "⊨"))}</div>` +
+      `<div class="ae-rel-seq">${f(sequentText(target, assessmentSymbol(target)))}</div>` +
       (blurb
         ? `<p class="ae-prose" style="margin:.35rem 0 0;font-size:.85rem;color:var(--ae-muted)">${escapeHtml(blurb)}</p>`
         : "") +
@@ -1625,9 +1636,9 @@ function renderMetrics(entry) {
     stat("atoms", m.atom_count) +
     stat("premises", m.premise_count) +
     stat("formula depth", m.max_formula_depth) +
-    stat("table", d.table) +
-    stat("tree", d.tree) +
-    stat("nd", d.nd) +
+    stat("table", difficultyLabel(d.table)) +
+    stat("tree", difficultyLabel(d.tree)) +
+    stat("nd", difficultyLabel(d.nd)) +
     (sharp ? stat("countermodels ÷ rows", sharp) : "") +
     `</div>` +
     (asArray(m.connectives).length
@@ -1733,12 +1744,12 @@ export function renderCard(entry, href) {
       .map((t) => `<span class="ae-chip">${escapeHtml(t)}</span>`)
       .join("") +
     `</div>` +
-    `<div class="ae-card-seq">${f(sequentText(entry, entry.display?.turnstiles?.table || "⊨"))}</div>` +
+    `<div class="ae-card-seq">${f(sequentText(entry, assessmentSymbol(entry)))}</div>` +
     `<div class="ae-card-meta">` +
     `<span>${entry.metrics?.atom_count} atoms · ${entry.verdict?.rows} rows</span>` +
-    `<span>table ${escapeHtml(entry.difficulty?.table || "—")}` +
-    ` · tree ${escapeHtml(entry.difficulty?.tree || "—")}` +
-    `${entry.nd?.exists ? ` · nd ${escapeHtml(entry.difficulty?.nd || "—")}` : ""}</span>` +
+    `<span>table ${escapeHtml(difficultyLabel(entry.difficulty?.table) || "—")}` +
+    ` · tree ${escapeHtml(difficultyLabel(entry.difficulty?.tree) || "—")}` +
+    `${entry.nd?.exists ? ` · nd ${escapeHtml(difficultyLabel(entry.difficulty?.nd) || "—")}` : ""}</span>` +
     (who ? `<span>${escapeHtml(who)}</span>` : "") +
     `</div></a>`
   );

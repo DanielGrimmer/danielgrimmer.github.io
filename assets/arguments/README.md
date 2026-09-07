@@ -38,7 +38,8 @@ metrics are computed from the formulas; nothing is asserted on authority.
 | `argument-db.json` | The database. Generated upstream — see *Do not hand-edit* below |
 | `encyclopedia.js` | Data loading, search, filters, and every renderer. All schema knowledge lives here |
 | `browse.js` | The catalogue controller: search, facets, and the `#/<id>` routes |
-| `practice.js` | Activity routing, the random draw and its shuffled bag |
+| `practice.js` | Activity routing, stable practice URLs, the random draw and its shuffled bag |
+| `practice-links.js` | Shared URL parsing and method eligibility for links and random draws |
 | `construction.js` | The fixed calculation sequence and worked intermediate columns; see `docs/truth-table-construction.md` |
 | `encyclopedia.css` | All styles, scoped to `.ae-scope` |
 | `svg/` | The typeset LaTeX, one SVG per (form, view) — table, compact table, tree, derivation — plus `index.json`; a build artifact, see below |

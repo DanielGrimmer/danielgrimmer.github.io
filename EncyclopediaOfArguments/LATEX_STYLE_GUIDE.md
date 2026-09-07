@@ -215,6 +215,11 @@ house form and `X ⊢ND ⊥` is not.
 | Derivability (ND) | ⊢<sub>ND</sub> | `\ProvesND` |
 | Non-derivability (ND) | ⊬<sub>ND</sub> | `\not\ProvesND` |
 
+Use `\therefore` (∴) for a neutral presentation of an argument, including
+unanswered practice. When making an assessment claim, derive the sign from
+`verdict.valid`; missing display metadata must never default to entailment.
+If no assessment is available, use ∴.
+
 Use `\ProvesND`, never an ad-hoc `\vdash_D` or `\vdash_\text{ND}`.
 
 **One-sided forms.** An empty side is not nothing: it is the empty conjunction

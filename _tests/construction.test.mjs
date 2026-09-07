@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 // Browser modules use .js without a package-wide ESM declaration. Loading this
 // self-contained module as ESM also works on the deployment's Node 20 runtime.
 const source = readFileSync(new URL('../assets/arguments/construction.js', import.meta.url), 'utf8');
-const { EXERCISES, CONNECTIVES, formulaText, tableData, workedTable, exerciseLink, constructionIndex, renderConstruction } =
+const { EXERCISES, LEGACY_EXERCISES, CONNECTIVES, formulaText, tableData, workedTable, exerciseLink, constructionIndex, renderConstruction } =
   await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const find = (id) => EXERCISES.find((e) => e.id === id);
 const finalColumn = (id) => {
@@ -15,27 +15,27 @@ const finalColumn = (id) => {
 };
 
 test('the fixed sequence begins with exactly the five course connectives', () => {
-  assert.equal(EXERCISES.length, 33);
+  assert.equal(EXERCISES.length, 35);
   assert.deepEqual(EXERCISES.slice(0, 5).map((e) => formulaText(e.formula)), ['∼p', 'p & q', 'p ∨ q', 'p ⊃ q', 'p ≡ q']);
   assert.deepEqual(CONNECTIVES.map((c) => finalColumn(`connective-${c.key}`)), ['FT', 'TFFF', 'TTTF', 'TFTT', 'TFFT']);
-  assert.deepEqual(EXERCISES.map((e) => e.stage), [...Array(5).fill('connectives'), ...Array(12).fill('pairs'), ...Array(16).fill('further')]);
+  assert.deepEqual(EXERCISES.map((e) => e.stage), [...Array(5).fill('connectives'), ...Array(12).fill('pairs'), ...Array(16).fill('further'), ...Array(2).fill('three-letters')]);
 });
 
-test('the shorter paired selection includes inner, outer, and no negations', () => {
-  const pairs = EXERCISES.filter((e) => e.stage === 'pairs');
-  const coverage = new Set(pairs.map(({ formula: f }) => {
-    const i = f.args.findIndex((a) => a.op);
-    assert.equal(f.args.filter((a) => a.op).length, 1);
-    assert.equal(tableData(f).columns.length, 2);
-    return `${f.op}/${f.args[i].op}/${i}`;
-  }));
-  assert.equal(coverage.size, 12);
-  assert.ok(coverage.has('cond/neg/0'));
-  assert.ok(coverage.has('cond/neg/1'));
-  assert.equal(pairs.filter((e) => e.formula.op === 'neg').length, 3);
-  assert.equal(pairs.filter((e) => !tableData(e.formula).columns.some((n) => n.op === 'neg')).length, 5);
-  const used = new Set(pairs.flatMap((e) => tableData(e.formula).columns.map((n) => n.op)));
-  assert.deepEqual([...used].sort(), CONNECTIVES.map((c) => c.key).sort());
+test('four pages compare all three placements of negation for every binary connective', () => {
+  for (const op of ['and', 'or', 'cond', 'bicond']) {
+    const trio = EXERCISES.filter((e) => e.group === op);
+    assert.equal(trio.length, 3);
+    assert.equal(EXERCISES.indexOf(trio[2]) - EXERCISES.indexOf(trio[0]), 2);
+    assert.deepEqual(trio.map((e) => [e.formula.op, e.formula.args.findIndex((n) => n.op)]), [[op, 0], ['neg', 0], [op, 1]]);
+    for (const e of trio) assert.equal(tableData(e.formula).columns.length, 2);
+    const root = { innerHTML: '' };
+    renderConstruction(root, exerciseLink(trio[1]));
+    assert.equal((root.innerHTML.match(/Show the worked table/g) || []).length, 3);
+    for (const e of trio) assert.ok(root.innerHTML.includes(exerciseLink(e)));
+    assert.ok(root.innerHTML.includes(`href="${exerciseLink(EXERCISES[EXERCISES.indexOf(trio[2]) + 1])}">Next page`));
+    assert.match(root.innerHTML, /How to check the calculations/);
+    assert.doesNotMatch(root.innerHTML, /<details[^>]* open/);
+  }
 });
 
 test('later stages retain the same mixed order across page loads', async () => {
@@ -49,7 +49,8 @@ test('later stages retain the same mixed order across page loads', async () => {
 
 test('every intermediate value and column position agrees with the course generator', () => {
   const ascii = (s) => s.replace(/[∼∨⊃≡]/g, (c) => ({ '∼': '~', '∨': '|', '⊃': '>', '≡': '=' })[c]);
-  const input = EXERCISES.map((e) => ascii(formulaText(e.formula)));
+  const checked = [...EXERCISES, ...LEGACY_EXERCISES];
+  const input = checked.map((e) => ascii(formulaText(e.formula)));
   const oracle = JSON.parse(execFileSync('python3', ['-c', `
 import json, sys
 from formula import parse, atoms_of, evaluate, main_connective_index
@@ -64,7 +65,7 @@ for src in json.load(sys.stdin):
         rows=[dict(model=m, values=[evaluate(n, m) for n in columns]) for m in models(atoms)]))
 print(json.dumps(out))
 `], { cwd: new URL('../EncyclopediaOfArguments/latexgen/', import.meta.url), input: JSON.stringify(input), encoding: 'utf8' }));
-  for (const [i, e] of EXERCISES.entries()) {
+  for (const [i, e] of checked.entries()) {
     const actual = tableData(e.formula);
     assert.deepEqual({ atoms: actual.atoms, tokens: actual.tokens.map((t) => ascii(t.text)), main: actual.main, rows: actual.rows }, oracle[i], e.id);
   }
@@ -85,7 +86,7 @@ test('all problems stay within the introductory workload, without duplicate form
   assert.equal(new Set(EXERCISES.map((e) => formulaText(e.formula))).size, EXERCISES.length);
   for (const e of EXERCISES) {
     const table = tableData(e.formula);
-    assert.ok(table.atoms.length <= 2, e.id);
+    assert.ok(table.atoms.length <= (e.stage === 'three-letters' ? 3 : 2), e.id);
     assert.ok(table.columns.length >= 1 && table.columns.length <= 4, e.id);
     assert.ok(table.main >= 0, e.id);
   }
@@ -108,12 +109,12 @@ test('one course-style table marks the main occurrence and leaves internal atoms
   assert.equal(tableData(find('negated-compound').formula).main, 0);
 });
 
-test('construction opens with the paper instructions and only the current problem number', () => {
+test('construction shows progress out of 35 and keeps each answer hidden', () => {
   const root = { innerHTML: '' };
   for (const [i, exercise] of EXERCISES.entries()) {
     renderConstruction(root, exerciseLink(exercise));
-    assert.match(root.innerHTML, new RegExp(`>Problem ${i + 1}</h3>`));
-    assert.doesNotMatch(root.innerHTML, /Problem \d+ of \d+|Read table by subformula/);
+    assert.match(root.innerHTML, new RegExp(`>Problem ${i + 1} of 35</h3>`));
+    assert.doesNotMatch(root.innerHTML, /<details[^>]* open|Read table by subformula/);
     assert.match(root.innerHTML, /Work through each problem on paper, before checking your calculations, and moving on to the next problem/);
   }
 });
@@ -125,4 +126,25 @@ test('all problem links restore their position and malformed links cannot select
   assert.equal(constructionIndex('#arguments'), -1);
   assert.equal(constructionIndex('#constructing-tables/not-a-problem'), -1);
   assert.equal(constructionIndex('#constructing-tables/<script>'), -1);
+});
+
+test('exactly two final problems introduce all eight three-letter assignments', () => {
+  assert.equal(EXERCISES.filter((e) => tableData(e.formula).atoms.length === 3).length, 2);
+  for (const e of EXERCISES.slice(-2)) {
+    const data = tableData(e.formula);
+    assert.equal(e.stage, 'three-letters');
+    assert.deepEqual(data.atoms, ['p', 'q', 'r']);
+    assert.deepEqual(data.rows.map(({model}) => Object.values(model).map((v) => v ? 'T' : 'F').join('')), ['TTT', 'TTF', 'TFT', 'TFF', 'FTT', 'FTF', 'FFT', 'FFF']);
+  }
+});
+
+test('the five replaced formulas remain accessible through their published links', () => {
+  const root = { innerHTML: '' };
+  assert.equal(LEGACY_EXERCISES.length, 5);
+  for (const e of LEGACY_EXERCISES) {
+    renderConstruction(root, exerciseLink(e));
+    assert.match(root.innerHTML, /Additional practice/);
+    assert.match(root.innerHTML, /Show the worked table/);
+    assert.doesNotMatch(root.innerHTML, /could not be found|Problem \d+ of/);
+  }
 });

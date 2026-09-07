@@ -262,7 +262,7 @@ function shell(db) {
       ["easy", "easy"],
       ["medium", "medium"],
       ["hard", "hard"],
-      ["extremely hard", "extremely hard"],
+      ["extremely hard", "extremely hard (optional)"],
     ]) +
     select("maxAtoms", "at most … atoms", [
       ["", "any"],

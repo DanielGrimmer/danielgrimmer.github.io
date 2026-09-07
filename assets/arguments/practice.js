@@ -27,9 +27,10 @@ import {
   problemStatement,
   hydrateSvgs,
   escapeHtml,
-  asArray,
+  difficultyLabel,
 } from "./encyclopedia.js";
 import { renderConstruction } from "./construction.js";
+import { LEVELS, practiceLink, isArgumentRoute, canPractise, resolvePracticeLink } from "./practice-links.js";
 
 const STORE = "phil1115.practice.v3";
 
@@ -41,7 +42,6 @@ const METHODS = [
 // The top band is a warning label rather than a fourth slice: only a handful
 // of entries per method wear it, so a practice set restricted to it is very
 // short by design.
-const LEVELS = ["easy", "medium", "hard", "extremely hard"];
 
 const root = document.getElementById("ae-practice");
 if (root) start();
@@ -54,10 +54,10 @@ function start() {
     `<section id="ae-construction" hidden></section><section id="ae-argument-practice" hidden></section>`;
   const construction = root.querySelector("#ae-construction");
   const argumentsRoot = root.querySelector("#ae-argument-practice");
-  let argumentsStarted = false;
+  let argumentsController = null;
   function route(focus = false) {
     const constructing = location.hash === "#constructing-tables" || location.hash.startsWith("#constructing-tables/");
-    const assessing = location.hash === "#arguments";
+    const assessing = isArgumentRoute(location.hash);
     construction.hidden = !constructing;
     argumentsRoot.hidden = !assessing;
     for (const link of root.querySelectorAll("[data-mode]")) {
@@ -69,9 +69,13 @@ function start() {
     if (constructing) {
       renderConstruction(construction, location.hash);
       if (focus) construction.querySelector("#ae-ct-heading")?.focus({ preventScroll: true });
-    } else if (assessing && !argumentsStarted) {
-      argumentsStarted = true;
-      startArguments(argumentsRoot);
+    } else if (assessing) {
+      if (!argumentsController) argumentsController = startArguments(argumentsRoot);
+      const hash = location.hash;
+      argumentsController.then((controller) => {
+        // Loading the database may finish after the user has changed activity.
+        if (location.hash === hash) controller?.open(hash);
+      });
     }
   }
   window.addEventListener("hashchange", () => route(true));
@@ -118,16 +122,13 @@ async function startArguments(root) {
     for (const e of db.entries) {
       for (const m of METHODS) {
         if (!state.methods.has(m.key)) continue;
-        // Natural deduction only ever offers valid forms: an invalid one has
-        // no derivation, so there would be nothing to find.
-        if (m.key === "nd" && !e.nd?.exists) continue;
         // A form set as graded work is not a fair random draw *in that
         // method*: the student has already been asked to build that very tree.
         // The other two methods stay open, since being asked for the table is
         // no help with the derivation. Exam appearances do not count -- the
         // site is unreachable during the exam, and there is far too much of it
         // to memorise -- so only problem sets are recorded here.
-        if (e.course?.problem_set?.[m.key]) continue;
+        if (!canPractise(e, m.key)) continue;
         const level = e.difficulty?.[m.key];
         if (!level || !state.levels.has(level)) continue;
         out.push(`${e.id}|${m.key}`);
@@ -199,6 +200,13 @@ async function startArguments(root) {
 
     const [id, method] = key.split("|");
     const entry = db.byId.get(id);
+    history.pushState(null, "", practiceLink(id, method));
+    showProblem(entry, method);
+  }
+
+  function showProblem(entry, method) {
+    const id = entry.id;
+    current = `${id}|${method}`;
     const m = METHODS.find((x) => x.key === method);
 
     // "Assess" for a table or a tree, because the verdict is the question.
@@ -211,11 +219,12 @@ async function startArguments(root) {
 
     els.stage.innerHTML =
       `<div class="ae-problem">` +
-      `<p class="ae-progress">${escapeHtml(m.label)} · ${escapeHtml(entry.difficulty[method])}</p>` +
+      `<p class="ae-progress">${escapeHtml(m.label)} · ${escapeHtml(difficultyLabel(entry.difficulty[method]))}</p>` +
       `<p class="ae-task">${task}</p>` +
       problemStatement(entry) +
       `<details class="ae-reveal"><summary>Show the answer</summary>` +
       `<div class="ae-reveal-body">${methodPanel(entry, method)}</div></details>` +
+      `<p><a data-practice-link href="${practiceLink(id, method)}">Link to this practice problem</a></p>` +
       `<p class="ae-entry-link">` +
       `<a href="/arguments/browse/#/${encodeURIComponent(id)}">` +
       `Open the encyclopedia entry for this form →</a></p>` +
@@ -224,6 +233,23 @@ async function startArguments(root) {
     // <details>, so by the time the student clicks it is already there.
     hydrateSvgs(els.stage);
     els.stage.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+
+  function open(hash) {
+    current = null;
+    els.stage.innerHTML = "";
+    if (hash === "#arguments" || hash === "#arguments/") return;
+    const linked = resolvePracticeLink(hash, db);
+    if (!linked) {
+      els.stage.innerHTML = `<p class="ae-empty">This practice problem is unavailable. Choose a method and difficulty above to draw another problem.</p>`;
+      return;
+    }
+    state.methods = new Set([linked.method]);
+    state.levels = new Set([linked.entry.difficulty[linked.method]]);
+    bag = [];
+    persist();
+    refresh();
+    showProblem(linked.entry, linked.method);
   }
 
   els.chips.addEventListener("click", (ev) => {
@@ -240,10 +266,20 @@ async function startArguments(root) {
       els.stage.innerHTML = `<p class="ae-empty">Your choices have changed. Draw a new problem to use them.</p>`;
       current = null;
     }
+    // The address must not keep pointing at a problem cleared by a filter.
+    history.replaceState(null, "", "#arguments");
   });
 
+  els.stage.addEventListener("click", (ev) => {
+    const link = ev.target.closest("a[data-practice-link]");
+    if (!link || ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.altKey) return;
+    ev.preventDefault();
+    // Clicking the current URL produces no hashchange; explicitly close its answer.
+    open(link.getAttribute("href"));
+  });
   els.draw.addEventListener("click", draw);
   refresh();
+  return { open };
 }
 
 function shell() {
@@ -264,14 +300,17 @@ function shell() {
     `<div id="ae-choices" class="ae-choices">` +
     `<div class="ae-choice">` +
     `<h3>Which method would you like to practise?</h3>` +
+    `<p>Select one or more.</p>` +
     `<div class="ae-chiprow">${group("method", METHODS)}</div>` +
     `</div>` +
     `<div class="ae-choice">` +
     `<h3>How hard?</h3>` +
+    `<p>Select one or more. Extremely hard problems are optional challenges.</p>` +
     `<div class="ae-chiprow">${group(
       "level",
-      LEVELS.map((l) => ({ key: l, label: l[0].toUpperCase() + l.slice(1) })),
+      LEVELS.map((l) => ({ key: l, label: difficultyLabel(l)[0].toUpperCase() + difficultyLabel(l).slice(1) })),
     )}</div>` +
+    `<p>Table levels measure the number of truth-value calculations: rows × connective occurrences. Tree levels count rule applications, resolving non-branching rules first. ND levels involve judgment about finding a proof. These levels describe the exercises, not exam expectations.</p>` +
     `</div>` +
     `<div class="ae-drawrow">` +
     `<button type="button" id="ae-draw" class="ae-btn ae-btn-primary">New problem</button>` +
